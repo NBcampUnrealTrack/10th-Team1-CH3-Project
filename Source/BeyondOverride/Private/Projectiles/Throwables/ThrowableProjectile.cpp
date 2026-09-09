@@ -1,7 +1,5 @@
 #include "Projectiles/Throwables/ThrowableProjectile.h"
 
-#include "ThrowableProjectile.h"
-
 #include "Components/SphereComponent.h"
 
 AThrowableProjectile::AThrowableProjectile()
