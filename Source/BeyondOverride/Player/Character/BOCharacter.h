@@ -23,14 +23,16 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	float SeatSpeedMultiplier = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SpeedMultiplier = 1.0f;
 
@@ -61,7 +63,7 @@ private:
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
 	UFUNCTION()
-	void ToggleSeat(const FInputActionValue& value);
+	void ToggleCrouch(const FInputActionValue& value);
 	UFUNCTION()
 	void Primary(const FInputActionValue& value);
 	UFUNCTION()
@@ -75,7 +77,6 @@ private:
 
 	void ChangeMoveSpeed();
 
-	bool bIsSeat = false;
 	bool bIsSprint = false;
 
 };

@@ -12,13 +12,13 @@ UCLASS()
 class BEYONDOVERRIDE_API UBOAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
+
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-//public:
-//	void ApplyEquipmentAnimation(UEquipmentAnimationData* NewData);
+	//public:
+	//	void ApplyEquipmentAnimation(UEquipmentAnimationData* NewData);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Character")
@@ -33,6 +33,8 @@ protected:
 	bool bShouldMove = false;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	bool bIsFalling = false;
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
+	bool bIsCrouch = false;
 
 	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	//UAnimSequenceBase* EquipmentIdle = nullptr;
