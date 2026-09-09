@@ -1,5 +1,7 @@
 #include "Items/Actors/ItemPickupBase.h"
 
+#include "Items/Objects/ItemInstanceBase.h"
+
 AItemPickupBase::AItemPickupBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -35,4 +37,13 @@ UItemInstanceBase* AItemPickupBase::GetItemInstance() const
 void AItemPickupBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 아이템 인스턴스 생성 - 저장된 인스턴스 없는 경우
+	if (!ItemInstance)
+	{
+		if (ItemInstanceClass)
+		{
+			ItemInstance = NewObject<UItemInstanceBase>(this, ItemInstanceClass);
+		}
+	}
 }
