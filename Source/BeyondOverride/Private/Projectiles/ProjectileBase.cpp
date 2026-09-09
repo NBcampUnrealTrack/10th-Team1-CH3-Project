@@ -17,3 +17,17 @@ AProjectileBase::AProjectileBase()
 	// 기본 수명 설정
 	InitialLifeSpan = 100.f;
 }
+
+void AProjectileBase::Initialize(
+	APawn* InInstigator,
+	const int32 InDamage,
+	const FVector& Velocity,
+	const float GravityScale)
+{
+	SetInstigator(InInstigator);
+
+	Damage = InDamage;
+
+	ProjectileMovement->Velocity = Velocity;
+	ProjectileMovement->ProjectileGravityScale = GravityScale;
+}
