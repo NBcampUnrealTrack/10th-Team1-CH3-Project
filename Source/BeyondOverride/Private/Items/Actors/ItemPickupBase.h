@@ -23,6 +23,8 @@ class AItemPickupBase : public AActor
   public:
 	AItemPickupBase();
 
+	void Initialize(UItemInstanceBase* InItemInstance);
+
 	// Getters
 	UItemInstanceBase* GetItemInstance() const;
 

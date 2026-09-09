@@ -10,6 +10,11 @@ AItemPickupBase::AItemPickupBase()
 	ItemInstance = nullptr;
 }
 
+void AItemPickupBase::Initialize(UItemInstanceBase* InItemInstance)
+{
+	// TODO
+}
+
 UItemInstanceBase* AItemPickupBase::GetItemInstance() const
 {
 	return ItemInstance;
