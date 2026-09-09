@@ -41,22 +41,21 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	bShouldMove = GroundSpeed > 3.0f && bHasAcceleration;
 
-	bIsCrouch = Character->GetIsCrouch();
-}
+	bIsCrouch = MovementComponent->IsCrouching();
 
-//void UBOAnimInstance::ApplyEquipmentAnimation(UEquipmentAnimationData* NewData)
-//{
-//    if (!IsValid(NewData))
-//    {
-//        return;
-//    }
-//
-//    CurrentEquipmentData = NewData;
-//
-//    EquipmentIdle = NewData->Idle;
-//    EquipmentLocomotion = NewData->Locomotion;
-//    EquipmentJumpStart = NewData->JumpStart;
-//    EquipmentJumpLoop = NewData->JumpLoop;
-//    EquipmentJumpLand = NewData->JumpLand;
-//    EquipmentAim = NewData->Aim;
-//}
+	//void UBOAnimInstance::ApplyEquipmentAnimation(UEquipmentAnimationData* NewData)
+	//{
+	//    if (!IsValid(NewData))
+	//    {
+	//        return;
+	//    }
+	//
+	//    CurrentEquipmentData = NewData;
+	//
+	//    EquipmentIdle = NewData->Idle;
+	//    EquipmentLocomotion = NewData->Locomotion;
+	//    EquipmentJumpStart = NewData->JumpStart;
+	//    EquipmentJumpLoop = NewData->JumpLoop;
+	//    EquipmentJumpLand = NewData->JumpLand;
+	//    EquipmentAim = NewData->Aim;
+}
