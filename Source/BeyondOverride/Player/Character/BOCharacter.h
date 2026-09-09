@@ -16,6 +16,9 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+	bool GetIsCrouch() const { return bIsCrouch; }
+
+public:
 	ABOCharacter();
 
 protected:
@@ -30,7 +33,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	float SeatSpeedMultiplier = 0.5f;
+	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SpeedMultiplier = 1.0f;
 
@@ -61,7 +64,7 @@ private:
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
 	UFUNCTION()
-	void ToggleSeat(const FInputActionValue& value);
+	void ToggleCrouch(const FInputActionValue& value);
 	UFUNCTION()
 	void Primary(const FInputActionValue& value);
 	UFUNCTION()
@@ -75,7 +78,7 @@ private:
 
 	void ChangeMoveSpeed();
 
-	bool bIsSeat = false;
+	bool bIsCrouch = false;
 	bool bIsSprint = false;
 
 };

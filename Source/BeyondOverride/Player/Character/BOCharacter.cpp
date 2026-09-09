@@ -74,7 +74,7 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 			if (PlayerController->SeatAction)
 			{
-				EnhancedInput->BindAction(PlayerController->SeatAction, ETriggerEvent::Triggered, this, &ABOCharacter::ToggleSeat);
+				EnhancedInput->BindAction(PlayerController->SeatAction, ETriggerEvent::Triggered, this, &ABOCharacter::ToggleCrouch);
 			}
 
 			if (PlayerController->PrimaryAction)
@@ -163,9 +163,9 @@ void ABOCharacter::StopSprint(const FInputActionValue& value)
 	ChangeMoveSpeed();
 }
 
-void ABOCharacter::ToggleSeat(const FInputActionValue& value)
+void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 {
-	bIsSeat = !bIsSeat;
+	bIsCrouch = !bIsCrouch;
 	ChangeMoveSpeed();
 }
 
@@ -193,9 +193,9 @@ void ABOCharacter::ChangeMoveSpeed()
 {
 	float NewMoveSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
 
-	if (bIsSeat)
+	if (bIsCrouch)
 	{
-		NewMoveSpeed *= SeatSpeedMultiplier;
+		NewMoveSpeed *= CrouchSpeedMultiplier;
 	}
 
 	GetCharacterMovement()->MaxWalkSpeed = NewMoveSpeed;
