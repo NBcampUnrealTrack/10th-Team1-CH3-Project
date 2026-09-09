@@ -6,8 +6,8 @@
 
 #include "ItemDataAsset.generated.h"
 
-// class UItemInstanceBase;
-// class AItemPickupBase;
+class UItemInstanceBase;
+class AItemPickupBase;
 
 UENUM(BlueprintType)
 enum class EItemID : uint8
@@ -43,10 +43,10 @@ class UItemDataAsset : public UDataAsset
 	GENERATED_BODY()
 
   public:
-	// UPROPERTY(EditDefaultsOnly, Category = "Class")
-	// TSubclassOf<UItemInstanceBase> ItemInstanceClass;
-	// UPROPERTY(EditDefaultsOnly, Category = "Class")
-	// TSubclassOf<AItemPickupBase> ItemPickupClass;
+	UPROPERTY(EditDefaultsOnly, Category = "Class")
+	TSubclassOf<UItemInstanceBase> ItemInstanceClass;
+	UPROPERTY(EditDefaultsOnly, Category = "Class")
+	TSubclassOf<AItemPickupBase> ItemPickupClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Identity")
 	EItemID ItemID;
