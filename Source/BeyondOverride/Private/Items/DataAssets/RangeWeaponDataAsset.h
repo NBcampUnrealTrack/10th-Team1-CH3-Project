@@ -14,6 +14,7 @@ class URangeWeaponDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
+  public:
 	UPROPERTY(EditDefaultsOnly, Category = "Stats")
 	int32 Damage;  // 데미지
 	UPROPERTY(EditDefaultsOnly, Category = "Stats")
