@@ -7,39 +7,41 @@
 
 void UBOAnimInstance::NativeInitializeAnimation()
 {
-    Super::NativeInitializeAnimation();
+	Super::NativeInitializeAnimation();
 
-    Character = Cast<ABOCharacter>(TryGetPawnOwner());
+	Character = Cast<ABOCharacter>(TryGetPawnOwner());
 }
 
 void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-    Super::NativeUpdateAnimation(DeltaSeconds);
+	Super::NativeUpdateAnimation(DeltaSeconds);
 
-    if (!IsValid(Character))
-    {
-        return;
-    }
+	if (!IsValid(Character))
+	{
+		return;
+	}
 
-    UCharacterMovementComponent* MovementComponent = Character->GetCharacterMovement();
+	UCharacterMovementComponent* MovementComponent = Character->GetCharacterMovement();
 
-    if (!IsValid(MovementComponent))
-    {
-        return;
-    }
+	if (!IsValid(MovementComponent))
+	{
+		return;
+	}
 
-    Velocity = Character->GetVelocity();
+	Velocity = Character->GetVelocity();
 
-    GroundSpeed = Velocity.Size2D();
+	GroundSpeed = Velocity.Size2D();
 
-    const FVector LocalVelocity = Character->GetActorTransform().InverseTransformVectorNoScale(Velocity);
+	const FVector LocalVelocity = Character->GetActorTransform().InverseTransformVectorNoScale(Velocity);
 
-    Direction = FMath::RadiansToDegrees(FMath::Atan2(LocalVelocity.Y, LocalVelocity.X));
-    bIsFalling = MovementComponent->IsFalling();
+	Direction = FMath::RadiansToDegrees(FMath::Atan2(LocalVelocity.Y, LocalVelocity.X));
+	bIsFalling = MovementComponent->IsFalling();
 
-    const bool bHasAcceleration = !MovementComponent->GetCurrentAcceleration().IsNearlyZero();
+	const bool bHasAcceleration = !MovementComponent->GetCurrentAcceleration().IsNearlyZero();
 
-    bShouldMove = GroundSpeed > 3.0f && bHasAcceleration;
+	bShouldMove = GroundSpeed > 3.0f && bHasAcceleration;
+
+	bIsCrouch = Character->GetIsCrouch();
 }
 
 //void UBOAnimInstance::ApplyEquipmentAnimation(UEquipmentAnimationData* NewData)
