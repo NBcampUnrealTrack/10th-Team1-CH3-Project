@@ -24,7 +24,7 @@ AItemPickupBase::AItemPickupBase()
 
 void AItemPickupBase::Initialize(UItemInstanceBase* InItemInstance)
 {
-	// TODO
+	ItemInstance = InItemInstance;
 }
 
 UItemInstanceBase* AItemPickupBase::GetItemInstance() const
