@@ -20,4 +20,6 @@ class AProjectileBase : public AActor
 
   public:
 	AProjectileBase();
+
+	virtual void Initialize(AActor* InOwner, APawn* InInstigator);
 };
