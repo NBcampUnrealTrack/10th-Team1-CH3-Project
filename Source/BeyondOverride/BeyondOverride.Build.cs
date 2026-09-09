@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 using UnrealBuildTool;
 
 public class BeyondOverride : ModuleRules
@@ -13,8 +11,9 @@ public class BeyondOverride : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore", 
-			"EnhancedInput"
-		});
+			"EnhancedInput",
+            "UMG"
+        });
 
 		PublicIncludePaths.AddRange(new string[] { 
 			"BeyondOverride"
