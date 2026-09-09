@@ -2,15 +2,10 @@
 
 AProjectileBase::AProjectileBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void AProjectileBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
