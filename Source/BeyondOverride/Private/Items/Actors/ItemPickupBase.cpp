@@ -18,6 +18,7 @@ AItemPickupBase::AItemPickupBase()
 	StaticMeshComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);      // Camera -> Ignore
 	StaticMeshComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);       // Pawn -> Overlap
 
+	ItemInstanceClass = nullptr;
 	ItemInstance = nullptr;
 }
 
