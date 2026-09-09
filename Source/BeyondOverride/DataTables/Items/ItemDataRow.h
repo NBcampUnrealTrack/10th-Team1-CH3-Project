@@ -50,6 +50,9 @@ struct BEYONDOVERRIDE_API FItemDataRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
 	TSubclassOf<AItemPickupBase> ItemPickupClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Asset")
+	TObjectPtr<UStaticMesh> ItemPickupMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	int32 MaxStackCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
