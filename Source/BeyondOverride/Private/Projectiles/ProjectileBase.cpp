@@ -17,9 +17,3 @@ AProjectileBase::AProjectileBase()
 	// 기본 수명 설정
 	InitialLifeSpan = 100.f;
 }
-
-void AProjectileBase::Initialize(AActor* InOwner, APawn* InInstigator)
-{
-	SetOwner(InOwner);
-	SetInstigator(InInstigator);
-}
