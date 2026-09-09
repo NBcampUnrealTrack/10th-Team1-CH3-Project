@@ -27,7 +27,7 @@ class URangeWeaponInstance : public UEquippableItemInstance
 	const URangeWeaponDataAsset* GetRangeWeaponData() const;
 
 	// Ammo
-	int32 GetCurrentAmmo() const;
 	bool ConsumeAmmo();
-	int32 AddAmmo(int32 Amount);
+	void AddAmmo(int32& Amount);
+	int32 GetCurrentAmmo() const;
 };
