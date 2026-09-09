@@ -6,7 +6,7 @@
 
 #include "RangeWeaponDataAsset.generated.h"
 
-// class AProjectileBase;
+class ABulletProjectile;
 class UWeaponAnimationDataAsset;
 
 UCLASS()
@@ -20,8 +20,8 @@ class URangeWeaponDataAsset : public UDataAsset
 	UPROPERTY(EditDefaultsOnly, Category = "Stats")
 	float FireRate;  // 발사 간격
 
-	// UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	// TSubclassOf<AProjectileBase> ProjectileClass;  // 투사체 클래스
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	TSubclassOf<ABulletProjectile> BulletClass;  // 투사체 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	float ProjectileSpeed;  // 투사체 속도
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
