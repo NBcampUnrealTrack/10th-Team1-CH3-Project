@@ -7,7 +7,7 @@
 #include "RangeWeaponDataAsset.generated.h"
 
 // class AProjectileBase;
-// class UWeaponAnimationDataAsset;
+class UWeaponAnimationDataAsset;
 
 UCLASS()
 class URangeWeaponDataAsset : public UDataAsset
@@ -44,6 +44,6 @@ class URangeWeaponDataAsset : public UDataAsset
 	UPROPERTY(EditDefaultsOnly, Category = "Spread")
 	TObjectPtr<UCurveFloat> SpreadCurve;  // 탄 퍼짐
 
-	// UPROPERTY(EditDefaultsOnly, Category = "Animation")
-	// TObjectPtr<UWeaponAnimationDataAsset> WeaponAnimationData;  // 애니메이션 데이터에셋
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	TObjectPtr<UWeaponAnimationDataAsset> WeaponAnimationData;  // 애니메이션 데이터에셋
 };
