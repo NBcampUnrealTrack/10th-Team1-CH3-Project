@@ -35,29 +35,29 @@ struct BEYONDOVERRIDE_API FItemDataRow : public FTableRowBase
 	GENERATED_BODY()
 
   public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")
 	FText DisplayName;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")
 	FText Description;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Category")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Category")
 	EItemType ItemType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Category")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Category")
 	EItemRarity ItemRarity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Class")
 	TSubclassOf<UItemInstanceBase> ItemInstanceClass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Class")
 	TSubclassOf<AItemPickupBase> ItemPickupClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Asset")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Asset")
 	TObjectPtr<UStaticMesh> ItemPickupMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	int32 MaxStackCount;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 	float Weight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	TObjectPtr<UTexture2D> ItemIcon;
 };

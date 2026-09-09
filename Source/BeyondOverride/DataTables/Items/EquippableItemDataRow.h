@@ -10,8 +10,8 @@ struct BEYONDOVERRIDE_API FEquippableItemDataRow : public FTableRowBase
 	GENERATED_BODY()
 
   public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
 	TObjectPtr<USkeletalMesh> EquipMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
 	FName EquipSocketName;
 };
