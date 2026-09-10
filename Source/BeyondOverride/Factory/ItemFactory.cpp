@@ -46,7 +46,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 
 	ItemInstance->Initialize();
 
-	return nullptr;
+	return ItemInstance;
 }
 
 AItemPickupBase* FItemFactory::SpawnItemPickup(
