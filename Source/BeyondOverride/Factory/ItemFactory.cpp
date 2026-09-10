@@ -10,6 +10,13 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 	UObject* Outer,
 	FName ItemID)
 {
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	// TODO
+
 	return nullptr;
 }
 
@@ -19,6 +26,11 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 	const FVector& Location,
 	const FRotator& Rotation)
 {
+	if (!World)
+	{
+		return nullptr;
+	}
+
 	// 아이템 오브젝트 생성
 	UItemInstanceBase* ItemInstance = CreateItemInstance(
 		World,
