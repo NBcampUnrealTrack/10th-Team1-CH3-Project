@@ -153,3 +153,8 @@ bool UInventoryComponent::FindEmptySlotIndex(int32& EmptySlotIndex) const
 
 	return false;
 }
+
+void UInventoryComponent::NotifyInventoryChanged()
+{
+	OnInventoryChanged.Broadcast(Slots);
+}

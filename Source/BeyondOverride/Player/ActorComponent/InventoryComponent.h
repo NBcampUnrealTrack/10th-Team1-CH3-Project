@@ -37,6 +37,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool FindEmptySlotIndex(int32& EmptySlotIndex) const;
 
+	UFUNCTION(BlueprintCallable)
+	void NotifyInventoryChanged();
 
 public:
 	UPROPERTY(BlueprintAssignable)
