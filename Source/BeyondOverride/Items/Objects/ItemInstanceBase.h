@@ -30,11 +30,6 @@ class UItemInstanceBase : public UObject
 	// 아이템 정보 초기 로드
 	virtual void Initialize();
 
-	// 아이템 액터 소환
-	AItemPickupBase* SpawnPickup(
-		const FVector& Location = FVector::ZeroVector,
-		const FRotator& Rotation = FRotator::ZeroRotator);
-
 	// Getters
 	const FItemDataRow* GetItemData() const;
 	int32 GetStackCount() const;
