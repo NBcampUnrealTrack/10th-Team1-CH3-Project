@@ -3,24 +3,39 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "../BODelegates.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
+
 #include "SpawnVolume.generated.h"
 
 UCLASS()
 class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
+
+  public:
 	ASpawnVolume();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void Initialize();
+	void SpawnRandomAI();
+	APawn* SpawnAI();
+	void RemoveSpawnedAIs();
+
+  public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
+	TObjectPtr<USceneComponent> SceneComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
+	TObjectPtr<UBoxComponent> BoxComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
+	TArray<TObjectPtr<APawn>> SpawnedAIs;
+
+  private:
+	FOnPlayerEntered OnPlayerEndtered;
 };

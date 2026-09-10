@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 
+#include "EnumFarmingState.generated.h"
+
+UENUM(BlueprintType)
 enum class EFarmingState : uint8
 {
 	None,

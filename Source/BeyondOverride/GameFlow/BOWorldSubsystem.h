@@ -3,15 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Subsystems/WorldSubsystem.h"
+
 #include "BOWorldSubsystem.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BEYONDOVERRIDE_API UBOWorldSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
-	
+
+  public:
+	float GetTotalTime() const;
+
+  private:
+	float StartTime;
+	float EndTime;
 };

@@ -3,15 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFlow/FarmingState/BaseFarmingState.h"
+
+#include "GameFlow/State/BaseFarmingState.h"
+
 #include "EndFarmingState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BEYONDOVERRIDE_API UEndFarmingState : public UBaseFarmingState
 {
 	GENERATED_BODY()
-	
+
+  public:
+	virtual void EnterState() override;
+
+  private:
+	void CleanSpawnVolumes();
+	void CleanContainers();
+	void CleanExitActors();
 };

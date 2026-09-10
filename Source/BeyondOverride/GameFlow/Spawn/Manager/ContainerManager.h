@@ -3,15 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Subsystems/GameInstanceSubsystem.h"
+
 #include "ContainerManager.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-	
+
+  public:
+	void Initialize();
+	void ActivateContainer();
+	void CleanContainer();
+
+  public:
+	TMap<FName, bool> LimitedItems;
+
+  private:
+	// TArray<TObjectPtr<AContainer>> Containers;
 };

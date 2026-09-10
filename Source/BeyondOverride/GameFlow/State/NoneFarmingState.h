@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "BaseFarmingState.generated.h"
+
+#include "GameFlow/State/BaseFarmingState.h"
+
+#include "NoneFarmingState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
-class BEYONDOVERRIDE_API UBaseFarmingState : public UObject
+class BEYONDOVERRIDE_API UNoneFarmingState : public UBaseFarmingState
 {
 	GENERATED_BODY()
-	
 };

@@ -4,12 +4,5 @@
 
 #include "CoreMinimal.h"
 
-/**
- * 
- */
-class BEYONDOVERRIDE_API SpawnVolumeStruct
-{
-public:
-	SpawnVolumeStruct();
-	~SpawnVolumeStruct();
-};
+// Spawn Volume
+DECLARE_DELEGATE(FOnPlayerEntered);
