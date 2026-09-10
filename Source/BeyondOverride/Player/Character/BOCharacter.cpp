@@ -15,8 +15,9 @@
 ABOCharacter::ABOCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
-	GetCharacterMovement()->CrouchedHalfHeight = 60.0f;
+	GetCharacterMovement()->SetCrouchedHalfHeight(60.0f);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->TargetArmLength = 250.0f;

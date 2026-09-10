@@ -15,7 +15,7 @@ class UItemInstanceBase : public UObject
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	const FItemDataRow* ItemData;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
@@ -24,7 +24,7 @@ class UItemInstanceBase : public UObject
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Properties")
 	int32 StackCount;
 
-  public:
+public:
 	UItemInstanceBase();
 
 	// 아이템 정보 초기 로드
@@ -33,4 +33,7 @@ class UItemInstanceBase : public UObject
 	// Getters
 	const FItemDataRow* GetItemData() const;
 	int32 GetStackCount() const;
+
+	// Setters
+	void SetStackCount(int32 NewStackCount) { StackCount = NewStackCount; }
 };
