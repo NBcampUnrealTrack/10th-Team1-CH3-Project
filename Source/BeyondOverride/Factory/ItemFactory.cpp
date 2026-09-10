@@ -10,12 +10,41 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 	UObject* Outer,
 	FName ItemID)
 {
-	if (!World)
+	// World & Outer 유효성 검사
+	if (!World || !Outer)
 	{
 		return nullptr;
 	}
 
-	// TODO
+	// GameInstance 확인
+	UGameInstance* GameInstance = World->GetGameInstance();
+	if (!GameInstance)
+	{
+		return nullptr;
+	}
+
+	// ItemDataSubsystem 확인
+	UItemDataSubsystem* ItemDataSubsystem = GameInstance->GetSubsystem<UItemDataSubsystem>();
+	if (!ItemDataSubsystem)
+	{
+		return nullptr;
+	}
+
+	// ItemData 확인
+	const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemID);
+	if (!ItemData || !ItemData->ItemInstanceClass)
+	{
+		return nullptr;
+	}
+
+	// ItemInstance 생성 및 확인
+	UItemInstanceBase* ItemInstance = NewObject<UItemInstanceBase>(Outer, ItemData->ItemInstanceClass);
+	if (!ItemInstance)
+	{
+		return nullptr;
+	}
+
+	ItemInstance->Initialize();
 
 	return nullptr;
 }
@@ -26,6 +55,7 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 	const FVector& Location,
 	const FRotator& Rotation)
 {
+	// World 유효성 검사
 	if (!World)
 	{
 		return nullptr;
