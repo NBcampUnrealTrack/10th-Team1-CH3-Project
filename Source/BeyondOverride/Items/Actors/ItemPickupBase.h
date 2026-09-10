@@ -17,8 +17,8 @@ class AItemPickupBase : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
-	TSubclassOf<UItemInstanceBase> ItemInstanceClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
+	FName ItemID;  // 아이템 ID
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UItemInstanceBase> ItemInstance;
 

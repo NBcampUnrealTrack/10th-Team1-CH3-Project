@@ -1,5 +1,7 @@
 #include "Items/Actors/ItemPickupBase.h"
 
+#include "DataTables/Items/ItemDataRow.h"
+#include "Factory/ItemFactory.h"
 #include "Items/Objects/ItemInstanceBase.h"
 
 AItemPickupBase::AItemPickupBase()
@@ -20,13 +22,31 @@ AItemPickupBase::AItemPickupBase()
 	StaticMeshComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);      // Camera -> Ignore
 	StaticMeshComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);       // Pawn -> Overlap
 
-	ItemInstanceClass = nullptr;
 	ItemInstance = nullptr;
 }
 
 void AItemPickupBase::Initialize(UItemInstanceBase* InItemInstance)
 {
+	// InItemInstance 유효성 검사
+	if (!InItemInstance)
+	{
+		return;
+	}
+
 	ItemInstance = InItemInstance;
+
+	// ItemData 확인
+	const FItemDataRow* ItemData = ItemInstance->GetItemData();
+	if (!ItemData)
+	{
+		return;
+	}
+
+	// 메시 설정
+	if (UStaticMesh* Mesh = ItemData->ItemPickupMesh)
+	{
+		StaticMeshComp->SetStaticMesh(Mesh);
+	}
 }
 
 UItemInstanceBase* AItemPickupBase::GetItemInstance() const
@@ -41,9 +61,13 @@ void AItemPickupBase::BeginPlay()
 	// 아이템 인스턴스 생성 - 저장된 인스턴스 없는 경우
 	if (!ItemInstance)
 	{
-		if (ItemInstanceClass)
-		{
-			ItemInstance = NewObject<UItemInstanceBase>(this, ItemInstanceClass);
-		}
+		ItemInstance = FItemFactory::CreateItemInstance(this, ItemID);
+		Initialize(ItemInstance);
+
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("CreateItemInstance Result: %s"),
+			ItemInstance ? TEXT("Success") : TEXT("Failed"));
 	}
 }
