@@ -9,6 +9,7 @@ class UCameraComponent;
 class UEquipmentComponent;
 class UStatComponent;
 class UInventoryComponent;
+class UInteractComponent;
 
 UCLASS()
 class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
@@ -48,6 +49,8 @@ protected:
 	UStatComponent* StatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInventoryComponent* InventoryComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UInteractComponent* InteractComponent;
 
 private:
 	UFUNCTION()
@@ -69,7 +72,9 @@ private:
 	UFUNCTION()
 	void Secondary(const FInputActionValue& value);
 	UFUNCTION()
-	void Interact(const FInputActionValue& value);
+	void InteractPress(const FInputActionValue& value);
+	UFUNCTION()
+	void InteractRelease(const FInputActionValue& value);
 	UFUNCTION()
 	void Inventory(const FInputActionValue& value);
 	UFUNCTION()
