@@ -7,7 +7,7 @@
 
 UItemInstanceBase* FItemFactory::CreateItemInstance(
 	UObject* Outer,
-	FName ItemID)
+	const FName ItemID)
 {
 	// Outer & World 유효성 검사
 	if (!Outer || !Outer->GetWorld())
@@ -51,7 +51,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 
 AItemPickupBase* FItemFactory::SpawnItemPickup(
 	UWorld* World,
-	FName ItemID,
+	const FName ItemID,
 	const FVector& Location,
 	const FRotator& Rotation)
 {
