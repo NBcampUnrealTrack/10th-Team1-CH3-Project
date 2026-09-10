@@ -6,7 +6,7 @@
 
 #include "RangeWeaponInstance.generated.h"
 
-class URangeWeaponDataAsset;
+struct FRangeWeaponDataRow;
 
 UCLASS()
 class URangeWeaponInstance : public UEquippableItemInstance
@@ -14,8 +14,7 @@ class URangeWeaponInstance : public UEquippableItemInstance
 	GENERATED_BODY()
 
   protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
-	TObjectPtr<URangeWeaponDataAsset> RangeWeaponData;
+	const FRangeWeaponDataRow* RangeWeaponData;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Properties")
 	int32 CurrentAmmo;
@@ -23,8 +22,11 @@ class URangeWeaponInstance : public UEquippableItemInstance
   public:
 	URangeWeaponInstance();
 
+	// 아이템 정보 초기 로드
+	virtual void Initialize();
+
 	// Data
-	const URangeWeaponDataAsset* GetRangeWeaponData() const;
+	const FRangeWeaponDataRow* GetRangeWeaponData() const;
 
 	// Ammo
 	bool ConsumeAmmo();            // 탄약 1개 소모 (소모 성공 여부 반환)
