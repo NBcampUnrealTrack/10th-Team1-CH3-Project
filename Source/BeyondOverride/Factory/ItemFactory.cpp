@@ -63,7 +63,6 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 
 	// 아이템 오브젝트 생성
 	UItemInstanceBase* ItemInstance = CreateItemInstance(
-		World,
 		nullptr,
 		ItemID);
 
