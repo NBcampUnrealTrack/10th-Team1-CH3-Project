@@ -1,4 +1,4 @@
-#include "Player/ActorComponent/InventoryInteractionComponent.h"
+ï»¿#include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "DataTables/Items/ItemDataRow.h"
 
@@ -24,7 +24,7 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 	const bool bHoldingItem = IsValid(HoldItem);
 	const bool bSlotHasItem = IsValid(SlotItem);
 
-	// ¼Õ¿¡ ¾Æ¹«°Íµµ ¾øÀ½
+	// ì†ì— ì•„ë¬´ê²ƒë„ ì—†ìŒ
 	if (!bHoldingItem)
 	{
 		if (!bSlotHasItem)
@@ -40,7 +40,7 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 		return PickupHalf(Inventory, SlotIndex);
 	}
 
-	// ¼Õ¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ½ + ½½·ÔÀÌ ºñ¾î ÀÖÀ½
+	// ì†ì— ì•„ì´í…œì´ ìˆìŒ + ìŠ¬ë¡¯ì´ ë¹„ì–´ ìˆìŒ
 	if (!bSlotHasItem)
 	{
 		if (bLeftClick)
@@ -51,7 +51,7 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 		return PlaceOne(Inventory, SlotIndex);
 	}
 
-	// ¼Õ¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ½ + ½½·Ô¿¡µµ °°Àº ¾ÆÀÌÅÛÀÌ ÀÖÀ½
+	// ì†ì— ì•„ì´í…œì´ ìˆìŒ + ìŠ¬ë¡¯ì—ë„ ê°™ì€ ì•„ì´í…œì´ ìˆìŒ
 	if (IsSameItem(HoldItem, SlotItem))
 	{
 		if (bLeftClick)
@@ -62,7 +62,7 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 		return MergeOne(Inventory, SlotIndex);
 	}
 
-	// ¼Õ¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ½ + ½½·Ô¿¡´Â ´Ù¸¥ ¾ÆÀÌÅÛÀÌ ÀÖÀ½
+	// ì†ì— ì•„ì´í…œì´ ìˆìŒ + ìŠ¬ë¡¯ì—ëŠ” ë‹¤ë¥¸ ì•„ì´í…œì´ ìˆìŒ
 	return SwapHeldItem(Inventory, SlotIndex);
 }
 
@@ -381,12 +381,17 @@ bool UInventoryInteractionComponent::IsSameItem(const UItemInstanceBase* FirstIt
 		return false;
 	}
 
-	// ÀÌ ºÎºĞÀº º¯°æÀÌ ÇÊ¿äÇÔ. µÎ ¾ÆÀÌÅÛÀÌ °°Àº Á¾·ùÀÎÁö °Ë»ç¸¦ ¾î¶»°Ô ÇÏ´Â°¡?
+	// ì´ ë¶€ë¶„ì€ ë³€ê²½ì´ í•„ìš”í•¨. ë‘ ì•„ì´í…œì´ ê°™ì€ ì¢…ë¥˜ì¸ì§€ ê²€ì‚¬ë¥¼ ì–´ë–»ê²Œ í•˜ëŠ”ê°€?
 	return FirstItem->GetItemData() == SecondItem->GetItemData();
 }
 
 UItemInstanceBase* UInventoryInteractionComponent::CreateItemInstance(UItemInstanceBase* ItemInstance)
 {
-	// ¾ÆÀÌÅÛ »ı¼º ¹æ½ÄÀº ¾ÆÁ÷ °áÁ¤ÇÏÁö ¾Ê¾ÒÀ¸¹Ç·Î ÀÓ½Ã ±¸Çö
-	return nullptr;
+	// ì•„ì´í…œ ìƒì„± ë°©ì‹ì€ ì•„ì§ ê²°ì •í•˜ì§€ ì•Šì•˜ìœ¼ë¯€ë¡œ ì„ì‹œ êµ¬í˜„
+	if (!IsValid(ItemInstance))
+	{
+		return nullptr;
+	}
+
+	return DuplicateObject<UItemInstanceBase>(ItemInstance, this);
 }

@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 
 #include "UObject/NoExportTypes.h"
-
+#include "DataTables/Items/ItemDataRow.h"
 #include "ItemInstanceBase.generated.h"
 
 class AItemPickupBase;
@@ -32,6 +32,8 @@ public:
 
 	// Getters
 	const FItemDataRow* GetItemData() const;
+	UFUNCTION(BlueprintCallable)
+	FItemDataRow GetFItemData() const { return *ItemData; }
 	int32 GetStackCount() const;
 
 	// Setters
