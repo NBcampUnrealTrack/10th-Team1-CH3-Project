@@ -5,12 +5,15 @@
 #include "BOEnums.h"
 #include "BOGameInstance.h"
 
+#include "Player/Character/BOCharacter.h"
+#include "Player/PlayerController/BOPlayerController.h"
 #include "State/FarmingStateMachine.h"
 
 ABOGameMode::ABOGameMode()
-	: StateMachine(nullptr),
-	  IsFailedFarming(false)
+	: StateMachine(nullptr)
 {
+	PlayerControllerClass = ABOPlayerController::StaticClass();
+	DefaultPawnClass = ABOCharacter::StaticClass();
 }
 
 void ABOGameMode::BeginPlay()
@@ -24,6 +27,7 @@ void ABOGameMode::BeginPlay()
 
 		if (BOGameState == EGameState::Playing && BOPlayingState == EPlayingState::Farming)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Game Mode Begin Play"));
 			StartFarming();
 		}
 	}
@@ -31,7 +35,7 @@ void ABOGameMode::BeginPlay()
 
 void ABOGameMode::StartFarming()
 {
-	StateMachine = NewObject<UFarmingStateMachine>();
+	StateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
 
 	if (StateMachine)
 	{
@@ -42,6 +46,7 @@ void ABOGameMode::StartFarming()
 
 void ABOGameMode::EndFarming(EFarmingResult Result)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Game Mode End Farming"));
 	if (StateMachine)
 	{
 		StateMachine->SetFarmingResult(Result);

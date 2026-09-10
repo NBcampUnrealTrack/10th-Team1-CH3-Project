@@ -2,12 +2,13 @@
 
 #include "BOGameInstance.h"
 
-#include "../Player/PlayerController/BOPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Manager/ContainerManager.h"
 #include "Manager/ExitManager.h"
 #include "Manager/SpawnVolumeManager.h"
+#include "Player/Character/BOCharacter.h"
+#include "Player/PlayerController/BOPlayerController.h"
 
 void UBOGameInstance::Init()
 {
@@ -23,6 +24,7 @@ void UBOGameInstance::Init()
 	// Inventory.empty();
 
 	OpenLevel(ELevel::Bunker);
+	StartFarming();
 }
 
 void UBOGameInstance::LoadSpawnVolumeData()
@@ -67,6 +69,7 @@ void UBOGameInstance::Exit()
 
 void UBOGameInstance::StartFarming()
 {
+	GameState = EGameState::Playing;  // test code
 	PlayingState = EPlayingState::Farming;
 
 	OpenLevel(ELevel::Main);
@@ -87,12 +90,24 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 	if (GetWorld() && Levels.Contains(Level))
 	{
 		UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
+
+		if (Level == ELevel::Main)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Main"));
+		}
+		else if (Level == ELevel::Bunker)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Bunker"));
+		}
 	}
 }
 
 void UBOGameInstance::SavePlayerData()
 {
 	// 플레이어 정보 저장 - 체력, 실드, 돈, 인벤토리
+	if (ABOCharacter* Character = Cast<ABOCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)))
+	{
+	}
 }
 
 void UBOGameInstance::GetSpawnVolumeData(FName Id, FSpawnVolumeData& Data)

@@ -24,8 +24,3 @@ void UBaseFarmingState::ChangeState(EFarmingState FarmingState) const
 		StateMachine->ChangeState(FarmingState);
 	}
 }
-
-// EFarmingState UBaseFarmingState::GetState() const
-//{
-//	return EFarmingState();
-// }

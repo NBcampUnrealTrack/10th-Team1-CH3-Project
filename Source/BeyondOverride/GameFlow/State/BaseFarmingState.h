@@ -22,8 +22,6 @@ class BEYONDOVERRIDE_API UBaseFarmingState : public UObject
 	virtual void Exit();
 	virtual void ChangeState(EFarmingState FarmingState) const;
 
-	// EFarmingState GetState() const;
-
   protected:
 	TObjectPtr<UFarmingStateMachine> StateMachine;
 };

@@ -51,24 +51,22 @@ void UFarmingStateMachine::CreateState(EFarmingState FarmingState)
 {
 	switch (FarmingState)
 	{
-		case EFarmingState::None:
-		{
-			CurrentState = NewObject<UNoneFarmingState>();
-			break;
-		}
 		case EFarmingState::Begin:
 		{
-			CurrentState = NewObject<UBeginFarmingState>();
+			UE_LOG(LogTemp, Warning, TEXT("State Begin"));
+			CurrentState = NewObject<UBeginFarmingState>(this, UBeginFarmingState::StaticClass());
 			break;
 		}
 		case EFarmingState::Progress:
 		{
-			CurrentState = NewObject<UProgressFarmingState>();
+			UE_LOG(LogTemp, Warning, TEXT("State Progress"));
+			CurrentState = NewObject<UProgressFarmingState>(this, UProgressFarmingState::StaticClass());
 			break;
 		}
 		case EFarmingState::End:
 		{
-			CurrentState = NewObject<UEndFarmingState>();
+			UE_LOG(LogTemp, Warning, TEXT("State End"));
+			CurrentState = NewObject<UEndFarmingState>(this, UEndFarmingState::StaticClass());
 			break;
 		}
 		default:

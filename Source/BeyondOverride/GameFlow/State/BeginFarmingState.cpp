@@ -9,6 +9,9 @@
 
 void UBeginFarmingState::Enter()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Begin Enter"));
+	Super::Enter();
+
 	SpawnCharacter();
 	SpawnAI();
 	ActivateContainer();
@@ -42,6 +45,11 @@ void UBeginFarmingState::SpawnCharacter()
 
 void UBeginFarmingState::SpawnAI()
 {
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
 	if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 	{
 		SpawnVolumeManager->SpawnAI();
@@ -50,6 +58,11 @@ void UBeginFarmingState::SpawnAI()
 
 void UBeginFarmingState::ActivateContainer()
 {
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
 	if (UContainerManager* ContainerManager = GetWorld()->GetGameInstance()->GetSubsystem<UContainerManager>())
 	{
 		ContainerManager->ActivateContainer();
@@ -58,6 +71,11 @@ void UBeginFarmingState::ActivateContainer()
 
 void UBeginFarmingState::ActivateExit()
 {
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
 	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
 	{
 		ExitManager->ActivateExit();

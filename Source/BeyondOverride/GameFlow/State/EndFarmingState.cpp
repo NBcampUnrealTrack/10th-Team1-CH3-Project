@@ -8,13 +8,18 @@
 
 void UEndFarmingState::Enter()
 {
+	UE_LOG(LogTemp, Warning, TEXT("End Enter"));
+	Super::Enter();
+
+	if (!GetWorld())
+	{
+		return;
+	}
+
 	EFarmingResult FarmingResult = StateMachine->GetFarmingResult();
 
-	if (GetWorld())
+	if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
 	{
-		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
-		{
-			GameInstance->EndFarming(FarmingResult);
-		}
+		GameInstance->EndFarming(FarmingResult);
 	}
 }
