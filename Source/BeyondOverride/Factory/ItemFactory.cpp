@@ -6,15 +6,15 @@
 #include "Subsystems/ItemDataSubsystem.h"
 
 UItemInstanceBase* FItemFactory::CreateItemInstance(
-	UWorld* World,
 	UObject* Outer,
 	FName ItemID)
 {
-	// World & Outer 유효성 검사
-	if (!World || !Outer)
+	// Outer & World 유효성 검사
+	if (!Outer || Outer->GetWorld())
 	{
 		return nullptr;
 	}
+	UWorld* World = Outer->GetWorld();
 
 	// GameInstance 확인
 	UGameInstance* GameInstance = World->GetGameInstance();
