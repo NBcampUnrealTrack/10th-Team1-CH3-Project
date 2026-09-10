@@ -2,23 +2,30 @@
 
 #include "GameFlow/State/BaseFarmingState.h"
 
+#include "FarmingStateMachine.h"
+
 void UBaseFarmingState::Initialize(UFarmingStateMachine* InStateMachine)
 {
+	StateMachine = InStateMachine;
 }
 
-void UBaseFarmingState::EnterState()
+void UBaseFarmingState::Enter()
 {
 }
 
-void UBaseFarmingState::ExitState()
+void UBaseFarmingState::Exit()
 {
 }
 
 void UBaseFarmingState::ChangeState(EFarmingState FarmingState) const
 {
+	if (StateMachine)
+	{
+		StateMachine->ChangeState(FarmingState);
+	}
 }
 
-EFarmingState UBaseFarmingState::GetState() const
-{
-	return EFarmingState();
-}
+// EFarmingState UBaseFarmingState::GetState() const
+//{
+//	return EFarmingState();
+// }

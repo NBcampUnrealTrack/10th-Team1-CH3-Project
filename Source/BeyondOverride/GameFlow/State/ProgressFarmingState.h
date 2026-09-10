@@ -17,8 +17,7 @@ class BEYONDOVERRIDE_API UProgressFarmingState : public UBaseFarmingState
 	GENERATED_BODY()
 
   public:
-	virtual void EnterState() override;
-	virtual void ExitState() override;
+	virtual void Enter() override;
 
   private:
 	void ShowHUDWidget();

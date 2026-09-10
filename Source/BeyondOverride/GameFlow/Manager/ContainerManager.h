@@ -19,7 +19,6 @@ class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
   public:
 	void Initialize();
 	void ActivateContainer();
-	void CleanContainer();
 
   public:
 	TMap<FName, bool> LimitedItems;

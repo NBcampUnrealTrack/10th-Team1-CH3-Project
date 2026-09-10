@@ -17,10 +17,11 @@ class BEYONDOVERRIDE_API UBeginFarmingState : public UBaseFarmingState
 	GENERATED_BODY()
 
   public:
-	virtual void EnterState() override;
-	virtual void ExitState() override;
+	virtual void Enter() override;
 
   private:
 	void SpawnCharacter();
-	void SpawnMonster();
+	void SpawnAI();
+	void ActivateContainer();
+	void ActivateExit();
 };

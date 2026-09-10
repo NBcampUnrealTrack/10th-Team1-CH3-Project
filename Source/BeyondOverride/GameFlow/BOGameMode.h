@@ -2,16 +2,15 @@
 
 #pragma once
 
+#include "BOEnums.h"
 #include "CoreMinimal.h"
 
 #include "GameFramework/GameMode.h"
 
 #include "BOGameMode.generated.h"
 
-// class UFarmingStateMachine;
-/**
- *
- */
+class UFarmingStateMachine;
+
 UCLASS()
 class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 {
@@ -19,13 +18,12 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
   public:
 	ABOGameMode();
+
 	virtual void BeginPlay() override;
+
 	void StartFarming();
-	void EndFarming();
-	void EscapeFarming();
-	void FailFarming();
+	void EndFarming(EFarmingResult Result);
 
   private:
-	// TObjectPtr<UFarmingStateMachine> StateMachine;
-	bool IsFailedFarming;
+	TObjectPtr<UFarmingStateMachine> StateMachine;
 };

@@ -18,7 +18,6 @@ class BEYONDOVERRIDE_API USpawnVolumeManager : public UGameInstanceSubsystem
   public:
 	void Initialize();
 	void SpawnAI();
-	void CleanSpawnVolume();
 
   private:
 	TSet<FName> ActivatedSpawnVolumes;

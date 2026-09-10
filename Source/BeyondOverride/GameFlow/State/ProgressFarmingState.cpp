@@ -2,14 +2,17 @@
 
 #include "GameFlow/State/ProgressFarmingState.h"
 
-void UProgressFarmingState::EnterState()
-{
-}
+#include "../Player/PlayerController/BOPlayerController.h"
 
-void UProgressFarmingState::ExitState()
+void UProgressFarmingState::Enter()
 {
+	ShowHUDWidget();
 }
 
 void UProgressFarmingState::ShowHUDWidget()
 {
+	if (ABOPlayerController* PlayerController = GetWorld()->GetFirstPlayerController<ABOPlayerController>())
+	{
+		PlayerController->ShowMainHUDWidget();
+	}
 }

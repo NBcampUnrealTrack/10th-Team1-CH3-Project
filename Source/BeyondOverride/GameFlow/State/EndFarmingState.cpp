@@ -2,18 +2,19 @@
 
 #include "GameFlow/State/EndFarmingState.h"
 
-void UEndFarmingState::EnterState()
-{
-}
+#include "FarmingStateMachine.h"
 
-void UEndFarmingState::CleanSpawnVolumes()
-{
-}
+#include "../BOGameInstance.h"
 
-void UEndFarmingState::CleanContainers()
+void UEndFarmingState::Enter()
 {
-}
+	EFarmingResult FarmingResult = StateMachine->GetFarmingResult();
 
-void UEndFarmingState::CleanExitActors()
-{
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			GameInstance->EndFarming(FarmingResult);
+		}
+	}
 }

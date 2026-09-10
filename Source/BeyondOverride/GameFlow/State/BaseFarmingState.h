@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EnumFarmingState.h"
 
+#include "../BOEnums.h"
 #include "UObject/NoExportTypes.h"
 
 #include "BaseFarmingState.generated.h"
@@ -18,12 +18,12 @@ class BEYONDOVERRIDE_API UBaseFarmingState : public UObject
 
   public:
 	virtual void Initialize(UFarmingStateMachine* InStateMachine);
-	virtual void EnterState();
-	virtual void ExitState();
+	virtual void Enter();
+	virtual void Exit();
 	virtual void ChangeState(EFarmingState FarmingState) const;
 
-	EFarmingState GetState() const;
+	// EFarmingState GetState() const;
 
-  private:
+  protected:
 	TObjectPtr<UFarmingStateMachine> StateMachine;
 };

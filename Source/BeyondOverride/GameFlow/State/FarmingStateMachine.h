@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EnumFarmingState.h"
 
+#include "../BOEnums.h"
 #include "UObject/NoExportTypes.h"
 
 #include "FarmingStateMachine.generated.h"
@@ -18,8 +18,13 @@ class BEYONDOVERRIDE_API UFarmingStateMachine : public UObject
 	GENERATED_BODY()
 
   public:
+	UFarmingStateMachine();
+
 	void Initialize(ABOGameMode* InGameMode);
 	void ChangeState(EFarmingState FarmingState);
+	void SetFarmingResult(EFarmingResult Result);
+
+	EFarmingResult GetFarmingResult() const;
 
   private:
 	void CreateState(EFarmingState FarmingState);
@@ -28,4 +33,5 @@ class BEYONDOVERRIDE_API UFarmingStateMachine : public UObject
 	TObjectPtr<ABOGameMode> GameMode;
 	TObjectPtr<UBaseFarmingState> CurrentState;
 	EFarmingState CurrentFarmingState;
+	EFarmingResult FarmingResult;
 };

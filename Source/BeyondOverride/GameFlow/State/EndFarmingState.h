@@ -17,10 +17,5 @@ class BEYONDOVERRIDE_API UEndFarmingState : public UBaseFarmingState
 	GENERATED_BODY()
 
   public:
-	virtual void EnterState() override;
-
-  private:
-	void CleanSpawnVolumes();
-	void CleanContainers();
-	void CleanExitActors();
+	virtual void Enter() override;
 };
