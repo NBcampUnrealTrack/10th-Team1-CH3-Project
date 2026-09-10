@@ -1,4 +1,4 @@
-#include "Player/ActorComponent/StatComponent.h"
+ï»¿#include "Player/ActorComponent/StatComponent.h"
 
 #include "Engine/World.h"
 #include "TimerManager.h"
@@ -27,16 +27,16 @@ void UStatComponent::ApplyDamage(int32 DamageAmount)
 		return;
 	}
 
-	// ½¯µå Àç»ı ´ë±â ½Ã°£ ÃÊ±âÈ­
+	// ì‰´ë“œ ì¬ìƒ ëŒ€ê¸° ì‹œê°„ ì´ˆê¸°í™”
 	ResetShieldRegenTimer();
 
-	if (CurShield > 0) // ½¯µå°¡ ÀÖ´Ù¸é ½¯µå ±ğ±â
+	if (CurShield > 0) // ì‰´ë“œê°€ ìˆë‹¤ë©´ ì‰´ë“œ ê¹ê¸°
 	{
 		CurShield = FMath::Clamp(CurShield - DamageAmount, 0, MaxShield);
 
 		OnShieldChanged.Broadcast(CurShield, MaxShield);
 	}
-	else // ½¯µå°¡ ¾ø´Ù¸é Ã¼·Â ±ğ±â
+	else // ì‰´ë“œê°€ ì—†ë‹¤ë©´ ì²´ë ¥ ê¹ê¸°
 	{
 		CurHealth = FMath::Clamp(CurHealth - DamageAmount, 0, MaxHealth);
 
@@ -49,7 +49,7 @@ void UStatComponent::ApplyDamage(int32 DamageAmount)
 		}
 	}
 
-	// ½¯µå Àç»ı ´ë±â
+	// ì‰´ë“œ ì¬ìƒ ëŒ€ê¸°
 	if (CurShield < MaxShield)
 	{
 		GetWorld()->GetTimerManager().SetTimer(ShieldDelayTimerHandle, this, &UStatComponent::StartShieldRegen, ShieldDelayTime, false);
@@ -108,7 +108,7 @@ void UStatComponent::RegenerateShield()
 
 	OnShieldChanged.Broadcast(CurShield, MaxShield);
 
-	// ½¯µå°¡ ÃÖ´ë°¡ µÇ¸é ´õ ÀÌ»ó Â÷Áö ¾ÊÀ½
+	// ì‰´ë“œê°€ ìµœëŒ€ê°€ ë˜ë©´ ë” ì´ìƒ ì°¨ì§€ ì•ŠìŒ
 	if (CurShield >= MaxShield)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(ShieldRegenTimerHandle);

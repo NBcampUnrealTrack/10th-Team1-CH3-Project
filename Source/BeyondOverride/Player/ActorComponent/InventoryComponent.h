@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -15,7 +15,7 @@ class BEYONDOVERRIDE_API UInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// ±‚∫ª¿˚¿Œ ¿Œ∫•≈‰∏Æ ¡∂¿€
+	// Í∏∞Î≥∏Ï†ÅÏù∏ Ïù∏Î≤§ÌÜ†Î¶¨ Ï°∞Ïûë
 	UFUNCTION(BlueprintCallable)
 	bool AddItem(UItemInstanceBase* Item, int32 SlotIndex = -1);
 	UFUNCTION(BlueprintCallable)
@@ -23,16 +23,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SwapSlots(int32 FirstIndex, int32 SecondIndex);
 
-	// ΩΩ∑‘ ¡¢±Ÿ
-	UFUNCTION(BlueprintCallable)
+	// Ïä¨Î°Ø Ï†ëÍ∑º
+	UFUNCTION(BlueprintPure)
 	UItemInstanceBase* GetItem(int32 SlotIndex) const;
 	UFUNCTION(BlueprintCallable)
 	bool SetItem(int32 SlotIndex, UItemInstanceBase* Item);
 
-	// ΩΩ∑‘ ¡§∫∏
-	UFUNCTION(BlueprintCallable)
+	// Ïä¨Î°Ø Ï†ïÎ≥¥
+	UFUNCTION(BlueprintPure)
 	int32 GetSlotCount() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	bool IsValidSlot(int32 SlotIndex) const;
 	UFUNCTION(BlueprintCallable)
 	bool FindEmptySlotIndex(int32& EmptySlotIndex) const;
