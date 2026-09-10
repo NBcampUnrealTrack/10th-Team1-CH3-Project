@@ -1,13 +1,21 @@
 #include "Items/Objects/ItemInstanceBase.h"
 
+#include "DataTables/Items/ItemDataRow.h"
 #include "Items/Actors/ItemPickupBase.h"
-#include "Items/DataAssets/ItemDataAsset.h"
+#include "Subsystems/ItemDataSubsystem.h"
 
 UItemInstanceBase::UItemInstanceBase()
 {
 	ItemData = nullptr;
 
 	StackCount = 1;
+}
+
+void UItemInstanceBase::Initialize()
+{
+	// ItemData 로드
+	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
+	ItemData = ItemDataSubsystem->GetItemData(ItemID);
 }
 
 AItemPickupBase* UItemInstanceBase::SpawnPickup(
@@ -37,7 +45,7 @@ AItemPickupBase* UItemInstanceBase::SpawnPickup(
 	return ItemPickup;
 }
 
-const UItemDataAsset* UItemInstanceBase::GetItemData() const
+const FItemDataRow* UItemInstanceBase::GetItemData() const
 {
 	return ItemData;
 }
