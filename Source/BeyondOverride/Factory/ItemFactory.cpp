@@ -10,7 +10,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 	FName ItemID)
 {
 	// Outer & World 유효성 검사
-	if (!Outer || Outer->GetWorld())
+	if (!Outer || !Outer->GetWorld())
 	{
 		return nullptr;
 	}
