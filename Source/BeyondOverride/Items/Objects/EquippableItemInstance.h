@@ -6,7 +6,7 @@
 
 #include "EquippableItemInstance.generated.h"
 
-class UEquippableItemDataAsset;
+struct FEquippableItemDataRow;
 
 UCLASS()
 class UEquippableItemInstance : public UItemInstanceBase
@@ -14,11 +14,14 @@ class UEquippableItemInstance : public UItemInstanceBase
 	GENERATED_BODY()
 
   protected:
-	TObjectPtr<const UEquippableItemDataAsset> EquippableItemData;
+	const FEquippableItemDataRow* EquippableItemData;
 
   public:
 	UEquippableItemInstance();
 
+	// 아이템 정보 초기 로드
+	virtual void Initialize();
+
 	// Getters
-	const UEquippableItemDataAsset* GetEquippableItemData() const;
+	const FEquippableItemDataRow* GetEquippableItemData() const;
 };

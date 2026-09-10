@@ -1,4 +1,4 @@
-#include "Player/Character/BOCharacter.h"
+﻿#include "Player/Character/BOCharacter.h"
 
 #include "Player/PlayerController/BOPlayerController.h"
 #include "EnhancedInputComponent.h"
@@ -10,15 +10,18 @@
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
+#include "Interaction/InteractComponent.h"
 
 ABOCharacter::ABOCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
-	GetCharacterMovement()->CrouchedHalfHeight = 66.0f;
+	GetCharacterMovement()->SetCrouchedHalfHeight(60.0f);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->TargetArmLength = 300.0f;
+	SpringArm->TargetArmLength = 250.0f;
+	SpringArm->SetRelativeLocation(FVector(0.0f, 20.0f, 90.0f));
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->SetupAttachment(RootComponent);
 
@@ -29,6 +32,7 @@ ABOCharacter::ABOCharacter()
 	EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipementComponent"));
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 }
 
 void ABOCharacter::BeginPlay()
@@ -92,7 +96,8 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 			if (PlayerController->InteractAction)
 			{
-				EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Started, this, &ABOCharacter::Interact);
+				EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Started, this, &ABOCharacter::InteractPress);
+				EnhancedInput->BindAction(PlayerController->InteractAction, ETriggerEvent::Completed, this, &ABOCharacter::InteractRelease);
 			}
 
 			if (PlayerController->InventoryAction)
@@ -199,8 +204,22 @@ void ABOCharacter::Secondary(const FInputActionValue& value)
 {
 }
 
-void ABOCharacter::Interact(const FInputActionValue& value)
+void ABOCharacter::InteractPress(const FInputActionValue& value)
 {
+	if (IsValid(InteractComponent))
+	{
+		InteractComponent->PressInteract();
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("111111")));
+	}
+}
+
+void ABOCharacter::InteractRelease(const FInputActionValue& value)
+{
+	if (IsValid(InteractComponent))
+	{
+		InteractComponent->ReleaseInteract();
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("222222")));
+	}
 }
 
 void ABOCharacter::Inventory(const FInputActionValue& value)

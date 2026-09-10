@@ -1,6 +1,7 @@
 #include "Items/Objects/RangeWeaponInstance.h"
 
-#include "Items/DataAssets/RangeWeaponDataAsset.h"
+#include "DataTables/Items/RangeWeaponDataRow.h"
+#include "Subsystems/ItemDataSubsystem.h"
 
 URangeWeaponInstance::URangeWeaponInstance()
 {
@@ -9,7 +10,16 @@ URangeWeaponInstance::URangeWeaponInstance()
 	CurrentAmmo = 0;
 }
 
-const URangeWeaponDataAsset* URangeWeaponInstance::GetRangeWeaponData() const
+void URangeWeaponInstance::Initialize()
+{
+	Super::Initialize();
+
+	// RangeWeaponData 로드
+	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
+	RangeWeaponData = ItemDataSubsystem->GetRangeWeaponData(ItemID);
+}
+
+const FRangeWeaponDataRow* URangeWeaponInstance::GetRangeWeaponData() const
 {
 	return RangeWeaponData;
 }
