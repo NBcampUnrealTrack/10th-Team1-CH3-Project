@@ -10,6 +10,7 @@ struct BEYONDOVERRIDE_API FItemFactory
   public:
 	// 아이템 오브젝트 생성
 	static UItemInstanceBase* CreateItemInstance(
+		UWorld* World,
 		UObject* Outer,
 		FName ItemID);
 

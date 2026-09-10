@@ -5,6 +5,7 @@
 #include "Items/Objects/ItemInstanceBase.h"
 
 UItemInstanceBase* FItemFactory::CreateItemInstance(
+	UWorld* World,
 	UObject* Outer,
 	FName ItemID)
 {
