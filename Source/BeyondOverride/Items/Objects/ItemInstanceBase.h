@@ -16,7 +16,7 @@ class UItemInstanceBase : public UObject
 	GENERATED_BODY()
 
   protected:
-	TObjectPtr<const FItemDataRow> ItemData;
+	const FItemDataRow* ItemData;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
 	FName ItemID;  // 아이템 ID
