@@ -3,6 +3,7 @@
 #include "DataTables/Items/ItemDataRow.h"
 #include "Items/Actors/ItemPickupBase.h"
 #include "Items/Objects/ItemInstanceBase.h"
+#include "Subsystems/ItemDataSubsystem.h"
 
 UItemInstanceBase* FItemFactory::CreateItemInstance(
 	UWorld* World,
@@ -19,7 +20,10 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 	const FRotator& Rotation)
 {
 	// 아이템 오브젝트 생성
-	UItemInstanceBase* ItemInstance = CreateItemInstance(nullptr, ItemID);
+	UItemInstanceBase* ItemInstance = CreateItemInstance(
+		World,
+		nullptr,
+		ItemID);
 
 	// 아이템 데이터 확인
 	const FItemDataRow* ItemData = ItemInstance->GetItemData();
