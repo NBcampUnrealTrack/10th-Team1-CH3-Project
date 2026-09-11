@@ -8,6 +8,7 @@ AProjectileBase::AProjectileBase()
 
 	// SceneRoot 생성
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
+	SetRootComponent(SceneRoot);
 
 	// ProjectileMovement 생성
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
