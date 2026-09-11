@@ -7,7 +7,8 @@
 
 UItemInstanceBase* FItemFactory::CreateItemInstance(
 	UObject* Outer,
-	const FName ItemID)
+	const FName ItemID,
+	const int32 StackCount)
 {
 	// Outer & World 유효성 검사
 	if (!Outer || !Outer->GetWorld())
@@ -45,6 +46,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 	}
 
 	ItemInstance->Initialize();
+	ItemInstance->SetStackCount(StackCount);
 
 	return ItemInstance;
 }
@@ -52,6 +54,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 AItemPickupBase* FItemFactory::SpawnItemPickup(
 	UWorld* World,
 	const FName ItemID,
+	const int32 StackCount,
 	const FVector& Location,
 	const FRotator& Rotation)
 {
@@ -64,7 +67,8 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 	// 아이템 오브젝트 생성
 	UItemInstanceBase* ItemInstance = CreateItemInstance(
 		World,
-		ItemID);
+		ItemID,
+		StackCount);
 	if (!ItemInstance)
 	{
 		return nullptr;
