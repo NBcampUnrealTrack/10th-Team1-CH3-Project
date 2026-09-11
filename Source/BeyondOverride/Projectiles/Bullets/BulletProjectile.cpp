@@ -1,6 +1,7 @@
 #include "Projectiles/Bullets/BulletProjectile.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ABulletProjectile::ABulletProjectile()
@@ -13,6 +14,8 @@ ABulletProjectile::ABulletProjectile()
 	Collision->OnComponentHit.AddDynamic(
 		this,
 		&ABulletProjectile::OnHit);
+
+	ProjectileMovement->UpdatedComponent = Collision;
 }
 
 void ABulletProjectile::Initialize(
