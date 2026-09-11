@@ -18,7 +18,7 @@ UENUM(BlueprintType)
 enum class EPlayingState : uint8
 {
 	None,
-	Shelter,
+	Bunker,
 	Farming
 };
 

@@ -4,5 +4,7 @@
 
 #include "CoreMinimal.h"
 
+class ASpawnVolume;
+
 // Spawn Volume
-DECLARE_DELEGATE(FOnPlayerEntered);
+DECLARE_DELEGATE_OneParam(FOnPlayerEntered, ASpawnVolume* SpawnVolume);

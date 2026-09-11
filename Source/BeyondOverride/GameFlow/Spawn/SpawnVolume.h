@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "../BODelegates.h"
+#include "../Data/SpawnStruct.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 
@@ -19,12 +20,18 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	ASpawnVolume();
 
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 
-	void Initialize();
+	UFUNCTION(BlueprintCallable, Category = "SpawnVolume")
+	virtual void OnOverlapped(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	void SpawnAI();
 	void SpawnRandomAI();
-	APawn* SpawnAI();
-	void RemoveSpawnedAIs();
 
   public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
@@ -34,8 +41,12 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	TObjectPtr<UBoxComponent> BoxComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
-	TArray<TObjectPtr<APawn>> SpawnedAIs;
+	FName Id;
 
-  private:
-	FOnPlayerEntered OnPlayerEndtered;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
+	float SpawnExclusionRadius;
+
+  public:
+	FSpawnStruct SpawnVolumeData;
+	FOnPlayerEntered OnPlayerEntered;
 };

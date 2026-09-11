@@ -17,10 +17,12 @@ class BEYONDOVERRIDE_API UGameDataAsset : public UDataAsset
 	GENERATED_BODY()
 
   public:
-	UDataTable* GetSpawnVolumeDataTable();
-	UDataTable* GetContainerDataTable();
+	UDataTable* GetSpawnVolumeDataTable() const;
+	UDataTable* GetAIDataTable() const;
+	UDataTable* GetContainerDataTable() const;
 
   public:
 	UDataTable* SpawnVolumeDataTable;
+	UDataTable* AIDataTable;
 	UDataTable* ContainerDataTable;
 };

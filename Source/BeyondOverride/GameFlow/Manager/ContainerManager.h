@@ -21,8 +21,12 @@ class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 	void ActivateContainer();
 
   public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mananer")
+	float ActivateProbability;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mananer")
 	TMap<FName, bool> LimitedItems;
 
   private:
-	// TArray<TObjectPtr<AContainer>> Containers;
+	TArray<TObjectPtr<AActor>> Containers;  // AContainer·Î º¯°æ
 };

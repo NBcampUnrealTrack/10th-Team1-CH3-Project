@@ -5,6 +5,7 @@
 #include "BOEnums.h"
 #include "CoreMinimal.h"
 
+#include "Data/GameDataAsset.h"
 #include "Data/SpawnStruct.h"
 #include "Engine/GameInstance.h"
 
@@ -20,6 +21,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
   private:
 	void LoadSpawnVolumeData();
+	void LoadAIData();
+	void LoadContainerData();
 
   public:
 	void Start();
@@ -30,7 +33,11 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void OpenLevel(ELevel Level);
 	void SavePlayerData();
 
-	void GetSpawnVolumeData(FName Id, FSpawnVolumeData& Data);
+	// TMap<ELevel, FName> GetLevels() const;
+	// TArray<FName> GetRegions() const;
+	void GetSpawnVolumeData(FName Id, FSpawnStruct& Data);
+	// void GetAIData(FName Id, FAIData& Data);
+	void GetContainerData(FName Id, FSpawnStruct& Data);
 	EGameState GetGameState() const;
 	EPlayingState GetPlayingState() const;
 	EFarmingResult GetFarmingResult() const;
@@ -39,8 +46,14 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 GetTotalMoney() const;
 
   public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TMap<ELevel, FName> Levels;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TArray<FName> Regions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UGameDataAsset* GameDataAsset;
 
   private:
 	EGameState GameState;
@@ -51,4 +64,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 CurrentShield;
 	int32 TotalMoney;
 	// TArray<FInventorySlot> Inventory;
+
+	TMap<FName, FSpawnStruct> SpawnVolumeDatas;
+	// TMap<FName, FAIData> AIDatas;
+	TMap<FName, FSpawnStruct> ContainerDatas;
 };

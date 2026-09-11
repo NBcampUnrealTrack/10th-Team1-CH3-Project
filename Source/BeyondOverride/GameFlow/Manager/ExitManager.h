@@ -20,4 +20,7 @@ class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 	void Initialize();
 	void ActivateExit();
 	AActor* SelectRandomExit();
+
+  private:
+	TArray<TObjectPtr<AActor>> Exits;  // AExit으로 바꾸기
 };

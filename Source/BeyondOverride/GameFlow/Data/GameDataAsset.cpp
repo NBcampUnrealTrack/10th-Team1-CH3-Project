@@ -2,12 +2,17 @@
 
 #include "GameFlow/Data/GameDataAsset.h"
 
-UDataTable* UGameDataAsset::GetSpawnVolumeDataTable()
+UDataTable* UGameDataAsset::GetSpawnVolumeDataTable() const
 {
-	return nullptr;
+	return SpawnVolumeDataTable;
 }
 
-UDataTable* UGameDataAsset::GetContainerDataTable()
+UDataTable* UGameDataAsset::GetAIDataTable() const
 {
-	return nullptr;
+	return AIDataTable;
+}
+
+UDataTable* UGameDataAsset::GetContainerDataTable() const
+{
+	return ContainerDataTable;
 }

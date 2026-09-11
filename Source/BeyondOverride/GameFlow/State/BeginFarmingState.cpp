@@ -13,7 +13,6 @@ void UBeginFarmingState::Enter()
 	Super::Enter();
 
 	SpawnCharacter();
-	SpawnAI();
 	ActivateContainer();
 	ActivateExit();
 
@@ -40,19 +39,6 @@ void UBeginFarmingState::SpawnCharacter()
 			Character->TeleportTo(ExitLocation, ExitRotation);
 			PlayerController->SetControlRotation(ExitRotation);
 		}
-	}
-}
-
-void UBeginFarmingState::SpawnAI()
-{
-	if (!GetWorld() || !GetWorld()->GetGameInstance())
-	{
-		return;
-	}
-
-	if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
-	{
-		SpawnVolumeManager->SpawnAI();
 	}
 }
 

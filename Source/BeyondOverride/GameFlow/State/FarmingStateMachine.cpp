@@ -4,7 +4,6 @@
 
 #include "BeginFarmingState.h"
 #include "EndFarmingState.h"
-#include "NoneFarmingState.h"
 #include "ProgressFarmingState.h"
 
 UFarmingStateMachine::UFarmingStateMachine()

@@ -21,7 +21,6 @@ class BEYONDOVERRIDE_API UBeginFarmingState : public UBaseFarmingState
 
   private:
 	void SpawnCharacter();
-	void SpawnAI();
 	void ActivateContainer();
 	void ActivateExit();
 };

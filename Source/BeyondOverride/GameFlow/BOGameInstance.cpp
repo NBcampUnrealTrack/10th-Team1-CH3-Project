@@ -21,7 +21,15 @@ void UBOGameInstance::Init()
 	CurrentHealth = 0;
 	CurrentShield = 0;
 	TotalMoney = 0;
-	// Inventory.empty();
+	// Inventory.Empty();
+
+	SpawnVolumeDatas.Empty();
+	// AIDatas.Empty();
+	ContainerDatas.Empty();
+
+	LoadSpawnVolumeData();
+	LoadAIData();
+	LoadContainerData();
 
 	OpenLevel(ELevel::Bunker);
 	StartFarming();
@@ -29,12 +37,77 @@ void UBOGameInstance::Init()
 
 void UBOGameInstance::LoadSpawnVolumeData()
 {
+	if (!GameDataAsset)
+	{
+		return;
+	}
+
+	if (UDataTable* SpawnVolumeDataTable = GameDataAsset->GetSpawnVolumeDataTable())
+	{
+		TArray<FSpawnStruct*> AllRows{};
+		SpawnVolumeDataTable->GetAllRows<FSpawnStruct>(TEXT("Get All Spawn Volume Datas"), AllRows);
+
+		for (FSpawnStruct* Row : AllRows)
+		{
+			if (Row)
+			{
+				FName Id = Row->Id;
+				SpawnVolumeDatas.Add(Id, *Row);
+			}
+		}
+	}
+}
+
+void UBOGameInstance::LoadAIData()
+{
+	if (!GameDataAsset)
+	{
+		return;
+	}
+
+	/*if (UDataTable* AIData = GameDataAsset->GetAIDataTable())
+	{
+		TArray<FAIData*> AllRows{};
+		AIData->GetAllRows<FAIData>(TEXT("Get All AI Datas"), AllRows);
+
+		for (FAIData* Row : AllRows)
+		{
+			if (Row)
+			{
+				FName Id = Row->Id;
+				AIDatas.Add(Id, *Row);
+			}
+		}
+	}*/
+}
+
+void UBOGameInstance::LoadContainerData()
+{
+	if (!GameDataAsset)
+	{
+		return;
+	}
+
+	if (UDataTable* ContainerDataTable = GameDataAsset->GetContainerDataTable())
+	{
+		TArray<FSpawnStruct*> AllRows{};
+		ContainerDataTable->GetAllRows<FSpawnStruct>(TEXT("Get All Container Datas"), AllRows);
+
+		for (FSpawnStruct* Row : AllRows)
+		{
+			if (Row)
+			{
+				FName Id = Row->Id;
+				ContainerDatas.Add(Id, *Row);
+			}
+		}
+	}
 }
 
 void UBOGameInstance::Start()
 {
 	GameState = EGameState::Playing;
-	PlayingState = EPlayingState::Shelter;
+	PlayingState = EPlayingState::Bunker;
 
 	// 기초 장비 지급
 }
@@ -69,7 +142,7 @@ void UBOGameInstance::Exit()
 
 void UBOGameInstance::StartFarming()
 {
-	GameState = EGameState::Playing;  // test code
+	GameState = EGameState::Playing; // test code
 	PlayingState = EPlayingState::Farming;
 
 	OpenLevel(ELevel::Main);
@@ -77,7 +150,7 @@ void UBOGameInstance::StartFarming()
 
 void UBOGameInstance::EndFarming(EFarmingResult Result)
 {
-	PlayingState = EPlayingState::Shelter;
+	PlayingState = EPlayingState::Bunker;
 	FarmingResult = Result;
 
 	OpenLevel(ELevel::Bunker);
@@ -110,8 +183,30 @@ void UBOGameInstance::SavePlayerData()
 	}
 }
 
-void UBOGameInstance::GetSpawnVolumeData(FName Id, FSpawnVolumeData& Data)
+// TMap<ELevel, FName> UBOGameInstance::GetLevels() const
+//{
+//	return Levels;
+// }
+//
+// TArray<FName> UBOGameInstance::GetRegions() const
+//{
+//	return Regions;
+// }
+
+void UBOGameInstance::GetSpawnVolumeData(FName Id, FSpawnStruct& Data)
 {
+	if (SpawnVolumeDatas.Contains(Id))
+	{
+		Data = SpawnVolumeDatas[Id];
+	}
+}
+
+void UBOGameInstance::GetContainerData(FName Id, FSpawnStruct& Data)
+{
+	if (ContainerDatas.Contains(Id))
+	{
+		Data = ContainerDatas[Id];
+	}
 }
 
 EGameState UBOGameInstance::GetGameState() const
