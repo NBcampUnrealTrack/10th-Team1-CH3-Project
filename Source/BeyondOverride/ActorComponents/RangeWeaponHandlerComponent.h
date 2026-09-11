@@ -19,6 +19,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
   public:
 	URangeWeaponHandlerComponent();
 
+	// 등록된 장비 반환
+	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
+
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* EquippableItemInstance) override;
 	// 장비 제거

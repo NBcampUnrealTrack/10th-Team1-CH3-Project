@@ -7,6 +7,11 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 {
 }
 
+UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance() const
+{
+	return RangeWeaponInstance;
+}
+
 bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableItemInstance)
 {
 	// 이미 등록된 장비 존재
