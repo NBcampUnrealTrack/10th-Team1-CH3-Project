@@ -19,7 +19,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 public:
-	void ApplyEquipmentAnimation(UEquipmentAnimationData* NewData);
+	void ApplyEquipmentAnimation(const UEquipmentAnimationData* NewData);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Character")

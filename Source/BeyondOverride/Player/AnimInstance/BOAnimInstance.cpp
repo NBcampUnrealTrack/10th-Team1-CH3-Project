@@ -44,7 +44,7 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	bIsCrouch = MovementComponent->IsCrouching();
 
-void UBOAnimInstance::ApplyEquipmentAnimation(UEquipmentAnimationData* NewData)
+void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationData* NewData)
 {
 	if (!IsValid(NewData))
 	{
