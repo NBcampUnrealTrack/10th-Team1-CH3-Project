@@ -20,7 +20,7 @@ void UStatComponent::BeginPlay()
 	OnShieldChanged.Broadcast(CurShield, MaxShield);
 }
 
-void UStatComponent::ApplyDamage(int32 DamageAmount)
+void UStatComponent::TakeDamage(int32 DamageAmount)
 {
 	if (bIsDead || DamageAmount <= 0)
 	{
