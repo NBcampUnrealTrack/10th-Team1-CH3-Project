@@ -1,4 +1,4 @@
-﻿#include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "DataTables/Items/ItemDataRow.h"
@@ -208,8 +208,7 @@ bool UInventoryInteractionComponent::PickupHalf(UInventoryComponent* Inventory, 
 	{
 		return PickupAll(
 			Inventory,
-			SlotIndex
-		);
+			SlotIndex);
 	}
 
 	const int32 HoldCount = StackCount / 2;
