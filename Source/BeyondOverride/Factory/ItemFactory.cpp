@@ -7,17 +7,17 @@
 
 UItemInstanceBase* FItemFactory::CreateItemInstance(
 	UObject* Outer,
-	const FName ItemID)
+	const FName ItemID,
+	const int32 StackCount)
 {
 	// Outer & World 유효성 검사
 	if (!Outer || !Outer->GetWorld())
 	{
 		return nullptr;
 	}
-	UWorld* World = Outer->GetWorld();
 
 	// GameInstance 확인
-	UGameInstance* GameInstance = World->GetGameInstance();
+	UGameInstance* GameInstance = Outer->GetWorld()->GetGameInstance();
 	if (!GameInstance)
 	{
 		return nullptr;
@@ -44,7 +44,9 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 		return nullptr;
 	}
 
+	// 데이터 초기 설정
 	ItemInstance->Initialize();
+	ItemInstance->SetStackCount(StackCount);
 
 	return ItemInstance;
 }
@@ -52,6 +54,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 AItemPickupBase* FItemFactory::SpawnItemPickup(
 	UWorld* World,
 	const FName ItemID,
+	const int32 StackCount,
 	const FVector& Location,
 	const FRotator& Rotation)
 {
@@ -63,8 +66,35 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 
 	// 아이템 오브젝트 생성
 	UItemInstanceBase* ItemInstance = CreateItemInstance(
-		nullptr,
-		ItemID);
+		World,
+		ItemID,
+		StackCount);
+
+	// 아이템 오브젝트를 포함하는 액터 생성 후 반환
+	return SpawnItemPickup(
+		World,
+		ItemInstance,
+		Location,
+		Rotation);
+}
+
+AItemPickupBase* FItemFactory::SpawnItemPickup(
+	UWorld* World,
+	UItemInstanceBase* ItemInstance,
+	const FVector& Location,
+	const FRotator& Rotation)
+{
+	// World 유효성 검사
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	// ItemInstance 유효성 검사
+	if (!ItemInstance)
+	{
+		return nullptr;
+	}
 
 	// 아이템 데이터 확인
 	const FItemDataRow* ItemData = ItemInstance->GetItemData();

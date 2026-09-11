@@ -1,7 +1,9 @@
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
-
-#include "DataTables/Items/ItemDataRow.h"
 #include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
+#include "DataTables/Items/ItemDataRow.h"
+#include "Factory/ItemFactory.h"
+#include "Items/Actors/ItemPickupBase.h"
 
 UInventoryInteractionComponent::UInventoryInteractionComponent()
 {
@@ -25,7 +27,7 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 	const bool bHoldingItem = IsValid(HoldItem);
 	const bool bSlotHasItem = IsValid(SlotItem);
 
-	// ¼Õ¿¡ ¾Æ¹«°Íµµ ¾øÀ½
+	// ì†ì— ì•„ë¬´ê²ƒë„ ì—†ìŒ
 	if (!bHoldingItem)
 	{
 		if (!bSlotHasItem)
@@ -41,7 +43,7 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 		return PickupHalf(Inventory, SlotIndex);
 	}
 
-	// ¼Õ¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ½ + ½½·ÔÀÌ ºñ¾î ÀÖÀ½
+	// ì†ì— ì•„ì´í…œì´ ìžˆìŒ + ìŠ¬ë¡¯ì´ ë¹„ì–´ ìžˆìŒ
 	if (!bSlotHasItem)
 	{
 		if (bLeftClick)
@@ -52,7 +54,7 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 		return PlaceOne(Inventory, SlotIndex);
 	}
 
-	// ¼Õ¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ½ + ½½·Ô¿¡µµ °°Àº ¾ÆÀÌÅÛÀÌ ÀÖÀ½
+	// ì†ì— ì•„ì´í…œì´ ìžˆìŒ + ìŠ¬ë¡¯ì—ë„ ê°™ì€ ì•„ì´í…œì´ ìžˆìŒ
 	if (IsSameItem(HoldItem, SlotItem))
 	{
 		if (bLeftClick)
@@ -63,8 +65,77 @@ bool UInventoryInteractionComponent::HandleSlotClick(UInventoryComponent* Invent
 		return MergeOne(Inventory, SlotIndex);
 	}
 
-	// ¼Õ¿¡ ¾ÆÀÌÅÛÀÌ ÀÖÀ½ + ½½·Ô¿¡´Â ´Ù¸¥ ¾ÆÀÌÅÛÀÌ ÀÖÀ½
+	// ì†ì— ì•„ì´í…œì´ ìžˆìŒ + ìŠ¬ë¡¯ì—ëŠ” ë‹¤ë¥¸ ì•„ì´í…œì´ ìžˆìŒ
 	return SwapHeldItem(Inventory, SlotIndex);
+}
+
+bool UInventoryInteractionComponent::HandleEquipmentSlotClick(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot, bool bLeftClick)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (!Inventory->IsValidEquipmentSlot(Slot))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* SlotItem = Inventory->GetEquipmentItem(Slot);
+
+	const bool bHoldingItem = IsValid(HoldItem);
+	const bool bSlotHasItem = IsValid(SlotItem);
+
+	// ì†ì— ì•„ë¬´ê²ƒë„ ì—†ìŒ
+	if (!bHoldingItem)
+	{
+		if (!bSlotHasItem)
+		{
+			return false;
+		}
+
+		if (bLeftClick)
+		{
+			return PickupEquipmentAll(Inventory, Slot);
+		}
+
+		return PickupEquipmentHalf(Inventory, Slot);
+	}
+
+	// ì†ì— ì•„ì´í…œì´ ìžˆìŒ + ìž¥ë¹„ ìŠ¬ë¡¯ì´ ë¹„ì–´ ìžˆìŒ
+	if (!bSlotHasItem)
+	{
+		if (bLeftClick)
+		{
+			return PlaceEquipmentAll(Inventory, Slot);
+		}
+
+		return PlaceEquipmentOne(Inventory, Slot);
+	}
+
+	// ì†ì— ì•„ì´í…œì´ ìžˆìŒ + ê°™ì€ ì•„ì´í…œ
+	if (IsSameItem(HoldItem, SlotItem))
+	{
+		if (bLeftClick)
+		{
+			return MergeEquipmentAll(Inventory, Slot);
+		}
+
+		return MergeEquipmentOne(Inventory, Slot);
+	}
+
+	// ì†ì— ì•„ì´í…œì´ ìžˆìŒ + ìž¥ë¹„ ìŠ¬ë¡¯ì— ì•„ì´í…œì´ ìžˆìŒ
+	return SwapEquipmentItem(Inventory, Slot);
+}
+
+bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
+{
+	if (bLeftClick)
+	{
+		return DropAll();
+	}
+
+	return DropOne();
 }
 
 bool UInventoryInteractionComponent::IsHoldingItem() const
@@ -140,9 +211,9 @@ bool UInventoryInteractionComponent::PickupHalf(UInventoryComponent* Inventory, 
 			SlotIndex);
 	}
 
-	const int32 HeldCount = StackCount / 2;
+	const int32 HoldCount = StackCount / 2;
 
-	const int32 RemainingCount = StackCount - HeldCount;
+	const int32 RemainingCount = StackCount - HoldCount;
 
 	UItemInstanceBase* NewItem = CreateItemInstance(SlotItem);
 
@@ -151,10 +222,11 @@ bool UInventoryInteractionComponent::PickupHalf(UInventoryComponent* Inventory, 
 		return false;
 	}
 
-	NewItem->SetStackCount(HeldCount);
-	SlotItem->SetStackCount(RemainingCount);
-
-	Inventory->NotifyInventoryChanged();
+	NewItem->SetStackCount(HoldCount);
+	if (!Inventory->SetItemStackCount(SlotIndex, RemainingCount))
+	{
+		return false;
+	}
 
 	HoldItem = NewItem;
 
@@ -264,7 +336,14 @@ bool UInventoryInteractionComponent::MergeAll(UInventoryComponent* Inventory, co
 		return false;
 	}
 
-	const int32 MaxStackCount = SlotItem->GetItemData()->MaxStackCount;
+	const FItemDataRow* ItemData = SlotItem->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	const int32 MaxStackCount = ItemData->MaxStackCount;
 	const int32 CurrentCount = SlotItem->GetStackCount();
 	const int32 HoldCount = HoldItem->GetStackCount();
 	const int32 Space = MaxStackCount - CurrentCount;
@@ -275,16 +354,20 @@ bool UInventoryInteractionComponent::MergeAll(UInventoryComponent* Inventory, co
 	}
 
 	const int32 MoveCount = FMath::Min(Space, HoldCount);
+	const int32 NewSlotCount = CurrentCount + MoveCount;
+	const int32 NewHoldCount = HoldCount - MoveCount;
 
-	SlotItem->SetStackCount(CurrentCount + MoveCount);
-	HoldItem->SetStackCount(HoldCount - MoveCount);
+	if (!Inventory->SetItemStackCount(SlotIndex, NewSlotCount))
+	{
+		return false;
+	}
+
+	HoldItem->SetStackCount(NewHoldCount);
 
 	if (HoldItem->GetStackCount() <= 0)
 	{
 		HoldItem = nullptr;
 	}
-
-	Inventory->NotifyInventoryChanged();
 
 	OnHoldItemChanged.Broadcast(HoldItem);
 
@@ -315,7 +398,14 @@ bool UInventoryInteractionComponent::MergeOne(UInventoryComponent* Inventory, co
 		return false;
 	}
 
-	const int32 MaxStackCount = SlotItem->GetItemData()->MaxStackCount;
+	const FItemDataRow* ItemData = SlotItem->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	const int32 MaxStackCount = ItemData->MaxStackCount;
 
 	if (SlotItem->GetStackCount() >= MaxStackCount)
 	{
@@ -327,7 +417,10 @@ bool UInventoryInteractionComponent::MergeOne(UInventoryComponent* Inventory, co
 		return false;
 	}
 
-	SlotItem->SetStackCount(SlotItem->GetStackCount() + 1);
+	if (!Inventory->SetItemStackCount(SlotIndex, SlotItem->GetStackCount() + 1))
+	{
+		return false;
+	}
 
 	HoldItem->SetStackCount(HoldItem->GetStackCount() - 1);
 
@@ -335,8 +428,6 @@ bool UInventoryInteractionComponent::MergeOne(UInventoryComponent* Inventory, co
 	{
 		HoldItem = nullptr;
 	}
-
-	Inventory->NotifyInventoryChanged();
 
 	OnHoldItemChanged.Broadcast(HoldItem);
 
@@ -374,6 +465,315 @@ bool UInventoryInteractionComponent::SwapHeldItem(UInventoryComponent* Inventory
 	return true;
 }
 
+bool UInventoryInteractionComponent::PickupEquipmentAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* SlotItem = Inventory->GetEquipmentItem(Slot);
+
+	if (!IsValid(SlotItem))
+	{
+		return false;
+	}
+
+	HoldItem = SlotItem;
+
+	if (!Inventory->SetEquipmentItem(Slot, nullptr))
+	{
+		HoldItem = nullptr;
+		return false;
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::PickupEquipmentHalf(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* SlotItem = Inventory->GetEquipmentItem(Slot);
+
+	if (!IsValid(SlotItem))
+	{
+		return false;
+	}
+
+	const int32 StackCount = SlotItem->GetStackCount();
+
+	if (StackCount <= 1)
+	{
+		return PickupEquipmentAll(Inventory, Slot);
+	}
+
+	const int32 HeldCount = StackCount / 2;
+	const int32 RemainingCount = StackCount - HeldCount;
+
+	UItemInstanceBase* NewItem = CreateItemInstance(SlotItem);
+
+	if (!IsValid(NewItem))
+	{
+		return false;
+	}
+
+	NewItem->SetStackCount(HeldCount);
+	if (!Inventory->SetEquipmentItemStackCount(Slot, RemainingCount))
+	{
+		return false;
+	};
+
+	HoldItem = NewItem;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::PlaceEquipmentAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	if (IsValid(Inventory->GetEquipmentItem(Slot)))
+	{
+		return false;
+	}
+
+	if (!Inventory->SetEquipmentItem(Slot, HoldItem))
+	{
+		return false;
+	}
+
+	HoldItem = nullptr;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::PlaceEquipmentOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	if (IsValid(Inventory->GetEquipmentItem(Slot)))
+	{
+		return false;
+	}
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		return false;
+	}
+
+	UItemInstanceBase* NewItem = CreateItemInstance(HoldItem);
+
+	if (!IsValid(NewItem))
+	{
+		return false;
+	}
+
+	NewItem->SetStackCount(1);
+
+	if (!Inventory->SetEquipmentItem(Slot, NewItem))
+	{
+		return false;
+	}
+
+	HoldItem->SetStackCount(HoldItem->GetStackCount() - 1);
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		HoldItem = nullptr;
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::MergeEquipmentAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* SlotItem = Inventory->GetEquipmentItem(Slot);
+
+	if (!IsValid(SlotItem))
+	{
+		return false;
+	}
+
+	if (!IsSameItem(HoldItem, SlotItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = SlotItem->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	const int32 MaxStackCount = ItemData->MaxStackCount;
+	const int32 CurrentCount = SlotItem->GetStackCount();
+	const int32 HoldCount = HoldItem->GetStackCount();
+	const int32 Space = MaxStackCount - CurrentCount;
+
+	if (Space <= 0)
+	{
+		return false;
+	}
+
+	const int32 MoveCount = FMath::Min(Space, HoldCount);
+	const int32 NewSlotCount = CurrentCount + MoveCount;
+	const int32 NewHoldCount = HoldCount - MoveCount;
+
+	if (!Inventory->SetEquipmentItemStackCount(Slot, NewSlotCount))
+	{
+		return false;
+	}
+
+	HoldItem->SetStackCount(NewHoldCount);
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		HoldItem = nullptr;
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::MergeEquipmentOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* SlotItem = Inventory->GetEquipmentItem(Slot);
+
+	if (!IsValid(SlotItem))
+	{
+		return false;
+	}
+
+	if (!IsSameItem(HoldItem, SlotItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = SlotItem->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	if (SlotItem->GetStackCount() >= ItemData->MaxStackCount)
+	{
+		return false;
+	}
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		return false;
+	}
+
+	if (!Inventory->SetEquipmentItemStackCount(Slot, SlotItem->GetStackCount() + 1))
+	{
+		return false;
+	}
+
+	HoldItem->SetStackCount(HoldItem->GetStackCount() - 1);
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		HoldItem = nullptr;
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::SwapEquipmentItem(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot)
+{
+	if (!IsValid(Inventory))
+	{
+		return false;
+	}
+
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* SlotItem = Inventory->GetEquipmentItem(Slot);
+
+	if (!IsValid(SlotItem))
+	{
+		return false;
+	}
+
+	if (!Inventory->SetEquipmentItem(Slot, HoldItem))
+	{
+		return false;
+	}
+
+	HoldItem = SlotItem;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
 bool UInventoryInteractionComponent::IsSameItem(const UItemInstanceBase* FirstItem, const UItemInstanceBase* SecondItem) const
 {
 	if (!IsValid(FirstItem) || !IsValid(SecondItem))
@@ -381,12 +781,108 @@ bool UInventoryInteractionComponent::IsSameItem(const UItemInstanceBase* FirstIt
 		return false;
 	}
 
-	// ÀÌ ºÎºÐÀº º¯°æÀÌ ÇÊ¿äÇÔ. µÎ ¾ÆÀÌÅÛÀÌ °°Àº Á¾·ùÀÎÁö °Ë»ç¸¦ ¾î¶»°Ô ÇÏ´Â°¡?
-	return FirstItem->GetItemData() == SecondItem->GetItemData();
+	return FirstItem->GetItemID() == SecondItem->GetItemID();
 }
 
 UItemInstanceBase* UInventoryInteractionComponent::CreateItemInstance(UItemInstanceBase* ItemInstance)
 {
-	// ¾ÆÀÌÅÛ »ý¼º ¹æ½ÄÀº ¾ÆÁ÷ °áÁ¤ÇÏÁö ¾Ê¾ÒÀ¸¹Ç·Î ÀÓ½Ã ±¸Çö
-	return nullptr;
+	if (!IsValid(ItemInstance))
+	{
+		return nullptr;
+	}
+
+	return FItemFactory::CreateItemInstance(this, ItemInstance->GetItemID(), ItemInstance->GetStackCount());
+}
+
+bool UInventoryInteractionComponent::DropAll()
+{
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return false;
+	}
+
+	const FVector DropLocation = Owner->GetActorLocation() + Owner->GetActorForwardVector() * 100.0f;
+	const FRotator DropRotation = FRotator::ZeroRotator;
+
+	AItemPickupBase* ItemPickup = FItemFactory::SpawnItemPickup(World, HoldItem, DropLocation, DropRotation);
+
+	if (!IsValid(ItemPickup))
+	{
+		return false;
+	}
+
+	HoldItem = nullptr;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::DropOne()
+{
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return false;
+	}
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		return false;
+	}
+
+	const FVector DropLocation = Owner->GetActorLocation() + Owner->GetActorForwardVector() * 100.0f;
+	const FRotator DropRotation = FRotator::ZeroRotator;
+
+	UItemInstanceBase* DropItem = FItemFactory::CreateItemInstance(this, HoldItem->GetItemID(), 1);
+
+	if (!IsValid(DropItem))
+	{
+		return false;
+	}
+
+	AItemPickupBase* ItemPickup = FItemFactory::SpawnItemPickup(World, DropItem, DropLocation, DropRotation);
+
+	if (!IsValid(ItemPickup))
+	{
+		return false;
+	}
+
+	HoldItem->SetStackCount(HoldItem->GetStackCount() - 1);
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		HoldItem = nullptr;
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
 }

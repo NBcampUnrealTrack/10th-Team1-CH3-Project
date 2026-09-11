@@ -1,11 +1,14 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "InventoryInteractionComponent.generated.h"
 
 class UInventoryComponent;
+class UPlayerInventoryComponent;
 class UItemInstanceBase;
+
+enum class EEquipmentSlot : uint8;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHoldItemChanged, const UItemInstanceBase*, HoldItem);
 
@@ -15,14 +18,18 @@ class BEYONDOVERRIDE_API UInventoryInteractionComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// UIÀÇ ½½·Ô Å¬¸¯ Ã³¸®
+	// UIì˜ ìŠ¬ë¡¯ í´ë¦­ ì²˜ë¦¬
 	UFUNCTION(BlueprintCallable)
-	bool HandleSlotClick(UInventoryComponent* Inventory, int32 SlotIndex, bool bLeftClick);
+	bool HandleSlotClick(UInventoryComponent* Inventory, int32 SlotIndex, bool bLeftClick); // ì¼ë°˜ ì¹¸ ì¢Œ/ìš°í´ë¦­
+	UFUNCTION(BlueprintCallable)
+	bool HandleEquipmentSlotClick(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot, bool bLeftClick); // ë¬´ê¸° ì¹¸ ì¢Œ/ìš°í´ë¦­
+	UFUNCTION(BlueprintCallable)
+	bool DropItem(bool bLeftClick); // ì†ì— ë“¤ê³  ìˆëŠ” ì•„ì´í…œ ë²„ë¦¬ê¸°
 
-	// ÇöÀç µé°í ÀÖ´Â ¾ÆÀÌÅÛ
-	UFUNCTION(BlueprintCallable)
+	// í˜„ì¬ ì†ì— ë“¤ê³  ìˆëŠ” ì•„ì´í…œ ì •ë³´
+	UFUNCTION(BlueprintPure)
 	bool IsHoldingItem() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	UItemInstanceBase* GetHoldItem() const;
 
 public:
@@ -33,26 +40,51 @@ public:
 	UInventoryInteractionComponent();
 
 private:
-	// ¾ÆÀÌÅÛ Áı±â
+	// --------------- ì¼ë°˜ ìŠ¬ë¡¯ í•¨ìˆ˜ -------------------
+	// ì•„ì´í…œ ì§‘ê¸°
 	bool PickupAll(UInventoryComponent* Inventory, int32 SlotIndex);
 	bool PickupHalf(UInventoryComponent* Inventory, int32 SlotIndex);
 
-	// ¾ÆÀÌÅÛ ³õ±â
+	// ì•„ì´í…œ ë†“ê¸°
 	bool PlaceAll(UInventoryComponent* Inventory, int32 SlotIndex);
 	bool PlaceOne(UInventoryComponent* Inventory, int32 SlotIndex);
 
-	// ¾ÆÀÌÅÛ ÇÕÄ¡±â
+	// ì•„ì´í…œ í•©ì¹˜ê¸°
 	bool MergeAll(UInventoryComponent* Inventory, int32 SlotIndex);
 	bool MergeOne(UInventoryComponent* Inventory, int32 SlotIndex);
 
-	// ¾ÆÀÌÅÛ ±³Ã¼
+	// ì•„ì´í…œ êµì²´
 	bool SwapHeldItem(UInventoryComponent* Inventory, int32 SlotIndex);
+	// --------------------------------------------------
 
-	// ¾ÆÀÌÅÛ ºñ±³
+	// --------------- ì¥ë¹„ ìŠ¬ë¡¯ í•¨ìˆ˜ -------------------
+	// ì•„ì´í…œ ì§‘ê¸°
+	bool PickupEquipmentAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool PickupEquipmentHalf(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+
+	// ì•„ì´í…œ ë†“ê¸°
+	bool PlaceEquipmentAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool PlaceEquipmentOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+
+	// ì•„ì´í…œ í•©ì¹˜ê¸°
+	bool MergeEquipmentAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool MergeEquipmentOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+
+	// ì•„ì´í…œ êµì²´
+	bool SwapEquipmentItem(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	// --------------------------------------------------
+
+	// ------------------ ê³µìš© í•¨ìˆ˜ ---------------------
+	// ì•„ì´í…œ ë¹„êµ
 	bool IsSameItem(const UItemInstanceBase* FirstItem, const UItemInstanceBase* SecondItem) const;
 
-	// ¾ÆÀÌÅÛ º¹Á¦
+	// ì•„ì´í…œ ë³µì œ
 	UItemInstanceBase* CreateItemInstance(UItemInstanceBase* ItemInstance);
+
+	// ì•„ì´í…œ ë²„ë¦¬ê¸°
+	bool DropAll();
+	bool DropOne();
+	// --------------------------------------------------
 
 private:
 	UPROPERTY()

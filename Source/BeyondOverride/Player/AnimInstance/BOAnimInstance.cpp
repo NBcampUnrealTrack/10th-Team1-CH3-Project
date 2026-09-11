@@ -1,9 +1,10 @@
-#include "Player/AnimInstance/BOAnimInstance.h"
+﻿#include "Player/AnimInstance/BOAnimInstance.h"
 
-#include "Player/Character/BOCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/BlendSpace.h"
+#include "DataAssets/EquipmentAnimationDataAsset.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Player/Character/BOCharacter.h"
 
 void UBOAnimInstance::NativeInitializeAnimation()
 {
@@ -42,20 +43,21 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bShouldMove = GroundSpeed > 3.0f && bHasAcceleration;
 
 	bIsCrouch = MovementComponent->IsCrouching();
+}
 
-	//void UBOAnimInstance::ApplyEquipmentAnimation(UEquipmentAnimationData* NewData)
-	//{
-	//    if (!IsValid(NewData))
-	//    {
-	//        return;
-	//    }
-	//
-	//    CurrentEquipmentData = NewData;
-	//
-	//    EquipmentIdle = NewData->Idle;
-	//    EquipmentLocomotion = NewData->Locomotion;
-	//    EquipmentJumpStart = NewData->JumpStart;
-	//    EquipmentJumpLoop = NewData->JumpLoop;
-	//    EquipmentJumpLand = NewData->JumpLand;
-	//    EquipmentAim = NewData->Aim;
+void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData)
+{
+	if (!IsValid(NewData))
+	{
+		return;
+	}
+
+	CurrentEquipmentData = NewData;
+
+	// EquipmentIdle = NewData->Idle;
+	// EquipmentLocomotion = NewData->Locomotion;
+	// EquipmentJumpStart = NewData->JumpStart;
+	// EquipmentJumpLoop = NewData->JumpLoop;
+	// EquipmentJumpLand = NewData->JumpLand;
+	// EquipmentAim = NewData->Aim;
 }
