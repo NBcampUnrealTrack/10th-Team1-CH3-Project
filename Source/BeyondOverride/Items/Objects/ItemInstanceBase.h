@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 
 #include "DataTables/Items/ItemDataRow.h"
-#include "UObject/NoExportTypes.h"
+#include "UObject/Object.h"
 
 #include "ItemInstanceBase.generated.h"
 
