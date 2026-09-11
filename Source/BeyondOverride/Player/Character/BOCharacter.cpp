@@ -242,5 +242,12 @@ void ABOCharacter::ChangeMoveSpeed()
 
 void ABOCharacter::OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
 {
-	EquipmentManagerComponent->Assign(Slot, ItemInstanceBase);
+	if (ItemInstanceBase)
+	{
+		EquipmentManagerComponent->Assign(Slot, ItemInstanceBase);
+	}
+	else
+	{
+		EquipmentManagerComponent->Unassign(Slot);
+	}
 }
