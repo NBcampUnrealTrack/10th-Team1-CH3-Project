@@ -14,7 +14,7 @@ class BEYONDOVERRIDE_API UStatComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	void ApplyDamage(int32 DamageAmount);
+	void TakeDamage(int32 DamageAmount);
 	void Heal(int32 HealAmount);
 
 	int32 GetCurHealth() const { return CurHealth; }
