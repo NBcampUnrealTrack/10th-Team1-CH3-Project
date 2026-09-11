@@ -1,5 +1,5 @@
 Language: Cpp
-BasedOnStyle: Google
+BasedOnStyle: LLVM
 ColumnLimit: 0
 DisableFormat: false
 
