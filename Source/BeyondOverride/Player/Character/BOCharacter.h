@@ -10,6 +10,7 @@ class UEquipmentComponent;
 class UStatComponent;
 class UInventoryComponent;
 class UInteractComponent;
+class UEquipmentManagerComponent;
 
 UCLASS()
 class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
@@ -57,6 +58,8 @@ protected:
 	UInventoryComponent* InventoryComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInteractComponent* InteractComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UEquipmentManagerComponent* EquipmentManagerComponent; // 장비 관리 컴포넌트
 
 private:
 	UFUNCTION()

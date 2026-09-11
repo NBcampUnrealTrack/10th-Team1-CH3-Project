@@ -11,6 +11,7 @@
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Interaction/InteractComponent.h"
+#include "ActorComponents/EquipmentManagerComponent.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -33,6 +34,7 @@ ABOCharacter::ABOCharacter()
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
+	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 }
 
 void ABOCharacter::BeginPlay()
