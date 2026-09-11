@@ -17,7 +17,7 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	UEquipmentHandlerComponent();
 
 	// 등록된 장비 반환
-	UEquippableItemInstance* GetEquippableItemInstance() const;
+	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
 
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* EquippableItemInstance);
