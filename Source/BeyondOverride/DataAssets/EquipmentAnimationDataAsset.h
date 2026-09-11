@@ -5,10 +5,10 @@
 
 #include "Engine/DataAsset.h"
 
-#include "WeaponAnimationDataAsset.generated.h"
+#include "EquipmentAnimationDataAsset.generated.h"
 
 UCLASS()
-class UWeaponAnimationDataAsset : public UDataAsset
+class UEquipmentAnimationDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 

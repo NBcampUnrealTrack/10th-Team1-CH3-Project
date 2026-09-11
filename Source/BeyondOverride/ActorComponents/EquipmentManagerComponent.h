@@ -1,3 +1,11 @@
+// TODO:
+//	- 비무장 구현
+//		- Unarmed(MeleeWeaponInstance) 생성 및 저장
+//		- 비무장 시 UnarmedHandler(MeleeWeaponHandlerComponent)에 Unarmed 장비 등록하기
+//		- 비무장 전환(Unequip) 또는 빈 슬롯 전환(Equip) 시 UnarmedHandler을 장착하기
+//	- 결합도 낮추기
+//		- UBOAnimInstance를 직접 불러오지 않고, 델리게이트 등을 통해 전달하기
+
 #pragma once
 
 #include "CoreMinimal.h"
