@@ -4,6 +4,7 @@
 #include "Animation/AnimInstance.h"
 #include "BOAnimInstance.generated.h"
 
+class UEquipmentAnimationData;
 class ABOCharacter;
 class UAnimSequenceBase;
 class UBlendSpace;
@@ -17,8 +18,8 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	//public:
-	//	void ApplyEquipmentAnimation(UEquipmentAnimationData* NewData);
+public:
+	void ApplyEquipmentAnimation(UEquipmentAnimationData* NewData);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Character")
