@@ -51,6 +51,11 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 	return ItemInstance;
 }
 
+UItemInstanceBase* FItemFactory::CreateItemInstance(UObject* Outer, AItemPickupBase* ItemPickup)
+{
+	return nullptr;
+}
+
 AItemPickupBase* FItemFactory::SpawnItemPickup(
 	UWorld* World,
 	const FName ItemID,
@@ -102,4 +107,9 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 	ItemPickup->Initialize(ItemInstance);
 
 	return ItemPickup;
+}
+
+AItemPickupBase* FItemFactory::SpawnItemPickup(UItemInstanceBase* ItemInstance, const FVector& Location, const FRotator& Rotation)
+{
+	return nullptr;
 }
