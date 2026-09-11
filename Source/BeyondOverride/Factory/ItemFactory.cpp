@@ -45,6 +45,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 		return nullptr;
 	}
 
+	// 데이터 초기 설정
 	ItemInstance->Initialize();
 	ItemInstance->SetStackCount(StackCount);
 
