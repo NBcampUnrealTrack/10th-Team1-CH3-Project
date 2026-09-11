@@ -4,7 +4,7 @@
 #include "Animation/AnimInstance.h"
 #include "BOAnimInstance.generated.h"
 
-class UEquipmentAnimationData;
+class UEquipmentAnimationDataAsset;
 class ABOCharacter;
 class UAnimSequenceBase;
 class UBlendSpace;
@@ -19,7 +19,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 public:
-	void ApplyEquipmentAnimation(const UEquipmentAnimationData* NewData);
+	void ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Character")
