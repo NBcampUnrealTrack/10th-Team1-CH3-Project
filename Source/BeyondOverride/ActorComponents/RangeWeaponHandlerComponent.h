@@ -6,17 +6,22 @@
 
 #include "RangeWeaponHandlerComponent.generated.h"
 
+class URangeWeaponInstance;
+
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
+
+  protected:
+	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;
 
   public:
 	URangeWeaponHandlerComponent();
 
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* EquippableItemInstance) override;
-	// 장비 등록 해제
+	// 장비 제거
 	virtual bool Unassign() override;
 
 	// 장비 장착
