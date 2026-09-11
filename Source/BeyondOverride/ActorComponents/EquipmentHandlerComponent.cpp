@@ -5,6 +5,11 @@ UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+UEquippableItemInstance* UEquipmentHandlerComponent::GetEquippableItemInstance() const
+{
+	return nullptr;
+}
+
 bool UEquipmentHandlerComponent::Assign(UEquippableItemInstance* EquippableItemInstance)
 {
 	return true;
