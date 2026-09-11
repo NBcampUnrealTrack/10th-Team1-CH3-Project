@@ -130,6 +130,34 @@ bool UInventoryComponent::SetItem(const int32 SlotIndex, UItemInstanceBase* Item
 	return true;
 }
 
+bool UInventoryComponent::SetItemStackCount(int32 SlotIndex, int32 StackCount)
+{
+	if (!Slots.IsValidIndex(SlotIndex))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* Item = Slots[SlotIndex];
+
+	if (!IsValid(Item))
+	{
+		return false;
+	}
+
+	if (StackCount <= 0)
+	{
+		Slots[SlotIndex] = nullptr;
+	}
+	else
+	{
+		Item->SetStackCount(StackCount);
+	}
+
+	OnInventoryChanged.Broadcast(Slots);
+
+	return true;
+}
+
 int32 UInventoryComponent::GetSlotCount() const
 {
 	return Slots.Num();
@@ -152,9 +180,4 @@ bool UInventoryComponent::FindEmptySlotIndex(int32& EmptySlotIndex) const
 	}
 
 	return false;
-}
-
-void UInventoryComponent::NotifyInventoryChanged()
-{
-	OnInventoryChanged.Broadcast(Slots);
 }
