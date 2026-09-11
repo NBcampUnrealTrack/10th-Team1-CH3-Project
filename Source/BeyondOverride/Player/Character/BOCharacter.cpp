@@ -11,6 +11,7 @@
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Interaction/InteractComponent.h"
+#include "ActorComponents/EquipmentManagerComponent.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -33,6 +34,7 @@ ABOCharacter::ABOCharacter()
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
+	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 }
 
 void ABOCharacter::BeginPlay()
@@ -119,7 +121,7 @@ float ABOCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	if (IsValid(StatComponent))
 	{
-		StatComponent->ApplyDamage(ActualDamage);
+		StatComponent->TakeDamage(ActualDamage);
 	}
 
 	return ActualDamage;
@@ -236,4 +238,16 @@ void ABOCharacter::ChangeMoveSpeed()
 
 	GetCharacterMovement()->MaxWalkSpeed = NewMoveSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = NewMoveSpeed * CrouchSpeedMultiplier;
+}
+
+void ABOCharacter::OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
+{
+	if (ItemInstanceBase)
+	{
+		EquipmentManagerComponent->Assign(Slot, ItemInstanceBase);
+	}
+	else
+	{
+		EquipmentManagerComponent->Unassign(Slot);
+	}
 }

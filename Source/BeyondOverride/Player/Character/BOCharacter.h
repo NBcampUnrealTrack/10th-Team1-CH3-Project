@@ -10,11 +10,22 @@ class UEquipmentComponent;
 class UStatComponent;
 class UInventoryComponent;
 class UInteractComponent;
+class UEquipmentManagerComponent;
+
+class UItemInstanceBase;
+
+enum class EEquipmentSlot : uint8;
 
 UCLASS()
 class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
+	UEquipmentComponent* GetEquipmentComponent() const { return EquipmentComponent; }
+	UStatComponent* GetStatComponent() const { return StatComponent; }
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
 
 public:
 	ABOCharacter();
@@ -51,6 +62,8 @@ protected:
 	UInventoryComponent* InventoryComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInteractComponent* InteractComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UEquipmentManagerComponent* EquipmentManagerComponent; // 장비 관리 컴포넌트
 
 private:
 	UFUNCTION()
@@ -84,4 +97,7 @@ private:
 
 	bool bIsSprint = false;
 
+public:
+	// 장비 슬롯에 아이템 등록 및 해제
+	void OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 };
