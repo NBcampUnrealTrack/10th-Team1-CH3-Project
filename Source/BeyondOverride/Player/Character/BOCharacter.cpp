@@ -239,3 +239,8 @@ void ABOCharacter::ChangeMoveSpeed()
 	GetCharacterMovement()->MaxWalkSpeed = NewMoveSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = NewMoveSpeed * CrouchSpeedMultiplier;
 }
+
+void ABOCharacter::OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
+{
+	EquipmentManagerComponent->Assign(Slot, ItemInstanceBase);
+}

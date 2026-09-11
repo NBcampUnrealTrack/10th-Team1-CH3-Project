@@ -12,6 +12,10 @@ class UInventoryComponent;
 class UInteractComponent;
 class UEquipmentManagerComponent;
 
+class UItemInstanceBase;
+
+enum class EEquipmentSlot : uint8;
+
 UCLASS()
 class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
@@ -93,4 +97,7 @@ private:
 
 	bool bIsSprint = false;
 
+public:
+	// 장비 슬롯에 아이템 등록 및 해제
+	void OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 };
