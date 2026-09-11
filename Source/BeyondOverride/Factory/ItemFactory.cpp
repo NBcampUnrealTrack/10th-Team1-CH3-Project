@@ -69,6 +69,28 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 		World,
 		ItemID,
 		StackCount);
+
+	// 아이템 오브젝트를 포함하는 액터 생성 후 반환
+	return SpawnItemPickup(
+		World,
+		ItemInstance,
+		Location,
+		Rotation);
+}
+
+AItemPickupBase* FItemFactory::SpawnItemPickup(
+	UWorld* World,
+	UItemInstanceBase* ItemInstance,
+	const FVector& Location,
+	const FRotator& Rotation)
+{
+	// World 유효성 검사
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	// ItemInstance 유효성 검사
 	if (!ItemInstance)
 	{
 		return nullptr;
@@ -102,12 +124,4 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 	ItemPickup->Initialize(ItemInstance);
 
 	return ItemPickup;
-}
-
-AItemPickupBase* FItemFactory::SpawnItemPickup(
-	UItemInstanceBase* ItemInstance,
-	const FVector& Location,
-	const FRotator& Rotation)
-{
-	return nullptr;
 }

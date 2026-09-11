@@ -23,6 +23,7 @@ struct BEYONDOVERRIDE_API FItemFactory
 		const FRotator& Rotation = FRotator::ZeroRotator);
 
 	static AItemPickupBase* SpawnItemPickup(
+		UWorld* World,
 		UItemInstanceBase* ItemInstance,
 		const FVector& Location = FVector::ZeroVector,
 		const FRotator& Rotation = FRotator::ZeroRotator);
