@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -9,14 +9,12 @@ class UCameraComponent;
 class UEquipmentComponent;
 class UStatComponent;
 class UInventoryComponent;
+class UInteractComponent;
 
 UCLASS()
 class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-public:
-	bool GetIsCrouch() const { return bIsCrouch; }
 
 public:
 	ABOCharacter();
@@ -26,13 +24,15 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SpeedMultiplier = 1.0f;
@@ -49,6 +49,8 @@ protected:
 	UStatComponent* StatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInventoryComponent* InventoryComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UInteractComponent* InteractComponent;
 
 private:
 	UFUNCTION()
@@ -70,7 +72,9 @@ private:
 	UFUNCTION()
 	void Secondary(const FInputActionValue& value);
 	UFUNCTION()
-	void Interact(const FInputActionValue& value);
+	void InteractPress(const FInputActionValue& value);
+	UFUNCTION()
+	void InteractRelease(const FInputActionValue& value);
 	UFUNCTION()
 	void Inventory(const FInputActionValue& value);
 	UFUNCTION()
@@ -78,7 +82,6 @@ private:
 
 	void ChangeMoveSpeed();
 
-	bool bIsCrouch = false;
 	bool bIsSprint = false;
 
 };
