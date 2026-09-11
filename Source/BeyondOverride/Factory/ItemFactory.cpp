@@ -15,10 +15,9 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 	{
 		return nullptr;
 	}
-	UWorld* World = Outer->GetWorld();
 
 	// GameInstance 확인
-	UGameInstance* GameInstance = World->GetGameInstance();
+	UGameInstance* GameInstance = Outer->GetWorld()->GetGameInstance();
 	if (!GameInstance)
 	{
 		return nullptr;
