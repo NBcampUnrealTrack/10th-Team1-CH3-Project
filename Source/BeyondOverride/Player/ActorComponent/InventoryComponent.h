@@ -6,7 +6,6 @@
 #include "InventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const TArray<UItemInstanceBase*>&, Slots);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnWeightChanged, float, CurCarryWeight, float, MaxCarryWeight);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))

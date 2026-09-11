@@ -119,7 +119,7 @@ float ABOCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	if (IsValid(StatComponent))
 	{
-		StatComponent->ApplyDamage(ActualDamage);
+		StatComponent->TakeDamage(ActualDamage);
 	}
 
 	return ActualDamage;
