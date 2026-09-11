@@ -5,7 +5,7 @@
 #include "RangeWeaponDataRow.generated.h"
 
 class ABulletProjectile;
-class UWeaponAnimationDataAsset;
+class UEquipmentAnimationDataAsset;
 
 USTRUCT(BlueprintType)
 struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
@@ -43,5 +43,5 @@ struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
 	TObjectPtr<UCurveFloat> SpreadCurve;  // 탄 퍼짐
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
-	TObjectPtr<UWeaponAnimationDataAsset> WeaponAnimationData;  // 애니메이션 데이터에셋
+	TObjectPtr<UEquipmentAnimationDataAsset> WeaponAnimationData;  // 애니메이션 데이터에셋
 };
