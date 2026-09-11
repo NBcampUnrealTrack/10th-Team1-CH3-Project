@@ -23,7 +23,17 @@ const FItemDataRow* UItemInstanceBase::GetItemData() const
 	return ItemData;
 }
 
+FName UItemInstanceBase::GetItemID() const
+{
+	return ItemID;
+}
+
 int32 UItemInstanceBase::GetStackCount() const
 {
 	return StackCount;
+}
+
+void UItemInstanceBase::SetStackCount(int32 InStackCount)
+{
+	StackCount = InStackCount;
 }
