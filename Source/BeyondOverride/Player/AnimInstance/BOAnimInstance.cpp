@@ -52,12 +52,12 @@ void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset
 		return;
 	}
 
-	/*CurrentEquipmentData = NewData;
+	CurrentEquipmentData = NewData;
 
-	EquipmentIdle = NewData->Idle;
-	EquipmentLocomotion = NewData->Locomotion;
-	EquipmentJumpStart = NewData->JumpStart;
-	EquipmentJumpLoop = NewData->JumpLoop;
-	EquipmentJumpLand = NewData->JumpLand;
-	EquipmentAim = NewData->Aim;*/
+	// EquipmentIdle = NewData->Idle;
+	// EquipmentLocomotion = NewData->Locomotion;
+	// EquipmentJumpStart = NewData->JumpStart;
+	// EquipmentJumpLoop = NewData->JumpLoop;
+	// EquipmentJumpLand = NewData->JumpLand;
+	// EquipmentAim = NewData->Aim;
 }

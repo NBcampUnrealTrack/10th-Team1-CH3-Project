@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+
 #include "Animation/AnimInstance.h"
+
 #include "BOAnimInstance.generated.h"
 
 class UEquipmentAnimationDataAsset;
@@ -14,14 +16,14 @@ class BEYONDOVERRIDE_API UBOAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
-public:
+  public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-public:
+  public:
 	void ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData);
 
-protected:
+  protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Character")
 	TObjectPtr<ABOCharacter> Character;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
@@ -37,19 +39,19 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	bool bIsCrouch = false;
 
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentIdle = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UBlendSpace* EquipmentLocomotion = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentJumpStart = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentJumpLoop = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentJumpLand = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentAim = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentIdle = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UBlendSpace* EquipmentLocomotion = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentJumpStart = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentJumpLoop = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentJumpLand = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentAim = nullptr;
 
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UEquipmentAnimationData* CurrentEquipmentData = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	const UEquipmentAnimationDataAsset* CurrentEquipmentData = nullptr;
 };
