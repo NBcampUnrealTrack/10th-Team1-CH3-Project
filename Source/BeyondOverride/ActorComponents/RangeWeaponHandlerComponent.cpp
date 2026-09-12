@@ -1,5 +1,6 @@
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 
+#include "GameFramework/Pawn.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 
@@ -8,6 +9,9 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	// 틱 가능 & 초기 비활성화
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
+
+	// 반동 적용 속도
+	RecoilApplySpeed = 10;
 }
 
 UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance() const
@@ -79,4 +83,32 @@ bool URangeWeaponHandlerComponent::Use()
 void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// 적용할 반동 값 계산
+	FVector2D RecoilDelta = FMath::Vector2DInterpConstantTo(FVector2D::ZeroVector, RecoilAccumulator, DeltaTime, RecoilApplySpeed);
+
+	// 반동 적용
+	APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!Pawn)
+	{
+		return;
+	}
+
+	Pawn->AddControllerPitchInput(-RecoilDelta.Y);
+	Pawn->AddControllerYawInput(RecoilDelta.X);
+
+	// 누적에 반영
+	RecoilAccumulator -= RecoilDelta;
+}
+
+void URangeWeaponHandlerComponent::AddRecoil()
+{
+	// TODO: 반동 타임라인을 통해 누적 반동에 추가
+}
+
+FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRotation)
+{
+	// TODO: 탄 퍼짐 타임라인을 통해 균일 분포를 적용한 방향 반환
+
+	return AimRotation;
 }
