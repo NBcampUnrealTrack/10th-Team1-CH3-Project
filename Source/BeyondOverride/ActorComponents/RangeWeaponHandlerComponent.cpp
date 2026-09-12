@@ -5,6 +5,9 @@
 
 URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 {
+	// 틱 가능 & 초기 비활성화
+	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
 UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance() const
@@ -27,6 +30,9 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 		return false;
 	}
 
+	// 틱 활성화
+	SetComponentTickEnabled(true);
+
 	// 등록 성공
 	return true;
 }
@@ -48,6 +54,9 @@ bool URangeWeaponHandlerComponent::Unassign()
 	// 장비 제거
 	RangeWeaponInstance = nullptr;
 
+	// 틱 비활성화
+	SetComponentTickEnabled(false);
+
 	// 제거 성공
 	return true;
 }
@@ -65,4 +74,9 @@ bool URangeWeaponHandlerComponent::Unequip()
 bool URangeWeaponHandlerComponent::Use()
 {
 	return true;
+}
+
+void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
