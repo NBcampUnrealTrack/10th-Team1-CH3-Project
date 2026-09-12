@@ -1,5 +1,6 @@
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 
+#include "DataTables/Items/RangeWeaponDataRow.h"
 #include "GameFramework/Pawn.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
@@ -37,6 +38,9 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 	// 틱 활성화
 	SetComponentTickEnabled(true);
 
+	// 타임라인 설정
+	SetupTimeline();
+
 	// 등록 성공
 	return true;
 }
@@ -60,6 +64,9 @@ bool URangeWeaponHandlerComponent::Unassign()
 
 	// 틱 비활성화
 	SetComponentTickEnabled(false);
+
+	// 타임라인 제거
+	ClearTimeline();
 
 	// 제거 성공
 	return true;
@@ -99,6 +106,42 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 	// 누적에 반영
 	RecoilAccumulator -= RecoilDelta;
+}
+
+void URangeWeaponHandlerComponent::SetupTimeline()
+{
+	// 기본 타임라인 제거
+	ClearTimeline();
+
+	// 반동 Pitch
+	if (UCurveFloat* RecoilPitchCurve = RangeWeaponInstance->GetRangeWeaponData()->RecoilPitchCurve)
+	{
+		RecoilPitchTimeline.AddInterpFloat(RecoilPitchCurve, FOnTimelineFloat());
+	}
+
+	// 반동 Yaw
+	if (UCurveFloat* RecoilYawCurve = RangeWeaponInstance->GetRangeWeaponData()->RecoilYawCurve)
+	{
+		RecoilYawTimeline.AddInterpFloat(RecoilYawCurve, FOnTimelineFloat());
+	}
+
+	// 탄 퍼짐
+	if (UCurveFloat* SpreadCurve = RangeWeaponInstance->GetRangeWeaponData()->SpreadCurve)
+	{
+		SpreadDegreeTimeline.AddInterpFloat(SpreadCurve, FOnTimelineFloat());
+	}
+}
+
+void URangeWeaponHandlerComponent::ClearTimeline()
+{
+	// 반동 Pitch
+	RecoilPitchTimeline = FTimeline();
+
+	// 반동 Yaw
+	RecoilYawTimeline = FTimeline();
+
+	// 탄 퍼짐
+	SpreadDegreeTimeline = FTimeline();
 }
 
 void URangeWeaponHandlerComponent::AddRecoil()
