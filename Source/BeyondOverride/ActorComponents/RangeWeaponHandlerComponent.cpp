@@ -113,20 +113,27 @@ void URangeWeaponHandlerComponent::SetupTimeline()
 	// 기본 타임라인 제거
 	ClearTimeline();
 
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return;
+	}
+
 	// 반동 Pitch
-	if (UCurveFloat* RecoilPitchCurve = RangeWeaponInstance->GetRangeWeaponData()->RecoilPitchCurve)
+	if (UCurveFloat* RecoilPitchCurve = RangeWeaponData->RecoilPitchCurve)
 	{
 		RecoilPitchTimeline.AddInterpFloat(RecoilPitchCurve, FOnTimelineFloat());
 	}
 
 	// 반동 Yaw
-	if (UCurveFloat* RecoilYawCurve = RangeWeaponInstance->GetRangeWeaponData()->RecoilYawCurve)
+	if (UCurveFloat* RecoilYawCurve = RangeWeaponData->RecoilYawCurve)
 	{
 		RecoilYawTimeline.AddInterpFloat(RecoilYawCurve, FOnTimelineFloat());
 	}
 
 	// 탄 퍼짐
-	if (UCurveFloat* SpreadCurve = RangeWeaponInstance->GetRangeWeaponData()->SpreadCurve)
+	if (UCurveFloat* SpreadCurve = RangeWeaponData->SpreadCurve)
 	{
 		SpreadDegreeTimeline.AddInterpFloat(SpreadCurve, FOnTimelineFloat());
 	}
