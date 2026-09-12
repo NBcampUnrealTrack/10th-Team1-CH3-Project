@@ -153,7 +153,24 @@ void URangeWeaponHandlerComponent::ClearTimeline()
 
 void URangeWeaponHandlerComponent::AddRecoil()
 {
-	// TODO: 반동 타임라인을 통해 누적 반동에 추가
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return;
+	}
+
+	// 반동 Pitch
+	if (UCurveFloat* RecoilPitchCurve = RangeWeaponData->RecoilPitchCurve)
+	{
+		RecoilAccumulator.Y += RecoilPitchCurve->GetFloatValue(RecoilPitchTimeline.GetPlaybackPosition());
+	}
+
+	// 반동 Yaw
+	if (UCurveFloat* RecoilYawCurve = RangeWeaponData->RecoilYawCurve)
+	{
+		RecoilAccumulator.X += RecoilYawCurve->GetFloatValue(RecoilYawTimeline.GetPlaybackPosition());
+	}
 }
 
 FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRotation)
