@@ -11,8 +11,7 @@ UInteractHighlightComponent::UInteractHighlightComponent()
 	// 기본 머티리얼을 코드에서 찾아둠
 	// 없으면 강조만 안 켜진다.
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> DefaultMat(
-		TEXT("/Game/Interaction/Materials/M_InteractHighlight.M_InteractHighlight"));
-
+		TEXT("/Game/Materials/M_Highlight.M_Highlight"));
 	if (DefaultMat.Succeeded())
 	{
 		HighlightMaterial = DefaultMat.Object;

@@ -43,6 +43,11 @@ void AInteractableActorBase::PostInitializeComponents()
 		if (P && P->IsCollisionEnabled())
 		{
 			P->SetCollisionResponseToChannel(ECC_Interaction, ECR_Block);
+
+			//P->SetCollisionResponseToChannel(ECC_InteractionDetector, ECR_Overlap);
+
+			// 상호작용 탐지용 겹침 이벤트는 무조건 켠다.
+			P->SetGenerateOverlapEvents(true);
 		}
 	}
 }
