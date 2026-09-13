@@ -18,38 +18,55 @@ class BEYONDOVERRIDE_API UAttackDataComponent : public UActorComponent
 
   public:
 	UAttackDataComponent();
+
+	// Setter
+	UFUNCTION()
+	void SetProtect(int32 GetProtect);
+	UFUNCTION()
+	void SetAttackDamage(int32 Damage);
+	UFUNCTION()
+	void SetRapidCount(int32 Rapid);
+	UFUNCTION()
+	void SetAttackDelay(float Speed);
+	UFUNCTION()
+	void SetAttackRange(float Range);
 	UFUNCTION()
 	void SetTargetLocation(FVector Point);
+
+	// Getter
 	UFUNCTION()
-	FVector GetTargetLocation() const;
+	int32 GetProtect() const;
 	UFUNCTION()
 	int32 GetAttackDamage() const;
 	UFUNCTION()
 	int32 GetRapidCount() const;
 	UFUNCTION()
-	float GetAttackSpeed() const;
+	float GetAttackDelay() const;
 	UFUNCTION()
 	float GetAttackRange() const;
+	UFUNCTION()
+	FVector GetTargetLocation() const;
+
+	// Function
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Monster")
 	bool IsDelay() const;
-
-	void EndAttackHold();
 
 	void CallAttackDelay();
 
   protected:
 	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
+	int32 Protect = 15;
+	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
 	int32 AttackDamage = 15;
 	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
 	int32 RapidCount = 3;
 	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
-	float AttackSpeed = 7.0f;
+	float AttackDelay = 7.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
 	float AttackRange = 600.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
 	FVector TargetLocation;
 
-	bool AttackHold = false;
 	FTimerHandle AttackDelayHandler;
 
 	virtual void BeginPlay() override;

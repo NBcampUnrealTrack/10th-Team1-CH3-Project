@@ -7,14 +7,39 @@ UAttackDataComponent::UAttackDataComponent()
 {
 }
 
+void UAttackDataComponent::SetProtect(int32 GetProtect)
+{
+	Protect = GetProtect;
+}
+
+void UAttackDataComponent::SetAttackDamage(int32 Damage)
+{
+	AttackDamage = Damage;
+}
+
+void UAttackDataComponent::SetRapidCount(int32 Rapid)
+{
+	RapidCount = Rapid;
+}
+
+void UAttackDataComponent::SetAttackDelay(float Speed)
+{
+	AttackDelay = Speed;
+}
+
+void UAttackDataComponent::SetAttackRange(float Range)
+{
+	AttackRange = Range;
+}
+
 void UAttackDataComponent::SetTargetLocation(FVector Point)
 {
 	TargetLocation = Point;
 }
 
-FVector UAttackDataComponent::GetTargetLocation() const
+int32 UAttackDataComponent::GetProtect() const
 {
-	return TargetLocation;
+	return Protect;
 }
 
 int32 UAttackDataComponent::GetAttackDamage() const
@@ -27,9 +52,9 @@ int32 UAttackDataComponent::GetRapidCount() const
 	return RapidCount;
 }
 
-float UAttackDataComponent::GetAttackSpeed() const
+float UAttackDataComponent::GetAttackDelay() const
 {
-	return AttackSpeed;
+	return AttackDelay;
 }
 
 float UAttackDataComponent::GetAttackRange() const
@@ -37,28 +62,28 @@ float UAttackDataComponent::GetAttackRange() const
 	return AttackRange;
 }
 
-bool UAttackDataComponent::IsDelay() const
+FVector UAttackDataComponent::GetTargetLocation() const
 {
-	return AttackHold;
+	return TargetLocation;
 }
 
-void UAttackDataComponent::EndAttackHold()
+bool UAttackDataComponent::IsDelay() const
 {
-	AttackHold = false;
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(AttackDelayHandler);
 }
 
 void UAttackDataComponent::CallAttackDelay()
 {
-	if (AttackHold)
+	if (IsDelay())
 	{
 		return;
 	}
 
-	AttackHold = true;
 	GetWorld()->GetTimerManager().SetTimer(AttackDelayHandler,
-										   this,
-										   &UAttackDataComponent::EndAttackHold,
-										   AttackSpeed,
+										   FTimerDelegate(),
+										   AttackDelay,
 										   false);
 }
 

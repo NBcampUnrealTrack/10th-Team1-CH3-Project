@@ -1,20 +1,22 @@
 // 26/09/10 Copyright CH3 Team1 Jinho Song
 
 // Base include
-#include "Monster/BTTaskBlackBoardBase/BTTaskPatrolCheck.h"
+#include "Monster/BTTaskBlackBoardBase/BTTaskCallingCheck.h"
 
 // Add include
+
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Player/Character/BOCharacter.h"
 
-UBTTaskPatrolCheck::UBTTaskPatrolCheck()
+UBTTaskCallingCheck::UBTTaskCallingCheck()
 {
-	NodeName = TEXT("Patrol Check");
+	NodeName = TEXT("Calling Check");
 }
 
-EBTNodeResult::Type UBTTaskPatrolCheck::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTaskCallingCheck::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp)
@@ -40,12 +42,26 @@ EBTNodeResult::Type UBTTaskPatrolCheck::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-	if (AIState->GetBeCanPatrol())
+	ABOCharacter* Target = AIState->GetTarget();
+	if (!Target)
 	{
-		AIState->FalseBeCanPatrol();
-		AIState->CallPatrolTimer();
 		return EBTNodeResult::Succeeded;
 	}
 
-	return EBTNodeResult::Failed;
+	if (!AIState->GetIsCallLocation() && AIState->IsCalling())
+	{
+		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
+		return EBTNodeResult::Succeeded;
+	}
+
+	if (AIState->GetIsCallLocation() && AIState->IsCalling())
+	{
+		AIState->CallLocationPatrolTimer();
+		AIState->SetLocationPatrolActor(Target);
+		AIState->TrueBeCanPatrol();
+		AIState->SetLocationPatrolPoint(Target->GetActorLocation());
+		return EBTNodeResult::Succeeded;
+	}
+
+	return EBTNodeResult::Succeeded;
 }

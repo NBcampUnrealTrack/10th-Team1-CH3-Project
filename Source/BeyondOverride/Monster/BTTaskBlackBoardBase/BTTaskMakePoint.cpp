@@ -41,7 +41,13 @@ EBTNodeResult::Type UBTTaskMakePoint::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
-	TargetCenter = Monster->GetStateComponent()->GetSpawnPoint();
+	UStateComponent* MonsterState = Monster->GetState();
+	if (!MonsterState)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	TargetCenter = MonsterState->GetSpawnPoint();
 	TargetCenter.X += FMath::RandRange(-RangeRand, RangeRand);
 	TargetCenter.Y += FMath::RandRange(-RangeRand, RangeRand);
 
