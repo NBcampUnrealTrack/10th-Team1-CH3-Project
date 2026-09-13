@@ -40,6 +40,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
   protected:
+	// 사격 타이머
+	FTimerHandle FireTimerHandle;
+
 	// 반동 적용 속도
 	float RecoilApplySpeed;
 
@@ -54,8 +57,18 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FTimeline SpreadDegreeTimeline;
 
   protected:
-	void SetupTimeline(); // 타임라인 설정
-	void ClearTimeline(); // 타임라인 제거
+	// 사격 가능 여부 반환
+	bool CanFire() const;
+
+	// 타임라인 설정
+	void SetupTimeline();
+	// 타임라인 제거
+	void ClearTimeline();
+
+	// 현재 누적 반동에 추가
+	void AddRecoil();
+	// 현재 탄퍼짐 바탕으로 사격 방향 반환
+	FRotator GetSpreadRotation(const FRotator& AimRotation);
 
 	void AddRecoil();                                        // 현재 누적 반동에 추가
 	FRotator GetSpreadRotation(const FRotator& AimRotation); // 현재 탄퍼짐 바탕으로 사격 방향 반환

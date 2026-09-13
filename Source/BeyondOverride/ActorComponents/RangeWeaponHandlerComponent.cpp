@@ -108,6 +108,30 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 	RecoilAccumulator -= RecoilDelta;
 }
 
+bool URangeWeaponHandlerComponent::CanFire() const
+{
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return false;
+	}
+
+	// 사격 딜레이
+	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	{
+		return false;
+	}
+
+	// 탄약 부족
+	if (RangeWeaponInstance->GetCurrentAmmo() <= 0)
+	{
+		return false;
+	}
+
+	// 사격 가능
+	return true;
+}
+
 void URangeWeaponHandlerComponent::SetupTimeline()
 {
 	// 기본 타임라인 제거
