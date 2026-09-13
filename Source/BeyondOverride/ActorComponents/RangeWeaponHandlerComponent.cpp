@@ -319,12 +319,12 @@ bool URangeWeaponHandlerComponent::CanReload() const
 	}
 
 	// 여분 탄약 등, 외부 조건 확인
-	if (!CanReloadDeleagte.IsBound())
+	if (!CanReloadDelegate.IsBound())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 불가 - CanReloadDeleagte is not Bound"));
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 불가 - CanReloadDelegate is not Bound"));
 		return false;
 	}
-	if (!CanReloadDeleagte.Execute(RangeWeaponInstance))
+	if (!CanReloadDelegate.Execute(RangeWeaponInstance))
 	{
 		return false;
 	}

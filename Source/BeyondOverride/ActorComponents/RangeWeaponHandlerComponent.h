@@ -27,7 +27,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	GENERATED_BODY()
   public:
 	// 재장전 가능 여부 델리게이트
-	FCanReloadDelegate CanReloadDeleagte;
+	FCanReloadDelegate CanReloadDelegate;
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
