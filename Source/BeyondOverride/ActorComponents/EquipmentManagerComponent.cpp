@@ -89,6 +89,15 @@ void UEquipmentManagerComponent::Unequip()
 
 void UEquipmentManagerComponent::Use()
 {
+	// 슬롯 확인
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Use 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
+		return;
+	}
+
+	// 장비 사용
+	EquipmentHandlerComponents[ActiveSlot]->Use();
 }
 
 void UEquipmentManagerComponent::Reload()
