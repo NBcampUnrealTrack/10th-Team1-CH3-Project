@@ -238,11 +238,25 @@ void URangeWeaponHandlerComponent::ClearTimeline()
 
 FVector URangeWeaponHandlerComponent::GetMuzzleLocation() const
 {
-	return FVector();
+	FVector MuzzleLocation = GetOwner()->GetActorLocation();
+	if (EquipMeshComponent && EquipMeshComponent->DoesSocketExist(MuzzleSocketName))
+	{
+		MuzzleLocation = EquipMeshComponent->GetSocketLocation(MuzzleSocketName);
+	}
+
+	return MuzzleLocation;
 }
 
 FRotator URangeWeaponHandlerComponent::GetMuzzleRotation() const
 {
+	FRotator Muzzleotation = GetOwner()->GetActorRotation();
+	if (EquipMeshComponent && EquipMeshComponent->DoesSocketExist(MuzzleSocketName))
+	{
+		Muzzleotation = EquipMeshComponent->GetSocketRotation(MuzzleSocketName);
+	}
+
+	return Muzzleotation;
+
 	return FRotator();
 }
 
