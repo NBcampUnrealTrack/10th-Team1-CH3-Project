@@ -49,3 +49,19 @@ bool UEquipmentHandlerComponent::Use()
 {
 	return true;
 }
+
+void UEquipmentHandlerComponent::AttachToSocket(FName SocketName)
+{
+	if (!EquipMeshComponent)
+	{
+		return;
+	}
+
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		EquipMeshComponent->AttachToComponent(
+			Character->GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			SocketName);
+	}
+}
