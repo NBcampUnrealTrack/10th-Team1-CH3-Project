@@ -1,5 +1,6 @@
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 
+#include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
 #include "GameFramework/Character.h"
@@ -552,6 +553,7 @@ void URangeWeaponHandlerComponent::StartReloadTimer()
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 	if (RangeWeaponData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 타이머 활성화 실패 - 유효하지 않은 RangeWeaponData"));
 		return;
 	}
 
@@ -566,10 +568,74 @@ void URangeWeaponHandlerComponent::StartReloadTimer()
 
 void URangeWeaponHandlerComponent::PlayFireAnimation()
 {
+	// 장비 메시 컴포넌트 확인
+	if (!EquipMeshComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 애니메이션 재생 실패 - 유효하지 않은 EquipMeshComponent"));
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
+	if (EquippableItemData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 애니메이션 재생 실패 - 유효하지 않은 EquippableItemData"));
+		return;
+	}
+
+	// 장비 애니메이션 검증
+	UEquipmentAnimationDataAsset* EquipmentAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!EquipmentAnimationData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 애니메이션 재생 실패 - 유효하지 않은 EquipmentAnimationData"));
+		return;
+	}
+
+	// 사격 애니메이션 검증
+	UAnimMontage* FireAnim = EquipmentAnimationData->WeaponFire;
+	if (!FireAnim)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 애니메이션 재생 실패 - 유효하지 않은 FireAnim"));
+		return;
+	}
+
+	EquipMeshComponent->PlayAnimation(FireAnim);
 }
 
 void URangeWeaponHandlerComponent::PlayReloadAnimation()
 {
+	// 장비 메시 컴포넌트 확인
+	if (!EquipMeshComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 애니메이션 재생 실패 - 유효하지 않은 EquipMeshComponent"));
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
+	if (EquippableItemData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 애니메이션 재생 실패 - 유효하지 않은 EquippableItemData"));
+		return;
+	}
+
+	// 장비 애니메이션 검증
+	UEquipmentAnimationDataAsset* EquipmentAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!EquipmentAnimationData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 애니메이션 재생 실패 - 유효하지 않은 EquipmentAnimationData"));
+		return;
+	}
+
+	// 재장전 애니메이션 검증 - TODO: 조준 여부에 따라 구분
+	UAnimMontage* WeaponReloadHip = EquipmentAnimationData->WeaponReloadHip;
+	if (!WeaponReloadHip)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 애니메이션 재생 실패 - 유효하지 않은 WeaponReloadHip"));
+		return;
+	}
+
+	EquipMeshComponent->PlayAnimation(WeaponReloadHip);
 }
 
 void URangeWeaponHandlerComponent::StopReloadAnimation()
