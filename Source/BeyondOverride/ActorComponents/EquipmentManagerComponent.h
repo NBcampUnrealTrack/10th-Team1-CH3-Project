@@ -18,6 +18,18 @@ enum class EEquipmentSlot : uint8;
 
 class UEquipmentHandlerComponent;
 class UItemInstanceBase;
+class URangeWeaponInstance;
+
+// [RangeWeapon] 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
+DECLARE_DELEGATE_RetVal_OneParam(
+	bool, // 재장전 여부 반환
+	FCanReloadDelegate,
+	URangeWeaponInstance*);
+// [RangeWeapon] 재장전 탄약 요청하는 델리게이트 - 재장전에 사용할 탄약 소모 및 전달
+DECLARE_DELEGATE_RetVal_OneParam(
+	int32,
+	FRequestReloadAmmoDelegate,
+	URangeWeaponInstance*);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
@@ -48,4 +60,18 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	void Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 	// 슬롯에서 장비 해제
 	void Unassign(EEquipmentSlot Slot);
+
+  public:
+	// 재장전 가능 여부 델리게이트
+	FCanReloadDelegate CanReloadDelegate;
+	// 재장전 탄약 요청 델리게이트
+	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
+
+  protected:
+	// 델리게이트 바인딩
+	void BindDelegates();
+
+	// Range Weapon 델리게이트
+	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
+	int32 OnRequestReloadAmmod(URangeWeaponInstance* RangeWeaponInstance) const;
 };

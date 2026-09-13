@@ -15,6 +15,8 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
+
+	BindDelegates();
 }
 
 void UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
@@ -139,4 +141,51 @@ void UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 	{
 		EquipmentHandlerComponents[Slot]->Unassign();
 	}
+}
+
+void UEquipmentManagerComponent::BindDelegates()
+{
+	// Primary (Range Weapon)
+	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Primary))
+	{
+		if (URangeWeaponHandlerComponent* PrimaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Primary]))
+		{
+			PrimaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
+			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmod);
+		}
+	}
+
+	//  Secondary (Range Weapon)
+	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Secondary))
+	{
+		if (URangeWeaponHandlerComponent* SecondaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Secondary]))
+		{
+			SecondaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
+			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmod);
+		}
+	}
+}
+
+bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
+{
+	if (!CanReloadDelegate.IsBound())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 재장전 불가 - CanReloadDelegate is not Bound"));
+		return false;
+	}
+
+	// 재장전 가능 여부 반환
+	return CanReloadDelegate.Execute(RangeWeaponInstance);
+}
+
+int32 UEquipmentManagerComponent::OnRequestReloadAmmod(URangeWeaponInstance* RangeWeaponInstance) const
+{
+	if (!RequestReloadAmmoDelegate.IsBound())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 재장전 실패 - RequestReloadAmmoDelegate is not Bound"));
+		return 0;
+	}
+
+	// 재장전에 사용할 탄약 개수 전달
+	return RequestReloadAmmoDelegate.Execute(RangeWeaponInstance);
 }
