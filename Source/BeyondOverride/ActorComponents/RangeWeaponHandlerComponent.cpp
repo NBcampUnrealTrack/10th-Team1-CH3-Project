@@ -151,10 +151,9 @@ bool URangeWeaponHandlerComponent::Equip()
 
 bool URangeWeaponHandlerComponent::Unequip()
 {
-	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	// 해제 불가
+	if (!CanUnequip())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - 등록된 장비가 없음"))
 		return false;
 	}
 
@@ -237,6 +236,24 @@ bool URangeWeaponHandlerComponent::Use()
 
 	// 사격 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
+
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanUnequip()
+{
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - 등록된 장비가 없음"))
+		return false;
+	}
+
+	// 사용 중
+	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	{
+		return false;
+	}
 
 	return true;
 }

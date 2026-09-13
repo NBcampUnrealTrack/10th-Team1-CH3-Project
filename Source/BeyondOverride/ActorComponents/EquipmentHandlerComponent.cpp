@@ -50,6 +50,11 @@ bool UEquipmentHandlerComponent::Use()
 	return true;
 }
 
+bool UEquipmentHandlerComponent::CanUnequip()
+{
+	return true;
+}
+
 void UEquipmentHandlerComponent::AttachToSocket(FName SocketName)
 {
 	if (!EquipMeshComponent)

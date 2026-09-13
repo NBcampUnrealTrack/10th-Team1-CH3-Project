@@ -40,6 +40,9 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	// 장비 사용
 	virtual bool Use();
 
+	// 장비 해제 가능 여부
+	virtual bool CanUnequip();
+
   protected:
 	// 소켓에 메시 부착
 	void AttachToSocket(FName SocketName);
