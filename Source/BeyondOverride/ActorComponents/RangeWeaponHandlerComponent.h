@@ -73,6 +73,8 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FVector GetMuzzleLocation() const;
 	// 총구 방향 반환
 	FRotator GetMuzzleRotation() const;
+	// 실제 목표 방향
+	FRotator GetAimRotation() const;
 
 	// 현재 누적 반동에 추가
 	void AddRecoil();

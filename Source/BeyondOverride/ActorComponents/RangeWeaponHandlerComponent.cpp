@@ -4,8 +4,10 @@
 #include "DataTables/Items/RangeWeaponDataRow.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerController.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 
 URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 {
@@ -112,13 +114,13 @@ bool URangeWeaponHandlerComponent::Use()
 
 	// 총구 위치 & 방향
 	const FVector MuzzleLocation = GetMuzzleLocation();
-	const FRotator MuzzleRotation = GetMuzzleRotation();
+	const FRotator AimRotation = GetAimRotation();
 
 	// 총알 소환
 	ABulletProjectile* Bullet = SpawnProjectile(
 		GetOwner(),
 		MuzzleLocation,
-		GetSpreadRotation(MuzzleRotation)); // 탄 퍼짐 적용
+		GetSpreadRotation(AimRotation)); // 탄 퍼짐 적용
 
 	// 반동 추가
 	AddRecoil();
@@ -256,6 +258,58 @@ FRotator URangeWeaponHandlerComponent::GetMuzzleRotation() const
 	}
 
 	return Muzzleotation;
+}
+
+FRotator URangeWeaponHandlerComponent::GetAimRotation() const
+{
+	// 총구 방향
+	const FRotator MuzzleRotation = GetMuzzleRotation();
+
+	// Owner 유효성 검증
+	APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!Pawn)
+	{
+		return MuzzleRotation;
+	}
+
+	// 컨트롤러 유효성 검증
+	AController* Controller = Pawn->GetController();
+	if (!Controller)
+	{
+		return MuzzleRotation;
+	}
+
+	// 컨트롤러 위치 & 방향
+	FVector ViewLocation;
+	FRotator ViewRotation;
+	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
+	// 라인트레이스 실행 - 컨트롤러 기준
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(GetOwner());
+
+	const FVector StartLocation = ViewLocation;
+	const FVector EndLocation = StartLocation + ViewRotation.Vector() * 1e6f; // 10km
+
+	GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECC_Visibility,
+		Params);
+
+	// 목표 위치
+	const FVector AimLocation = HitResult.bBlockingHit
+									? HitResult.ImpactPoint
+									: EndLocation;
+
+	// 총구 방향 구하기
+	const FRotator AimRotation = UKismetMathLibrary::FindLookAtRotation(
+		GetMuzzleLocation(),
+		AimLocation);
+
+	return AimRotation;
 }
 
 void URangeWeaponHandlerComponent::AddRecoil()
