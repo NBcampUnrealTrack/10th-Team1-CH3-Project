@@ -16,14 +16,19 @@ class BEYONDOVERRIDE_API UBOAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
-  public:
+public:
+	void ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData);
+	void PlayEquipMontage();
+	void PlayFireHipMontage();
+	void PlayFireAimMontage();
+	void PlayReloadHipMontage();
+	void PlayReloadAimMontage();
+
+public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-  public:
-	void ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData);
-
-  protected:
+protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Character")
 	TObjectPtr<ABOCharacter> Character;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
@@ -38,19 +43,23 @@ class BEYONDOVERRIDE_API UBOAnimInstance : public UAnimInstance
 	bool bIsFalling = false;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	bool bIsCrouch = false;
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
+	bool bIsAiming = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UAnimSequenceBase* EquipmentIdle = nullptr;
+	UAnimSequenceBase* EquipmentHipIdle = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UBlendSpace* EquipmentLocomotion = nullptr;
+	UAnimSequenceBase* EquipmentAimIdle = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UAnimSequenceBase* EquipmentJumpStart = nullptr;
+	UBlendSpace* EquipmentHipLocomotion = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UAnimSequenceBase* EquipmentJumpLoop = nullptr;
+	UBlendSpace* EquipmentAimLocomotion = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UAnimSequenceBase* EquipmentJumpLand = nullptr;
+	UAnimSequenceBase* EquipmentJump = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UAnimSequenceBase* EquipmentAim = nullptr;
+	UAnimSequenceBase* EquipmentFallingLoop = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentLand = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	const UEquipmentAnimationDataAsset* CurrentEquipmentData = nullptr;
