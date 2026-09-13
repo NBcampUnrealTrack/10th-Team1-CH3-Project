@@ -196,6 +196,9 @@ bool URangeWeaponHandlerComponent::Unequip()
 		EquipMeshComponent->SetSkeletalMesh(nullptr);
 	}
 
+	// 재장전 중이면 취소
+	OnReloadInterrupted();
+
 	return true;
 }
 
