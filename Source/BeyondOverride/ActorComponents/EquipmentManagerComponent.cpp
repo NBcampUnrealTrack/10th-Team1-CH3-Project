@@ -180,6 +180,18 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 성공 - %s를 %s 슬롯에 등록 성공"), *GetNameSafe(ItemInstanceBase), *UEnum::GetValueAsString(Slot));
+
+	// 활성화 슬롯에 장착 시 Equip()
+	if (Slot == ActiveSlot)
+	{
+		EquipmentHandlerComponents[Slot]->Equip();
+	}
+	// 비활성화 슬롯에 장착 시 Unequip()
+	else
+	{
+		EquipmentHandlerComponents[Slot]->Unequip();
+	}
+
 	return true;
 }
 
