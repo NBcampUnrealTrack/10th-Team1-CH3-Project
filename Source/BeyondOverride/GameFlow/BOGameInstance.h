@@ -2,11 +2,10 @@
 
 #pragma once
 
-#include "BOEnums.h"
 #include "CoreMinimal.h"
 
-#include "Data/GameDataAsset.h"
-#include "Data/SpawnStruct.h"
+#include "../DataAssets/BODataAsset.h"
+#include "../Enums/BOEnums.h"
 #include "Engine/GameInstance.h"
 
 #include "BOGameInstance.generated.h"
@@ -16,56 +15,79 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-  public:
-	virtual void Init() override;
-
   private:
-	void LoadSpawnVolumeData();
-	void LoadAIData();
-	void LoadContainerData();
+	virtual void Init() override;
+	void LoadMonsterData();
 
   public:
+	void InitSetting();
 	void Start();
 	void Restart();
 	void Exit();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
 	void OpenLevel(ELevel Level);
-	void SavePlayerData();
 
-	// TMap<ELevel, FName> GetLevels() const;
-	// TArray<FName> GetRegions() const;
-	void GetSpawnVolumeData(FName Id, FSpawnStruct& Data);
-	// void GetAIData(FName Id, FAIData& Data);
-	void GetContainerData(FName Id, FSpawnStruct& Data);
+	void SavePlayerData();
+	void SaveFarmingData();
+
+  public:
+	UBODataAsset* GetBODataAsset() const;
+	void GetLevels(TMap<ELevel, FName>& Data) const;
+	void GetRegions(TArray<FName>& Data) const;
+	void GetBasicEquipments(TArray<FName>& Data) const;
+	float GetExitActivateProb() const;
+	// void GetAIData(FName Id, FAIData& Data) const;
+
 	EGameState GetGameState() const;
 	EPlayingState GetPlayingState() const;
 	EFarmingResult GetFarmingResult() const;
+
+	float GetTotalSurvivalTime() const;
+	float GetSurvivalTime() const;
+	void GetTotalKilledMonsters(TMap<FName, int32>& Data) const;
+	void GetKilledMonsters(TMap<FName, int32>& Data) const;
+	FName GetKillerMonster() const;
+
 	float GetCurrentHealth() const;
 	float GetCurrentShield() const;
 	int32 GetTotalMoney() const;
 
+	bool GetIsCardAcquired() const;
+
   public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Data")
+	UBODataAsset* BODataAsset;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Data")
 	TMap<ELevel, FName> Levels;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Data")
 	TArray<FName> Regions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	UGameDataAsset* GameDataAsset;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Data")
+	TArray<FName> BasicEquipments;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Data")
+	float ExitActivateProb;
 
   private:
 	EGameState GameState;
 	EPlayingState PlayingState;
 	EFarmingResult FarmingResult;
+
 	float TotalSurvivalTime;
-	int32 CurrentHealth;
-	int32 CurrentShield;
+	float SurvivalTime;
+	TMap<FName, int32> TotalKilledMonsters;
+	TMap<FName, int32> KilledMonsters;
+	FName KillerMonster;
+
+	int32 CurHealth;
+	int32 CurShield;
 	int32 TotalMoney;
 	// TArray<FInventorySlot> Inventory;
 
-	TMap<FName, FSpawnStruct> SpawnVolumeDatas;
-	// TMap<FName, FAIData> AIDatas;
-	TMap<FName, FSpawnStruct> ContainerDatas;
+	bool IsKeyCardAcquired;
+
+	// TMap<FName, FMonsterData> MonsterDatas;
 };

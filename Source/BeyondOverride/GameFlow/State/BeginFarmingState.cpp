@@ -2,9 +2,7 @@
 
 #include "GameFlow/State/BeginFarmingState.h"
 
-#include "../Manager/ContainerManager.h"
-#include "../Manager/ExitManager.h"
-#include "../Manager/SpawnVolumeManager.h"
+#include "../Manager/RegionManager.h"
 #include "Kismet/GameplayStatics.h"
 
 void UBeginFarmingState::Enter()
@@ -12,58 +10,20 @@ void UBeginFarmingState::Enter()
 	UE_LOG(LogTemp, Warning, TEXT("Begin Enter"));
 	Super::Enter();
 
-	SpawnCharacter();
-	ActivateContainer();
-	ActivateExit();
+	InitRegions();
 
 	ChangeState(EFarmingState::Progress);
 }
 
-void UBeginFarmingState::SpawnCharacter()
-{
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	APawn* Character = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-
-	if (!PlayerController || !Character || !GetWorld() || !GetWorld()->GetGameInstance())
-	{
-		return;
-	}
-
-	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
-	{
-		if (AActor* Exit = ExitManager->SelectRandomExit())
-		{
-			FVector ExitLocation = Exit->GetActorLocation();
-			FRotator ExitRotation = Exit->GetActorRotation();
-
-			Character->TeleportTo(ExitLocation, ExitRotation);
-			PlayerController->SetControlRotation(ExitRotation);
-		}
-	}
-}
-
-void UBeginFarmingState::ActivateContainer()
+void UBeginFarmingState::InitRegions()
 {
 	if (!GetWorld() || !GetWorld()->GetGameInstance())
 	{
 		return;
 	}
 
-	if (UContainerManager* ContainerManager = GetWorld()->GetGameInstance()->GetSubsystem<UContainerManager>())
+	if (URegionManager* RegionManager = GetWorld()->GetGameInstance()->GetSubsystem<URegionManager>())
 	{
-		ContainerManager->ActivateContainer();
-	}
-}
-
-void UBeginFarmingState::ActivateExit()
-{
-	if (!GetWorld() || !GetWorld()->GetGameInstance())
-	{
-		return;
-	}
-
-	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
-	{
-		ExitManager->ActivateExit();
+		RegionManager->InitSetting();
 	}
 }

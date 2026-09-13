@@ -6,23 +6,27 @@
 
 #include "Engine/DataAsset.h"
 
-#include "GameDataAsset.generated.h"
+#include "BODataAsset.generated.h"
 
 /**
  *
  */
 UCLASS()
-class BEYONDOVERRIDE_API UGameDataAsset : public UDataAsset
+class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
   public:
+	UDataTable* GetRegionDataTable() const;
 	UDataTable* GetSpawnVolumeDataTable() const;
-	UDataTable* GetAIDataTable() const;
+	UDataTable* GetPhaseDataTable() const;
+	UDataTable* GetMonsterDataTable() const;
 	UDataTable* GetContainerDataTable() const;
 
   public:
+	UDataTable* RegionDataTable;
 	UDataTable* SpawnVolumeDataTable;
-	UDataTable* AIDataTable;
+	UDataTable* PhaseDataTable;
+	UDataTable* MonsterDataTable;
 	UDataTable* ContainerDataTable;
 };

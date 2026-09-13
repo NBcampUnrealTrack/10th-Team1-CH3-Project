@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 
+#include "../../DataTables/Farming/PhaseData.h"
+#include "../../DataTables/Farming/SpawnData.h"
+#include "../../Interaction/Actors/ExitActor.h"
 #include "../BODelegates.h"
-#include "../Data/SpawnStruct.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 
@@ -30,8 +32,13 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 		bool bFromSweep,
 		const FHitResult& SweepResult);
 
-	void SpawnAI();
-	void SpawnRandomAI();
+	void SpawnMonster();
+	void SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float MinDist = -1.0f, float MaxDist = -1.0f, bool IsChase = false);
+	void StartPhase();
+	void SpawnPhaseMonster();
+
+	FName GetId() const;
+	FName GetRegionId() const;
 
   public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
@@ -44,9 +51,17 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	FName Id;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
-	float SpawnExclusionRadius;
+	float SpawnMinRadius;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
+	float SpawnMaxRadius;
 
   public:
-	FSpawnStruct SpawnVolumeData;
+	int32 PhaseIndex;
+
+	FSpawnData SpawnVolumeData;
+	FPhaseData PhaseData;
+
+	FTimerHandle PhaseTimer;
 	FOnPlayerEntered OnPlayerEntered;
 };

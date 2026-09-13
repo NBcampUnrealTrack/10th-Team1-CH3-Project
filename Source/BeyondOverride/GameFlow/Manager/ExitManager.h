@@ -8,19 +8,26 @@
 
 #include "ExitManager.generated.h"
 
-/**
- *
- */
+class AExitActor;
+
 UCLASS()
 class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+  private:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
   public:
-	void Initialize();
+	void InitSetting();
+	void SpawnCharacter();
 	void ActivateExit();
-	AActor* SelectRandomExit();
+	AExitActor* SelectRandomExit();
+
+	UFUNCTION(BlueprintCallable, Category = "Exit")
+	void HandleExtract(AExitActor* ExitPoint, AActor* Interactor);
 
   private:
-	TArray<TObjectPtr<AActor>> Exits;  // AExit으로 바꾸기
+	float ExitActivateProb;
+	TArray<TObjectPtr<AExitActor>> Exits;
 };

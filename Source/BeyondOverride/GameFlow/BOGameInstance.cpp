@@ -2,11 +2,12 @@
 
 #include "BOGameInstance.h"
 
+#include "BOGameMode.h"
+#include "BOWorldSubsystem.h"
+
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Manager/ContainerManager.h"
-#include "Manager/ExitManager.h"
-#include "Manager/SpawnVolumeManager.h"
+#include "Player/ActorComponent/StatComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
 
@@ -14,58 +15,25 @@ void UBOGameInstance::Init()
 {
 	Super::Init();
 
-	GameState = EGameState::Begin;
-	PlayingState = EPlayingState::None;
-	FarmingResult = EFarmingResult::None;
-	TotalSurvivalTime = 0.0f;
-	CurrentHealth = 0;
-	CurrentShield = 0;
-	TotalMoney = 0;
-	// Inventory.Empty();
+	BODataAsset = nullptr;
+	Levels.Empty();
+	Regions.Empty();
+	BasicEquipments.Empty();
+	ExitActivateProb = 0.5f;
 
-	SpawnVolumeDatas.Empty();
-	// AIDatas.Empty();
-	ContainerDatas.Empty();
+	LoadMonsterData();
 
-	LoadSpawnVolumeData();
-	LoadAIData();
-	LoadContainerData();
-
-	OpenLevel(ELevel::Bunker);
-	StartFarming();
+	InitSetting();
 }
 
-void UBOGameInstance::LoadSpawnVolumeData()
+void UBOGameInstance::LoadMonsterData()
 {
-	if (!GameDataAsset)
+	if (!BODataAsset)
 	{
 		return;
 	}
 
-	if (UDataTable* SpawnVolumeDataTable = GameDataAsset->GetSpawnVolumeDataTable())
-	{
-		TArray<FSpawnStruct*> AllRows{};
-		SpawnVolumeDataTable->GetAllRows<FSpawnStruct>(TEXT("Get All Spawn Volume Datas"), AllRows);
-
-		for (FSpawnStruct* Row : AllRows)
-		{
-			if (Row)
-			{
-				FName Id = Row->Id;
-				SpawnVolumeDatas.Add(Id, *Row);
-			}
-		}
-	}
-}
-
-void UBOGameInstance::LoadAIData()
-{
-	if (!GameDataAsset)
-	{
-		return;
-	}
-
-	/*if (UDataTable* AIData = GameDataAsset->GetAIDataTable())
+	/*if (UDataTable* AIData = BODataAsset->GetMonsterDataTable())
 	{
 		TArray<FAIData*> AllRows{};
 		AIData->GetAllRows<FAIData>(TEXT("Get All AI Datas"), AllRows);
@@ -81,55 +49,40 @@ void UBOGameInstance::LoadAIData()
 	}*/
 }
 
-void UBOGameInstance::LoadContainerData()
+void UBOGameInstance::InitSetting()
 {
-	if (!GameDataAsset)
-	{
-		return;
-	}
+	GameState = EGameState::Begin;
+	PlayingState = EPlayingState::None;
+	FarmingResult = EFarmingResult::None;
 
-	if (UDataTable* ContainerDataTable = GameDataAsset->GetContainerDataTable())
-	{
-		TArray<FSpawnStruct*> AllRows{};
-		ContainerDataTable->GetAllRows<FSpawnStruct>(TEXT("Get All Container Datas"), AllRows);
+	TotalSurvivalTime = 0.0f;
+	SurvivalTime = 0.0f;
+	TotalKilledMonsters.Empty();
+	KilledMonsters.Empty();
+	KillerMonster = "None";
 
-		for (FSpawnStruct* Row : AllRows)
-		{
-			if (Row)
-			{
-				FName Id = Row->Id;
-				ContainerDatas.Add(Id, *Row);
-			}
-		}
-	}
+	CurHealth = 0;
+	CurShield = 0;
+	TotalMoney = 0;
+	// Inventory.Empty();
+
+	IsKeyCardAcquired = false;
+
+	// MonsterDatas.Empty();
+
+	OpenLevel(ELevel::Bunker);
+	StartFarming(); // test code
 }
 
 void UBOGameInstance::Start()
 {
 	GameState = EGameState::Playing;
 	PlayingState = EPlayingState::Bunker;
-
-	// 기초 장비 지급
 }
 
 void UBOGameInstance::Restart()
 {
-	Init();
-
-	if (USpawnVolumeManager* SpawnVolumeManager = GetSubsystem<USpawnVolumeManager>())
-	{
-		SpawnVolumeManager->Initialize();
-	}
-
-	if (UContainerManager* ContainerManager = GetSubsystem<UContainerManager>())
-	{
-		ContainerManager->Initialize();
-	}
-
-	if (UExitManager* ExitManager = GetSubsystem<UExitManager>())
-	{
-		ExitManager->Initialize();
-	}
+	InitSetting();
 }
 
 void UBOGameInstance::Exit()
@@ -145,6 +98,10 @@ void UBOGameInstance::StartFarming()
 	GameState = EGameState::Playing; // test code
 	PlayingState = EPlayingState::Farming;
 
+	SurvivalTime = 0.0f;
+	KilledMonsters.Empty();
+	KillerMonster = "None";
+
 	OpenLevel(ELevel::Main);
 }
 
@@ -152,6 +109,8 @@ void UBOGameInstance::EndFarming(EFarmingResult Result)
 {
 	PlayingState = EPlayingState::Bunker;
 	FarmingResult = Result;
+
+	SaveFarmingData();
 
 	OpenLevel(ELevel::Bunker);
 }
@@ -177,36 +136,81 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 
 void UBOGameInstance::SavePlayerData()
 {
-	// 플레이어 정보 저장 - 체력, 실드, 돈, 인벤토리
 	if (ABOCharacter* Character = Cast<ABOCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)))
 	{
+		// health, shield
+		if (UStatComponent* StatComponent = Character->GetStatComponent())
+		{
+			CurHealth = StatComponent->GetCurHealth();
+			CurShield = StatComponent->GetCurShield();
+		}
+
+		// money, inventory
+		// search key card in the inventory
 	}
 }
 
-// TMap<ELevel, FName> UBOGameInstance::GetLevels() const
-//{
-//	return Levels;
-// }
-//
-// TArray<FName> UBOGameInstance::GetRegions() const
-//{
-//	return Regions;
-// }
-
-void UBOGameInstance::GetSpawnVolumeData(FName Id, FSpawnStruct& Data)
+void UBOGameInstance::SaveFarmingData()
 {
-	if (SpawnVolumeDatas.Contains(Id))
+	if (!GetWorld())
 	{
-		Data = SpawnVolumeDatas[Id];
+		return;
+	}
+
+	// survival time
+	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
+	{
+		SurvivalTime = WorldSubsystem->GetSurvivalTime();
+
+		TotalSurvivalTime += SurvivalTime;
+	}
+
+	// killed monsters / killer monster
+	if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+	{
+		GameMode->GetKilledMonsters(KilledMonsters);
+		KillerMonster = GameMode->GetKillerMonster();
+
+		for (TPair<FName, int32> Monster : KilledMonsters)
+		{
+			FName Id = Monster.Key;
+			int32 Count = Monster.Value;
+
+			if (TotalKilledMonsters.Contains(Id))
+			{
+				TotalKilledMonsters[Id] += Count;
+			}
+			else
+			{
+				TotalKilledMonsters.Add(Id, Count);
+			}
+		}
 	}
 }
 
-void UBOGameInstance::GetContainerData(FName Id, FSpawnStruct& Data)
+UBODataAsset* UBOGameInstance::GetBODataAsset() const
 {
-	if (ContainerDatas.Contains(Id))
-	{
-		Data = ContainerDatas[Id];
-	}
+	return BODataAsset;
+}
+
+void UBOGameInstance::GetLevels(TMap<ELevel, FName>& Data) const
+{
+	Data = Levels;
+}
+
+void UBOGameInstance::GetRegions(TArray<FName>& Data) const
+{
+	Data = Regions;
+}
+
+void UBOGameInstance::GetBasicEquipments(TArray<FName>& Data) const
+{
+	Data = BasicEquipments;
+}
+
+float UBOGameInstance::GetExitActivateProb() const
+{
+	return ExitActivateProb;
 }
 
 EGameState UBOGameInstance::GetGameState() const
@@ -224,17 +228,47 @@ EFarmingResult UBOGameInstance::GetFarmingResult() const
 	return FarmingResult;
 }
 
+float UBOGameInstance::GetTotalSurvivalTime() const
+{
+	return TotalSurvivalTime;
+}
+
+float UBOGameInstance::GetSurvivalTime() const
+{
+	return SurvivalTime;
+}
+
+void UBOGameInstance::GetTotalKilledMonsters(TMap<FName, int32>& Data) const
+{
+	Data = TotalKilledMonsters;
+}
+
+void UBOGameInstance::GetKilledMonsters(TMap<FName, int32>& Data) const
+{
+	Data = KilledMonsters;
+}
+
+FName UBOGameInstance::GetKillerMonster() const
+{
+	return KillerMonster;
+}
+
 float UBOGameInstance::GetCurrentHealth() const
 {
-	return CurrentHealth;
+	return CurHealth;
 }
 
 float UBOGameInstance::GetCurrentShield() const
 {
-	return CurrentShield;
+	return CurShield;
 }
 
 int32 UBOGameInstance::GetTotalMoney() const
 {
 	return TotalMoney;
+}
+
+bool UBOGameInstance::GetIsCardAcquired() const
+{
+	return IsKeyCardAcquired;
 }

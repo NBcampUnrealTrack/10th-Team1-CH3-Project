@@ -4,31 +4,28 @@
 
 #include "CoreMinimal.h"
 
+#include "../../DataTables/Farming/RegionData.h"
 #include "../../DataTables/Farming/SpawnData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
-#include "ContainerManager.generated.h"
+#include "RegionManager.generated.h"
 
-/**
- *
- */
+class UBODataAsset;
+
 UCLASS()
-class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
+class BEYONDOVERRIDE_API URegionManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
   private:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	void LoadContainerData();
+
+	void LoadRegionData();
 
   public:
 	void InitSetting();
-	void ActivateContainer();
-
-	bool GetContainerData(FName ContainerId, FSpawnData& Data) const;
+	bool GetRegiondata(FName RegionId, FRegionData& Data) const;
 
   private:
-	TMap<FName, FSpawnData> ContainerDatas;
-
-	TMap<FName, TArray<TObjectPtr<AActor>>> ContainerByRegion; // AContainer·Î º¯°æ
+	TMap<FName, FRegionData> RegionDatas;
 };

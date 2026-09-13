@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+#include "../../DataTables/Farming/PhaseData.h"
+#include "../../DataTables/Farming/SpawnData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
 #include "SpawnVolumeManager.generated.h"
@@ -15,13 +17,25 @@ class BEYONDOVERRIDE_API USpawnVolumeManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+  private:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	void LoadSpawnVolumeData();
+	void LoadPhaseData();
+
   public:
-	void Initialize();
+	void InitSetting();
 
 	UFUNCTION(BlueprintCallable, Category = "Manager")
 	void ActivateSpawnVolume(ASpawnVolume* SpawnVolume);
 
+	bool GetSpawnVolumeData(FName SpawnVolumeId, FSpawnData& Data) const;
+	bool GetPhaseData(FName SpawnVolumeId, FPhaseData& Data) const;
+	ASpawnVolume* GetSpawnVolume(FName RegionId) const;
+
   private:
+	TMap<FName, FSpawnData> SpawnVolumeDatas;
+	TMap<FName, FPhaseData> PhaseDatas;
+
 	TSet<TObjectPtr<ASpawnVolume>> ActivatedSpawnVolumes;
-	TArray<TObjectPtr<ASpawnVolume>> SpawnVolumes;
+	TMap<FName, TObjectPtr<ASpawnVolume>> SpawnVolumeByRegion;
 };

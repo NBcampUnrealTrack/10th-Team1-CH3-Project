@@ -2,45 +2,153 @@
 
 #include "GameFlow/Manager/ContainerManager.h"
 
+#include "RegionManager.h"
+
 #include "../BOGameInstance.h"
+#include "Algo/RandomShuffle.h"
 #include "Kismet/GameplayStatics.h"
 
-void UContainerManager::Initialize()
+void UContainerManager::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	ContainerDatas.Empty();
+
+	LoadContainerData();
+}
+
+void UContainerManager::LoadContainerData()
 {
 	if (!GetWorld())
 	{
 		return;
 	}
 
-	TArray<AActor*> AllActors{};  // AContainer*로 변경
-	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);  // AContainer로 변경
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Container"), AllActors);  // test code
-
-	for (AActor* Actor : AllActors)
-	{
-		// Container로 캐스팅
-
-		Containers.Add(Actor);  // Container 넣기
-	}
-}
-
-void UContainerManager::ActivateContainer()
-{
 	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
 	if (!GameInstance)
 	{
 		return;
 	}
 
-	for (TObjectPtr<AActor> Container : Containers)  // AActor -> AContainer로 변경
+	UBODataAsset* BODataAsset = GameInstance->GetBODataAsset();
+	if (!BODataAsset)
 	{
-		float Probability = FMath::RandRange(0.0f, 100.0f);
+		return;
+	}
 
-		if (Probability >= ActivateProbability)
+	UDataTable* ContainerDataTable = BODataAsset->GetContainerDataTable();
+	if (!ContainerDataTable)
+	{
+		return;
+	}
+
+	TArray<FSpawnData*> AllRows{};
+	ContainerDataTable->GetAllRows<FSpawnData>(TEXT("Get All Container Datas"), AllRows);
+
+	for (FSpawnData* Row : AllRows)
+	{
+		if (Row)
 		{
-			// Container Data 채우기
-			// Container의 TArray<FName> Items 멤버 설정
-			// 이후 상호작용 시 인벤토리 컴포넌트에서 해당 데이터 가지고 인벤토리 구성
+			FName Id = Row->Id;
+			ContainerDatas.Add(Id, *Row);
 		}
 	}
+}
+
+void UContainerManager::InitSetting()
+{
+	ContainerByRegion.Empty();
+
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	TArray<AActor*> AllActors{};
+	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);  // change AActor -> AContainer
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Container"), AllActors); // test code
+
+	for (AActor* Actor : AllActors)
+	{
+		// cast to Container
+		// AContainer* Container = Cast<AContainer>(Actor);
+
+		// save container by region
+		/*FName RegionId = Container->GetRegionId();
+		if (ContainerByRegion.Contains(RegionId))
+		{
+			ContainerByRegion[RegionId].Add(Actor);
+		}
+		else
+		{
+			ContainerByRegion.Add(RegionId, Actor);
+		}*/
+	}
+
+	ActivateContainer();
+}
+
+void UContainerManager::ActivateContainer()
+{
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
+	URegionManager* RegionManager = GetWorld()->GetGameInstance()->GetSubsystem<URegionManager>();
+	if (!RegionManager)
+	{
+		return;
+	}
+
+	bool IsKeyCardSpawned{};
+
+	for (const TPair<FName, TArray<TObjectPtr<AActor>>>& Pair : ContainerByRegion) // change AActor -> AContainer
+	{
+		FName RegionId = Pair.Key;
+		TArray<TObjectPtr<AActor>> Containers = Pair.Value;
+
+		FRegionData RegionData{};
+		if (!RegionManager->GetRegiondata(RegionId, RegionData))
+		{
+			return;
+		}
+
+		float Prob = RegionData.ContainerActivateProb;
+		int32 Size = Containers.Num();
+		int32 Count = FMath::RoundToInt(Size * Prob);
+
+		Algo::RandomShuffle(Containers);
+
+		for (int i = 0; i < Count; i++)
+		{
+			TObjectPtr<AActor> Container = Containers[i];
+
+			/*
+			if (IsKeyCardSpawned)
+			{
+				Container->SetCanSpawnKeyCard(false);
+			}
+			else
+			{
+				Container->SetCanSpawnKeyCard(true);
+				IsKeyCardSpawned = true;
+			}
+
+			Container->SetSpawnItems(); // set container 'TArray<FName> Items' property
+			*/
+		}
+	}
+}
+
+bool UContainerManager::GetContainerData(FName ContainerId, FSpawnData& Data) const
+{
+	if (ContainerDatas.Contains(ContainerId))
+	{
+		Data = ContainerDatas[ContainerId];
+
+		return true;
+	}
+
+	return false;
 }

@@ -2,13 +2,14 @@
 
 #include "GameFlow/Spawn/SpawnVolume.h"
 
-#include "../BOGameInstance.h"
-#include "../Player/Character/BOCharacter.h"
+#include "../Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/Character/BOCharacter.h"
 
 ASpawnVolume::ASpawnVolume()
 	: Id("Default"),
-	  SpawnExclusionRadius(0.0f)
+	  SpawnMinRadius(0.0f),
+	  PhaseIndex(0)
 {
 	SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Component"));
 	SetRootComponent(SceneComp);
@@ -23,11 +24,12 @@ void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetWorld())
+	if (GetWorld() && GetWorld()->GetGameInstance())
 	{
-		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 		{
-			GameInstance->GetSpawnVolumeData(Id, SpawnVolumeData);
+			SpawnVolumeManager->GetSpawnVolumeData(Id, SpawnVolumeData);
+			SpawnVolumeManager->GetPhaseData(Id, PhaseData);
 		}
 	}
 }
@@ -40,35 +42,47 @@ void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	}
 }
 
-void ASpawnVolume::SpawnAI()
+void ASpawnVolume::SpawnMonster()
 {
 	int32 Count = SpawnVolumeData.SpawnCount;
+	TArray<FSpawnEntry> SpawnEntries = SpawnVolumeData.SpawnEntries;
 
 	for (int i = 0; i < Count; i++)
 	{
-		SpawnRandomAI();
+		SpawnRandomMonster(SpawnEntries, SpawnMinRadius);
 	}
 }
 
-void ASpawnVolume::SpawnRandomAI()
+void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float MinDist, float MaxDist, bool IsChase)
 {
 	if (!GetWorld() || !BoxComp)
 	{
 		return;
 	}
 
+	float MinDistance = FMath::Pow(SpawnMinRadius, 2);
+	float MaxDistance{};
+
+	if (MinDist != -1.0f)
+	{
+		MinDistance = FMath::Pow(MinDist, 2);
+	}
+	if (MaxDist != -1.0f)
+	{
+		MaxDistance = FMath::Pow(MaxDist, 2);
+	}
+
 	FVector SVLocation = GetActorLocation();
 	FVector BoxExtent = BoxComp->GetScaledBoxExtent();
 	FVector PlayerLocation = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation();
-	float ExclusionDistance = FMath::Pow(SpawnExclusionRadius, 2);
 
 	FVector SpawnLocation{};
 	float X = FMath::RandRange(SVLocation.X - BoxExtent.X, SVLocation.X + BoxExtent.X);
 	float Y = FMath::RandRange(SVLocation.Y - BoxExtent.Y, SVLocation.Y + BoxExtent.Y);
 	float Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
 
-	// 최적화 생각하기
-	while (Distance <= ExclusionDistance)
+	// Is it Optimal?
+	while (Distance < MinDistance || MaxDistance < Distance)
 	{
 		X = FMath::RandRange(SVLocation.X - BoxExtent.X, SVLocation.X + BoxExtent.X);
 		Y = FMath::RandRange(SVLocation.Y - BoxExtent.Y, SVLocation.Y + BoxExtent.Y);
@@ -79,18 +93,73 @@ void ASpawnVolume::SpawnRandomAI()
 	SpawnLocation.Y = Y;
 	SpawnLocation.Z = SVLocation.Z;
 
-	TArray<FSpawnData> SpawnableAIs = SpawnVolumeData.SpawnableDatas;
-	float Probability = FMath::RandRange(0.0f, 100.0f);
+	float Prob = FMath::RandRange(0.0f, 100.0f);
 	float Sum{};
 
-	for (FSpawnData SpawnableAI : SpawnableAIs)
+	for (FSpawnEntry SpawnEntry : SpawnEntries)
 	{
-		Sum += SpawnableAI.Probability;
+		Sum += SpawnEntry.Prob;
 
-		if (Sum >= Probability)
+		if (Sum >= Prob)
 		{
+			FName MonsterId = SpawnEntry.Id;
+			UE_LOG(LogTemp, Warning, TEXT("Spawned Monster : %s"), *MonsterId.ToString());
+
 			// Get AI Data
 			// Spawn AI
+
+			if (IsChase)
+			{
+				// Chase Player
+			}
 		}
 	}
+}
+
+void ASpawnVolume::StartPhase()
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	GetWorld()->GetTimerManager().ClearTimer(PhaseTimer);
+
+	int32 Size = PhaseData.PhaseEntries.Num();
+
+	if (PhaseIndex < Size)
+	{
+		float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
+
+		GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
+		SpawnPhaseMonster();
+	}
+	else
+	{
+		PhaseIndex = 0;
+	}
+}
+
+void ASpawnVolume::SpawnPhaseMonster()
+{
+	TArray<FPhaseEntry> PhaseEntries = PhaseData.PhaseEntries;
+	TArray<FSpawnEntry> SpawnEntries = PhaseEntries[PhaseIndex].SpawnEntries;
+	int32 SpawnCount = PhaseEntries[PhaseIndex].SpawnCount;
+
+	for (int i = 0; i < SpawnCount; i++)
+	{
+		SpawnRandomMonster(SpawnEntries, SpawnMinRadius, SpawnMaxRadius, true);
+	}
+
+	PhaseIndex += 1;
+}
+
+FName ASpawnVolume::GetId() const
+{
+	return Id;
+}
+
+FName ASpawnVolume::GetRegionId() const
+{
+	return SpawnVolumeData.RegionId;
 }

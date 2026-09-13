@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 
-#include "SpawnStruct.generated.h"
+#include "RegionData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FSpawnData
+struct FRegionData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -16,24 +16,11 @@ struct FSpawnData
 	FName Id = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	float Probability = 0.0f;
-};
-
-USTRUCT(BlueprintType)
-struct FSpawnStruct : public FTableRowBase
-{
-	GENERATED_USTRUCT_BODY()
-
-  public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName Id = "Default";
+	FName SpawnVolumeId = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName RegionId = "Default";
+	FName ExitId = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	TArray<FSpawnData> SpawnableDatas;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	int32 SpawnCount = 0;
+	float ContainerActivateProb = 0.0f;
 };

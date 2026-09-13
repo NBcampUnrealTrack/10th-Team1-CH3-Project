@@ -17,7 +17,7 @@ class BEYONDOVERRIDE_API UBOWorldSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 
   public:
-	float GetTotalTime() const;
+	float GetSurvivalTime() const;
 
   private:
 	float StartTime;
