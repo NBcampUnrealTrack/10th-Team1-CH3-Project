@@ -112,6 +112,9 @@ bool URangeWeaponHandlerComponent::Use()
 		return false;
 	}
 
+	// 재장전 중이면, 취소 후 사격
+	OnReloadInterrupted();
+
 	// 총구 위치 & 방향
 	const FVector MuzzleLocation = GetMuzzleLocation();
 	const FRotator AimRotation = GetAimRotation();
@@ -456,14 +459,18 @@ void URangeWeaponHandlerComponent::PlayFireAnimation()
 {
 }
 
-void URangeWeaponHandlerComponent::ReloadFireAnimation()
+void URangeWeaponHandlerComponent::PlayReloadAnimation()
+{
+}
+
+void URangeWeaponHandlerComponent::StopReloadAnimation()
 {
 }
 
 void URangeWeaponHandlerComponent::OnReloadStarted()
 {
 	// 재장전 애니메이션 재생
-	ReloadFireAnimation();
+	StopReloadAnimation();
 
 	// 재장전 타이머 활성화
 	StartReloadTimer();
@@ -477,4 +484,13 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 								: 0;
 	// 탄약 추가
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
+}
+
+void URangeWeaponHandlerComponent::OnReloadInterrupted()
+{
+	// 재장전 타이머 제거
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+
+	// 재장전 애니메이션 중단
+	StopReloadAnimation();
 }

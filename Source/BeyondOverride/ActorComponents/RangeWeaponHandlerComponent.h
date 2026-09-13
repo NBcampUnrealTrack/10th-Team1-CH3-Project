@@ -118,10 +118,15 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 사격 애니메이션 재생
 	void PlayFireAnimation();
 	// 재장전 애니메이션 재생
-	void ReloadFireAnimation();
+	void PlayReloadAnimation();
+	// 재장전 애니메이션 중단
+	void StopReloadAnimation();
 
   protected:
-	// 콜백
+	// 재장전 시작 시 호출
 	void OnReloadStarted();
+	// 재장전 완료 시 호출
 	void OnReloadCompleted();
+	// 재장전 중단 시 호출
+	void OnReloadInterrupted();
 };
