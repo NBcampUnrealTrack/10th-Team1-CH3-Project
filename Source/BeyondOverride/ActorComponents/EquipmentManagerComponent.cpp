@@ -17,6 +17,21 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
 }
 
+EEquipmentSlot UEquipmentManagerComponent::GetActiveSlot() const
+{
+	return ActiveSlot;
+}
+
+bool UEquipmentManagerComponent::HasEquipment(EEquipmentSlot Slot) const
+{
+	if (!EquipmentHandlerComponents.Contains(Slot))
+	{
+		return false;
+	}
+
+	return EquipmentHandlerComponents[Slot]->GetEquippableItemInstance() != nullptr;
+}
+
 void UEquipmentManagerComponent::OnRegister()
 {
 	Super::OnRegister();

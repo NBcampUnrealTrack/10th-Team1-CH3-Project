@@ -45,6 +45,10 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
   public:
 	UEquipmentManagerComponent();
 
+	// Getters
+	EEquipmentSlot GetActiveSlot() const;         // 현재 활성화 슬롯 반환
+	bool HasEquipment(EEquipmentSlot Slot) const; // 슬롯에 장비가 등록되었는지 여부
+
   protected:
 	virtual void OnRegister() override;
 
