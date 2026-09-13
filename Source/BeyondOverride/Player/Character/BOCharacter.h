@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Character.h"
+
 #include "BOCharacter.generated.h"
 
 class USpringArmComponent;
@@ -13,6 +15,7 @@ class UInteractComponent;
 class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
+class URangeWeaponInstance;
 
 enum class EEquipmentSlot : uint8;
 
@@ -21,16 +24,33 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	UEquipmentComponent* GetEquipmentComponent() const { return EquipmentComponent; }
-	UStatComponent* GetStatComponent() const { return StatComponent; }
-	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
-	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
+  public:
+	UEquipmentComponent* GetEquipmentComponent() const
+	{
+		return EquipmentComponent;
+	}
+	UStatComponent* GetStatComponent() const
+	{
+		return StatComponent;
+	}
+	UInventoryComponent* GetInventoryComponent() const
+	{
+		return InventoryComponent;
+	}
+	UInteractComponent* GetInteractComponent() const
+	{
+		return InteractComponent;
+	}
 
-public:
+	const bool GetIsAiming() const
+	{
+		return bIsAiming;
+	}
+
+  public:
 	ABOCharacter();
 
-protected:
+  protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -38,7 +58,7 @@ protected:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-protected:
+  protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -65,7 +85,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UEquipmentManagerComponent* EquipmentManagerComponent; // 장비 관리 컴포넌트
 
-private:
+  private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
@@ -81,9 +101,13 @@ private:
 	UFUNCTION()
 	void ToggleCrouch(const FInputActionValue& value);
 	UFUNCTION()
-	void Primary(const FInputActionValue& value);
+	void Fire(const FInputActionValue& value);
 	UFUNCTION()
-	void Secondary(const FInputActionValue& value);
+	void Aim(const FInputActionValue& value);
+	UFUNCTION()
+	void Hip(const FInputActionValue& value);
+	UFUNCTION()
+	void Reload(const FInputActionValue& value);
 	UFUNCTION()
 	void InteractPress(const FInputActionValue& value);
 	UFUNCTION()
@@ -93,11 +117,31 @@ private:
 	UFUNCTION()
 	void Escape(const FInputActionValue& value);
 
+	UFUNCTION()
+	void EquipSlot1(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot2(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot3(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot4(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot5(const FInputActionValue& value);
+	UFUNCTION()
+	void DropEquipment(const FInputActionValue& value);
+
 	void ChangeMoveSpeed();
 
 	bool bIsSprint = false;
+	bool bIsAiming = false;
 
-public:
+  public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	void OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
+
+	// EquipmentManagerComponent의 델리게이트 바인딩
+	void BindingEquipmentManagerComponentDelegates();
+	// EquipmentManagerComponent - Range Weapon 델리게이트 연결 이벤트
+	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
+	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);
 };

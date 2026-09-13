@@ -3,6 +3,7 @@
 #include "DataAssets/ItemDataRegistry.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/ItemDataRow.h"
+#include "DataTables/Items/MeleeWeaponDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
 
 void UItemDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -72,4 +73,22 @@ const FRangeWeaponDataRow* UItemDataSubsystem::GetRangeWeaponData(const FName It
 	}
 
 	return RangeWeaponData;
+}
+
+const FMeleeWeaponDataRow* UItemDataSubsystem::GetMeleeWeaponData(const FName ItemID) const
+{
+	if (!ItemDataRegistry || !ItemDataRegistry->MeleeWeaponTable)
+	{
+		return nullptr;
+	}
+
+	const FMeleeWeaponDataRow* MeleeWeaponData = ItemDataRegistry->MeleeWeaponTable->FindRow<FMeleeWeaponDataRow>(ItemID, TEXT("UItemDataSubsystem::GetMeleeWeaponData"));
+
+	if (!MeleeWeaponData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MeleeWeaponData not found: %s"), *ItemID.ToString());
+		return nullptr;
+	}
+
+	return MeleeWeaponData;
 }

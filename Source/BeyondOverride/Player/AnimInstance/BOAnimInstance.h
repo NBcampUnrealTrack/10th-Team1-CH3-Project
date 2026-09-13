@@ -1,9 +1,12 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+
 #include "Animation/AnimInstance.h"
+
 #include "BOAnimInstance.generated.h"
 
+class UEquipmentAnimationDataAsset;
 class ABOCharacter;
 class UAnimSequenceBase;
 class UBlendSpace;
@@ -14,11 +17,16 @@ class BEYONDOVERRIDE_API UBOAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
+	void ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData);
+	void PlayEquipMontage();
+	void PlayFireHipMontage();
+	void PlayFireAimMontage();
+	void PlayReloadHipMontage();
+	void PlayReloadAimMontage();
+
+public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-
-	//public:
-	//	void ApplyEquipmentAnimation(UEquipmentAnimationData* NewData);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Character")
@@ -35,20 +43,24 @@ protected:
 	bool bIsFalling = false;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	bool bIsCrouch = false;
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
+	bool bIsAiming = false;
 
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentIdle = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UBlendSpace* EquipmentLocomotion = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentJumpStart = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentJumpLoop = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentJumpLand = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentAim = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentHipIdle = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentAimIdle = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UBlendSpace* EquipmentHipLocomotion = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UBlendSpace* EquipmentAimLocomotion = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentJump = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentFallingLoop = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UAnimSequenceBase* EquipmentLand = nullptr;
 
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UEquipmentAnimationData* CurrentEquipmentData = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	const UEquipmentAnimationDataAsset* CurrentEquipmentData = nullptr;
 };

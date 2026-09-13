@@ -1,0 +1,129 @@
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
+#include "Enums/EquipmentSlot.h"
+
+UPlayerInventoryComponent::UPlayerInventoryComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UPlayerInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitializeEquipmentSlot();
+}
+
+void UPlayerInventoryComponent::InitializeEquipmentSlot()
+{
+	EquipmentSlots.Init(nullptr, 5);
+}
+
+bool UPlayerInventoryComponent::CanEquipItem(EEquipmentSlot Slot, const UItemInstanceBase* Item) const
+{
+	if (!IsValid(Item))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = Item->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	switch (Slot)
+	{
+	case EEquipmentSlot::Primary:
+	case EEquipmentSlot::Secondary:
+		return ItemData->ItemType == EItemType::RangeWeapon;
+
+	case EEquipmentSlot::Melee:
+		return ItemData->ItemType == EItemType::MeleeWeapon;
+
+	case EEquipmentSlot::Throwable:
+		return ItemData->ItemType == EItemType::ThrowableItem;
+
+	case EEquipmentSlot::Effect:
+		return ItemData->ItemType == EItemType::EffectItem;
+
+	default:
+		return false;
+	}
+}
+
+bool UPlayerInventoryComponent::SetEquipmentItemStackCount(EEquipmentSlot Slot, int32 StackCount)
+{
+	const int32 SlotIndex = GetEquipmentSlotIndex(Slot);
+
+	if (!EquipmentSlots.IsValidIndex(SlotIndex))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* Item = EquipmentSlots[SlotIndex];
+
+	if (!IsValid(Item))
+	{
+		return false;
+	}
+
+	if (StackCount <= 0)
+	{
+		EquipmentSlots[SlotIndex] = nullptr;
+
+		OnEquipmentSlotChanged.Broadcast(Slot, nullptr);
+
+		return true;
+	}
+
+	Item->SetStackCount(StackCount);
+
+	OnEquipmentSlotChanged.Broadcast(Slot, Item);
+
+	return true;
+}
+
+int32 UPlayerInventoryComponent::GetEquipmentSlotIndex(EEquipmentSlot Slot) const
+{
+	return static_cast<int32>(Slot);
+}
+
+bool UPlayerInventoryComponent::IsValidEquipmentSlot(EEquipmentSlot Slot) const
+{
+	return EquipmentSlots.IsValidIndex(GetEquipmentSlotIndex(Slot));
+}
+
+UItemInstanceBase* UPlayerInventoryComponent::GetEquipmentItem(EEquipmentSlot Slot) const
+{
+	const int32 SlotIndex = GetEquipmentSlotIndex(Slot);
+
+	if (!EquipmentSlots.IsValidIndex(SlotIndex))
+	{
+		return nullptr;
+	}
+
+	return EquipmentSlots[SlotIndex];
+}
+
+bool UPlayerInventoryComponent::SetEquipmentItem(EEquipmentSlot Slot, UItemInstanceBase* Item)
+{
+	const int32 SlotIndex = GetEquipmentSlotIndex(Slot);
+
+	if (!EquipmentSlots.IsValidIndex(SlotIndex))
+	{
+		return false;
+	}
+
+	if (IsValid(Item) && !CanEquipItem(Slot, Item))
+	{
+		return false;
+	}
+
+	EquipmentSlots[SlotIndex] = Item;
+
+	OnEquipmentSlotChanged.Broadcast(Slot, Item);
+
+	return true;
+}
+
