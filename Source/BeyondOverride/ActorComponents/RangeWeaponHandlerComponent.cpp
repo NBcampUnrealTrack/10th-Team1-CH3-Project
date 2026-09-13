@@ -35,6 +35,15 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 		return false;
 	}
 
+	// 장비 메시 설정
+	if (EquipMeshComponent)
+	{
+		if (USkeletalMesh* Mesh = RangeWeaponInstance->GetEquippableItemData()->EquipMesh)
+		{
+			EquipMeshComponent->SetSkeletalMesh(Mesh);
+		}
+	}
+
 	// 틱 활성화
 	SetComponentTickEnabled(true);
 
@@ -61,6 +70,12 @@ bool URangeWeaponHandlerComponent::Unassign()
 
 	// 장비 제거
 	RangeWeaponInstance = nullptr;
+
+	// 장비 메시 제거
+	if (EquipMeshComponent)
+	{
+		EquipMeshComponent->SetSkeletalMesh(nullptr);
+	}
 
 	// 틱 비활성화
 	SetComponentTickEnabled(false);
