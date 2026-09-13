@@ -22,9 +22,9 @@ class BEYONDOVERRIDE_API UTitleScreenWidget : public UUserWidget
 	UFUNCTION()
 	void OnExitButtonClicked();
 
-	UPROPERTY(meta = (StartBtn))
-	TObjectPtr<UButton> StartButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> StartBtn;
 
-	UPROPERTY(meta = (ExitBtn))
-	TObjectPtr<UButton> ExitButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ExitBtn;
 };

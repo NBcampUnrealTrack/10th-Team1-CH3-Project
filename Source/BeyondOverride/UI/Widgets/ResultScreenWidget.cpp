@@ -1,5 +1,2 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "ui/widgets/ResultScreenWidget.h"
+#include "UI/Widgets/ResultScreenWidget.h"
 

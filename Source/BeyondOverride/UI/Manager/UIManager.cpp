@@ -2,12 +2,15 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Engine/World.h"
+#include "Interaction/InteractComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/Widgets/InteractPromptWidget.h"
 #include "UObject/ConstructorHelpers.h"
 
-UUIManager::UUIManager(){
+UUIManager::UUIManager()
+{
 	static ConstructorHelpers::FClassFinder<UUserWidget> TitleWBPClass(TEXT("/Game/UI/WBP_TitleScreen"));
-	if (TitleWBPClass.Succeeded()) 
+	if (TitleWBPClass.Succeeded())
 	{
 		ScreenClasses.Add(EUIScreen::Title, TitleWBPClass.Class);
 	}
@@ -35,12 +38,18 @@ UUIManager::UUIManager(){
 	{
 		ScreenClasses.Add(EUIScreen::Result, ResultWBPClass.Class);
 	}
+
+	static ConstructorHelpers::FClassFinder<UInteractPromptWidget> InteractPromptWBPClass(TEXT("/Game/UI/WBP_InteractPrompt"));
+	if (InteractPromptWBPClass.Succeeded())
+	{
+		InteractPromptWidgetClass = InteractPromptWBPClass.Class;
+	}
 }
 
 UUIManager* UUIManager::Get(const UObject* WorldContextObject)
 {
 	if (UGameInstance* GI = UGameplayStatics::GetGameInstance(WorldContextObject))
-	{	
+	{
 		return GI->GetSubsystem<UUIManager>();
 	}
 	return nullptr;
@@ -48,60 +57,74 @@ UUIManager* UUIManager::Get(const UObject* WorldContextObject)
 
 UUserWidget* UUIManager::ShowScreen(EUIScreen Screen, EUIInputMode InputMode)
 {
-	const TSubclassOf<UUserWidget>* FoundClass = ScreenClasses.Find(Screen);
-	if (!FoundClass || !(*FoundClass))
+	for (const FUIScreenEntry& Entry : ScreenStack)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("없는 화면"));
-		return nullptr;
-	}
-
-	for (UUserWidget* StackedWidget : ScreenStack)
-	{
-		if (StackedWidget)
+		if (Entry.Widget)
 		{
-			StackedWidget->RemoveFromParent();
+			Entry.Widget->RemoveFromParent();
 		}
 	}
 	ScreenStack.Empty();
 
-	if (CurrentScreen)
+	if (Screen == EUIScreen::None)
 	{
-		CurrentScreen->RemoveFromParent();
-		CurrentScreen = nullptr;
+		ScreenStack.Add({nullptr, Screen, EUIInputMode::GameOnly});
+
+		if (APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr)
+		{
+			PC->SetInputMode(FInputModeGameOnly());
+			PC->bShowMouseCursor = false;
+		}
+		return nullptr;
 	}
 
-	UGameInstance* GI = GetGameInstance();
-	if (!GI)
+	const TSubclassOf<UUserWidget>* FoundClass = ScreenClasses.Find(Screen);
+	if (!FoundClass || !(*FoundClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("없는 화면"));
+
+		return nullptr;
+	}
+
+	APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+	if (!PC)
 		return nullptr;
 
-	UUserWidget* NewWidget = CreateWidget<UUserWidget>(GI, *FoundClass);
+	UUserWidget* NewWidget = CreateWidget<UUserWidget>(PC, *FoundClass);
 	if (NewWidget)
 	{
 		NewWidget->AddToViewport();
-		CurrentScreen = NewWidget;
+		ScreenStack.Add({NewWidget, Screen, InputMode});
 		ApplyInputMode(InputMode, NewWidget);
 	}
 
 	return NewWidget;
 }
 
-UUserWidget* UUIManager::PushScreen(EUIScreen Screen)
+UUserWidget* UUIManager::PushScreen(EUIScreen Screen, EUIInputMode InputMode)
 {
+	if (ScreenStack.Num() > 0 && ScreenStack.Last().Screen == Screen)
+	{
+		PopScreen();
+		return nullptr;
+	}
+
 	const TSubclassOf<UUserWidget>* FoundClass = ScreenClasses.Find(Screen);
 	if (!FoundClass || !(*FoundClass))
 	{
 		return nullptr;
 	}
 
-	UGameInstance* GI = GetGameInstance();
-	if (!GI)
+	APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+	if (!PC)
 		return nullptr;
 
-	UUserWidget* NewWidget = CreateWidget<UUserWidget>(GI, *FoundClass);
+	UUserWidget* NewWidget = CreateWidget<UUserWidget>(PC, *FoundClass);
 	if (NewWidget)
 	{
 		NewWidget->AddToViewport(ScreenStack.Num() + 1);
-		ScreenStack.Add(NewWidget);
+		ScreenStack.Add({NewWidget, Screen, InputMode});
+		ApplyInputMode(InputMode, NewWidget);
 	}
 
 	return NewWidget;
@@ -112,18 +135,16 @@ void UUIManager::PopScreen()
 	if (ScreenStack.Num() == 0)
 		return;
 
-	UUserWidget* TopWidget = ScreenStack.Last();
+	UUserWidget* TopWidget = ScreenStack.Last().Widget;
 	if (TopWidget)
 	{
 		TopWidget->RemoveFromParent();
 	}
 
 	ScreenStack.RemoveAt(ScreenStack.Num() - 1);
-}
 
-UUserWidget* UUIManager::GetCurrentScreen() const
-{
-	return CurrentScreen;
+	const FUIScreenEntry& ChangedCurrent = ScreenStack.Last();
+	ApplyInputMode(ChangedCurrent.InputMode, ChangedCurrent.Widget);
 }
 
 void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
@@ -137,7 +158,10 @@ void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
 	case EUIInputMode::UIOnly:
 	{
 		FInputModeUIOnly Mode;
-		Mode.SetWidgetToFocus(Widget->TakeWidget());
+		if (Widget)
+		{
+			Mode.SetWidgetToFocus(Widget->TakeWidget());
+		}
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		PC->SetInputMode(Mode);
 		PC->bShowMouseCursor = true;
@@ -146,7 +170,10 @@ void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
 	case EUIInputMode::GameAndUI:
 	{
 		FInputModeGameAndUI Mode;
-		Mode.SetWidgetToFocus(Widget->TakeWidget());
+		if (Widget)
+		{
+			Mode.SetWidgetToFocus(Widget->TakeWidget());
+		}
 		PC->SetInputMode(Mode);
 		PC->bShowMouseCursor = true;
 		break;
@@ -156,5 +183,31 @@ void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
 		PC->SetInputMode(FInputModeGameOnly());
 		PC->bShowMouseCursor = false;
 		break;
+	}
+}
+
+void UUIManager::BindInteractPrompt(UInteractComponent* InteractComponent)
+{
+	if (!InteractComponent)
+		return;
+
+	if (!IsValid(InteractPromptWidget) && InteractPromptWidgetClass)
+	{
+		APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
+		if (!PC)
+			return;
+
+		InteractPromptWidget = CreateWidget<UInteractPromptWidget>(PC, InteractPromptWidgetClass);
+	}
+
+	if (InteractPromptWidget)
+	{
+		if (!InteractPromptWidget->IsInViewport())
+		{
+			InteractPromptWidget->AddToViewport();
+		}
+
+		InteractComponent->OnPromptChanged.AddDynamic(InteractPromptWidget, &UInteractPromptWidget::HandleFocusChanged);
+		InteractComponent->OnHoldProgress.AddDynamic(InteractPromptWidget, &UInteractPromptWidget::HandleHoldProgress);
 	}
 }

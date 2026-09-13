@@ -1,0 +1,76 @@
+#pragma once
+
+#include "CoreMinimal.h"
+
+#include "Blueprint/UserWidget.h"
+
+#include "ItemSlotPanelWidget.generated.h"
+
+class UInventoryComponent;
+class UInventoryInteractionComponent;
+class UUniformGridPanel;
+class UItemSlotWidget;
+class UItemInstanceBase;
+class AItemPickupBase;
+class UPanelFrameWidget;
+
+UENUM()
+enum class EItemSlotPanelMode : uint8
+{
+	Inventory,
+	WorldItems,
+};
+
+UCLASS()
+class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
+{
+	GENERATED_BODY()
+
+  protected:
+	virtual void NativeDestruct() override;
+
+  public:
+	UItemSlotPanelWidget(const FObjectInitializer& ObjectInitializer);
+
+	void SetInventory(UInventoryComponent* InInventory, UInventoryInteractionComponent* InInteraction);
+
+	void SetWorldItems(const TArray<AItemPickupBase*>& InItems, UInventoryInteractionComponent* InInteraction);
+
+	void RefreshSlots();
+
+	void SetContainerName(const FText& InName);
+
+  protected:
+	UPROPERTY(meta = (BindWidget))
+	UUniformGridPanel* SlotContainer;
+
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	TObjectPtr<UPanelFrameWidget> PanelFrame;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Slot")
+	TSubclassOf<UItemSlotWidget> SlotWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Slot")
+	int32 ColumnCount = 5;
+
+
+  private:
+	EItemSlotPanelMode Mode = EItemSlotPanelMode::WorldItems;
+
+	UPROPERTY()
+	TObjectPtr<UInventoryComponent> InventoryComponent;
+
+	UPROPERTY()
+	TArray<TObjectPtr<AItemPickupBase>> WorldItems;
+
+	UPROPERTY()
+	TObjectPtr<UInventoryInteractionComponent> InteractionComponent;
+
+	void UnbindInventory();
+
+	UFUNCTION()
+	void OnInventoryChanged(const TArray<UItemInstanceBase*>& Slots);
+
+	UFUNCTION()
+	void HandleSlotClicked(int32 SlotIndex, bool bLeftClick);
+};
