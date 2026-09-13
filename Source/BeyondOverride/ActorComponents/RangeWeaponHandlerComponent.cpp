@@ -137,6 +137,11 @@ bool URangeWeaponHandlerComponent::Use()
 	return true;
 }
 
+bool URangeWeaponHandlerComponent::Reload()
+{
+	return false;
+}
+
 void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

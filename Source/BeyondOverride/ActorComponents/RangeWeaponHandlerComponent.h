@@ -40,6 +40,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 장비 사용
 	virtual bool Use() override;
 
+	// 재장전
+	bool Reload();
+
   protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
