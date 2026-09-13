@@ -104,7 +104,7 @@ bool URangeWeaponHandlerComponent::Equip()
 	if (!RangeWeaponInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - 등록된 장비가 없음"))
-		return;
+		return false;
 	}
 
 	// 데이터 유효성 검증
@@ -112,7 +112,7 @@ bool URangeWeaponHandlerComponent::Equip()
 	if (!EquippableItemData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(RangeWeaponInstance))
-		return;
+		return false;
 	}
 
 	// 캐릭터 메시 확인
@@ -152,7 +152,7 @@ bool URangeWeaponHandlerComponent::Unequip()
 	if (!RangeWeaponInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - 등록된 장비가 없음"))
-		return;
+		return false;
 	}
 
 	// 데이터 유효성 검증
@@ -160,7 +160,7 @@ bool URangeWeaponHandlerComponent::Unequip()
 	if (!EquippableItemData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(RangeWeaponInstance))
-		return;
+		return false;
 	}
 
 	// 캐릭터 메시 확인
