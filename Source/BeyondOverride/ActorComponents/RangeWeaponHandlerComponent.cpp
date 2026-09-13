@@ -317,6 +317,12 @@ bool URangeWeaponHandlerComponent::CanReload() const
 		return false;
 	}
 
+	// 탄창 가득찬 경우
+	if (RangeWeaponInstance->GetCurrentAmmo() == RangeWeaponInstance->GetMagazineSize())
+	{
+		return false;
+	}
+
 	// 재장전 딜레이
 	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(ReloadTimerHandle))
 	{
