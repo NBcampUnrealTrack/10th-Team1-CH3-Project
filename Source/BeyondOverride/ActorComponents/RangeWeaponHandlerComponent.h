@@ -18,6 +18,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
   protected:
 	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;
 
+	// 총구 소켓 이름
+	FName MuzzleSocketName;
+
   public:
 	URangeWeaponHandlerComponent();
 

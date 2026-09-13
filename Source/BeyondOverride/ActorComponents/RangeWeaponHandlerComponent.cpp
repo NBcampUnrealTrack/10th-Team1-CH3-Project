@@ -13,6 +13,9 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 
+	// 총구 소켓 이름
+	MuzzleSocketName = FName("Muzzle");
+
 	// 반동 적용 속도
 	RecoilApplySpeed = 10;
 }
