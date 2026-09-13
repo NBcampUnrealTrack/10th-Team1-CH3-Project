@@ -70,3 +70,13 @@ int32 URangeWeaponInstance::GetCurrentAmmo() const
 {
 	return CurrentAmmo;
 }
+
+int32 URangeWeaponInstance::GetMagazineSize() const
+{
+	if (!RangeWeaponData)
+	{
+		return 0;
+	}
+
+	return RangeWeaponData->MagazineSize;
+}
