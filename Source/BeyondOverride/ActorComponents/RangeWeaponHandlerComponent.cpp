@@ -660,7 +660,7 @@ void URangeWeaponHandlerComponent::StopReloadAnimation()
 void URangeWeaponHandlerComponent::OnReloadStarted()
 {
 	// 재장전 애니메이션 재생
-	StopReloadAnimation();
+	PlayReloadAnimation();
 
 	// 재장전 타이머 활성화
 	StartReloadTimer();
