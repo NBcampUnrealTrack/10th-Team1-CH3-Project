@@ -322,6 +322,10 @@ void ABOCharacter::DropEquipment(const FInputActionValue& value)
 
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Reload();
+	}
 }
 
 void ABOCharacter::ChangeMoveSpeed()
