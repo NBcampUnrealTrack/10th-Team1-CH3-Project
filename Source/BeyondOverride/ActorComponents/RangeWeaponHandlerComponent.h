@@ -15,13 +15,21 @@ DECLARE_DELEGATE_RetVal_OneParam(
 	bool, // 재장전 여부 반환
 	FCanReloadDelegate,
 	URangeWeaponInstance*);
+// 재장전 탄약 요청하는 델리게이트 - 재장전에 사용할 탄약 소모 및 전달
+DECLARE_DELEGATE_RetVal_OneParam(
+	int32,
+	FRequestReloadAmmoDelegate,
+	URangeWeaponInstance*);
 
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
   public:
+	// 재장전 가능 여부 델리게이트
 	FCanReloadDelegate CanReloadDeleagte;
+	// 재장전 탄약 요청 델리게이트
+	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
   protected:
 	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;

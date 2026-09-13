@@ -471,6 +471,10 @@ void URangeWeaponHandlerComponent::OnReloadStarted()
 
 void URangeWeaponHandlerComponent::OnReloadCompleted()
 {
-	// TODO: 델리게이트 추가
-	// RangeWeaponInstance 전달 -> 재장전에 사용할 탄약 소모 및 전달 -> 반환값으로 받은 탄약 만큼 추가
+	// 추가할 탄약 개수
+	const int32 AddedAmmo = CanReloadDeleagte.IsBound()
+								? RequestReloadAmmoDelegate.Execute(RangeWeaponInstance)
+								: 0;
+	// 탄약 추가
+	RangeWeaponInstance->AddAmmo(AddedAmmo);
 }
