@@ -106,6 +106,8 @@ private:
 	void EquipSlot5(const FInputActionValue& value);
 	UFUNCTION()
 	void DropEquipment(const FInputActionValue& value);
+	UFUNCTION()
+	void Reload(const FInputActionValue& value);
 
 	void ChangeMoveSpeed();
 

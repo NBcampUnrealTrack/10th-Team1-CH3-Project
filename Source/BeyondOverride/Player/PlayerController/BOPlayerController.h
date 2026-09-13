@@ -63,6 +63,9 @@ class BEYONDOVERRIDE_API ABOPlayerController : public APlayerController
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
 	UInputAction* DropEquipmentAction = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* ReloadAction = nullptr;
+
   protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	UUserWidget* MainHUDWidget;

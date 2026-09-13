@@ -139,8 +139,13 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			{
 				EnhancedInput->BindAction(PlayerController->DropEquipmentAction, ETriggerEvent::Started, this, &ABOCharacter::DropEquipment);
 			}
+
+			if (PlayerController->ReloadAction)
+			{
+				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started, this, &ABOCharacter::Reload);
 		}
 	}
+}
 }
 
 float ABOCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -301,6 +306,21 @@ void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 }
 
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		// 장비 제거
+		UItemInstanceBase* ItemInstance = EquipmentManagerComponent->Unassign(EquipmentManagerComponent->GetActiveSlot());
+
+		// 제거한 장비 액터 소환
+		FItemFactory::SpawnItemPickup(
+			GetWorld(),
+			ItemInstance,
+			GetActorLocation() + 30 * GetActorForwardVector());
+	}
+}
+
+void ABOCharacter::Reload(const FInputActionValue& value)
 {
 }
 
