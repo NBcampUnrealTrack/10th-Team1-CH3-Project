@@ -230,6 +230,9 @@ bool URangeWeaponHandlerComponent::Use()
 	// 사격 쿨다운 설정
 	StartFireTimer();
 
+	// 사격 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
+
 	return true;
 }
 
@@ -580,6 +583,9 @@ void URangeWeaponHandlerComponent::OnReloadStarted()
 
 	// 재장전 타이머 활성화
 	StartReloadTimer();
+
+	// 재장전 시작 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Started")));
 }
 
 void URangeWeaponHandlerComponent::OnReloadCompleted()
@@ -596,6 +602,9 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 
 	// 탄약 추가
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
+
+	// 재장전 완료 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Completed")));
 }
 
 void URangeWeaponHandlerComponent::OnReloadInterrupted()
