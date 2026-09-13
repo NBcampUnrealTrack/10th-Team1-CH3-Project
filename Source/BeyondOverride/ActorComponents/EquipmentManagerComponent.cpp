@@ -95,7 +95,9 @@ void UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 		return;
 	}
 
-	if (!EquipmentHandlerComponents[Slot]->Assign(EquippableItemInstance))
+	// 등록 시도
+	const bool bSucceed = EquipmentHandlerComponents[Slot]->Assign(EquippableItemInstance);
+	if (!bSucceed)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 등록 실패 - %s -> %s Handler 등록 실패"), *GetNameSafe(ItemInstanceBase), *UEnum::GetValueAsString(Slot));
 		return;
