@@ -120,15 +120,15 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->EquipSlot1Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot1Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot1);
-		}
+			}
 			if (PlayerController->EquipSlot2Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot2Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot2);
-	}
+			}
 			if (PlayerController->EquipSlot3Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot3Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot3);
-}
+			}
 			if (PlayerController->EquipSlot3Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot4Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot4);
@@ -146,9 +146,9 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->ReloadAction)
 			{
 				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started, this, &ABOCharacter::Reload);
+			}
 		}
 	}
-}
 }
 
 float ABOCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -177,7 +177,8 @@ void ABOCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdj
 
 void ABOCharacter::Move(const FInputActionValue& value)
 {
-	if (!Controller) return;
+	if (!Controller)
+		return;
 
 	const FVector2D MoveInput = value.Get<FVector2D>();
 
@@ -264,14 +265,17 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 				if (EquipmentManagerComponent->HasEquipment(ActiveSlot))
 				{
 					EquipmentManagerComponent->Assign(ActiveSlot, ItemInstance);
+					ItemPickup->Destroy();
 				}
 				if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Primary))
 				{
 					EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance);
+					ItemPickup->Destroy();
 				}
 				else if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Secondary))
 				{
 					EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance);
+					ItemPickup->Destroy();
 				}
 			}
 		}
@@ -308,7 +312,7 @@ void ABOCharacter::EquipSlot2(const FInputActionValue& value)
 	if (EquipmentManagerComponent)
 	{
 		EquipmentManagerComponent->Equip(EEquipmentSlot::Secondary);
-}
+	}
 }
 
 void ABOCharacter::EquipSlot3(const FInputActionValue& value)
