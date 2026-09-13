@@ -113,6 +113,32 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			{
 				EnhancedInput->BindAction(PlayerController->EscapeAction, ETriggerEvent::Started, this, &ABOCharacter::Escape);
 			}
+
+			if (PlayerController->EquipSlot1Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot1Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot1);
+		}
+			if (PlayerController->EquipSlot2Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot2Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot2);
+	}
+			if (PlayerController->EquipSlot3Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot3Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot3);
+}
+			if (PlayerController->EquipSlot3Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot4Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot4);
+			}
+			if (PlayerController->EquipSlot4Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot5Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot5);
+			}
+
+			if (PlayerController->DropEquipmentAction)
+			{
+				EnhancedInput->BindAction(PlayerController->DropEquipmentAction, ETriggerEvent::Started, this, &ABOCharacter::DropEquipment);
+			}
 		}
 	}
 }
@@ -231,6 +257,30 @@ void ABOCharacter::Inventory(const FInputActionValue& value)
 }
 
 void ABOCharacter::Escape(const FInputActionValue& value)
+{
+}
+
+void ABOCharacter::EquipSlot1(const FInputActionValue& value)
+{
+}
+
+void ABOCharacter::EquipSlot2(const FInputActionValue& value)
+{
+}
+
+void ABOCharacter::EquipSlot3(const FInputActionValue& value)
+{
+}
+
+void ABOCharacter::EquipSlot4(const FInputActionValue& value)
+{
+}
+
+void ABOCharacter::EquipSlot5(const FInputActionValue& value)
+{
+}
+
+void ABOCharacter::DropEquipment(const FInputActionValue& value)
 {
 }
 

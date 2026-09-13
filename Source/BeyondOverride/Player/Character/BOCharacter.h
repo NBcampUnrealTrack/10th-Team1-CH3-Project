@@ -94,6 +94,19 @@ private:
 	UFUNCTION()
 	void Escape(const FInputActionValue& value);
 
+	UFUNCTION()
+	void EquipSlot1(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot2(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot3(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot4(const FInputActionValue& value);
+	UFUNCTION()
+	void EquipSlot5(const FInputActionValue& value);
+	UFUNCTION()
+	void DropEquipment(const FInputActionValue& value);
+
 	void ChangeMoveSpeed();
 
 	bool bIsSprint = false;

@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/PlayerController.h"
+
 #include "BOPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -12,17 +14,17 @@ class BEYONDOVERRIDE_API ABOPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-public:
+  public:
 	void ShowMainHUDWidget();
 	void ShowESCWidget();
 
-public:
+  public:
 	ABOPlayerController();
 
-protected:
+  protected:
 	virtual void BeginPlay() override;
 
-public:
+  public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* InputMappingContext = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -46,7 +48,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* EscapeAction = nullptr;
 
-protected:
+	// 장비 Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* EquipSlot1Action = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* EquipSlot2Action = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* EquipSlot3Action = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* EquipSlot4Action = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* EquipSlot5Action = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* DropEquipmentAction = nullptr;
+
+  protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	UUserWidget* MainHUDWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
