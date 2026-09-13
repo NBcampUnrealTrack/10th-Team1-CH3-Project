@@ -5,10 +5,10 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFrameWork/CharacterMovementComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/MonsterCalling.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Player/Character/BOCharacter.h"
@@ -22,7 +22,6 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	ABOCharacter* NearestTarget;
-	bool RotationSet = true;
 
 	if (!BlackboardComp)
 	{
@@ -39,7 +38,7 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetStateComponent();
+	UStateComponent* AIState = AIMonster->GetState();
 	if (!AIState)
 	{
 		return EBTNodeResult::Failed;
@@ -48,25 +47,22 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 	NearestTarget = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (NearestTarget)
 	{
+
 		return EBTNodeResult::Succeeded;
-	}
-	UCharacterMovementComponent* AIMovement = AIMonster->GetCharacterMovement();
-	if (!AIMovement)
-	{
-		return EBTNodeResult::Failed;
 	}
 
 	PerceptionCheck(OwnerComp, NearestTarget);
 
 	if (NearestTarget)
 	{
-		RotationSet = false;
+		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
+		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
 		AIState->TrueContinueTargeting();
 		AIState->CallContinueTimer();
+		AIState->SetSttandOffTimer();
 	}
 
-	AIMovement->bOrientRotationToMovement = RotationSet;
 	return EBTNodeResult::Succeeded;
 }
 

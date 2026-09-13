@@ -23,7 +23,7 @@ class URangeWeaponInstance : public UEquippableItemInstance
 	URangeWeaponInstance();
 
 	// 아이템 정보 초기 로드
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 	// Data
 	const FRangeWeaponDataRow* GetRangeWeaponData() const;
