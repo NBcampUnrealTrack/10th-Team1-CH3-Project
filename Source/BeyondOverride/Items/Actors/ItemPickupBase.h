@@ -3,13 +3,14 @@
 #include "CoreMinimal.h"
 
 #include "GameFramework/Actor.h"
+#include "Interaction/InteractableActorBase.h"
 
 #include "ItemPickupBase.generated.h"
 
 class UItemInstanceBase;
 
 UCLASS()
-class AItemPickupBase : public AActor
+class AItemPickupBase : public AInteractableActorBase
 {
 	GENERATED_BODY()
 
@@ -18,7 +19,7 @@ class AItemPickupBase : public AActor
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
-	FName ItemID;  // 아이템 ID
+	FName ItemID; // 아이템 ID
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Data")
 	TObjectPtr<UItemInstanceBase> ItemInstance;
 

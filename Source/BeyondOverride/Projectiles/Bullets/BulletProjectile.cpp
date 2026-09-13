@@ -1,6 +1,7 @@
 #include "Projectiles/Bullets/BulletProjectile.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ABulletProjectile::ABulletProjectile()
@@ -13,19 +14,23 @@ ABulletProjectile::ABulletProjectile()
 	Collision->OnComponentHit.AddDynamic(
 		this,
 		&ABulletProjectile::OnHit);
+
+	ProjectileMovement->UpdatedComponent = Collision;
 }
 
 void ABulletProjectile::Initialize(
 	APawn* InInstigator,
 	const int32 InDamage,
 	const FVector& Velocity,
-	const float GravityScale)
+	const float GravityScale,
+	const float LifeSpan)
 {
 	Super::Initialize(
 		InInstigator,
 		InDamage,
 		Velocity,
-		GravityScale);
+		GravityScale,
+		LifeSpan);
 
 	// Instigator와의 충돌 무시
 	Collision->IgnoreActorWhenMoving(InInstigator, true);

@@ -32,4 +32,5 @@ class URangeWeaponInstance : public UEquippableItemInstance
 	bool ConsumeAmmo();            // 탄약 1개 소모 (소모 성공 여부 반환)
 	int32 AddAmmo(int32 Amount);   // 탄약 추가 (추가 후 남은 개수 반환)
 	int32 GetCurrentAmmo() const;  // 현재 탄약 개수 반환
+	int32 GetMagazineSize() const; // 탄창 크기 반환
 };

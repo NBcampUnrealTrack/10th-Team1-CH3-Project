@@ -28,6 +28,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetItem(int32 SlotIndex, UItemInstanceBase* Item);
 
+	// 아이템 수량 변경
+	UFUNCTION(BlueprintCallable)
+	bool SetItemStackCount(int32 SlotIndex, int32 StackCount);
+
 	// 슬롯 정보
 	UFUNCTION(BlueprintPure)
 	int32 GetSlotCount() const;
@@ -35,9 +39,6 @@ public:
 	bool IsValidSlot(int32 SlotIndex) const;
 	UFUNCTION(BlueprintCallable)
 	bool FindEmptySlotIndex(int32& EmptySlotIndex) const;
-
-	UFUNCTION(BlueprintCallable)
-	void NotifyInventoryChanged();
 
 public:
 	UPROPERTY(BlueprintAssignable)

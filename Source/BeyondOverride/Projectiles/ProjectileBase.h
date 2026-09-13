@@ -15,10 +15,10 @@ class AProjectileBase : public AActor
 	GENERATED_BODY()
 
   protected:
-	TObjectPtr<USceneComponent> SceneRoot;                        // 루트 컴포넌트
-	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;  // 탄도학 적용 컴포넌트
+	TObjectPtr<USceneComponent> SceneRoot;                       // 루트 컴포넌트
+	TObjectPtr<UProjectileMovementComponent> ProjectileMovement; // 탄도학 적용 컴포넌트
 
-	int32 Damage;  // 데미지
+	int32 Damage; // 데미지
 
   public:
 	AProjectileBase();
@@ -27,5 +27,6 @@ class AProjectileBase : public AActor
 		APawn* InInstigator,
 		const int32 InDamage,
 		const FVector& Velocity,
-		const float GravityScale = 1.f);
+		const float GravityScale = 1.f,
+		const float LifeSpan = 0.f);
 };

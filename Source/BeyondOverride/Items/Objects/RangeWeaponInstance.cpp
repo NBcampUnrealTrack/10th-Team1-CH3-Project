@@ -14,6 +14,8 @@ void URangeWeaponInstance::Initialize()
 {
 	Super::Initialize();
 
+	UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponInstance] Initialize %s"), *GetNameSafe(this));
+
 	// RangeWeaponData 로드
 	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
 	RangeWeaponData = ItemDataSubsystem->GetRangeWeaponData(ItemID);
@@ -69,4 +71,14 @@ int32 URangeWeaponInstance::AddAmmo(int32 Amount)
 int32 URangeWeaponInstance::GetCurrentAmmo() const
 {
 	return CurrentAmmo;
+}
+
+int32 URangeWeaponInstance::GetMagazineSize() const
+{
+	if (!RangeWeaponData)
+	{
+		return 0;
+	}
+
+	return RangeWeaponData->MagazineSize;
 }
