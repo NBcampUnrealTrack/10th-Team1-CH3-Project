@@ -54,20 +54,20 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 
   public:
 	// 슬롯 전환
-	void Equip(EEquipmentSlot Slot);
+	bool Equip(EEquipmentSlot Slot);
 	// 비무장 전환
-	void Unequip(); // 미구현
+	bool Unequip(); // 미구현
 
 	// 현재 장비 사용
-	void Use();
+	bool Use();
 
 	// 현재 장비 재장전 - RangeWeapon 전용
-	void Reload();
+	bool Reload();
 
 	// 슬롯에 장비 등록
-	void Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
+	bool Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 	// 슬롯에서 장비 해제
-	void Unassign(EEquipmentSlot Slot);
+	bool Unassign(EEquipmentSlot Slot);
 
   public:
 	// 재장전 가능 여부 델리게이트

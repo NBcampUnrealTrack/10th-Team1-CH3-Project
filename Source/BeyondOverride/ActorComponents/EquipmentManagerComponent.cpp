@@ -40,13 +40,13 @@ void UEquipmentManagerComponent::OnRegister()
 	BindDelegates();
 }
 
-void UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
+bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 {
 	// 슬롯 확인
 	if (!EquipmentHandlerComponents.Contains(Slot) || !EquipmentHandlerComponents[Slot])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
-		return;
+		return false;
 	}
 
 	// 활성화 슬롯 전환
@@ -60,7 +60,7 @@ void UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	if (!EquippableItemInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: 등록된 장비가 없음"), *UEnum::GetValueAsString(Slot))
-		return;
+		return false;
 	}
 
 	// 장비 데이터 확인
@@ -68,7 +68,7 @@ void UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	if (!EquippableItemData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 EquippableItemData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-		return;
+		return false;
 	}
 
 	// 장비 애니메이션 데이터 확인
@@ -76,7 +76,7 @@ void UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	if (!WeaponAnimationData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 WeaponAnimationData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-		return;
+		return false;
 	}
 
 	// UBOAnimInstance 확인 - TODO: 결합도 낮추는 방향으로 리팩토링 필요
@@ -90,9 +90,11 @@ void UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 			}
 		}
 	}
+
+	return true;
 }
 
-void UEquipmentManagerComponent::Unequip()
+bool UEquipmentManagerComponent::Unequip()
 {
 	// 장비 애니메이션 해제 (기본 애니메이션)
 	// TODO: ABOAnimInstance에 기본 애니메이션 등록 후 함수 호출하여 기본 애니메이션으로 복구
@@ -101,39 +103,43 @@ void UEquipmentManagerComponent::Unequip()
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unequip 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-		return;
+		return false;
 	}
 
 	// 장비 해제
 	EquipmentHandlerComponents[ActiveSlot]->Unequip();
+
+	return true;
 }
 
-void UEquipmentManagerComponent::Use()
+bool UEquipmentManagerComponent::Use()
 {
 	// 슬롯 확인
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Use 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-		return;
+		return false;
 	}
 
 	// 장비 사용
 	EquipmentHandlerComponents[ActiveSlot]->Use();
+
+	return true;
 }
 
-void UEquipmentManagerComponent::Reload()
+bool UEquipmentManagerComponent::Reload()
 {
 	// 슬롯 확인
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
-		return;
+		return false;
 	}
 
 	// RangeWeapon이 아닌 경우
 	URangeWeaponHandlerComponent* RangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[ActiveSlot]);
 	if (!RangeWeaponHandler)
 	{
-		return;
+		return false;
 	}
 
 	// 재장전
@@ -141,46 +147,58 @@ void UEquipmentManagerComponent::Reload()
 	if (!bSucceed)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 재장전 실패 - %s 슬롯: %s"), *UEnum::GetValueAsString(ActiveSlot), *GetNameSafe(RangeWeaponHandler->GetEquippableItemInstance()));
-		return;
+		return false;
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 재장전 성공 - %s 슬롯: %s"), *UEnum::GetValueAsString(ActiveSlot), *GetNameSafe(RangeWeaponHandler->GetEquippableItemInstance()));
+	return true;
 }
 
-void UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
+bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
 {
 	// 장착 불가능한 타입
 	UEquippableItemInstance* EquippableItemInstance = Cast<UEquippableItemInstance>(ItemInstanceBase);
 	if (!EquippableItemInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 등록 실패 - %s -> EquippableItemInstance 캐스팅 실패"), *GetNameSafe(ItemInstanceBase));
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 실패 - %s -> EquippableItemInstance 캐스팅 실패"), *GetNameSafe(ItemInstanceBase));
+		return false;
 	}
 
 	// 슬롯이 없음
 	if (!EquipmentHandlerComponents.Contains(Slot) || !EquipmentHandlerComponents[Slot])
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 등록 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
+		return false;
 	}
 
 	// 등록 시도
 	const bool bSucceed = EquipmentHandlerComponents[Slot]->Assign(EquippableItemInstance);
 	if (!bSucceed)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 등록 실패 - %s -> %s Handler 등록 실패"), *GetNameSafe(ItemInstanceBase), *UEnum::GetValueAsString(Slot));
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 실패 - %s -> %s Handler 등록 실패"), *GetNameSafe(ItemInstanceBase), *UEnum::GetValueAsString(Slot));
+		return false;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 등록 성공 - %s를 %s 슬롯에 등록 성공"), *GetNameSafe(ItemInstanceBase), *UEnum::GetValueAsString(Slot));
+	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 성공 - %s를 %s 슬롯에 등록 성공"), *GetNameSafe(ItemInstanceBase), *UEnum::GetValueAsString(Slot));
+	return true;
 }
 
-void UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
+bool UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 {
-	if (EquipmentHandlerComponents.Contains(Slot))
+	if (!EquipmentHandlerComponents.Contains(Slot))
 	{
-		EquipmentHandlerComponents[Slot]->Unassign();
+		return false;
 	}
+
+	const bool bSucceed = EquipmentHandlerComponents[Slot]->Unassign();
+	if (!bSucceed)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 실패 - %s 슬롯의 장비 제거 실패"), *UEnum::GetValueAsString(Slot));
+		return false;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 성공 - 슬롯의 장비 제거 성공"), *UEnum::GetValueAsString(Slot));
+	return true;
 }
 
 void UEquipmentManagerComponent::BindDelegates()
