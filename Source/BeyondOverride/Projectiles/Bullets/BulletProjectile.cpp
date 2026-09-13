@@ -22,13 +22,15 @@ void ABulletProjectile::Initialize(
 	APawn* InInstigator,
 	const int32 InDamage,
 	const FVector& Velocity,
-	const float GravityScale)
+	const float GravityScale,
+	const float LifeSpan)
 {
 	Super::Initialize(
 		InInstigator,
 		InDamage,
 		Velocity,
-		GravityScale);
+		GravityScale,
+		LifeSpan);
 
 	// Instigator와의 충돌 무시
 	Collision->IgnoreActorWhenMoving(InInstigator, true);

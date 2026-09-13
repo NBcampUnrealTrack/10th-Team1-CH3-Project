@@ -563,7 +563,8 @@ ABulletProjectile* URangeWeaponHandlerComponent::SpawnProjectile(
 		Instigator,
 		RangeWeaponData->Damage,
 		RangeWeaponData->ProjectileSpeed * Rotation.Vector(),
-		RangeWeaponData->ProjectileGravityScale);
+		RangeWeaponData->ProjectileGravityScale,
+		RangeWeaponData->ProjectileRange / RangeWeaponData->ProjectileSpeed);
 
 	return BulletActor;
 }
