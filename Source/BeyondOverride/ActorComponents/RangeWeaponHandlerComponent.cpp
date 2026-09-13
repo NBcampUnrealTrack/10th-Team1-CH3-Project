@@ -290,9 +290,29 @@ void URangeWeaponHandlerComponent::AddRecoil()
 
 FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRotation)
 {
-	// TODO: 탄 퍼짐 타임라인을 통해 균일 분포를 적용한 방향 반환
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return AimRotation;
+	}
 
-	return AimRotation;
+	// SpreadCurve 유효성 검증
+	const UCurveFloat* SpreadCurve = RangeWeaponData->SpreadCurve;
+	if (!SpreadCurve)
+	{
+		return AimRotation;
+	}
+
+	// 탄 퍼짐 각도
+	const float SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	const float SpreadRadians = FMath::DegreesToRadians(SpreadDegree);
+
+	// 원뿔 내 균일 분포
+	return FMath::VRandCone(
+			   AimRotation.Vector(),
+			   SpreadRadians)
+		.Rotation();
 }
 
 ABulletProjectile* URangeWeaponHandlerComponent::SpawnProjectile(
