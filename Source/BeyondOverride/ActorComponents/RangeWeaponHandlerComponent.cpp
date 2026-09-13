@@ -139,7 +139,15 @@ bool URangeWeaponHandlerComponent::Use()
 
 bool URangeWeaponHandlerComponent::Reload()
 {
-	return false;
+	// 재장전 불가
+	if (!CanReload())
+	{
+		return false;
+	}
+
+	OnReloadStarted();
+
+	return true;
 }
 
 void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -191,6 +199,36 @@ bool URangeWeaponHandlerComponent::CanFire() const
 	}
 
 	// 사격 가능
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanReload() const
+{
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return false;
+	}
+
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return false;
+	}
+
+	// 재장전 딜레이
+	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(ReloadTimerHandle))
+	{
+		return false;
+	}
+
+	// 여분 탄약 등, 외부 조건 확인
+	if (!CanReloadDeleagte.Execute(RangeWeaponInstance))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -396,6 +434,43 @@ void URangeWeaponHandlerComponent::StartFireTimer()
 		false);
 }
 
+void URangeWeaponHandlerComponent::StartReloadTimer()
+{
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (RangeWeaponData)
+	{
+		return;
+	}
+
+	// 재장전 타이머 활성화
+	GetWorld()->GetTimerManager().SetTimer(
+		ReloadTimerHandle,
+		this,
+		&URangeWeaponHandlerComponent::OnReloadCompleted,
+		RangeWeaponData->ReloadTime,
+		false);
+}
+
 void URangeWeaponHandlerComponent::PlayFireAnimation()
 {
+}
+
+void URangeWeaponHandlerComponent::ReloadFireAnimation()
+{
+}
+
+void URangeWeaponHandlerComponent::OnReloadStarted()
+{
+	// 재장전 애니메이션 재생
+	ReloadFireAnimation();
+
+	// 재장전 타이머 활성화
+	StartReloadTimer();
+}
+
+void URangeWeaponHandlerComponent::OnReloadCompleted()
+{
+	// TODO: 델리게이트 추가
+	// RangeWeaponInstance 전달 -> 재장전에 사용할 탄약 소모 및 전달 -> 반환값으로 받은 탄약 만큼 추가
 }

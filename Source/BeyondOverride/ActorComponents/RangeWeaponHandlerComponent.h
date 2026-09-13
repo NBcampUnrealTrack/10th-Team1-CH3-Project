@@ -10,10 +10,18 @@
 class URangeWeaponInstance;
 class ABulletProjectile;
 
+// 재장전 가능한지 확인하는 델리게이트
+DECLARE_DELEGATE_RetVal_OneParam(
+	bool, // 재장전 여부 반환
+	FCanReloadDelegate,
+	URangeWeaponInstance*);
+
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
+  public:
+	FCanReloadDelegate CanReloadDeleagte;
 
   protected:
 	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;
@@ -49,6 +57,8 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
   protected:
 	// 사격 타이머
 	FTimerHandle FireTimerHandle;
+	// 재장전 타이머
+	FTimerHandle ReloadTimerHandle;
 
 	// 반동 적용 속도
 	float RecoilApplySpeed;
@@ -66,6 +76,8 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
   protected:
 	// 사격 가능 여부 반환
 	bool CanFire() const;
+	// 재장전 가능 여부 반환
+	bool CanReload() const;
 
 	// 타임라인 설정
 	void SetupTimeline();
@@ -92,7 +104,16 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 
 	// 사격 타이머 활성화
 	void StartFireTimer();
+	// 재장전 타이머 활성화
+	void StartReloadTimer();
 
 	// 사격 애니메이션 재생
 	void PlayFireAnimation();
+	// 재장전 애니메이션 재생
+	void ReloadFireAnimation();
+
+  protected:
+	// 콜백
+	void OnReloadStarted();
+	void OnReloadCompleted();
 };
