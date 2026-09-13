@@ -32,11 +32,9 @@ struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
 	float ReloadTime; // 재장전 시간
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Recoil")
-	TObjectPtr<UCurveFloat> RecoilPitchUpCurve; // Pitch 반동
+	TObjectPtr<UCurveFloat> RecoilPitchCurve; // Pitch 반동 (Up)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Recoil")
-	TObjectPtr<UCurveFloat> RecoilYawLeftCurve; // Yaw 좌측 반동
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Recoil")
-	TObjectPtr<UCurveFloat> RecoilYawRightCurve; // Yaw 우측 반동
+	TObjectPtr<UCurveFloat> RecoilYawCurve; // Yaw 좌측 반동 (Right)
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spread")
 	TObjectPtr<UCurveFloat> SpreadCurve; // 탄 퍼짐

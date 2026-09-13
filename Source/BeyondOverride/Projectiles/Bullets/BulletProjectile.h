@@ -23,7 +23,8 @@ class ABulletProjectile : public AProjectileBase
 		APawn* InInstigator,
 		const int32 InDamage,
 		const FVector& Velocity,
-		const float GravityScale = 1.f) override;
+		const float GravityScale = 1.f,
+		const float LifeSpan = 0.f) override;
 
   protected:
 	UFUNCTION()

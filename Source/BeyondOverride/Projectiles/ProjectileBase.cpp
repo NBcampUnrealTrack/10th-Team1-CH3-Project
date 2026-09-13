@@ -14,16 +14,14 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 	ProjectileMovement->UpdatedComponent = SceneRoot;
 	ProjectileMovement->bSweepCollision = true;
-
-	// 기본 수명 설정
-	InitialLifeSpan = 100.f;
 }
 
 void AProjectileBase::Initialize(
 	APawn* InInstigator,
 	const int32 InDamage,
 	const FVector& Velocity,
-	const float GravityScale)
+	const float GravityScale,
+	const float LifeSpan)
 {
 	SetInstigator(InInstigator);
 
@@ -31,4 +29,6 @@ void AProjectileBase::Initialize(
 
 	ProjectileMovement->Velocity = Velocity;
 	ProjectileMovement->ProjectileGravityScale = GravityScale;
+
+	SetLifeSpan(LifeSpan);
 }

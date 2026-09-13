@@ -1,19 +1,21 @@
 ﻿#include "Player/Character/BOCharacter.h"
 
-#include "Player/PlayerController/BOPlayerController.h"
 #include "EnhancedInputComponent.h"
 
-#include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-
-#include "Player/ActorComponent/EquipmentComponent.h"
-#include "Player/ActorComponent/StatComponent.h"
-#include "Player/ActorComponent/InventoryComponent.h"
-#include "Interaction/InteractComponent.h"
 #include "ActorComponents/EquipmentManagerComponent.h"
-
+#include "Camera/CameraComponent.h"
+#include "Enums/EquipmentSlot.h"
+#include "Factory/ItemFactory.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Interaction/InteractComponent.h"
+#include "Items/Actors/ItemPickupBase.h"
+#include "Items/Objects/RangeWeaponInstance.h"
+#include "Player/ActorComponent/EquipmentComponent.h"
+#include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
+#include "Player/PlayerController/BOPlayerController.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -44,12 +46,14 @@ void ABOCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	ChangeMoveSpeed();
+
+	// EquipmentManagerComponent의 델리게이트 바인딩
+	BindingEquipmentManagerComponentDelegates();
 }
 
 void ABOCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -90,7 +94,7 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 			if (PlayerController->PrimaryAction)
 			{
-				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::Fire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Fire);
 			}
 
 			if (PlayerController->SecondaryAction)
@@ -118,6 +122,32 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->EscapeAction)
 			{
 				EnhancedInput->BindAction(PlayerController->EscapeAction, ETriggerEvent::Started, this, &ABOCharacter::Escape);
+			}
+
+			if (PlayerController->EquipSlot1Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot1Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot1);
+			}
+			if (PlayerController->EquipSlot2Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot2Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot2);
+			}
+			if (PlayerController->EquipSlot3Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot3Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot3);
+			}
+			if (PlayerController->EquipSlot3Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot4Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot4);
+			}
+			if (PlayerController->EquipSlot4Action)
+			{
+				EnhancedInput->BindAction(PlayerController->EquipSlot5Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot5);
+			}
+
+			if (PlayerController->DropEquipmentAction)
+			{
+				EnhancedInput->BindAction(PlayerController->DropEquipmentAction, ETriggerEvent::Started, this, &ABOCharacter::DropEquipment);
 			}
 		}
 	}
@@ -149,7 +179,8 @@ void ABOCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdj
 
 void ABOCharacter::Move(const FInputActionValue& value)
 {
-	if (!Controller) return;
+	if (!Controller)
+		return;
 
 	const FVector2D MoveInput = value.Get<FVector2D>();
 
@@ -208,9 +239,11 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
-	// TODO: 실제 발사 코드
-
-	// --------------------
+	// 현재 장비 사용
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Use();
+	}
 
 	if (!GetMesh() || GetMesh()->GetAnimInstance())
 	{
@@ -240,6 +273,12 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
+	// 장비 재장전
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Reload();
+	}
+
 	if (!GetMesh() || GetMesh()->GetAnimInstance())
 	{
 		return;
@@ -272,6 +311,32 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 	{
 		InteractComponent->PressInteract();
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("111111")));
+
+		// TEMP: 장비 획득 및 장착
+		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
+		{
+			UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
+			if (EquipmentManagerComponent)
+			{
+				EEquipmentSlot ActiveSlot = EquipmentManagerComponent->GetActiveSlot();
+				// 현재 빈손인 경우
+				if (EquipmentManagerComponent->HasEquipment(ActiveSlot))
+				{
+					EquipmentManagerComponent->Assign(ActiveSlot, ItemInstance);
+					ItemPickup->Destroy();
+				}
+				if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Primary))
+				{
+					EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance);
+					ItemPickup->Destroy();
+				}
+				else if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Secondary))
+				{
+					EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance);
+					ItemPickup->Destroy();
+				}
+			}
+		}
 	}
 }
 
@@ -292,6 +357,61 @@ void ABOCharacter::Escape(const FInputActionValue& value)
 {
 }
 
+void ABOCharacter::EquipSlot1(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Primary);
+	}
+}
+
+void ABOCharacter::EquipSlot2(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Secondary);
+	}
+}
+
+void ABOCharacter::EquipSlot3(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Melee);
+	}
+}
+
+void ABOCharacter::EquipSlot4(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Throwable);
+	}
+}
+
+void ABOCharacter::EquipSlot5(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Effect);
+	}
+}
+
+void ABOCharacter::DropEquipment(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		// 장비 제거
+		UItemInstanceBase* ItemInstance = EquipmentManagerComponent->Unassign(EquipmentManagerComponent->GetActiveSlot());
+
+		// 제거한 장비 액터 소환
+		FItemFactory::SpawnItemPickup(
+			GetWorld(),
+			ItemInstance,
+			GetActorLocation() + 30 * GetActorForwardVector());
+	}
+}
+
 void ABOCharacter::ChangeMoveSpeed()
 {
 	float NewMoveSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
@@ -310,4 +430,29 @@ void ABOCharacter::OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase
 	{
 		EquipmentManagerComponent->Unassign(Slot);
 	}
+}
+
+void ABOCharacter::BindingEquipmentManagerComponentDelegates()
+{
+	if (!EquipmentManagerComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ABOCharacter] EquipmentManagerComponent의 델리게이트 바인딩 실패 : 유효하지 않은 EquipmentManagerComponent"));
+		return;
+	}
+
+	// Primary & Secondary (Range Weapon)
+	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
+	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
+}
+
+bool ABOCharacter::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
+{
+	// TEMP: 재장전 항상 가능
+	return true;
+}
+
+int32 ABOCharacter::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance)
+{
+	// TEMP: 재장전 탄약 충분
+	return 100;
 }
