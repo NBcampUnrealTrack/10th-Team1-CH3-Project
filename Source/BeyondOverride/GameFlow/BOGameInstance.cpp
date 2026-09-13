@@ -163,6 +163,9 @@ void UBOGameInstance::SaveFarmingData()
 		SurvivalTime = WorldSubsystem->GetSurvivalTime();
 
 		TotalSurvivalTime += SurvivalTime;
+
+		UE_LOG(LogTemp, Warning, TEXT("Survival Time : %f"), SurvivalTime);
+		UE_LOG(LogTemp, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
 	}
 
 	// killed monsters / killer monster

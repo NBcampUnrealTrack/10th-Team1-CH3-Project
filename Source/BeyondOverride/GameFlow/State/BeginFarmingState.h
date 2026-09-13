@@ -21,4 +21,5 @@ class BEYONDOVERRIDE_API UBeginFarmingState : public UBaseFarmingState
 
   private:
 	void InitRegions();
+	void SetStartTime();
 };

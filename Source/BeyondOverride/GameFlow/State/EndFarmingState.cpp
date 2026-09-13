@@ -4,13 +4,34 @@
 
 #include "FarmingStateMachine.h"
 
-#include "../BOGameInstance.h"
+#include "GameFlow/BOGameInstance.h"
+#include "GameFlow/BOWorldSubsystem.h"
 
 void UEndFarmingState::Enter()
 {
 	UE_LOG(LogTemp, Warning, TEXT("End Enter"));
 	Super::Enter();
 
+	SetEndTime();
+	SetFarmingResult();
+}
+
+void UEndFarmingState::SetEndTime()
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Set End Time"));
+		WorldSubsystem->SetEndTime();
+	}
+}
+
+void UEndFarmingState::SetFarmingResult()
+{
 	if (!GetWorld())
 	{
 		return;

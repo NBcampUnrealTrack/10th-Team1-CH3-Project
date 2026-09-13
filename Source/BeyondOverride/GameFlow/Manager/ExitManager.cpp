@@ -91,7 +91,14 @@ AExitActor* UExitManager::SelectRandomExit()
 	int32 Size = Exits.Num();
 	int32 Index = FMath::RandRange(0, Size - 1);
 
-	return Exits[Index];
+	if (Index < Size)
+	{
+		return Exits[Index];
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 void UExitManager::HandleExtract(AExitActor* ExitPoint, AActor* Interactor)

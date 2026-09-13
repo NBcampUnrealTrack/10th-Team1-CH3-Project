@@ -18,4 +18,8 @@ class BEYONDOVERRIDE_API UEndFarmingState : public UBaseFarmingState
 
   public:
 	virtual void Enter() override;
+
+  private:
+	void SetEndTime();
+	void SetFarmingResult();
 };

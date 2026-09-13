@@ -127,17 +127,17 @@ void ASpawnVolume::StartPhase()
 
 	int32 Size = PhaseData.PhaseEntries.Num();
 
-	if (PhaseIndex < Size)
-	{
-		float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
-
-		GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
-		SpawnPhaseMonster();
-	}
-	else
+	if (PhaseIndex == Size)
 	{
 		PhaseIndex = 0;
+
+		return;
 	}
+
+	float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
+
+	GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
+	SpawnPhaseMonster();
 }
 
 void ASpawnVolume::SpawnPhaseMonster()
