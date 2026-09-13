@@ -41,6 +41,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 현재 장비 사용
 	void Use();
 
+	// 현재 장비 재장전 - RangeWeapon 전용
+	void Reload();
+
 	// 슬롯에 장비 등록
 	void Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 	// 슬롯에서 장비 해제

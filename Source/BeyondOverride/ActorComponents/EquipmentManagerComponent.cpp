@@ -78,6 +78,32 @@ void UEquipmentManagerComponent::Use()
 {
 }
 
+void UEquipmentManagerComponent::Reload()
+{
+	// 슬롯 확인
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
+	{
+		return;
+	}
+
+	// RangeWeapon이 아닌 경우
+	URangeWeaponHandlerComponent* RangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[ActiveSlot]);
+	if (!RangeWeaponHandler)
+	{
+		return;
+	}
+
+	// 재장전
+	const bool bSucceed = RangeWeaponHandler->Reload();
+	if (!bSucceed)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 재장전 실패 - %s 슬롯: %s"), *UEnum::GetValueAsString(ActiveSlot), *GetNameSafe(RangeWeaponHandler->GetEquippableItemInstance()));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 재장전 성공 - %s 슬롯: %s"), *UEnum::GetValueAsString(ActiveSlot), *GetNameSafe(RangeWeaponHandler->GetEquippableItemInstance()));
+}
+
 void UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
 {
 	// 장착 불가능한 타입
