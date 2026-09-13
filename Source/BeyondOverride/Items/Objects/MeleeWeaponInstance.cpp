@@ -16,7 +16,7 @@ void UMeleeWeaponInstance::Initialize()
 
 	// MeleeWeaponData 로드
 	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
-	// MeleeWeaponData = ItemDataSubsystem->GetMeleeWeaponData(ItemID);
+	MeleeWeaponData = ItemDataSubsystem->GetMeleeWeaponData(ItemID);
 }
 
 const FMeleeWeaponDataRow* UMeleeWeaponInstance::GetMeleeWeaponData() const
