@@ -541,8 +541,9 @@ void URangeWeaponHandlerComponent::StartFireTimer()
 {
 	// 데이터 유효성 검증
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (RangeWeaponData)
+	if (!RangeWeaponData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 타이머 활성화 실패 - 유효하지 않은 RangeWeaponData"));
 		return;
 	}
 
@@ -557,7 +558,7 @@ void URangeWeaponHandlerComponent::StartReloadTimer()
 {
 	// 데이터 유효성 검증
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (RangeWeaponData)
+	if (!RangeWeaponData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 타이머 활성화 실패 - 유효하지 않은 RangeWeaponData"));
 		return;
