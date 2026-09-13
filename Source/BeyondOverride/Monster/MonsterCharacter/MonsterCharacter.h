@@ -63,10 +63,14 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 	FBallisticInfo Ballistic;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Monster")
-	UStateComponent* GetStateComponent() const;
+	UStateComponent* GetState() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Monster")
-	UAttackDataComponent* GetAttackDataComponent() const;
+	UAttackDataComponent* GetAttackData() const;
+
+	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
+	void DeathSequence();
 
 	UPROPERTY(EditAnywhere, Category = "Monster|Stat")
 	float WalkSpeed = 600.0f;
@@ -81,12 +85,12 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 	UParticleSystem* FireParticle;
 
   protected:
+	UPROPERTY(VisibleAnywhere, Category = "Coponent|Stat")
+	TObjectPtr<UStatComponent> StatComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Coponent|State")
 	TObjectPtr<UStateComponent> StateComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Coponent|Stat")
 	TObjectPtr<UAttackDataComponent> AttackDataComponent;
-	UPROPERTY(VisibleAnywhere, Category = "Coponent|Stat")
-	TObjectPtr<UStatComponent> StatComponent;
 
 	virtual void BeginPlay() override;
 

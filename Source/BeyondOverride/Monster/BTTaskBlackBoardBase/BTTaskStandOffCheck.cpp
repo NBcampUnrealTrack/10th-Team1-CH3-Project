@@ -1,20 +1,26 @@
 // 26/09/10 Copyright CH3 Team1 Jinho Song
 
 // Base include
-#include "Monster/BTTaskBlackBoardBase/BTTaskPatrolCheck.h"
+#include "Monster/BTTaskBlackBoardBase/BTTaskStandOffCheck.h"
 
 // Add include
+#include "NavigationSystem.h"
+
 #include "BehaviorTree/BlackboardComponent.h"
+#include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
+#include "GameFramework/Actor.h"
+#include "Monster/ActorComponent/AttackDataComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Player/Character/BOCharacter.h"
 
-UBTTaskPatrolCheck::UBTTaskPatrolCheck()
+UBTTaskStandOffCheck::UBTTaskStandOffCheck()
 {
-	NodeName = TEXT("Patrol Check");
+	NodeName = TEXT("StandOff Check");
 }
 
-EBTNodeResult::Type UBTTaskPatrolCheck::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp)
@@ -40,10 +46,15 @@ EBTNodeResult::Type UBTTaskPatrolCheck::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-	if (AIState->GetBeCanPatrol())
+	ABOCharacter* Target = AIState->GetTarget();
+	if (!Target)
 	{
-		AIState->FalseBeCanPatrol();
-		AIState->CallPatrolTimer();
+		return EBTNodeResult::Failed;
+	}
+
+	if (!AIState->IsSttandOff())
+	{
+		AIState->SetSttandOffTimer();
 		return EBTNodeResult::Succeeded;
 	}
 

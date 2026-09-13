@@ -34,7 +34,7 @@ EBTNodeResult::Type UBTTaskClearTarget::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetStateComponent();
+	UStateComponent* AIState = AIMonster->GetState();
 	if (!AIState)
 	{
 		return EBTNodeResult::Failed;
