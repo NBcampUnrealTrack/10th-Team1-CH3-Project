@@ -307,14 +307,14 @@ bool URangeWeaponHandlerComponent::CanFire() const
 		return false;
 	}
 
-	// 사격 딜레이
-	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	// 탄약 부족
+	if (RangeWeaponInstance->GetCurrentAmmo() <= 0)
 	{
 		return false;
 	}
 
-	// 탄약 부족
-	if (RangeWeaponInstance->GetCurrentAmmo() <= 0)
+	// 사격 딜레이
+	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
 	{
 		return false;
 	}
