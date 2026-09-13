@@ -256,8 +256,6 @@ FRotator URangeWeaponHandlerComponent::GetMuzzleRotation() const
 	}
 
 	return Muzzleotation;
-
-	return FRotator();
 }
 
 void URangeWeaponHandlerComponent::AddRecoil()
