@@ -234,6 +234,10 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Primary(const FInputActionValue& value)
 {
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Use();
+	}
 }
 
 void ABOCharacter::Secondary(const FInputActionValue& value)
