@@ -1,0 +1,43 @@
+#include "Interaction/Actors/StorageContainerActor.h"
+
+#include "Player/ActorComponent/InventoryComponent.h"
+#include "UI/Manager/UIManager.h"
+#include "UI/Widgets/InventoryScreenWidget.h"
+
+AStorageContainerActor::AStorageContainerActor()
+{
+	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	SetRootComponent(StaticMeshComp);
+
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+
+	PromptData.Title = FText::FromString(TEXT("상자"));
+	PromptData.ActionText = FText::FromString(TEXT("[E] 키를 눌러 아이템을 획득하세요"));
+	PromptData.HoldSeconds = 3.f;
+	PromptData.bMoveCancel = true;
+	PromptData.bEnabled = true;
+}
+
+void AStorageContainerActor::PerformInteract(AActor* Interactor)
+{
+	UUIManager* UIManager = UUIManager::Get(Interactor);
+	if (!UIManager)
+		return;
+
+	UUserWidget* Widget = UIManager->PushScreen(EUIScreen::Inventory, EUIInputMode::GameAndUI);
+	if (UInventoryScreenWidget* InventoryScreen = Cast<UInventoryScreenWidget>(Widget))
+	{
+		InventoryScreen->OpenContainer(InventoryComponent, GetDisplayTitle(Interactor));
+	}
+	SetOpened();
+}
+
+void AStorageContainerActor::SetOpened()
+{
+	PromptData.HoldSeconds = 0.f;
+	if (bIsOpened || !OpenedMesh || !StaticMeshComp)
+		return;
+
+	StaticMeshComp->SetStaticMesh(OpenedMesh);
+	bIsOpened = true;
+}
