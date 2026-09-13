@@ -116,6 +116,13 @@ bool URangeWeaponHandlerComponent::CanFire() const
 		return false;
 	}
 
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return false;
+	}
+
 	// 사격 딜레이
 	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
 	{
