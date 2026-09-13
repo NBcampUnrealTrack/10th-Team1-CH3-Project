@@ -45,6 +45,10 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
   public:
 	UEquipmentManagerComponent();
 
+  protected:
+	virtual void OnRegister() override;
+
+  public:
 	// 슬롯 전환
 	void Equip(EEquipmentSlot Slot);
 	// 비무장 전환

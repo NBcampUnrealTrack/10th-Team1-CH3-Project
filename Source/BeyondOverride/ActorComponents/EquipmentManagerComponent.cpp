@@ -15,7 +15,13 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
+}
 
+void UEquipmentManagerComponent::OnRegister()
+{
+	Super::OnRegister();
+
+	// 장비 핸들러의 델리게이트 연결
 	BindDelegates();
 }
 
