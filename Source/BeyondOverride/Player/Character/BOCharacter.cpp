@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
+#include "Items/Actors/ItemPickupBase.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
@@ -251,6 +252,29 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 	{
 		InteractComponent->PressInteract();
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("111111")));
+
+		// TEMP: 장비 획득 및 장착
+		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
+		{
+			UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
+			if (EquipmentManagerComponent)
+			{
+				EEquipmentSlot ActiveSlot = EquipmentManagerComponent->GetActiveSlot();
+				// 현재 빈손인 경우
+				if (EquipmentManagerComponent->HasEquipment(ActiveSlot))
+				{
+					EquipmentManagerComponent->Assign(ActiveSlot, ItemInstance);
+				}
+				if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Primary))
+				{
+					EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance);
+				}
+				else if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Secondary))
+				{
+					EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance);
+				}
+			}
+		}
 	}
 }
 
