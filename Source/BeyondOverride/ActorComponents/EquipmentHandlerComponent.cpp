@@ -1,8 +1,17 @@
 #include "ActorComponents/EquipmentHandlerComponent.h"
 
+#include "Components/SkeletalMeshComponent.h"
+
 UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	SkeletalMeshComponent = nullptr;
+}
+
+void UEquipmentHandlerComponent::OnRegister()
+{
+	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
 }
 
 UEquippableItemInstance* UEquipmentHandlerComponent::GetEquippableItemInstance() const

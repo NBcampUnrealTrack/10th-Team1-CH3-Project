@@ -6,6 +6,7 @@
 
 #include "EquipmentHandlerComponent.generated.h"
 
+class USkeletalMeshComponent;
 class UEquippableItemInstance;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -13,9 +14,16 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+  protected:
+	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
+
   public:
 	UEquipmentHandlerComponent();
 
+  protected:
+	virtual void OnRegister() override;
+
+  public:
 	// 등록된 장비 반환
 	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
 
