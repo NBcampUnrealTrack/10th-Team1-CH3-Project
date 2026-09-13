@@ -224,7 +224,7 @@ bool URangeWeaponHandlerComponent::CanReload() const
 	}
 
 	// 여분 탄약 등, 외부 조건 확인
-	if (!CanReloadDeleagte.Execute(RangeWeaponInstance))
+	if (!CanReloadDeleagte.IsBound() || !CanReloadDeleagte.Execute(RangeWeaponInstance))
 	{
 		return false;
 	}
