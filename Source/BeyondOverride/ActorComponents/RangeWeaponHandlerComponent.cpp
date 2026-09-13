@@ -32,6 +32,7 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 	// 이미 등록된 장비 존재
 	if (RangeWeaponInstance)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Assign 실패 - %s 장비가 이미 등록됨"), *GetNameSafe(RangeWeaponInstance))
 		return false;
 	}
 
@@ -39,6 +40,7 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 	RangeWeaponInstance = Cast<URangeWeaponInstance>(EquippableItemInstance);
 	if (!RangeWeaponInstance)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Assign 실패 - %s: URangeWeaponInstance가 아님"), *GetNameSafe(EquippableItemInstance))
 		return false;
 	}
 
@@ -66,12 +68,14 @@ bool URangeWeaponHandlerComponent::Unassign()
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - 등록된 장비가 없음"))
 		return false;
 	}
 
 	// 장착 해제 시도
 	if (!Unequip())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - Unequip 실패"))
 		return false;
 	}
 
@@ -99,6 +103,7 @@ bool URangeWeaponHandlerComponent::Equip()
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - 등록된 장비가 없음"))
 		return;
 	}
 
@@ -106,6 +111,7 @@ bool URangeWeaponHandlerComponent::Equip()
 	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
 	if (!EquippableItemData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(RangeWeaponInstance))
 		return;
 	}
 
@@ -113,12 +119,14 @@ bool URangeWeaponHandlerComponent::Equip()
 	ACharacter* Character = GetOwner<ACharacter>();
 	if (!Character)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - Owner가 Character가 아님 (Owner=%s)"), *GetNameSafe(GetOwner()))
 		return false;
 	}
 
 	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
 	if (!CharacterMeshComponent)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - Character가 SkeletalMeshComponent를 갖지 않음 (Character=%s)"), *GetNameSafe(Character))
 		return false;
 	}
 
@@ -143,6 +151,7 @@ bool URangeWeaponHandlerComponent::Unequip()
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - 등록된 장비가 없음"))
 		return;
 	}
 
@@ -150,6 +159,7 @@ bool URangeWeaponHandlerComponent::Unequip()
 	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
 	if (!EquippableItemData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(RangeWeaponInstance))
 		return;
 	}
 
@@ -157,12 +167,14 @@ bool URangeWeaponHandlerComponent::Unequip()
 	ACharacter* Character = GetOwner<ACharacter>();
 	if (!Character)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - Owner가 Character가 아님 (Owner=%s)"), *GetNameSafe(GetOwner()))
 		return false;
 	}
 
 	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
 	if (!CharacterMeshComponent)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - Character가 SkeletalMeshComponent를 갖지 않음 (Character=%s)"), *GetNameSafe(Character))
 		return false;
 	}
 
