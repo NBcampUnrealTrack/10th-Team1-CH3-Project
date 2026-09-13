@@ -93,7 +93,7 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 			if (PlayerController->PrimaryAction)
 			{
-				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::Primary);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Primary);
 			}
 
 			if (PlayerController->SecondaryAction)
