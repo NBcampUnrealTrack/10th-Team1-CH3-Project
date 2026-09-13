@@ -1,6 +1,7 @@
 #include "ActorComponents/EquipmentHandlerComponent.h"
 
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
 
 UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 {
@@ -12,6 +13,11 @@ UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 void UEquipmentHandlerComponent::OnRegister()
 {
 	EquipMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
+
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		EquipMeshComponent->SetupAttachment(Character->GetMesh());
+	}
 }
 
 UEquippableItemInstance* UEquipmentHandlerComponent::GetEquippableItemInstance() const
