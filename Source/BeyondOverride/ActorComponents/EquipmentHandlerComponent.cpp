@@ -7,14 +7,12 @@ UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	EquipMeshComponent = nullptr;
+	EquipMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
 }
 
 void UEquipmentHandlerComponent::OnRegister()
 {
 	Super::OnRegister();
-
-	EquipMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
 
 	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
