@@ -96,11 +96,91 @@ bool URangeWeaponHandlerComponent::Unassign()
 
 bool URangeWeaponHandlerComponent::Equip()
 {
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
+	if (!EquippableItemData)
+	{
+		return;
+	}
+
+	// 캐릭터 메시 확인
+	ACharacter* Character = GetOwner<ACharacter>();
+	if (!Character)
+	{
+		return false;
+	}
+
+	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
+	if (!CharacterMeshComponent)
+	{
+		return false;
+	}
+
+	// 메시 설정
+	EquipMeshComponent->SetSkeletalMesh(EquippableItemData->EquipMesh);
+
+	// 장착 소켓에 메시 부착
+	const FName EquipSocketName = EquippableItemData->EquipSocketName;
+	if (CharacterMeshComponent->DoesSocketExist(EquipSocketName))
+	{
+		EquipMeshComponent->AttachToComponent( // 소켓에 부착
+			CharacterMeshComponent,
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			EquipSocketName);
+	}
+
 	return true;
 }
 
 bool URangeWeaponHandlerComponent::Unequip()
 {
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
+	if (!EquippableItemData)
+	{
+		return;
+	}
+
+	// 캐릭터 메시 확인
+	ACharacter* Character = GetOwner<ACharacter>();
+	if (!Character)
+	{
+		return false;
+	}
+
+	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
+	if (!CharacterMeshComponent)
+	{
+		return false;
+	}
+
+	// 보관 소켓에 메시 부착
+	const FName HolsterSocketName = EquippableItemData->HolsterSocketName;
+	if (CharacterMeshComponent->DoesSocketExist(HolsterSocketName))
+	{
+		EquipMeshComponent->AttachToComponent( // 소켓에 부착
+			CharacterMeshComponent,
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			HolsterSocketName);
+	}
+	// 보관 소켓이 없는 경우 메시 제거
+	else
+	{
+		EquipMeshComponent->SetSkeletalMesh(nullptr);
+	}
+
 	return true;
 }
 
