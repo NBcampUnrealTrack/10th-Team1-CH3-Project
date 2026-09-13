@@ -137,6 +137,12 @@ void URangeWeaponHandlerComponent::SetupTimeline()
 	// 기본 타임라인 제거
 	ClearTimeline();
 
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return;
+	}
+
 	// 데이터 유효성 검증
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 	if (!RangeWeaponData)
@@ -177,6 +183,12 @@ void URangeWeaponHandlerComponent::ClearTimeline()
 
 void URangeWeaponHandlerComponent::AddRecoil()
 {
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return;
+	}
+
 	// 데이터 유효성 검증
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 	if (!RangeWeaponData)
