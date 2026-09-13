@@ -599,7 +599,7 @@ void URangeWeaponHandlerComponent::PlayFireAnimation()
 		return;
 	}
 
-	EquipMeshComponent->PlayAnimation(FireAnim);
+	EquipMeshComponent->PlayAnimation(FireAnim, false);
 }
 
 void URangeWeaponHandlerComponent::PlayReloadAnimation()
@@ -635,7 +635,7 @@ void URangeWeaponHandlerComponent::PlayReloadAnimation()
 		return;
 	}
 
-	EquipMeshComponent->PlayAnimation(WeaponReloadHip);
+	EquipMeshComponent->PlayAnimation(WeaponReloadHip, false);
 }
 
 void URangeWeaponHandlerComponent::StopReloadAnimation()
