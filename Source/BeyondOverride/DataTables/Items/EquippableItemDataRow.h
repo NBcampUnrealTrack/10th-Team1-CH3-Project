@@ -15,7 +15,9 @@ struct BEYONDOVERRIDE_API FEquippableItemDataRow : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
 	TObjectPtr<USkeletalMesh> EquipMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
-	FName EquipSocketName;
+	FName EquipSocketName; // 장착 소켓 이름
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
+	FName HolsterSocketName; // 사용하지 않을 때 소켓 이름
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
 	TObjectPtr<UEquipmentAnimationDataAsset> EquipmentAnimationData; // 장비 애니메이션 데이터에셋
