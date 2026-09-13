@@ -14,6 +14,7 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	ActiveSlot = EEquipmentSlot::Primary;
 
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
+	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
 }
 
 void UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
