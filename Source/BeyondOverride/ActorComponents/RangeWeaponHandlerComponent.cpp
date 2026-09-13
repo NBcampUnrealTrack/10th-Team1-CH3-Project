@@ -1,6 +1,8 @@
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 
+#include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
