@@ -398,17 +398,17 @@ FVector URangeWeaponHandlerComponent::GetMuzzleLocation() const
 
 FRotator URangeWeaponHandlerComponent::GetMuzzleRotation() const
 {
-	FRotator Muzzleotation = GetOwner()->GetActorRotation();
+	FRotator MuzzleRotation = GetOwner()->GetActorRotation();
 	if (EquipMeshComponent && EquipMeshComponent->DoesSocketExist(MuzzleSocketName))
 	{
-		Muzzleotation = EquipMeshComponent->GetSocketRotation(MuzzleSocketName);
+		MuzzleRotation = EquipMeshComponent->GetSocketRotation(MuzzleSocketName);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] GetMuzzleRotation 기본값 반환 - 메시에 %s 소켓이 없음 (장비=%s"), *MuzzleSocketName.ToString(), *GetNameSafe(RangeWeaponInstance));
 	}
 
-	return Muzzleotation;
+	return MuzzleRotation;
 }
 
 FRotator URangeWeaponHandlerComponent::GetAimRotation() const
