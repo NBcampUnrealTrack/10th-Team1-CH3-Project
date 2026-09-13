@@ -1,17 +1,14 @@
 ﻿#include "Player/Character/BOCharacter.h"
 
-#include "Player/PlayerController/BOPlayerController.h"
 #include "EnhancedInputComponent.h"
 
 #include "ActorComponents/EquipmentManagerComponent.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
-#include "Player/ActorComponent/StatComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -53,7 +50,6 @@ void ABOCharacter::BeginPlay()
 void ABOCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
