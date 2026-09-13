@@ -725,9 +725,18 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 
 void URangeWeaponHandlerComponent::OnReloadInterrupted()
 {
+	// 재장전 중이 아닌 경우
+	if (!GetWorld() || !GetWorld()->GetTimerManager().IsTimerActive(ReloadTimerHandle))
+	{
+		return;
+	}
+
 	// 재장전 타이머 제거
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 
 	// 재장전 애니메이션 중단
 	StopReloadAnimation();
+
+	// 재장전 취소 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Interrupted")));
 }
