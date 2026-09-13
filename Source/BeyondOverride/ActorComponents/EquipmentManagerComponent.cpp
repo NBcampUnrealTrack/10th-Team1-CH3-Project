@@ -49,7 +49,19 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 		return false;
 	}
 
-	// 활성화 슬롯 전환
+	// 이미 활성화된 슬롯인 경우 유지
+	if (ActiveSlot == Slot)
+	{
+		return false;
+	}
+
+	// 이전 슬롯의 장비 해제
+	if (EquipmentHandlerComponents.Contains(ActiveSlot))
+	{
+		EquipmentHandlerComponents[ActiveSlot]->Unequip();
+	}
+
+	// 활성화 슬롯 전환 및 장비 장착
 	ActiveSlot = Slot;
 	EquipmentHandlerComponents[Slot]->Equip();
 
