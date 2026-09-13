@@ -13,6 +13,8 @@
 #include "Interaction/InteractComponent.h"
 #include "ActorComponents/EquipmentManagerComponent.h"
 
+#include "Player/AnimInstance/BOAnimInstance.h"
+
 ABOCharacter::ABOCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -88,12 +90,18 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 			if (PlayerController->PrimaryAction)
 			{
-				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::Primary);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::Fire);
 			}
 
 			if (PlayerController->SecondaryAction)
 			{
-				EnhancedInput->BindAction(PlayerController->SecondaryAction, ETriggerEvent::Started, this, &ABOCharacter::Secondary);
+				EnhancedInput->BindAction(PlayerController->SecondaryAction, ETriggerEvent::Started, this, &ABOCharacter::Aim);
+				EnhancedInput->BindAction(PlayerController->SecondaryAction, ETriggerEvent::Completed, this, &ABOCharacter::Hip);
+			}
+
+			if (PlayerController->ReloadAction)
+			{
+				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started, this, &ABOCharacter::Reload);
 			}
 
 			if (PlayerController->InteractAction)
@@ -198,12 +206,64 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 	}
 }
 
-void ABOCharacter::Primary(const FInputActionValue& value)
+void ABOCharacter::Fire(const FInputActionValue& value)
 {
+	// TODO: 실제 발사 코드
+
+	// --------------------
+
+	if (!GetMesh() || GetMesh()->GetAnimInstance())
+	{
+		return;
+	}
+
+	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
+	if (IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	if (bIsAiming)
+	{
+		AnimInstance->PlayFireAimMontage();
+	}
+	else
+	{
+		AnimInstance->PlayFireHipMontage();
+	}
 }
 
-void ABOCharacter::Secondary(const FInputActionValue& value)
+void ABOCharacter::Hip(const FInputActionValue& value)
 {
+	bIsAiming = false;
+}
+
+void ABOCharacter::Reload(const FInputActionValue& value)
+{
+	if (!GetMesh() || GetMesh()->GetAnimInstance())
+	{
+		return;
+	}
+
+	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
+	if (IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	if (bIsAiming)
+	{
+		AnimInstance->PlayReloadAimMontage();
+	}
+	else
+	{
+		AnimInstance->PlayReloadHipMontage();
+	}
+}
+
+void ABOCharacter::Aim(const FInputActionValue& value)
+{
+	bIsAiming = true;
 }
 
 void ABOCharacter::InteractPress(const FInputActionValue& value)

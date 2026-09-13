@@ -43,6 +43,14 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bShouldMove = GroundSpeed > 3.0f && bHasAcceleration;
 
 	bIsCrouch = MovementComponent->IsCrouching();
+
+	ABOCharacter* BOCharacter = Cast<ABOCharacter>(Character);
+	if (IsValid(BOCharacter))
+	{
+		return;
+	}
+
+	bIsAiming = BOCharacter->GetIsAiming();
 }
 
 void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData)

@@ -27,6 +27,8 @@ public:
 	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
 
+	const bool GetIsAiming() const { return bIsAiming; }
+
 public:
 	ABOCharacter();
 
@@ -81,9 +83,13 @@ private:
 	UFUNCTION()
 	void ToggleCrouch(const FInputActionValue& value);
 	UFUNCTION()
-	void Primary(const FInputActionValue& value);
+	void Fire(const FInputActionValue& value);
 	UFUNCTION()
-	void Secondary(const FInputActionValue& value);
+	void Aim(const FInputActionValue& value);
+	UFUNCTION()
+	void Hip(const FInputActionValue& value);
+	UFUNCTION()
+	void Reload(const FInputActionValue& value);
 	UFUNCTION()
 	void InteractPress(const FInputActionValue& value);
 	UFUNCTION()
@@ -96,6 +102,7 @@ private:
 	void ChangeMoveSpeed();
 
 	bool bIsSprint = false;
+	bool bIsAiming = false;
 
 public:
 	// 장비 슬롯에 아이템 등록 및 해제
