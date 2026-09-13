@@ -151,7 +151,7 @@ void UEquipmentManagerComponent::BindDelegates()
 		if (URangeWeaponHandlerComponent* PrimaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Primary]))
 		{
 			PrimaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
-			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmod);
+			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
 		}
 	}
 
@@ -161,7 +161,7 @@ void UEquipmentManagerComponent::BindDelegates()
 		if (URangeWeaponHandlerComponent* SecondaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Secondary]))
 		{
 			SecondaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
-			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmod);
+			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
 		}
 	}
 }
@@ -178,7 +178,7 @@ bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponIn
 	return CanReloadDelegate.Execute(RangeWeaponInstance);
 }
 
-int32 UEquipmentManagerComponent::OnRequestReloadAmmod(URangeWeaponInstance* RangeWeaponInstance) const
+int32 UEquipmentManagerComponent::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance) const
 {
 	if (!RequestReloadAmmoDelegate.IsBound())
 	{

@@ -73,5 +73,5 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 
 	// Range Weapon 델리게이트
 	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
-	int32 OnRequestReloadAmmod(URangeWeaponInstance* RangeWeaponInstance) const;
+	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance) const;
 };
