@@ -43,6 +43,14 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bShouldMove = GroundSpeed > 3.0f && bHasAcceleration;
 
 	bIsCrouch = MovementComponent->IsCrouching();
+
+	ABOCharacter* BOCharacter = Cast<ABOCharacter>(Character);
+	if (IsValid(BOCharacter))
+	{
+		return;
+	}
+
+	bIsAiming = BOCharacter->GetIsAiming();
 }
 
 void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData)
@@ -54,10 +62,109 @@ void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset
 
 	CurrentEquipmentData = NewData;
 
-	// EquipmentIdle = NewData->Idle;
-	// EquipmentLocomotion = NewData->Locomotion;
-	// EquipmentJumpStart = NewData->JumpStart;
-	// EquipmentJumpLoop = NewData->JumpLoop;
-	// EquipmentJumpLand = NewData->JumpLand;
-	// EquipmentAim = NewData->Aim;
+	EquipmentHipIdle = NewData->IdleHip;
+	EquipmentAimIdle = NewData->IdleAim;
+	EquipmentHipLocomotion = NewData->LocomotionHip;
+	EquipmentAimLocomotion = NewData->LocomotionAim;
+	EquipmentJump = NewData->Jump;
+	EquipmentFallingLoop = NewData->FallingLoop;
+	EquipmentLand = NewData->Land;
+}
+
+void UBOAnimInstance::PlayEquipMontage()
+{
+	if (!CurrentEquipmentData || !CurrentEquipmentData->Equip)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->Equip);
+}
+
+void UBOAnimInstance::PlayFireHipMontage()
+{
+	if (!CurrentEquipmentData)
+	{
+		return;
+	}
+
+	if (!CurrentEquipmentData->FireHip)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->FireHip);
+
+	if (!CurrentEquipmentData->WeaponFire)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->WeaponFire);
+}
+
+void UBOAnimInstance::PlayFireAimMontage()
+{
+	if (!CurrentEquipmentData)
+	{
+		return;
+	}
+
+	if (!CurrentEquipmentData->FireAim)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->FireAim);
+
+	if (!CurrentEquipmentData->WeaponFire)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->WeaponFire);
+}
+
+void UBOAnimInstance::PlayReloadHipMontage()
+{
+	if (!CurrentEquipmentData)
+	{
+		return;
+	}
+
+	if (!CurrentEquipmentData->ReloadHip)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->ReloadHip);
+
+	if (!CurrentEquipmentData->WeaponReloadHip)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->WeaponReloadHip);
+}
+
+void UBOAnimInstance::PlayReloadAimMontage()
+{
+	if (!CurrentEquipmentData)
+	{
+		return;
+	}
+
+	if (!CurrentEquipmentData->ReloadAim)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->ReloadAim);
+
+	if (!CurrentEquipmentData->WeaponReloadAim)
+	{
+		return;
+	}
+
+	Montage_Play(CurrentEquipmentData->WeaponReloadAim);
 }

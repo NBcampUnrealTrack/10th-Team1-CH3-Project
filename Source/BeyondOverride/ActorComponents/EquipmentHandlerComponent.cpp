@@ -1,8 +1,23 @@
 #include "ActorComponents/EquipmentHandlerComponent.h"
 
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
+
 UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	EquipMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
+}
+
+void UEquipmentHandlerComponent::OnRegister()
+{
+	Super::OnRegister();
+
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		EquipMeshComponent->SetupAttachment(Character->GetMesh());
+	}
 }
 
 UEquippableItemInstance* UEquipmentHandlerComponent::GetEquippableItemInstance() const
@@ -15,9 +30,9 @@ bool UEquipmentHandlerComponent::Assign(UEquippableItemInstance* EquippableItemI
 	return true;
 }
 
-bool UEquipmentHandlerComponent::Unassign()
+UEquippableItemInstance* UEquipmentHandlerComponent::Unassign()
 {
-	return true;
+	return nullptr;
 }
 
 bool UEquipmentHandlerComponent::Equip()
@@ -33,4 +48,25 @@ bool UEquipmentHandlerComponent::Unequip()
 bool UEquipmentHandlerComponent::Use()
 {
 	return true;
+}
+
+bool UEquipmentHandlerComponent::CanUnequip()
+{
+	return true;
+}
+
+void UEquipmentHandlerComponent::AttachToSocket(FName SocketName)
+{
+	if (!EquipMeshComponent)
+	{
+		return;
+	}
+
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		EquipMeshComponent->AttachToComponent(
+			Character->GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			SocketName);
+	}
 }

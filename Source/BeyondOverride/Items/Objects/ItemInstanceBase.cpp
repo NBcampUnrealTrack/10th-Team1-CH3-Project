@@ -13,6 +13,8 @@ UItemInstanceBase::UItemInstanceBase()
 
 void UItemInstanceBase::Initialize()
 {
+	UE_LOG(LogTemp, Warning, TEXT("[UItemInstanceBase] Initialize %s"), *GetNameSafe(this));
+
 	// ItemData 로드
 	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
 	ItemData = ItemDataSubsystem->GetItemData(ItemID);

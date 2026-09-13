@@ -13,32 +13,41 @@ class UEquipmentAnimationDataAsset : public UDataAsset
 	GENERATED_BODY()
 
   public:
-	UPROPERTY(EditDefaultsOnly, Category = "Character|Hip")
-	TObjectPtr<UAnimSequence> HipIdle;  // 캐릭터 비조준 Idle
-	UPROPERTY(EditDefaultsOnly, Category = "Character|Hip")
-	TObjectPtr<UBlendSpace> HipLocomotion;  // 캐릭터 비조준 Locomotion
+	// Character Locomotion
+	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
+	TObjectPtr<UAnimSequence> IdleHip; // 캐릭터 Hip Idle
+	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
+	TObjectPtr<UAnimSequence> IdleAim; // 캐릭터 Aim Idle
+	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
+	TObjectPtr<UBlendSpace> LocomotionHip; // 캐릭터 Hip Locomotion
+	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
+	TObjectPtr<UBlendSpace> LocomotionAim; // 캐릭터 Aim Locomotion
 
-	UPROPERTY(EditDefaultsOnly, Category = "Character|Aim")
-	TObjectPtr<UAnimSequence> AimIdle;  // 캐릭터 조준 Idle
-	UPROPERTY(EditDefaultsOnly, Category = "Character|Aim")
-	TObjectPtr<UBlendSpace> AimLocomotion;  // 캐릭터 조준 Locomotion
-
+	// Character Airborne
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Airborne")
-	TObjectPtr<UAnimSequence> Jump;  // 캐릭터 점프
+	TObjectPtr<UAnimSequence> Jump; // 캐릭터 점프
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Airborne")
-	TObjectPtr<UAnimSequence> FallingLoop;  // 캐릭터 낙하 (반복)
+	TObjectPtr<UAnimSequence> FallingLoop; // 캐릭터 낙하 (반복)
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Airborne")
-	TObjectPtr<UAnimSequence> Land;  // 캐릭터 착지
+	TObjectPtr<UAnimSequence> Land; // 캐릭터 착지
 
+	// Character Action
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Action")
-	TObjectPtr<UAnimMontage> Equip;  // 캐릭터 무기 Equip 애니메이션
+	TObjectPtr<UAnimMontage> Equip; // 캐릭터 무기 Equip 애니메이션
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Action")
-	TObjectPtr<UAnimMontage> Fire;  // 캐릭터 무기 Fire 애니메이션
+	TObjectPtr<UAnimMontage> FireHip; // 캐릭터 무기 Hip Fire 애니메이션
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Action")
-	TObjectPtr<UAnimMontage> Reload;  // 캐릭터 무기 Reload 애니메이션
+	TObjectPtr<UAnimMontage> FireAim; // 캐릭터 무기 Aim Fire 애니메이션
+	UPROPERTY(EditDefaultsOnly, Category = "Character|Action")
+	TObjectPtr<UAnimMontage> ReloadHip; // 캐릭터 무기 Hip Reload 애니메이션
+	UPROPERTY(EditDefaultsOnly, Category = "Character|Action")
+	TObjectPtr<UAnimMontage> ReloadAim; // 캐릭터 무기 Aim Reload 애니메이션
 
+	// Weapon Action
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Action")
-	TObjectPtr<UAnimMontage> WeaponFire;  // 총기 Fire 애니메이션
+	TObjectPtr<UAnimMontage> WeaponFire; // 총기 Fire 애니메이션
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Action")
-	TObjectPtr<UAnimMontage> WeaponReload;  // 총기 Reload 애니메이션
+	TObjectPtr<UAnimMontage> WeaponReloadHip; // 총기 Hip Reload 애니메이션
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Action")
+	TObjectPtr<UAnimMontage> WeaponReloadAim; // 총기 Aim Reload 애니메이션
 };
