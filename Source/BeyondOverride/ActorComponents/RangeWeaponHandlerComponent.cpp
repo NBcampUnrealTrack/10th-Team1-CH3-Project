@@ -325,6 +325,18 @@ ABulletProjectile* URangeWeaponHandlerComponent::SpawnProjectile(
 
 void URangeWeaponHandlerComponent::StartFireTimer()
 {
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (RangeWeaponData)
+	{
+		return;
+	}
+
+	// 사격 타이머 활성화
+	GetWorld()->GetTimerManager().SetTimer(
+		FireTimerHandle,
+		RangeWeaponData->FireRate,
+		false);
 }
 
 void URangeWeaponHandlerComponent::PlayFireAnimation()
