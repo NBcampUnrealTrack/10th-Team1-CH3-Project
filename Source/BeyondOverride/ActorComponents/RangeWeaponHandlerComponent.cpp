@@ -647,6 +647,14 @@ void URangeWeaponHandlerComponent::PlayReloadAnimation()
 
 void URangeWeaponHandlerComponent::StopReloadAnimation()
 {
+	// 장비 메시 컴포넌트 확인
+	if (!EquipMeshComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 애니메이션 정지 실패 - 유효하지 않은 EquipMeshComponent"));
+		return;
+	}
+
+	EquipMeshComponent->Stop();
 }
 
 void URangeWeaponHandlerComponent::OnReloadStarted()
