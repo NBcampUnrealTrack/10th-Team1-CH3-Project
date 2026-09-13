@@ -35,7 +35,7 @@ EBTNodeResult::Type UBTTaskCanAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
-	UAttackDataComponent* AIAttackData = AIMonster->GetAttackDataComponent();
+	UAttackDataComponent* AIAttackData = AIMonster->GetAttackData();
 	if (!AIAttackData)
 	{
 		return EBTNodeResult::Failed;

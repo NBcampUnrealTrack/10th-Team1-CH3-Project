@@ -36,7 +36,7 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-	UAttackDataComponent* AIAttackData = AIMonster->GetAttackDataComponent();
+	UAttackDataComponent* AIAttackData = AIMonster->GetAttackData();
 	if (!AIAttackData)
 	{
 		return EBTNodeResult::Failed;
@@ -76,8 +76,9 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 			Point.Y += FMath::Sin(Angle) * Radius;
 
 			// Point = Center에서 정확히 Radius만큼 떨어진 위치
-			if (NavSystem->ProjectPointToNavigation(Point, NavLocation))
+			if (NavSystem->ProjectPointToNavigation(Point, NavLocation, FVector((AIAttackData->GetAttackRange() / 20.0f), (AIAttackData->GetAttackRange() / 20.0f), 2000.0f)))
 			{
+
 				MoveLocation = NavLocation.Location;
 				break;
 			}
