@@ -262,22 +262,42 @@ void ABOCharacter::Escape(const FInputActionValue& value)
 
 void ABOCharacter::EquipSlot1(const FInputActionValue& value)
 {
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Primary);
+	}
 }
 
 void ABOCharacter::EquipSlot2(const FInputActionValue& value)
 {
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Secondary);
+}
 }
 
 void ABOCharacter::EquipSlot3(const FInputActionValue& value)
 {
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Melee);
+	}
 }
 
 void ABOCharacter::EquipSlot4(const FInputActionValue& value)
 {
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Throwable);
+	}
 }
 
 void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 {
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Equip(EEquipmentSlot::Effect);
+	}
 }
 
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
