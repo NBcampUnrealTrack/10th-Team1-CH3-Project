@@ -9,6 +9,7 @@
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Projectiles/Bullets/BulletProjectile.h"
 
 URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 {
@@ -215,7 +216,7 @@ bool URangeWeaponHandlerComponent::Use()
 
 	// 총알 소환
 	ABulletProjectile* Bullet = SpawnProjectile(
-		GetOwner(),
+		Cast<APawn>(GetOwner()),
 		MuzzleLocation,
 		GetSpreadRotation(AimRotation)); // 탄 퍼짐 적용
 
@@ -530,11 +531,41 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 }
 
 ABulletProjectile* URangeWeaponHandlerComponent::SpawnProjectile(
-	AActor* Instigator,
+	APawn* Instigator,
 	const FVector& StartLocation,
 	const FRotator& Rotation)
 {
-	return nullptr;
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return nullptr;
+	}
+
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return nullptr;
+	}
+
+	// 총알 액터 생성
+	ABulletProjectile* BulletActor = GetWorld()->SpawnActor<ABulletProjectile>(
+		RangeWeaponData->BulletClass,
+		StartLocation,
+		Rotation);
+	if (!BulletActor)
+	{
+		return nullptr;
+	}
+
+	// 총알 초기 설정
+	BulletActor->Initialize(
+		Instigator,
+		RangeWeaponData->Damage,
+		RangeWeaponData->ProjectileSpeed * Rotation.Vector(),
+		RangeWeaponData->ProjectileGravityScale);
+
+	return BulletActor;
 }
 
 void URangeWeaponHandlerComponent::StartFireTimer()

@@ -106,7 +106,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 
 	// 총알 소환
 	ABulletProjectile* SpawnProjectile(
-		AActor* Instigator,
+		APawn* Instigator,
 		const FVector& StartLocation,
 		const FRotator& Rotation);
 
