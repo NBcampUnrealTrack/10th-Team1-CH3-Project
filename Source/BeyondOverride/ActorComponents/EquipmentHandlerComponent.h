@@ -15,7 +15,7 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	GENERATED_BODY()
 
   protected:
-	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
+	TObjectPtr<USkeletalMeshComponent> EquipMeshComponent;
 
   public:
 	UEquipmentHandlerComponent();

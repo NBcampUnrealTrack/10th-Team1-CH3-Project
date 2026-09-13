@@ -6,12 +6,12 @@ UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	SkeletalMeshComponent = nullptr;
+	EquipMeshComponent = nullptr;
 }
 
 void UEquipmentHandlerComponent::OnRegister()
 {
-	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
+	EquipMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
 }
 
 UEquippableItemInstance* UEquipmentHandlerComponent::GetEquippableItemInstance() const
