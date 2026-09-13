@@ -14,6 +14,8 @@ void URangeWeaponInstance::Initialize()
 {
 	Super::Initialize();
 
+	UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponInstance] Initialize %s"), *GetNameSafe(this));
+
 	// RangeWeaponData 로드
 	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
 	RangeWeaponData = ItemDataSubsystem->GetRangeWeaponData(ItemID);
