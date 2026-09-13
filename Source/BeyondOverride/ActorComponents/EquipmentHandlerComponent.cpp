@@ -12,6 +12,8 @@ UEquipmentHandlerComponent::UEquipmentHandlerComponent()
 
 void UEquipmentHandlerComponent::OnRegister()
 {
+	Super::OnRegister();
+
 	EquipMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Equipment Mesh"));
 
 	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
