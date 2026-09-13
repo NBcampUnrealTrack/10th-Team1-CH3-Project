@@ -144,6 +144,7 @@ bool UEquipmentManagerComponent::Reload()
 	// 슬롯 확인
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
 		return false;
 	}
 
@@ -151,6 +152,7 @@ bool UEquipmentManagerComponent::Reload()
 	URangeWeaponHandlerComponent* RangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[ActiveSlot]);
 	if (!RangeWeaponHandler)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 URangeWeaponHandlerComponent가 아님"), *UEnum::GetValueAsString(ActiveSlot))
 		return false;
 	}
 
