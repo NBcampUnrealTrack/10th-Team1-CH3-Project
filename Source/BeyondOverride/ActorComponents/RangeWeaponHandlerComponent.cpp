@@ -84,6 +84,34 @@ bool URangeWeaponHandlerComponent::Unequip()
 
 bool URangeWeaponHandlerComponent::Use()
 {
+	// 사격 불가
+	if (!CanFire())
+	{
+		return false;
+	}
+
+	// 총구 위치 & 방향
+	const FVector MuzzleLocation = GetMuzzleLocation();
+	const FRotator MuzzleRotation = GetMuzzleRotation();
+
+	// 총알 소환
+	ABulletProjectile* Bullet = SpawnProjectile(
+		GetOwner(),
+		MuzzleLocation,
+		GetSpreadRotation(MuzzleRotation)); // 탄 퍼짐 적용
+
+	// 반동 추가
+	AddRecoil();
+
+	// 사격 애니메이션 재생
+	PlayFireAnimation();
+
+	// 탄약 소모
+	RangeWeaponInstance->ConsumeAmmo();
+
+	// 사격 쿨다운 설정
+	StartFireTimer();
+
 	return true;
 }
 
@@ -188,6 +216,16 @@ void URangeWeaponHandlerComponent::ClearTimeline()
 	SpreadDegreeTimeline = FTimeline();
 }
 
+FVector URangeWeaponHandlerComponent::GetMuzzleLocation() const
+{
+	return FVector();
+}
+
+FRotator URangeWeaponHandlerComponent::GetMuzzleRotation() const
+{
+	return FRotator();
+}
+
 void URangeWeaponHandlerComponent::AddRecoil()
 {
 	// 등록된 장비 없음
@@ -221,4 +259,20 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 	// TODO: 탄 퍼짐 타임라인을 통해 균일 분포를 적용한 방향 반환
 
 	return AimRotation;
+}
+
+ABulletProjectile* URangeWeaponHandlerComponent::SpawnProjectile(
+	AActor* Instigator,
+	const FVector& StartLocation,
+	const FRotator& Rotation)
+{
+	return nullptr;
+}
+
+void URangeWeaponHandlerComponent::StartFireTimer()
+{
+}
+
+void URangeWeaponHandlerComponent::PlayFireAnimation()
+{
 }

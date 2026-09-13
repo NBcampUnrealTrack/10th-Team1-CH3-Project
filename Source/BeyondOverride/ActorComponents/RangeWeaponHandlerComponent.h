@@ -8,6 +8,7 @@
 #include "RangeWeaponHandlerComponent.generated.h"
 
 class URangeWeaponInstance;
+class ABulletProjectile;
 
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
@@ -65,11 +66,25 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 타임라인 제거
 	void ClearTimeline();
 
+	// 총구 위치 반환
+	FVector GetMuzzleLocation() const;
+	// 총구 방향 반환
+	FRotator GetMuzzleRotation() const;
+
 	// 현재 누적 반동에 추가
 	void AddRecoil();
 	// 현재 탄퍼짐 바탕으로 사격 방향 반환
 	FRotator GetSpreadRotation(const FRotator& AimRotation);
 
-	void AddRecoil();                                        // 현재 누적 반동에 추가
-	FRotator GetSpreadRotation(const FRotator& AimRotation); // 현재 탄퍼짐 바탕으로 사격 방향 반환
+	// 총알 소환
+	ABulletProjectile* SpawnProjectile(
+		AActor* Instigator,
+		const FVector& StartLocation,
+		const FRotator& Rotation);
+
+	// 사격 타이머 활성화
+	void StartFireTimer();
+
+	// 사격 애니메이션 재생
+	void PlayFireAnimation();
 };
