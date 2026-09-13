@@ -75,6 +75,16 @@ void UEquipmentManagerComponent::Unequip()
 {
 	// 장비 애니메이션 해제 (기본 애니메이션)
 	// TODO: ABOAnimInstance에 기본 애니메이션 등록 후 함수 호출하여 기본 애니메이션으로 복구
+
+	// 슬롯 확인
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unequip 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
+		return;
+	}
+
+	// 장비 해제
+	EquipmentHandlerComponents[ActiveSlot]->Unequip();
 }
 
 void UEquipmentManagerComponent::Use()
