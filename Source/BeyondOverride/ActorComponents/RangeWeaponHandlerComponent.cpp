@@ -483,10 +483,16 @@ void URangeWeaponHandlerComponent::OnReloadStarted()
 
 void URangeWeaponHandlerComponent::OnReloadCompleted()
 {
+	// RequestReloadAmmoDelegate 바인딩 확인
+	if (!RequestReloadAmmoDelegate.IsBound())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 실패 - RequestReloadAmmoDelegate is not Bound"));
+		return;
+	}
+
 	// 추가할 탄약 개수
-	const int32 AddedAmmo = CanReloadDeleagte.IsBound()
-								? RequestReloadAmmoDelegate.Execute(RangeWeaponInstance)
-								: 0;
+	const int32 AddedAmmo = RequestReloadAmmoDelegate.Execute(RangeWeaponInstance);
+
 	// 탄약 추가
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
 }
