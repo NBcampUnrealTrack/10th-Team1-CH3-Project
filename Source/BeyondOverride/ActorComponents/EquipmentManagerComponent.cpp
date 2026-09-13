@@ -183,22 +183,22 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 	return true;
 }
 
-bool UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
+UItemInstanceBase* UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 {
 	if (!EquipmentHandlerComponents.Contains(Slot))
 	{
-		return false;
+		return nullptr;
 	}
 
-	const bool bSucceed = EquipmentHandlerComponents[Slot]->Unassign();
-	if (!bSucceed)
+	UItemInstanceBase* ItemInstance = EquipmentHandlerComponents[Slot]->Unassign();
+	if (!ItemInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 실패 - %s 슬롯의 장비 제거 실패"), *UEnum::GetValueAsString(Slot));
-		return false;
+		return nullptr;
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 성공 - 슬롯의 장비 제거 성공"), *UEnum::GetValueAsString(Slot));
-	return true;
+	return ItemInstance;
 }
 
 void UEquipmentManagerComponent::BindDelegates()

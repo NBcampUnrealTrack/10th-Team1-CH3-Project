@@ -67,7 +67,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 슬롯에 장비 등록
 	bool Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 	// 슬롯에서 장비 해제
-	bool Unassign(EEquipmentSlot Slot);
+	UItemInstanceBase* Unassign(EEquipmentSlot Slot);
 
   public:
 	// 재장전 가능 여부 델리게이트

@@ -63,24 +63,21 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 	return true;
 }
 
-bool URangeWeaponHandlerComponent::Unassign()
+UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 {
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - 등록된 장비가 없음"))
-		return false;
+		return nullptr;
 	}
 
 	// 장착 해제 시도
 	if (!Unequip())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - Unequip 실패"))
-		return false;
+		return nullptr;
 	}
-
-	// 장비 제거
-	RangeWeaponInstance = nullptr;
 
 	// 장비 메시 제거
 	if (EquipMeshComponent)
@@ -94,8 +91,12 @@ bool URangeWeaponHandlerComponent::Unassign()
 	// 타임라인 제거
 	ClearTimeline();
 
-	// 제거 성공
-	return true;
+	// 장비 제거
+	UEquippableItemInstance* OutEquippableItemInstance = RangeWeaponInstance;
+	RangeWeaponInstance = nullptr;
+
+	// 제거한 장비 반환
+	return OutEquippableItemInstance;
 }
 
 bool URangeWeaponHandlerComponent::Equip()

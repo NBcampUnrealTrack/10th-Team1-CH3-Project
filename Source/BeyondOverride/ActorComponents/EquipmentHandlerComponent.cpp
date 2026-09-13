@@ -30,9 +30,9 @@ bool UEquipmentHandlerComponent::Assign(UEquippableItemInstance* EquippableItemI
 	return true;
 }
 
-bool UEquipmentHandlerComponent::Unassign()
+UEquippableItemInstance* UEquipmentHandlerComponent::Unassign()
 {
-	return true;
+	return nullptr;
 }
 
 bool UEquipmentHandlerComponent::Equip()

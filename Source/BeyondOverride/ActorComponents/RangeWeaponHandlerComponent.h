@@ -46,7 +46,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* EquippableItemInstance) override;
 	// 장비 제거
-	virtual bool Unassign() override;
+	virtual UEquippableItemInstance* Unassign() override;
 
 	// 장비 장착
 	virtual bool Equip() override;
