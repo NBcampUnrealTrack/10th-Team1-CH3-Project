@@ -4,6 +4,7 @@
 
 #include "ActorComponents/EquipmentManagerComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Enums/EquipmentSlot.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
