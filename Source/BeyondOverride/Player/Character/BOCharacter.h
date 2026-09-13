@@ -13,6 +13,7 @@ class UInteractComponent;
 class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
+class URangeWeaponInstance;
 
 enum class EEquipmentSlot : uint8;
 
@@ -100,4 +101,10 @@ private:
 public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	void OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
+
+	// EquipmentManagerComponent의 델리게이트 바인딩
+	void BindingEquipmentManagerComponentDelegates();
+	// EquipmentManagerComponent - Range Weapon 델리게이트 연결 이벤트
+	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
+	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);
 };

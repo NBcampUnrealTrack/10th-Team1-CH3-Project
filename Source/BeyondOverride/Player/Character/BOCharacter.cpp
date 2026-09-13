@@ -3,15 +3,18 @@
 #include "Player/PlayerController/BOPlayerController.h"
 #include "EnhancedInputComponent.h"
 
+#include "ActorComponents/EquipmentManagerComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "GameFramework/SpringArmComponent.h"
+#include "Interaction/InteractComponent.h"
+#include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
-#include "Interaction/InteractComponent.h"
-#include "ActorComponents/EquipmentManagerComponent.h"
+#include "Player/ActorComponent/StatComponent.h"
+#include "Player/PlayerController/BOPlayerController.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -42,6 +45,9 @@ void ABOCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	ChangeMoveSpeed();
+
+	// EquipmentManagerComponent의 델리게이트 바인딩
+	BindingEquipmentManagerComponentDelegates();
 }
 
 void ABOCharacter::Tick(float DeltaTime)
@@ -250,4 +256,29 @@ void ABOCharacter::OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase
 	{
 		EquipmentManagerComponent->Unassign(Slot);
 	}
+}
+
+void ABOCharacter::BindingEquipmentManagerComponentDelegates()
+{
+	if (!EquipmentManagerComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ABOCharacter] EquipmentManagerComponent의 델리게이트 바인딩 실패 : 유효하지 않은 EquipmentManagerComponent"));
+		return;
+	}
+
+	// Primary & Secondary (Range Weapon)
+	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
+	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
+}
+
+bool ABOCharacter::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
+{
+	// TEMP: 재장전 항상 가능
+	return true;
+}
+
+int32 ABOCharacter::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance)
+{
+	// TEMP: 재장전 탄약 충분
+	return 100;
 }
