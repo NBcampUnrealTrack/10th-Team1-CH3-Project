@@ -584,7 +584,7 @@ void URangeWeaponHandlerComponent::PlayFireAnimation()
 
 	// 데이터 유효성 검증
 	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
-	if (EquippableItemData)
+	if (!EquippableItemData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 애니메이션 재생 실패 - 유효하지 않은 EquippableItemData"));
 		return;
@@ -620,7 +620,7 @@ void URangeWeaponHandlerComponent::PlayReloadAnimation()
 
 	// 데이터 유효성 검증
 	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
-	if (EquippableItemData)
+	if (!EquippableItemData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 애니메이션 재생 실패 - 유효하지 않은 EquippableItemData"));
 		return;
