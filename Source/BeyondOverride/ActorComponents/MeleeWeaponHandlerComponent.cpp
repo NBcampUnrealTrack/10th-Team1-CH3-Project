@@ -55,48 +55,9 @@ bool UMeleeWeaponHandlerComponent::Equip()
 
 bool UMeleeWeaponHandlerComponent::Unequip()
 {
-	// 해제 불가
-	if (!CanUnequip())
+	if (!Super::Unequip())
 	{
 		return false;
-	}
-
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = MeleeWeaponInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Unequip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(MeleeWeaponInstance))
-		return false;
-	}
-
-	// 캐릭터 메시 확인
-	ACharacter* Character = GetOwner<ACharacter>();
-	if (!Character)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Unequip 실패 - Owner가 Character가 아님 (Owner=%s)"), *GetNameSafe(GetOwner()))
-		return false;
-	}
-
-	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
-	if (!CharacterMeshComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Unequip 실패 - Character가 SkeletalMeshComponent를 갖지 않음 (Character=%s)"), *GetNameSafe(Character))
-		return false;
-	}
-
-	// 보관 소켓에 메시 부착
-	const FName HolsterSocketName = EquippableItemData->HolsterSocketName;
-	if (CharacterMeshComponent->DoesSocketExist(HolsterSocketName))
-	{
-		EquipMeshComponent->AttachToComponent( // 소켓에 부착
-			CharacterMeshComponent,
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			HolsterSocketName);
-	}
-	// 보관 소켓이 없는 경우 메시 제거
-	else
-	{
-		EquipMeshComponent->SetSkeletalMesh(nullptr);
 	}
 
 	return true;
@@ -135,7 +96,7 @@ bool UMeleeWeaponHandlerComponent::CanEquip() const
 
 bool UMeleeWeaponHandlerComponent::CanUnequip() const
 {
-	return true;
+	return Super::CanUnequip();
 }
 
 bool UMeleeWeaponHandlerComponent::CanUse() const
