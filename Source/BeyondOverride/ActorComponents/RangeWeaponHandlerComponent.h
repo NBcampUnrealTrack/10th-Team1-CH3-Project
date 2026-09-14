@@ -42,6 +42,10 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
   public:
 	URangeWeaponHandlerComponent();
 
+  protected:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+  public:
 	// 등록된 장비 반환
 	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
 
@@ -72,9 +76,6 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual bool CanUnequip() const override;
 	// 장비 사용 가능 여부
 	virtual bool CanUse() const override;
-
-  protected:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
   protected:
 	// 사격 타이머

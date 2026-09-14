@@ -24,6 +24,27 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	RecoilApplySpeed = 10;
 }
 
+void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// 적용할 반동 값 계산
+	FVector2D RecoilDelta = FMath::Vector2DInterpConstantTo(FVector2D::ZeroVector, RecoilAccumulator, DeltaTime, RecoilApplySpeed);
+
+	// 반동 적용
+	APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!Pawn)
+	{
+		return;
+	}
+
+	Pawn->AddControllerPitchInput(-RecoilDelta.Y);
+	Pawn->AddControllerYawInput(RecoilDelta.X);
+
+	// 누적에 반영
+	RecoilAccumulator -= RecoilDelta;
+}
+
 UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance() const
 {
 	return RangeWeaponInstance;
@@ -202,27 +223,6 @@ bool URangeWeaponHandlerComponent::CanUse() const
 	}
 
 	return true;
-}
-
-void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// 적용할 반동 값 계산
-	FVector2D RecoilDelta = FMath::Vector2DInterpConstantTo(FVector2D::ZeroVector, RecoilAccumulator, DeltaTime, RecoilApplySpeed);
-
-	// 반동 적용
-	APawn* Pawn = Cast<APawn>(GetOwner());
-	if (!Pawn)
-	{
-		return;
-	}
-
-	Pawn->AddControllerPitchInput(-RecoilDelta.Y);
-	Pawn->AddControllerYawInput(RecoilDelta.X);
-
-	// 누적에 반영
-	RecoilAccumulator -= RecoilDelta;
 }
 
 bool URangeWeaponHandlerComponent::CanFire() const
