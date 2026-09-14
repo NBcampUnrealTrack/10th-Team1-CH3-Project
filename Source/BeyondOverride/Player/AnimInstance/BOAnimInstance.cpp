@@ -1,5 +1,5 @@
 ﻿#include "Player/AnimInstance/BOAnimInstance.h"
-
+#include "Kismet/KismetMathLibrary.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/BlendSpace.h"
 #include "DataAssets/EquipmentAnimationDataAsset.h"
@@ -33,7 +33,33 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	GroundSpeed = Velocity.Size2D();
 
+	bool bIsFireMontagePlaying = false;
+
+	if (IsValid(CurrentEquipmentData))
+	{
+		if (IsValid(CurrentEquipmentData->FireHip))
+		{
+			bIsFireMontagePlaying |=
+				Montage_IsPlaying(
+					CurrentEquipmentData->FireHip);
+		}
+
+		if (IsValid(CurrentEquipmentData->FireAim))
+		{
+			bIsFireMontagePlaying |=
+				Montage_IsPlaying(
+					CurrentEquipmentData->FireAim);
+		}
+	}
+
+	EquipmentGroundSpeed = bIsFireMontagePlaying ? 0.0f : GroundSpeed;
+
 	const FVector LocalVelocity = Character->GetActorTransform().InverseTransformVectorNoScale(Velocity);
+
+	const FRotator AimRotation = Character->GetBaseAimRotation();
+	const FRotator ActorRotation = Character->GetActorRotation();
+	const FRotator DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
+	AimPitch = FMath::Clamp(DeltaRotation.Pitch, -90.0f, 90.0f);
 
 	Direction = FMath::RadiansToDegrees(FMath::Atan2(LocalVelocity.Y, LocalVelocity.X));
 	bIsFalling = MovementComponent->IsFalling();
@@ -43,14 +69,7 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bShouldMove = GroundSpeed > 3.0f && bHasAcceleration;
 
 	bIsCrouch = MovementComponent->IsCrouching();
-
-	ABOCharacter* BOCharacter = Cast<ABOCharacter>(Character);
-	if (IsValid(BOCharacter))
-	{
-		return;
-	}
-
-	bIsAiming = BOCharacter->GetIsAiming();
+	bIsAiming = Character->GetIsAiming();
 }
 
 void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData)
@@ -62,8 +81,8 @@ void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset
 
 	CurrentEquipmentData = NewData;
 
-	EquipmentHipIdle = NewData->IdleHip;
-	EquipmentAimIdle = NewData->IdleAim;
+	//EquipmentHipIdle = NewData->IdleHip;
+	//EquipmentAimIdle = NewData->IdleAim;
 	EquipmentHipLocomotion = NewData->LocomotionHip;
 	EquipmentAimLocomotion = NewData->LocomotionAim;
 	EquipmentJump = NewData->Jump;
@@ -100,7 +119,7 @@ void UBOAnimInstance::PlayFireHipMontage()
 		return;
 	}
 
-	Montage_Play(CurrentEquipmentData->WeaponFire);
+	// Montage_Play(CurrentEquipmentData->WeaponFire);
 }
 
 void UBOAnimInstance::PlayFireAimMontage()
@@ -122,7 +141,7 @@ void UBOAnimInstance::PlayFireAimMontage()
 		return;
 	}
 
-	Montage_Play(CurrentEquipmentData->WeaponFire);
+	// Montage_Play(CurrentEquipmentData->WeaponFire);
 }
 
 void UBOAnimInstance::PlayReloadHipMontage()
@@ -144,7 +163,7 @@ void UBOAnimInstance::PlayReloadHipMontage()
 		return;
 	}
 
-	Montage_Play(CurrentEquipmentData->WeaponReloadHip);
+	// Montage_Play(CurrentEquipmentData->WeaponReloadHip);
 }
 
 void UBOAnimInstance::PlayReloadAimMontage()
