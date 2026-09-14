@@ -171,6 +171,11 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				EnhancedInput->BindAction(PlayerController->EquipSlot5Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot5);
 			}
 
+			if (PlayerController->UnarmAction)
+			{
+				EnhancedInput->BindAction(PlayerController->UnarmAction, ETriggerEvent::Started, this, &ABOCharacter::Unarm);
+			}
+
 			if (PlayerController->DropEquipmentAction)
 			{
 				EnhancedInput->BindAction(PlayerController->DropEquipmentAction, ETriggerEvent::Started, this, &ABOCharacter::DropEquipment);
@@ -433,6 +438,14 @@ void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 	if (EquipmentManagerComponent)
 	{
 		EquipmentManagerComponent->Equip(EEquipmentSlot::Effect);
+	}
+}
+
+void ABOCharacter::Unarm(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Unequip();
 	}
 }
 

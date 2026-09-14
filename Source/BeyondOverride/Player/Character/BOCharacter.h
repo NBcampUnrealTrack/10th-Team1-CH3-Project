@@ -13,6 +13,7 @@ class UStatComponent;
 class UPlayerInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
+class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
 class UEquippableItemInstance;
@@ -121,6 +122,8 @@ private:
 	void EquipSlot4(const FInputActionValue& value);
 	UFUNCTION()
 	void EquipSlot5(const FInputActionValue& value);
+	UFUNCTION()
+	void Unarm(const FInputActionValue& value);
 	UFUNCTION()
 	void DropEquipment(const FInputActionValue& value);
 
