@@ -8,14 +8,14 @@
 
 class USpringArmComponent;
 class UCameraComponent;
-class UEquipmentComponent;
+class UEquipmentManagerComponent;
 class UStatComponent;
 class UInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
-class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
+class UEquippableItemInstance;
 class URangeWeaponInstance;
 
 enum class EEquipmentSlot : uint8;
@@ -26,9 +26,9 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	UEquipmentComponent* GetEquipmentComponent() const { return EquipmentComponent; }
+	UEquipmentManagerComponent* GetEquipmentComponent() const { return EquipmentManagerComponent; }
 	UStatComponent* GetStatComponent() const { return StatComponent; }
-	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	UPlayerInventoryComponent* GetPlayerInventoryComponent() const { return PlayerInventoryComponent; }
 	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
 	UInventoryInteractionComponent* GetInventoryInteractionComponent() const
 	{
@@ -58,6 +58,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SpeedMultiplier = 1.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Zoom")
+	float DefaultFOV = 90.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Zoom")
+	float AimFOV = 65.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Zoom")
+	float ZoomSpeed = 20.0f;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -65,11 +72,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USkeletalMeshComponent* EquipmentSkeletalMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	UEquipmentComponent* EquipmentComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UStatComponent* StatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	UInventoryComponent* InventoryComponent;
+	UPlayerInventoryComponent* PlayerInventoryComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInventoryInteractionComponent* InventoryInteractionComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
@@ -136,6 +141,8 @@ public:
 
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
+	// EquipmentManagerComponent - 장비 애니메이션 설정
+	void OnEquipmentChanged(UEquippableItemInstance* EquippableItemInstance);
 	// EquipmentManagerComponent - Range Weapon 델리게이트 연결 이벤트
 	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
 	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);

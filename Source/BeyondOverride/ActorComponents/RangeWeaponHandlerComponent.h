@@ -42,11 +42,15 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
   public:
 	URangeWeaponHandlerComponent();
 
+  protected:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+  public:
 	// 등록된 장비 반환
 	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
 
 	// 장비 등록
-	virtual bool Assign(UEquippableItemInstance* EquippableItemInstance) override;
+	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
 	// 장비 제거
 	virtual UEquippableItemInstance* Unassign() override;
 
@@ -58,14 +62,20 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 장비 사용
 	virtual bool Use() override;
 
-	// 장비 해제 가능 여부
-	virtual bool CanUnequip() override;
-
 	// 재장전
 	bool Reload();
 
   protected:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	// 장비 등록 가능 여부
+	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const override;
+	// 장비 제거 가능 여부
+	virtual bool CanUnassign() const override;
+	// 장비 장착 가능 여부
+	virtual bool CanEquip() const override;
+	// 장비 해제 가능 여부
+	virtual bool CanUnequip() const override;
+	// 장비 사용 가능 여부
+	virtual bool CanUse() const override;
 
   protected:
 	// 사격 타이머

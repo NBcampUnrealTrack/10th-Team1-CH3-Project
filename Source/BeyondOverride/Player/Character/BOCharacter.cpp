@@ -4,13 +4,15 @@
 
 #include "ActorComponents/EquipmentManagerComponent.h"
 #include "Camera/CameraComponent.h"
+#include "DataTables/Items/EquippableItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
 #include "Items/Actors/ItemPickupBase.h"
-#include "Items/Objects/ItemInstanceBase.h"
+#include "Items/Objects/EquippableItemInstance.h"
+#include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
@@ -37,7 +39,7 @@ ABOCharacter::ABOCharacter()
 	Camera->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm);
 
-	EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipementComponent"));
+	// EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipementComponent"));
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	InventoryInteractionComponent = CreateDefaultSubobject<UInventoryInteractionComponent>(TEXT("InventoryInteractionComponent"));
@@ -48,6 +50,11 @@ ABOCharacter::ABOCharacter()
 void ABOCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (IsValid(Camera))
+	{
+		DefaultFOV = Camera->FieldOfView;
+	}
 
 	ChangeMoveSpeed();
 
@@ -63,6 +70,16 @@ void ABOCharacter::BeginPlay()
 void ABOCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!IsValid(Camera))
+	{
+		return;
+	}
+
+	const float TargetFOV = bIsAiming ? AimFOV : DefaultFOV;
+	const float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomSpeed);
+
+	Camera->SetFieldOfView(NewFOV);
 }
 
 void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -168,7 +185,7 @@ float ABOCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	if (IsValid(StatComponent))
 	{
-		StatComponent->TakeDamage(ActualDamage);
+		StatComponent->TakeDamage(ActualDamage, DamageCauser);
 	}
 
 	return ActualDamage;
@@ -254,13 +271,13 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 		EquipmentManagerComponent->Use();
 	}
 
-	if (!GetMesh() || GetMesh()->GetAnimInstance())
+	if (!GetMesh() || !GetMesh()->GetAnimInstance())
 	{
 		return;
 	}
 
 	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
-	if (IsValid(AnimInstance))
+	if (!IsValid(AnimInstance))
 	{
 		return;
 	}
@@ -288,13 +305,13 @@ void ABOCharacter::Reload(const FInputActionValue& value)
 		EquipmentManagerComponent->Reload();
 	}
 
-	if (!GetMesh() || GetMesh()->GetAnimInstance())
+	if (!GetMesh() || !GetMesh()->GetAnimInstance())
 	{
 		return;
 	}
 
 	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
-	if (IsValid(AnimInstance))
+	if (!IsValid(AnimInstance))
 	{
 		return;
 	}
@@ -324,25 +341,30 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 		// TEMP: 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
 		{
-			UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
-			if (EquipmentManagerComponent)
+			if (UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance())
 			{
-				EEquipmentSlot ActiveSlot = EquipmentManagerComponent->GetActiveSlot();
-				// 현재 빈손인 경우
-				if (EquipmentManagerComponent->HasEquipment(ActiveSlot))
+				if (EquipmentManagerComponent)
 				{
-					EquipmentManagerComponent->Assign(ActiveSlot, ItemInstance);
-					ItemPickup->Destroy();
-				}
-				if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Primary))
-				{
-					EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance);
-					ItemPickup->Destroy();
-				}
-				else if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Secondary))
-				{
-					EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance);
-					ItemPickup->Destroy();
+					// Range Weapon
+					if (ItemInstance->IsA(URangeWeaponInstance::StaticClass()))
+					{
+						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
+						{
+							ItemPickup->Destroy();
+						}
+						else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
+						{
+							ItemPickup->Destroy();
+						}
+					}
+					// Melee Weapon
+					else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
+					{
+						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
+						{
+							ItemPickup->Destroy();
+						}
+					}
 				}
 			}
 		}
@@ -457,9 +479,43 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 		return;
 	}
 
+	// Equipment Changed
+	EquipmentManagerComponent->OnEquipmentChangedDelegate.AddUObject(this, &ABOCharacter::OnEquipmentChanged);
+
 	// Primary & Secondary (Range Weapon)
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
+}
+
+void ABOCharacter::OnEquipmentChanged(UEquippableItemInstance* EquippableItemInstance)
+{
+	if (!EquippableItemInstance)
+	{
+		return;
+	}
+
+	// 장비 데이터 확인
+	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
+	if (!EquippableItemData)
+	{
+		return;
+	}
+
+	// 장비 애니메이션 데이터 확인
+	UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!WeaponAnimationData)
+	{
+		return;
+	}
+
+	// 애니메이션 데이터 적용
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
+		{
+			BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+		}
+	}
 }
 
 bool ABOCharacter::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const

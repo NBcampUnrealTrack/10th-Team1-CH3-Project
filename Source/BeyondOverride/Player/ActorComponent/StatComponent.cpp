@@ -3,6 +3,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "GameFlow/BOGameMode.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
+
 
 UStatComponent::UStatComponent()
 {
@@ -21,7 +23,7 @@ void UStatComponent::BeginPlay()
 	OnShieldChanged.Broadcast(CurShield, MaxShield);
 }
 
-void UStatComponent::TakeDamage(int32 DamageAmount)
+void UStatComponent::TakeDamage(int32 DamageAmount, AActor* DamageCauser)
 {
 	if (bIsDead || DamageAmount <= 0)
 	{
@@ -45,7 +47,7 @@ void UStatComponent::TakeDamage(int32 DamageAmount)
 
 		if (CurHealth <= 0)
 		{
-			Die();
+			Die(DamageCauser);
 			return;
 		}
 	}
@@ -116,7 +118,7 @@ void UStatComponent::RegenerateShield()
 	}
 }
 
-void UStatComponent::Die()
+void UStatComponent::Die(AActor* DamageCauser)
 {
 	if (bIsDead)
 	{
@@ -128,7 +130,12 @@ void UStatComponent::Die()
 		if (ABOGameMode* GameMode = World->GetAuthGameMode<ABOGameMode>())
 		{
 			GameMode->EndFarming(EFarmingResult::Fail);
-			// GameMode->SetKillerMonster(MonsterId);
+
+			AMonsterCharacter* Monster = Cast<AMonsterCharacter>(DamageCauser);
+			if (IsValid(Monster))
+			{
+				// GameMode->SetKillerMonster(Monster->GetId);
+			}
 		}
 	}
 
