@@ -1,4 +1,4 @@
-// 26/09/10 Copyright CH3 Team1 Jinho Song
+// 26/09/13 Copyright CH3 Team1 Jinho Song
 
 // Base include
 #include "Monster/BTTaskBlackBoardBase/BTTaskStandOffCheck.h"
@@ -52,9 +52,9 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	if (!AIState->IsSttandOff())
+	if (!AIState->IsStandOff())
 	{
-		AIState->SetSttandOffTimer();
+		AIState->SetContinueStandOffTimer();
 		return EBTNodeResult::Succeeded;
 	}
 

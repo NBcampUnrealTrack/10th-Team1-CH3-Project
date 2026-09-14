@@ -24,7 +24,11 @@ public:
 
 	// 슬롯 접근
 	UFUNCTION(BlueprintPure)
+	TArray<UItemInstanceBase*> GetSlots() const;
+	UFUNCTION(BlueprintPure)
 	UItemInstanceBase* GetItem(int32 SlotIndex) const;
+	UFUNCTION(BlueprintCallable)
+	bool SetSlots(const TArray<UItemInstanceBase*>& NewSlots);
 	UFUNCTION(BlueprintCallable)
 	bool SetItem(int32 SlotIndex, UItemInstanceBase* Item);
 
@@ -61,10 +65,4 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	int32 MaxSlotCount = 16;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	float CurCarryWeight = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	float MaxCarryWeight = 500.0f;
 };

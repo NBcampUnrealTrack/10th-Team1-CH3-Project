@@ -198,21 +198,40 @@ void UStateComponent::SetCallingTimer()
 										   false);
 }
 
-bool UStateComponent::IsSttandOff() const
+bool UStateComponent::IsStandOff() const
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 
-	return TimerManager.IsTimerActive(SttandOffTimer);
+	return TimerManager.IsTimerActive(StandOffTimer);
 }
 
-void UStateComponent::SetSttandOffTimer()
+void UStateComponent::SetStandOffTimer()
 {
-	if (IsSttandOff())
+	if (IsStandOff())
 	{
 		return;
 	}
-	GetWorld()->GetTimerManager().SetTimer(SttandOffTimer,
+	GetWorld()->GetTimerManager().SetTimer(StandOffTimer,
 										   FTimerDelegate(),
 										   10.0f,
+										   false);
+}
+
+bool UStateComponent::IsContinueStandOff() const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(ContinueStandOffTimer);
+}
+
+void UStateComponent::SetContinueStandOffTimer()
+{
+	if (IsContinueStandOff())
+	{
+		return;
+	}
+	GetWorld()->GetTimerManager().SetTimer(ContinueStandOffTimer,
+										   FTimerDelegate(),
+										   5.0f,
 										   false);
 }

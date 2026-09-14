@@ -2,6 +2,7 @@
 
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "GameFlow/BOGameMode.h"
 
 UStatComponent::UStatComponent()
 {
@@ -120,6 +121,15 @@ void UStatComponent::Die()
 	if (bIsDead)
 	{
 		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		if (ABOGameMode* GameMode = World->GetAuthGameMode<ABOGameMode>())
+		{
+			GameMode->EndFarming(EFarmingResult::Fail);
+			// GameMode->SetKillerMonster(MonsterId);
+		}
 	}
 
 	bIsDead = true;
