@@ -46,7 +46,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
 
 	// 장비 등록
-	virtual bool Assign(UEquippableItemInstance* EquippableItemInstance) override;
+	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
 	// 장비 제거
 	virtual UEquippableItemInstance* Unassign() override;
 
@@ -63,7 +63,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 
   protected:
 	// 장비 등록 가능 여부
-	virtual bool CanAssign(const UEquippableItemInstance* EquippableItemInstance) const override;
+	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const override;
 	// 장비 제거 가능 여부
 	virtual bool CanUnassign() const override;
 	// 장비 장착 가능 여부

@@ -14,31 +14,15 @@ UEquippableItemInstance* UMeleeWeaponHandlerComponent::GetEquippableItemInstance
 	return MeleeWeaponInstance;
 }
 
-bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableItemInstance)
+bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
-	// 이미 등록된 장비 존재
-	if (MeleeWeaponInstance)
+	if (!Assign(InEquippableItemInstance))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Assign 실패 - %s 장비가 이미 등록됨"), *GetNameSafe(MeleeWeaponInstance))
 		return false;
 	}
 
-	// 잘못된 아이템 장착 시도
+	// Melee Weapon 인스턴스 저장
 	MeleeWeaponInstance = Cast<UMeleeWeaponInstance>(EquippableItemInstance);
-	if (!MeleeWeaponInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Assign 실패 - %s: UMeleeWeaponInstance가 아님"), *GetNameSafe(EquippableItemInstance))
-		return false;
-	}
-
-	// 장비 메시 설정
-	if (EquipMeshComponent)
-	{
-		if (USkeletalMesh* Mesh = MeleeWeaponInstance->GetEquippableItemData()->EquipMesh)
-		{
-			EquipMeshComponent->SetSkeletalMesh(Mesh);
-		}
-	}
 
 	// 등록 성공
 	return true;
@@ -46,28 +30,13 @@ bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 
 UEquippableItemInstance* UMeleeWeaponHandlerComponent::Unassign()
 {
-	// 등록된 장비 없음
-	if (!MeleeWeaponInstance)
+	UEquippableItemInstance* OutEquippableItemInstance = Super::Unassign();
+	if (!OutEquippableItemInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Unassign 실패 - 등록된 장비가 없음"))
 		return nullptr;
 	}
 
-	// 장착 해제 시도
-	if (!Unequip())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Unassign 실패 - Unequip 실패"))
-		return nullptr;
-	}
-
-	// 장비 메시 제거
-	if (EquipMeshComponent)
-	{
-		EquipMeshComponent->SetSkeletalMesh(nullptr);
-	}
-
-	// 장비 제거
-	UEquippableItemInstance* OutEquippableItemInstance = MeleeWeaponInstance;
+	// Melee Weapon 인스턴스 제거
 	MeleeWeaponInstance = nullptr;
 
 	// 제거한 장비 반환
@@ -176,14 +145,25 @@ bool UMeleeWeaponHandlerComponent::Use()
 	return false;
 }
 
-bool UMeleeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* EquippableItemInstance) const
+bool UMeleeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
+	if (!Super::CanAssign(InEquippableItemInstance))
+	{
+		return false;
+	}
+
+	// 잘못된 아이템 타입
+	if (!InEquippableItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 bool UMeleeWeaponHandlerComponent::CanUnassign() const
 {
-	return true;
+	return Super::CanUnassign();
 }
 
 bool UMeleeWeaponHandlerComponent::CanEquip() const

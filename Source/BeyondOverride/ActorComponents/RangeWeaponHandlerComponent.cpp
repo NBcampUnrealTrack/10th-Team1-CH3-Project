@@ -29,31 +29,15 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance
 	return RangeWeaponInstance;
 }
 
-bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableItemInstance)
+bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
-	// 이미 등록된 장비 존재
-	if (RangeWeaponInstance)
+	if (!Assign(InEquippableItemInstance))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Assign 실패 - %s 장비가 이미 등록됨"), *GetNameSafe(RangeWeaponInstance))
 		return false;
 	}
 
-	// 잘못된 아이템 장착 시도
+	// Range Weapon 인스턴스 저장
 	RangeWeaponInstance = Cast<URangeWeaponInstance>(EquippableItemInstance);
-	if (!RangeWeaponInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Assign 실패 - %s: URangeWeaponInstance가 아님"), *GetNameSafe(EquippableItemInstance))
-		return false;
-	}
-
-	// 장비 메시 설정
-	if (EquipMeshComponent)
-	{
-		if (USkeletalMesh* Mesh = RangeWeaponInstance->GetEquippableItemData()->EquipMesh)
-		{
-			EquipMeshComponent->SetSkeletalMesh(Mesh);
-		}
-	}
 
 	// 틱 활성화
 	SetComponentTickEnabled(true);
@@ -67,24 +51,10 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 
 UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 {
-	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	UEquippableItemInstance* OutEquippableItemInstance = Super::Unassign();
+	if (!OutEquippableItemInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - 등록된 장비가 없음"))
 		return nullptr;
-	}
-
-	// 장착 해제 시도
-	if (!Unequip())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - Unequip 실패"))
-		return nullptr;
-	}
-
-	// 장비 메시 제거
-	if (EquipMeshComponent)
-	{
-		EquipMeshComponent->SetSkeletalMesh(nullptr);
 	}
 
 	// 틱 비활성화
@@ -93,8 +63,7 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 	// 타임라인 제거
 	ClearTimeline();
 
-	// 장비 제거
-	UEquippableItemInstance* OutEquippableItemInstance = RangeWeaponInstance;
+	// Range Weapon 인스턴스 제거
 	RangeWeaponInstance = nullptr;
 
 	// 제거한 장비 반환
@@ -253,14 +222,25 @@ bool URangeWeaponHandlerComponent::Reload()
 	return true;
 }
 
-bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* EquippableItemInstance) const
+bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
+	if (!Super::CanAssign(InEquippableItemInstance))
+	{
+		return false;
+	}
+
+	// 잘못된 아이템 타입
+	if (!InEquippableItemInstance->IsA(URangeWeaponInstance::StaticClass()))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 bool URangeWeaponHandlerComponent::CanUnassign() const
 {
-	return true;
+	return Super::CanUnassign();
 }
 
 bool URangeWeaponHandlerComponent::CanEquip() const
