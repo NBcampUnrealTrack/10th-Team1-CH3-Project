@@ -123,8 +123,18 @@ UItemInstanceBase* UInventoryComponent::GetItem(const int32 SlotIndex) const
 
 bool UInventoryComponent::SetSlots(TArray<UItemInstanceBase*> NewSlots)
 {
+	if (NewSlots.Num() > Slots.Num())
+	{
+		return false;
+	}
 
-	return false;
+	Slots.Reset();
+	for (int32 i = 0; i < NewSlots.Num(); i++)
+	{
+		Slots[i] = NewSlots[i];
+	}
+
+	return true;
 }
 
 bool UInventoryComponent::SetItem(const int32 SlotIndex, UItemInstanceBase* Item)
