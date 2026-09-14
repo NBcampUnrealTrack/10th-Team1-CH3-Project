@@ -81,9 +81,12 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	}
 
 	// 현재 슬롯에 장착된 장비 존재 & 해제 실패 - 슬롯 유지
-	if (EquipmentHandlerComponents[ActiveSlot]->GetEquippableItemInstance() && !EquipmentHandlerComponents[ActiveSlot]->Unequip())
+	if (EquipmentHandlerComponents.Contains(ActiveSlot) && EquipmentHandlerComponents[ActiveSlot]->GetEquippableItemInstance())
+	{
+		if (!EquipmentHandlerComponents[ActiveSlot]->Unequip())
 	{
 		return false;
+	}
 	}
 
 	// 장비가 없는 슬롯으로 전환 - 비무장(Unarmed) 슬롯 전환
