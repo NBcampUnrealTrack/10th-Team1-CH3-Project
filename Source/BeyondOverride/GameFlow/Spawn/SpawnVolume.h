@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 
-#include "../../DataTables/Farming/PhaseData.h"
-#include "../../DataTables/Farming/SpawnData.h"
-#include "../../Interaction/Actors/ExitActor.h"
-#include "../BODelegates.h"
 #include "Components/BoxComponent.h"
+#include "DataTables/Farming/PhaseData.h"
+#include "DataTables/Farming/SpawnData.h"
+#include "GameFlow/BODelegates.h"
 #include "GameFramework/Actor.h"
+#include "Interaction/Actors/ExitActor.h"
 
 #include "SpawnVolume.generated.h"
 
@@ -56,12 +56,14 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpawnVolume")
 	float SpawnMaxRadius;
 
-  public:
+  private:
 	int32 PhaseIndex;
 
 	FSpawnData SpawnVolumeData;
 	FPhaseData PhaseData;
 
 	FTimerHandle PhaseTimer;
+
+  public:
 	FOnPlayerEntered OnPlayerEntered;
 };
