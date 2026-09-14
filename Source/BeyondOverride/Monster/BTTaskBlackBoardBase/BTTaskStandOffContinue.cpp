@@ -46,14 +46,15 @@ EBTNodeResult::Type UBTTaskStandOffContinue::ExecuteTask(UBehaviorTreeComponent&
 		return EBTNodeResult::Failed;
 	}
 
-	if (!AIState->IsContinueStandOff())
+	if (AIState->IsStandOff() && !AIState->IsContinueStandOff())
 	{
+		AIState->SetContinueStandOffTimer();
 		AIState->SetStandOffTimer();
 		return EBTNodeResult::Succeeded;
 	}
 	else
 	{
-		BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
+		BlackboardComp->SetValueAsVector(TEXT("TargetPoint"), AIMonster->GetActorLocation());
 		return EBTNodeResult::Succeeded;
 	}
 }

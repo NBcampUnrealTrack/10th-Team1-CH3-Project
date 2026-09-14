@@ -14,6 +14,21 @@ UStateComponent::UStateComponent()
 	LocationPatrolPoint = FVector::ZeroVector;
 }
 
+void UStateComponent::StartStandOff()
+{
+	bStandOff = true;
+}
+
+void UStateComponent::EndStandOff()
+{
+	bStandOff = false;
+}
+
+bool UStateComponent::CheckStandOff() const
+{
+	return bStandOff;
+}
+
 void UStateComponent::SetIsCallLocation(bool value)
 {
 	IsCallLocation = value;
@@ -207,12 +222,13 @@ bool UStateComponent::IsStandOff() const
 
 void UStateComponent::SetStandOffTimer()
 {
-	if (IsStandOff())
+	if (IsStandOff() || CheckStandOff())
 	{
 		return;
 	}
 	GetWorld()->GetTimerManager().SetTimer(StandOffTimer,
-										   FTimerDelegate(),
+										   this,
+										   &UStateComponent::StartStandOff,
 										   10.0f,
 										   false);
 }
@@ -231,7 +247,8 @@ void UStateComponent::SetContinueStandOffTimer()
 		return;
 	}
 	GetWorld()->GetTimerManager().SetTimer(ContinueStandOffTimer,
-										   FTimerDelegate(),
+										   this,
+										   &UStateComponent::EndStandOff,
 										   5.0f,
 										   false);
 }

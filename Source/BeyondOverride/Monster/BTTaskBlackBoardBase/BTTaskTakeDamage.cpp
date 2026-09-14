@@ -67,7 +67,12 @@ EBTNodeResult::Type UBTTaskTakeDamage::ExecuteTask(UBehaviorTreeComponent& Owner
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, Target, ECallType::Attack);
 		AIState->TrueContinueTargeting();
 		AIState->CallContinueTimer();
-		AIState->SetStandOffTimer();
+
+		if (!AIState->IsStandOff() && !AIState->IsContinueStandOff())
+		{
+			AIState->SetStandOffTimer();
+		}
+
 		return EBTNodeResult::Succeeded;
 	}
 
