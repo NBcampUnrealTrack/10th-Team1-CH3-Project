@@ -24,7 +24,11 @@ public:
 
 	// 슬롯 접근
 	UFUNCTION(BlueprintPure)
+	TArray<UItemInstanceBase*> GetSlots() const;
+	UFUNCTION(BlueprintPure)
 	UItemInstanceBase* GetItem(int32 SlotIndex) const;
+	UFUNCTION(BlueprintCallable)
+	bool SetSlots(TArray<UItemInstanceBase*> NewSlots);
 	UFUNCTION(BlueprintCallable)
 	bool SetItem(int32 SlotIndex, UItemInstanceBase* Item);
 

@@ -106,6 +106,11 @@ bool UInventoryComponent::SwapSlots(const int32 FirstIndex, const int32 SecondIn
 	return true;
 }
 
+TArray<UItemInstanceBase*> UInventoryComponent::GetSlots() const
+{
+	return Slots;
+}
+
 UItemInstanceBase* UInventoryComponent::GetItem(const int32 SlotIndex) const
 {
 	if (!Slots.IsValidIndex(SlotIndex))
@@ -114,6 +119,12 @@ UItemInstanceBase* UInventoryComponent::GetItem(const int32 SlotIndex) const
 	}
 
 	return Slots[SlotIndex];
+}
+
+bool UInventoryComponent::SetSlots(TArray<UItemInstanceBase*> NewSlots)
+{
+
+	return false;
 }
 
 bool UInventoryComponent::SetItem(const int32 SlotIndex, UItemInstanceBase* Item)
