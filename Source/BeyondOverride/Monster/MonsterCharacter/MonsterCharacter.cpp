@@ -18,6 +18,8 @@
 AMonsterCharacter::AMonsterCharacter()
 {
 
+	MonsterType = EMonsterType::Range;
+
 	// 상태 데이터 컴포넌트
 	StateComponent = CreateDefaultSubobject<UStateComponent>(TEXT("StateComponent"));
 
