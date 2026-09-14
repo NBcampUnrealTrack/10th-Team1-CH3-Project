@@ -92,7 +92,7 @@ bool UEquipmentHandlerComponent::Equip()
 	// 장착 소켓에 메시 부착
 	const FName EquipSocketName = EquippableItemData->EquipSocketName;                  // 장착할 소켓 이름
 	USkeletalMeshComponent* CharacterMeshComponent = GetOwner<ACharacter>()->GetMesh(); // 캐릭터 메시
-	if (CharacterMeshComponent->DoesSocketExist(EquipSocketName))
+	if (EquipMeshComponent && CharacterMeshComponent->DoesSocketExist(EquipSocketName))
 	{
 		EquipMeshComponent->AttachToComponent( // 소켓에 부착
 			CharacterMeshComponent,
@@ -114,7 +114,7 @@ bool UEquipmentHandlerComponent::Unequip()
 	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData(); // 장비 데이터
 	const FName HolsterSocketName = EquippableItemData->HolsterSocketName;                              // 보관할 소켓 이름
 	USkeletalMeshComponent* CharacterMeshComponent = GetOwner<ACharacter>()->GetMesh();                 // 캐릭터 메시
-	if (CharacterMeshComponent->DoesSocketExist(HolsterSocketName))
+	if (EquipMeshComponent && CharacterMeshComponent->DoesSocketExist(HolsterSocketName))
 	{
 		EquipMeshComponent->AttachToComponent( // 소켓에 부착
 			CharacterMeshComponent,
