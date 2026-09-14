@@ -11,8 +11,7 @@
 #include "Interaction/InteractComponent.h"
 #include "Items/Actors/ItemPickupBase.h"
 #include "Items/Objects/RangeWeaponInstance.h"
-#include "Player/ActorComponent/EquipmentComponent.h"
-#include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -34,9 +33,9 @@ ABOCharacter::ABOCharacter()
 	Camera->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm);
 
-	EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipementComponent"));
+	// EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipementComponent"));
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
-	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 }
@@ -44,6 +43,11 @@ ABOCharacter::ABOCharacter()
 void ABOCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (IsValid(Camera))
+	{
+		DefaultFOV = Camera->FieldOfView;
+	}
 
 	ChangeMoveSpeed();
 
@@ -54,6 +58,16 @@ void ABOCharacter::BeginPlay()
 void ABOCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!IsValid(Camera))
+	{
+		return;
+	}
+
+	const float TargetFOV = bIsAiming ? AimFOV : DefaultFOV;
+	const float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomSpeed);
+
+	Camera->SetFieldOfView(NewFOV);
 }
 
 void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -159,7 +173,7 @@ float ABOCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	if (IsValid(StatComponent))
 	{
-		StatComponent->TakeDamage(ActualDamage);
+		StatComponent->TakeDamage(ActualDamage, DamageCauser);
 	}
 
 	return ActualDamage;
@@ -245,13 +259,13 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 		EquipmentManagerComponent->Use();
 	}
 
-	if (!GetMesh() || GetMesh()->GetAnimInstance())
+	if (!GetMesh() || !GetMesh()->GetAnimInstance())
 	{
 		return;
 	}
 
 	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
-	if (IsValid(AnimInstance))
+	if (!IsValid(AnimInstance))
 	{
 		return;
 	}
@@ -279,13 +293,13 @@ void ABOCharacter::Reload(const FInputActionValue& value)
 		EquipmentManagerComponent->Reload();
 	}
 
-	if (!GetMesh() || GetMesh()->GetAnimInstance())
+	if (!GetMesh() || !GetMesh()->GetAnimInstance())
 	{
 		return;
 	}
 
 	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
-	if (IsValid(AnimInstance))
+	if (!IsValid(AnimInstance))
 	{
 		return;
 	}
