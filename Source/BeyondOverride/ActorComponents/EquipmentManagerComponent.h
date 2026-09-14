@@ -1,9 +1,3 @@
-// TODO:
-//	- 비무장 구현
-//		- Unarmed(MeleeWeaponInstance) 생성 및 저장
-//		- 비무장 시 UnarmedHandler(MeleeWeaponHandlerComponent)에 Unarmed 장비 등록하기
-//		- 비무장 전환(Unequip) 또는 빈 슬롯 전환(Equip) 시 UnarmedHandler을 장착하기
-
 #pragma once
 
 #include "CoreMinimal.h"
