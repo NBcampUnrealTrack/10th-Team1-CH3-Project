@@ -15,8 +15,8 @@
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
-#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -169,6 +169,11 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->EquipSlot4Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot5Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot5);
+			}
+
+			if (PlayerController->UnarmAction)
+			{
+				EnhancedInput->BindAction(PlayerController->UnarmAction, ETriggerEvent::Started, this, &ABOCharacter::Unarm);
 			}
 
 			if (PlayerController->DropEquipmentAction)
@@ -436,6 +441,14 @@ void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 	}
 }
 
+void ABOCharacter::Unarm(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Unequip();
+	}
+}
+
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
 {
 	if (EquipmentManagerComponent)
@@ -480,14 +493,14 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	}
 
 	// Equipment Changed
-	EquipmentManagerComponent->OnEquipmentChangedDelegate.AddUObject(this, &ABOCharacter::OnEquipmentChanged);
+	EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &ABOCharacter::OnActiveSlotChanged);
 
 	// Primary & Secondary (Range Weapon)
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
 }
 
-void ABOCharacter::OnEquipmentChanged(UEquippableItemInstance* EquippableItemInstance)
+void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)
 {
 	if (!EquippableItemInstance)
 	{

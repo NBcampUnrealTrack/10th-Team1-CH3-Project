@@ -9,6 +9,7 @@
 #include "Manager/SpawnVolumeManager.h"
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
+#include "UI/Manager/UIManager.h"
 
 void UBOGameInstance::Init()
 {
@@ -24,7 +25,7 @@ void UBOGameInstance::Init()
 	// Inventory.empty();
 
 	OpenLevel(ELevel::Bunker);
-	StartFarming();
+	// StartFarming();
 }
 
 void UBOGameInstance::LoadSpawnVolumeData()
@@ -35,6 +36,11 @@ void UBOGameInstance::Start()
 {
 	GameState = EGameState::Playing;
 	PlayingState = EPlayingState::Shelter;
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
+	}
 
 	// 기초 장비 지급
 }

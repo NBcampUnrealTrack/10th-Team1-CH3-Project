@@ -1,9 +1,3 @@
-// TODO:
-//	- 비무장 구현
-//		- Unarmed(MeleeWeaponInstance) 생성 및 저장
-//		- 비무장 시 UnarmedHandler(MeleeWeaponHandlerComponent)에 Unarmed 장비 등록하기
-//		- 비무장 전환(Unequip) 또는 빈 슬롯 전환(Equip) 시 UnarmedHandler을 장착하기
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -19,9 +13,10 @@ class UItemInstanceBase;
 class UEquippableItemInstance;
 class URangeWeaponInstance;
 
-// [UEquipmentManagerComponent] 장비 변경 시 인스턴스 전달하는 델리게이트
-DECLARE_MULTICAST_DELEGATE_OneParam(
-	FOnEquipmentChangedDelegate,
+// [UEquipmentManagerComponent] 활성화 슬롯 전환 시 송출하는 델리게이트
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+	FOnActiveSlotChangedDelegate,
+	EEquipmentSlot,
 	UEquippableItemInstance*);
 
 // [RangeWeapon] 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
@@ -55,6 +50,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 
   protected:
 	virtual void OnRegister() override;
+	virtual void BeginPlay() override;
 
   public:
 	// 슬롯 전환
@@ -75,7 +71,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 
   public:
 	// 장비 인스턴스 전달 델리게이트
-	FOnEquipmentChangedDelegate OnEquipmentChangedDelegate;
+	FOnActiveSlotChangedDelegate OnActiveSlotChangedDelegate;
 
 	// 재장전 가능 여부 델리게이트
 	FCanReloadDelegate CanReloadDelegate;

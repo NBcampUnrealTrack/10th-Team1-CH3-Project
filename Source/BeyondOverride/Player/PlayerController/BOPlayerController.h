@@ -61,6 +61,9 @@ class BEYONDOVERRIDE_API ABOPlayerController : public APlayerController
 	UInputAction* EquipSlot4Action = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
 	UInputAction* EquipSlot5Action = nullptr;
+	// 비무장 전환
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
+	UInputAction* UnarmAction = nullptr;
 	// 장비 버리기
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
 	UInputAction* DropEquipmentAction = nullptr;

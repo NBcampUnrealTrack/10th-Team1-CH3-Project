@@ -37,17 +37,6 @@ bool UEquipmentHandlerComponent::Assign(UEquippableItemInstance* InEquippableIte
 	// 장비 인스턴스 저장
 	EquippableItemInstance = InEquippableItemInstance;
 
-	// 장비 메시 설정
-	if (EquipMeshComponent)
-	{
-		const FEquippableItemDataRow* EquippableItemData = InEquippableItemInstance->GetEquippableItemData(); // 장비 데이터
-
-		if (USkeletalMesh* Mesh = EquippableItemData->EquipMesh)
-		{
-			EquipMeshComponent->SetSkeletalMesh(Mesh);
-		}
-	}
-
 	return true;
 }
 
