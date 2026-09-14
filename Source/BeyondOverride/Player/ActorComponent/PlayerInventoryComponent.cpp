@@ -106,6 +106,22 @@ UItemInstanceBase* UPlayerInventoryComponent::GetEquipmentItem(EEquipmentSlot Sl
 	return EquipmentSlots[SlotIndex];
 }
 
+bool UPlayerInventoryComponent::SetEquipmentSlots(const TArray<UItemInstanceBase*>& NewSlots)
+{
+	if (NewSlots.Num() > EquipmentSlots.Num())
+	{
+		return false;
+	}
+
+	EquipmentSlots.Reset();
+	for (int32 i = 0; i < NewSlots.Num(); i++)
+	{
+		EquipmentSlots[i] = NewSlots[i];
+	}
+
+	return true;
+}
+
 bool UPlayerInventoryComponent::SetEquipmentItem(EEquipmentSlot Slot, UItemInstanceBase* Item)
 {
 	const int32 SlotIndex = GetEquipmentSlotIndex(Slot);

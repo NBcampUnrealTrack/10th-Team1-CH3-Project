@@ -20,7 +20,12 @@ class BEYONDOVERRIDE_API UPlayerInventoryComponent : public UInventoryComponent
 	GENERATED_BODY()
 
 public:
+	// Slots getter/setter
+	UFUNCTION(BlueprintPure)
 	TArray<UItemInstanceBase*> GetEquipmentSlots() const { return EquipmentSlots; }
+
+	UFUNCTION(BlueprintCallable)
+	bool SetEquipmentSlots(const TArray<UItemInstanceBase*>& NewSlots);
 
 	// 장비 슬롯 조작
 	UFUNCTION(BlueprintCallable)
