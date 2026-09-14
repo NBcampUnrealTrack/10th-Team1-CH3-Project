@@ -178,5 +178,5 @@ bool UMeleeWeaponHandlerComponent::Use()
 
 bool UMeleeWeaponHandlerComponent::CanUnequip()
 {
-	return false;
+	return true;
 }
