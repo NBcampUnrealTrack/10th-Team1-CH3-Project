@@ -515,8 +515,8 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 	}
 
 	// 장비 애니메이션 데이터 확인
-	UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
-	if (!WeaponAnimationData)
+	UEquipmentAnimationDataAsset* EquipmentAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!EquipmentAnimationData)
 	{
 		return;
 	}
@@ -526,7 +526,7 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 	{
 		if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
 		{
-			BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+			BOAnimInstance->ApplyEquipmentAnimation(EquipmentAnimationData);
 		}
 	}
 }
