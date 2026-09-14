@@ -3,9 +3,55 @@
 // Base include
 #include "Monster/ActorComponent/StateComponent.h"
 
+// Add include
+#include "Player/Character/BOCharacter.h"
+
 UStateComponent::UStateComponent()
 {
 	bCanPatrol = true;
+	LocationPatrolActor = nullptr;
+	NowTarget = nullptr;
+	LocationPatrolPoint = FVector::ZeroVector;
+}
+
+void UStateComponent::SetIsCallLocation(bool value)
+{
+	IsCallLocation = value;
+}
+
+bool UStateComponent::GetIsCallLocation() const
+{
+	return IsCallLocation;
+}
+
+void UStateComponent::SetTarget(ABOCharacter* Character)
+{
+	NowTarget = Character;
+}
+
+ABOCharacter* UStateComponent::GetTarget() const
+{
+	return NowTarget;
+}
+
+void UStateComponent::SetLocationPatrolActor(AActor* PlayActor)
+{
+	LocationPatrolActor = PlayActor;
+}
+
+AActor* UStateComponent::GetLocationPatrolActor() const
+{
+	return LocationPatrolActor;
+}
+
+void UStateComponent::SetLocationPatrolPoint(FVector Location)
+{
+	LocationPatrolPoint = Location;
+}
+
+FVector UStateComponent::GetLocationPatrolPoint() const
+{
+	return LocationPatrolPoint;
 }
 
 void UStateComponent::BeginPlay()
@@ -66,7 +112,7 @@ void UStateComponent::CallContinueTimer()
 	GetWorld()->GetTimerManager().SetTimer(ContinueTimer,
 										   this,
 										   &UStateComponent::FalseContinueTargeting,
-										   15.0f,
+										   30.0f,
 										   false);
 }
 
@@ -76,6 +122,116 @@ void UStateComponent::ReCallContinueTimer()
 	GetWorld()->GetTimerManager().SetTimer(ContinueTimer,
 										   this,
 										   &UStateComponent::FalseContinueTargeting,
-										   15.0f,
+										   30.0f,
+										   false);
+}
+
+bool UStateComponent::IsLocation() const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(LocationPatrolTimer);
+}
+
+void UStateComponent::CallLocationPatrolTimer()
+{
+	GetWorld()->GetTimerManager().SetTimer(LocationPatrolTimer,
+										   FTimerDelegate(),
+										   10.0f,
+										   false);
+}
+
+bool UStateComponent::IsHearing() const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(HearingTimer);
+}
+
+void UStateComponent::CallHearingTimer()
+{
+	if (IsHearing())
+	{
+		return;
+	}
+	GetWorld()->GetTimerManager().SetTimer(HearingTimer,
+										   FTimerDelegate(),
+										   1.0f,
+										   false);
+}
+
+bool UStateComponent::IsGetDamage() const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(GetDamageTimer);
+}
+
+void UStateComponent::CallGetDamage()
+{
+	if (IsGetDamage())
+	{
+		return;
+	}
+	GetWorld()->GetTimerManager().SetTimer(GetDamageTimer,
+										   FTimerDelegate(),
+										   0.02f,
+										   false);
+}
+
+bool UStateComponent::IsCalling() const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(CallingTimer);
+}
+
+void UStateComponent::SetCallingTimer()
+{
+	if (IsGetDamage())
+	{
+		return;
+	}
+	GetWorld()->GetTimerManager().SetTimer(CallingTimer,
+										   FTimerDelegate(),
+										   0.02f,
+										   false);
+}
+
+bool UStateComponent::IsStandOff() const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(StandOffTimer);
+}
+
+void UStateComponent::SetStandOffTimer()
+{
+	if (IsStandOff())
+	{
+		return;
+	}
+	GetWorld()->GetTimerManager().SetTimer(StandOffTimer,
+										   FTimerDelegate(),
+										   10.0f,
+										   false);
+}
+
+bool UStateComponent::IsContinueStandOff() const
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	return TimerManager.IsTimerActive(ContinueStandOffTimer);
+}
+
+void UStateComponent::SetContinueStandOffTimer()
+{
+	if (IsContinueStandOff())
+	{
+		return;
+	}
+	GetWorld()->GetTimerManager().SetTimer(ContinueStandOffTimer,
+										   FTimerDelegate(),
+										   5.0f,
 										   false);
 }

@@ -18,4 +18,6 @@ class BEYONDOVERRIDE_API UItemDataRegistry : public UDataAsset
 	TObjectPtr<UDataTable> EquippableItemTable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UDataTable> RangeWeaponTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UDataTable> MeleeWeaponTable;
 };

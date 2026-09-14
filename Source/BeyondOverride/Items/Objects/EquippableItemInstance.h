@@ -20,8 +20,8 @@ class UEquippableItemInstance : public UItemInstanceBase
 	UEquippableItemInstance();
 
 	// 아이템 정보 초기 로드
-	virtual void Initialize();
+	virtual void Initialize() override;
 
-	// Getters
+	// Data
 	const FEquippableItemDataRow* GetEquippableItemData() const;
 };

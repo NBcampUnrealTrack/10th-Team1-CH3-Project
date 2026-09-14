@@ -9,12 +9,16 @@
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monster/ActorComponent/AttackDataComponent.h"
+#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
+#include "Player/Character/BOCharacter.h"
 
 AMonsterCharacter::AMonsterCharacter()
 {
+
+	MonsterType = EMonsterType::Range;
 
 	// 상태 데이터 컴포넌트
 	StateComponent = CreateDefaultSubobject<UStateComponent>(TEXT("StateComponent"));
@@ -38,6 +42,11 @@ AMonsterCharacter::AMonsterCharacter()
 	{
 
 		// Character 이동속도 설정
+		if (MonsterType == EMonsterType::Special)
+		{
+			Movement->MaxWalkSpeed = WalkSpeed * 0.6;
+		}
+		// Character 이동속도 설정
 		if (MonsterType == EMonsterType::Range)
 		{
 			Movement->MaxWalkSpeed = WalkSpeed * 0.8;
@@ -48,6 +57,8 @@ AMonsterCharacter::AMonsterCharacter()
 			Movement->MaxWalkSpeed = WalkSpeed * 1;
 		}
 
+		// Character 이동 방향으로 바라보기 설정
+		Movement->bOrientRotationToMovement = true;
 		// Character 이동 방향으로 회전하는 속도 설정
 		Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	}
@@ -55,23 +66,64 @@ AMonsterCharacter::AMonsterCharacter()
 
 void AMonsterCharacter::MonsterAttack()
 {
-	CallBallistic();
+	if (MonsterType == EMonsterType::Range)
+	{
+		CallBallistic();
+	}
 }
 
-UStateComponent* AMonsterCharacter::GetStateComponent() const
+UStateComponent* AMonsterCharacter::GetState() const
 {
 	return StateComponent;
 }
 
-UAttackDataComponent* AMonsterCharacter::GetAttackDataComponent() const
+UAttackDataComponent* AMonsterCharacter::GetAttackData() const
 {
 	return AttackDataComponent;
+}
+
+float AMonsterCharacter::TakeDamage(float DamageAmount,
+									FDamageEvent const& DamageEvent,
+									AController* EventInstigator,
+									AActor* DamageCauser)
+{
+	// 기본 데미지 처리 로직 호출 (필수는 아님)
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	int32 GetDamage = FMath::Max(1.0f, ActualDamage - GetAttackData()->GetProtect());
+	ABOCharacter* Target = nullptr;
+
+	if (EventInstigator)
+	{
+		Target = Cast<ABOCharacter>(EventInstigator->GetPawn());
+	}
+
+	StatComponent->TakeDamage(GetDamage);
+
+	if (Target)
+	{
+		GetState()->SetTarget(Target);
+		GetState()->CallGetDamage();
+	}
+	DeathSequence();
+
+	return ActualDamage;
+}
+
+void AMonsterCharacter::DeathSequence()
+{
+
+	if (!StatComponent->GetIsDead())
+	{
+		return;
+	}
+
+	Destroy();
 }
 
 void AMonsterCharacter::CallBallistic()
 {
 
-	if (Ballistic.bHit || Ballistic.EndCount >= 65)
+	if (Ballistic.bHit || Ballistic.EndCount * Ballistic.FlyTime >= GetAttackData()->GetAttackDelay())
 	{
 
 		if (Ballistic.bHit)
@@ -95,7 +147,7 @@ void AMonsterCharacter::CallBallistic()
 	{
 
 		Ballistic.BulletLocation = GetMesh()->GetSocketLocation(TEXT("Muzzle_01"));
-		Ballistic.BulletDirection = (GetAttackDataComponent()->GetTargetLocation() - Ballistic.BulletLocation).GetSafeNormal();
+		Ballistic.BulletDirection = (GetAttackData()->GetTargetLocation() - Ballistic.BulletLocation).GetSafeNormal();
 		UParticleSystemComponent* Particle = nullptr;
 
 		if (FireParticle)
@@ -145,7 +197,7 @@ void AMonsterCharacter::CallBallistic()
 	GetWorld()->GetTimerManager().SetTimer(Ballistic.Update,
 										   this,
 										   &AMonsterCharacter::CallBallistic,
-										   0.1f,
+										   Ballistic.FlyTime,
 										   false);
 }
 

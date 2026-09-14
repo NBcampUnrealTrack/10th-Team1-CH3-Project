@@ -11,10 +11,10 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
-#include "GameFrameWork/CharacterMovementComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/MonsterCalling.h"
 #include "Player/Character/BOCharacter.h"
 
 UBTTaskOverlapCheck::UBTTaskOverlapCheck()
@@ -26,7 +26,6 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	ABOCharacter* NearestTarget;
-	bool RotationSet = true;
 
 	if (!BlackboardComp)
 	{
@@ -43,15 +42,8 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetStateComponent();
+	UStateComponent* AIState = AIMonster->GetState();
 	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	// 캐릭터의 무브먼트 정보 가져오기
-	UCharacterMovementComponent* AIMovement = AIMonster->GetCharacterMovement();
-	if (!AIMovement)
 	{
 		return EBTNodeResult::Failed;
 	}
@@ -59,6 +51,7 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 	NearestTarget = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (NearestTarget)
 	{
+
 		return EBTNodeResult::Succeeded;
 	}
 
@@ -66,14 +59,14 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 
 	if (NearestTarget)
 	{
-
-		RotationSet = false;
+		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
+		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
 		AIState->TrueContinueTargeting();
 		AIState->CallContinueTimer();
+		AIState->SetStandOffTimer();
 	}
 
-	AIMovement->bOrientRotationToMovement = RotationSet;
 	return EBTNodeResult::Succeeded;
 }
 
