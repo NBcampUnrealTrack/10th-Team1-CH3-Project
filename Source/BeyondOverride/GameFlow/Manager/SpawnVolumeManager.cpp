@@ -118,7 +118,7 @@ void USpawnVolumeManager::ActivateSpawnVolume(ASpawnVolume* SpawnVolume)
 	}
 
 	ActivatedSpawnVolumes.Add(SpawnVolume);
-	SpawnVolume->SpawnMonster();
+	SpawnVolume->SpawnMonsters();
 }
 
 bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeId, FSpawnData& Data) const

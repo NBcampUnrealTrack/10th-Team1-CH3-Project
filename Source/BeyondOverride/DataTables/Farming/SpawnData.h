@@ -35,5 +35,8 @@ struct FSpawnData : public FTableRowBase
 	TArray<FSpawnEntry> SpawnEntries;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	int32 SpawnCount = 0;
+	int32 MinSpawnCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 MaxSpawnCount = 0;
 };

@@ -4,9 +4,12 @@
 
 #include "RegionManager.h"
 
-#include "../BOGameInstance.h"
 #include "Algo/RandomShuffle.h"
+#include "Factory/ItemFactory.h"
+#include "GameFlow/BOGameInstance.h"
+#include "Items/Objects/ItemInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Subsystems/ItemDataSubsystem.h"
 
 void UContainerManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -55,9 +58,10 @@ void UContainerManager::LoadContainerData()
 	}
 }
 
-void UContainerManager::InitSetting()
+void UContainerManager::InitSetting(bool IsKeyCardAcquired)
 {
 	ContainerByRegion.Empty();
+	bShouldSpawnKeyCard = !IsKeyCardAcquired;
 
 	if (!GetWorld())
 	{
@@ -101,8 +105,6 @@ void UContainerManager::ActivateContainer()
 		return;
 	}
 
-	bool IsKeyCardSpawned{};
-
 	for (const TPair<FName, TArray<TObjectPtr<AActor>>>& Pair : ContainerByRegion) // change AActor -> AContainer
 	{
 		FName RegionId = Pair.Key;
@@ -124,21 +126,99 @@ void UContainerManager::ActivateContainer()
 		{
 			TObjectPtr<AActor> Container = Containers[i];
 
-			/*
-			if (IsKeyCardSpawned)
-			{
-				Container->SetCanSpawnKeyCard(false);
-			}
-			else
-			{
-				Container->SetCanSpawnKeyCard(true);
-				IsKeyCardSpawned = true;
-			}
+			TArray<TObjectPtr<UItemInstanceBase>> Items;
+			GetSpawnItems(Container, Items);
 
-			Container->SetSpawnItems(); // set container 'TArray<FName> Items' property
-			*/
+			// Container->SetItems(Items);
 		}
 	}
+}
+
+void UContainerManager::GetSpawnItems(AActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items)
+{
+	if (!Container)
+	{
+		return;
+	}
+
+	Items.Empty();
+	TMap<FName, int32> SpawnItems{};
+
+	FSpawnData ContainerData{};
+	// GetContainerData(Container->GetId(), ContainerData);
+
+	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
+	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
+
+	for (int i = 0; i < Count; i++)
+	{
+		FName ItemId = AddRandomSpawnItem(SpawnEntries);
+
+		if (SpawnItems.Contains(ItemId))
+		{
+			SpawnItems.Add(ItemId, 1);
+		}
+		else
+		{
+			SpawnItems[ItemId] += 1;
+		}
+	}
+
+	FItemFactory ItemFactory{};
+
+	for (const TPair<FName, int32>& Item : SpawnItems)
+	{
+		if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key, Item.Value))
+		{
+			Items.Add(ItemInstanceBase);
+		}
+	}
+}
+
+FName UContainerManager::AddRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries)
+{
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return FName(TEXT("Default"));
+	}
+
+	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
+	if (!ItemDataSubsystem)
+	{
+		return FName(TEXT("Default"));
+	}
+
+	float Prob = FMath::RandRange(0.0f, 100.0f);
+	float Sum{};
+
+	for (const FSpawnEntry& SpawnEntry : SpawnEntries)
+	{
+		Sum += SpawnEntry.Prob;
+
+		if (Sum >= Prob)
+		{
+			FName ItemId = SpawnEntry.Id;
+			const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemId);
+
+			if (ItemData && ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
+			{
+				if (!bShouldSpawnKeyCard)
+				{
+					Sum -= SpawnEntry.Prob;
+
+					continue;
+				}
+				else
+				{
+					bShouldSpawnKeyCard = false;
+				}
+			}
+
+			return ItemId;
+		}
+	}
+
+	return FName(TEXT("Default"));
 }
 
 bool UContainerManager::GetContainerData(FName ContainerId, FSpawnData& Data) const

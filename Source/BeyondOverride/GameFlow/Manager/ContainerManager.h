@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 
-#include "../../DataTables/Farming/SpawnData.h"
+#include "DataTables/Farming/SpawnData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
 #include "ContainerManager.generated.h"
 
-/**
- *
- */
+class UItemInstanceBase;
+
 UCLASS()
 class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 {
@@ -22,13 +21,16 @@ class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 	void LoadContainerData();
 
   public:
-	void InitSetting();
+	void InitSetting(bool IsKeyCardAcquired);
 	void ActivateContainer();
+	void GetSpawnItems(AActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items);
+	FName AddRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries);
 
 	bool GetContainerData(FName ContainerId, FSpawnData& Data) const;
 
   private:
-	TMap<FName, FSpawnData> ContainerDatas;
+	bool bShouldSpawnKeyCard;
 
+	TMap<FName, FSpawnData> ContainerDatas;
 	TMap<FName, TArray<TObjectPtr<AActor>>> ContainerByRegion; // AContainer·Î º¯°æ
 };

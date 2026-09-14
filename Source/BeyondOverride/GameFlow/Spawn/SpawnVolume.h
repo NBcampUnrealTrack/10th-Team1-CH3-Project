@@ -32,10 +32,10 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 		bool bFromSweep,
 		const FHitResult& SweepResult);
 
-	void SpawnMonster();
+	void SpawnMonsters();
 	void SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float MinDist = -1.0f, float MaxDist = -1.0f, bool IsChase = false);
 	void StartPhase();
-	void SpawnPhaseMonster();
+	void SpawnPhaseMonsters();
 
 	FName GetId() const;
 	FName GetRegionId() const;

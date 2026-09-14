@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 
-#include "../DataAssets/BODataAsset.h"
-#include "../Enums/BOEnums.h"
+#include "DataAssets/BODataAsset.h"
 #include "Engine/GameInstance.h"
+#include "Enums/BOEnums.h"
 
 #include "BOGameInstance.generated.h"
 
@@ -53,7 +53,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	float GetCurrentShield() const;
 	int32 GetTotalMoney() const;
 
-	bool GetIsCardAcquired() const;
+	bool GetIsKeyCardAcquired() const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")

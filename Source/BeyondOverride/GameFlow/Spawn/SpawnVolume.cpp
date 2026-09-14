@@ -42,9 +42,9 @@ void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	}
 }
 
-void ASpawnVolume::SpawnMonster()
+void ASpawnVolume::SpawnMonsters()
 {
-	int32 Count = SpawnVolumeData.SpawnCount;
+	int32 Count = FMath::RandRange(SpawnVolumeData.MinSpawnCount, SpawnVolumeData.MaxSpawnCount);
 	TArray<FSpawnEntry> SpawnEntries = SpawnVolumeData.SpawnEntries;
 
 	for (int i = 0; i < Count; i++)
@@ -137,10 +137,10 @@ void ASpawnVolume::StartPhase()
 	float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
 
 	GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
-	SpawnPhaseMonster();
+	SpawnPhaseMonsters();
 }
 
-void ASpawnVolume::SpawnPhaseMonster()
+void ASpawnVolume::SpawnPhaseMonsters()
 {
 	TArray<FPhaseEntry> PhaseEntries = PhaseData.PhaseEntries;
 	TArray<FSpawnEntry> SpawnEntries = PhaseEntries[PhaseIndex].SpawnEntries;

@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 
-#include "../../DataTables/Farming/RegionData.h"
-#include "../../DataTables/Farming/SpawnData.h"
+#include "DataTables/Farming/RegionData.h"
+#include "DataTables/Farming/SpawnData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
 #include "RegionManager.generated.h"

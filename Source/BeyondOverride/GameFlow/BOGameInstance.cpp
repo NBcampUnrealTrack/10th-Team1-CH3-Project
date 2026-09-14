@@ -145,7 +145,7 @@ void UBOGameInstance::SavePlayerData()
 			CurShield = StatComponent->GetCurShield();
 		}
 
-		// money, inventory
+		// inventory
 		// search key card in the inventory
 	}
 }
@@ -271,7 +271,7 @@ int32 UBOGameInstance::GetTotalMoney() const
 	return TotalMoney;
 }
 
-bool UBOGameInstance::GetIsCardAcquired() const
+bool UBOGameInstance::GetIsKeyCardAcquired() const
 {
 	return IsKeyCardAcquired;
 }

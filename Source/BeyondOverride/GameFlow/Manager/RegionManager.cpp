@@ -6,7 +6,7 @@
 #include "ExitManager.h"
 #include "SpawnVolumeManager.h"
 
-#include "../BOGameInstance.h"
+#include "GameFlow/BOGameInstance.h"
 
 void URegionManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -56,6 +56,17 @@ void URegionManager::LoadRegionData()
 
 void URegionManager::InitSetting()
 {
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
+	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	if (!GameInstance)
+	{
+		return;
+	}
+
 	if (USpawnVolumeManager* SpawnVolumeManger = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 	{
 		SpawnVolumeManger->InitSetting();
@@ -63,7 +74,8 @@ void URegionManager::InitSetting()
 
 	if (UContainerManager* ContainerManager = GetWorld()->GetGameInstance()->GetSubsystem<UContainerManager>())
 	{
-		ContainerManager->InitSetting();
+		bool IsKeyCardAcquired = GameInstance->GetIsKeyCardAcquired();
+		ContainerManager->InitSetting(IsKeyCardAcquired);
 	}
 
 	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
