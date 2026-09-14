@@ -56,6 +56,8 @@ void UEquipmentManagerComponent::BeginPlay()
 			ActiveSlot = EEquipmentSlot::Unarmed;
 			EquipmentHandlerComponents[ActiveSlot]->Assign(EquippableItemInstance);
 			EquipmentHandlerComponents[ActiveSlot]->Equip();
+			OnActiveSlotChangedDelegate.Broadcast(ActiveSlot, EquippableItemInstance);
+			GEngine->AddOnScreenDebugMessage(100, 1000.f, FColor::Yellow, FString::Printf(TEXT("현재 슬롯 - %s"), *UEnum::GetValueAsString(ActiveSlot)));
 			return;
 		}
 	}
@@ -68,11 +70,8 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	// 유효하지 않은 슬롯
 	if (!EquipmentHandlerComponents.Contains(Slot) || !EquipmentHandlerComponents[Slot])
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Equip 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
 		return false;
 	}
-
-	GEngine->AddOnScreenDebugMessage(100, 1000.f, FColor::Yellow, FString::Printf(TEXT("현재 슬롯 - %s"), *UEnum::GetValueAsString(ActiveSlot)));
 
 	// 이미 활성화된 슬롯인 경우 유지
 	if (ActiveSlot == Slot)
@@ -84,9 +83,9 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	if (EquipmentHandlerComponents.Contains(ActiveSlot) && EquipmentHandlerComponents[ActiveSlot]->GetEquippableItemInstance())
 	{
 		if (!EquipmentHandlerComponents[ActiveSlot]->Unequip())
-	{
-		return false;
-	}
+		{
+			return false;
+		}
 	}
 
 	// 장비가 없는 슬롯으로 전환 - 비무장(Unarmed) 슬롯 전환
