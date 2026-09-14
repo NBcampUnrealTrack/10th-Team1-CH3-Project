@@ -123,9 +123,7 @@ bool UEquipmentManagerComponent::Use()
 	}
 
 	// 장비 사용
-	EquipmentHandlerComponents[ActiveSlot]->Use();
-
-	return true;
+	return EquipmentHandlerComponents[ActiveSlot]->Use();
 }
 
 bool UEquipmentManagerComponent::Reload()
