@@ -57,7 +57,7 @@ void UEnvQueryTestNearlyAttackRange::RunTest(FEnvQueryInstance& QueryInstance) c
 
 		const float AttackRange = MonsterAttack->GetAttackRange() / 10;
 
-		float Score = FMath::Max(0.0f, AttackRange - (TargetDist - AttackRange));
+		float Score = FMath::Max(0.0f, AttackRange - FMath::Abs(TargetDist - AttackRange));
 
 		It.SetScore(TestPurpose,
 					FilterType,

@@ -146,5 +146,5 @@ void UItemSlotPanelWidget::HandleSlotClicked(int32 SlotIndex, bool bLeftClick)
 		AItemPickupBase* Pickup = WorldItems[SlotIndex];
 	}
 
-	InteractionComponent->HandleSlotClick(InventoryComponent, SlotIndex, bLeftClick);
+	//InteractionComponent->HandleSlotClick(InventoryComponent, SlotIndex, bLeftClick);
 }

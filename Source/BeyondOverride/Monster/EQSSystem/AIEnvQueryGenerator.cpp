@@ -21,7 +21,6 @@ UAIEnvQueryGenerator::UAIEnvQueryGenerator(
 
 void UAIEnvQueryGenerator::GenerateItems(FEnvQueryInstance& QueryInstance) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("AIEnvQueryGenerator Called"));
 	UObject* QuerierObject = QueryInstance.Owner.Get();
 
 	AMonsterCharacter* QuerierMonster = Cast<AMonsterCharacter>(QuerierObject);
@@ -52,20 +51,19 @@ void UAIEnvQueryGenerator::GenerateItems(FEnvQueryInstance& QueryInstance) const
 	const float AttackRange = MonsterAttack->GetAttackRange();
 	const float PointRange = AttackRange - (AttackRange / 10);
 
-	for (int32 i = 0; i < 72; ++i)
+	for (int32 i = 0; i < 144; ++i)
 	{
 		float RandomRange = FMath::RandRange(0.0f, AttackRange);
 
 		float Radius = PointRange + RandomRange;
 
-		const float Angle = FMath::DegreesToRadians(i * 5.0f);
+		const float Angle = FMath::DegreesToRadians(i * 2.5f);
 
 		FVector Point = BaseLocation;
 
 		Point.X += FMath::Cos(Angle) * Radius;
 		Point.Y += FMath::Sin(Angle) * Radius;
 
-		UE_LOG(LogTemp, Warning, TEXT("EQS Point: %s"), *Point.ToString());
 		QueryInstance.AddItemData<UEnvQueryItemType_Point>(Point);
 	}
 }

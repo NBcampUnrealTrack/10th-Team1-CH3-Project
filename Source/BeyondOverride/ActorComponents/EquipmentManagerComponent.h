@@ -3,8 +3,6 @@
 //		- Unarmed(MeleeWeaponInstance) 생성 및 저장
 //		- 비무장 시 UnarmedHandler(MeleeWeaponHandlerComponent)에 Unarmed 장비 등록하기
 //		- 비무장 전환(Unequip) 또는 빈 슬롯 전환(Equip) 시 UnarmedHandler을 장착하기
-//	- 결합도 낮추기
-//		- UBOAnimInstance를 직접 불러오지 않고, 델리게이트 등을 통해 전달하기
 
 #pragma once
 
@@ -18,7 +16,13 @@ enum class EEquipmentSlot : uint8;
 
 class UEquipmentHandlerComponent;
 class UItemInstanceBase;
+class UEquippableItemInstance;
 class URangeWeaponInstance;
+
+// [UEquipmentManagerComponent] 장비 변경 시 인스턴스 전달하는 델리게이트
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnEquipmentChangedDelegate,
+	UEquippableItemInstance*);
 
 // [RangeWeapon] 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
 DECLARE_DELEGATE_RetVal_OneParam(
@@ -70,6 +74,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	UItemInstanceBase* Unassign(EEquipmentSlot Slot);
 
   public:
+	// 장비 인스턴스 전달 델리게이트
+	FOnEquipmentChangedDelegate OnEquipmentChangedDelegate;
+
 	// 재장전 가능 여부 델리게이트
 	FCanReloadDelegate CanReloadDelegate;
 	// 재장전 탄약 요청 델리게이트

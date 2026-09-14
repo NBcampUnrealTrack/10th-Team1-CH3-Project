@@ -8,6 +8,7 @@
 
 class UItemSlotPanelWidget;
 class UInventoryComponent;
+class UHeldItemWidget;
 
 UCLASS()
 class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
@@ -27,4 +28,7 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	UItemSlotPanelWidget* BackpackSlotPanel;
+
+	UPROPERTY(meta = (BindWidget))
+	UHeldItemWidget* HeldItem;
 };

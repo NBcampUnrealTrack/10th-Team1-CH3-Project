@@ -52,9 +52,25 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	if (!AIState->IsStandOff())
+	FVector NowEQSPoint = BlackboardComp->GetValueAsVector(TEXT("EQSPoint"));
+	if (NowEQSPoint == FVector::ZeroVector)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	if (AIState->CheckStandOff() && !AIState->IsContinueStandOff() && !AIState->IsStandOff())
 	{
 		AIState->SetContinueStandOffTimer();
+		return EBTNodeResult::Succeeded;
+	}
+	else if (!AIState->CheckStandOff() && !AIState->IsContinueStandOff() && !AIState->IsStandOff())
+	{
+		AIState->SetStandOffTimer();
+		return EBTNodeResult::Succeeded;
+	}
+	else if (AIState->CheckStandOff() && AIState->IsContinueStandOff() && !AIState->IsStandOff())
+	{
+		BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
 		return EBTNodeResult::Succeeded;
 	}
 
