@@ -60,10 +60,11 @@ void ABOGameMode::ProvideBasicEquipment()
 
 	TArray<FName> BasicEquipments{};
 	GameInstance->GetBasicEquipments(BasicEquipments);
-	int32 Count = BasicEquipments.Num();
 
 	TArray<AActor*> AllActors{};
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), AllActors);
+
+	int32 Count = AllActors.Num();
 
 	FItemFactory ItemFactory{};
 
@@ -72,8 +73,10 @@ void ABOGameMode::ProvideBasicEquipment()
 		AActor* TargetPoint = AllActors[i];
 		if (TargetPoint)
 		{
+			int32 Tag = FCString::Atoi(*TargetPoint->Tags[0].ToString());
 			FVector Location = TargetPoint->GetActorLocation();
-			ItemFactory.SpawnItemPickup(GetWorld(), BasicEquipments[i], 1, Location, FRotator::ZeroRotator);
+			FRotator Rotation = TargetPoint->GetActorRotation();
+			ItemFactory.SpawnItemPickup(GetWorld(), BasicEquipments[Tag], 1, Location, Rotation);
 		}
 	}
 }

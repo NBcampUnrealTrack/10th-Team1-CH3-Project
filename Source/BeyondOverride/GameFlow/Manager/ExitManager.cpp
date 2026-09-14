@@ -4,11 +4,13 @@
 
 #include "SpawnVolumeManager.h"
 
-#include "../../Interaction/Actors/ExitActor.h"
-#include "../BOGameInstance.h"
-#include "../Spawn/SpawnVolume.h"
 #include "Algo/RandomShuffle.h"
+#include "GameFlow/BOGameInstance.h"
+#include "GameFlow/Spawn/SpawnVolume.h"
+#include "Interaction/Actors/ExitActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/Character/BOCharacter.h"
+#include "Player/PlayerController/BOPlayerController.h"
 
 void UExitManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -39,7 +41,7 @@ void UExitManager::InitSetting()
 	{
 		if (AExitActor* Exit = Cast<AExitActor>(Actor))
 		{
-			Exit->OnExtractRequested.AddDynamic(this, &UExitManager::HandleExtract);
+			// Exit->OnExtractRequested.AddDynamic(this, &UExitManager::HandleExtract);
 			Exits.Add(Exit);
 		}
 	}
@@ -50,10 +52,19 @@ void UExitManager::InitSetting()
 
 void UExitManager::SpawnCharacter()
 {
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	APawn* Character = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (!GetWorld())
+	{
+		return;
+	}
 
-	if (!PlayerController || !Character)
+	ABOPlayerController* PlayerController = GetWorld()->GetFirstPlayerController<ABOPlayerController>();
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	ABOCharacter* Character = PlayerController->GetPawn<ABOCharacter>();
+	if (!Character)
 	{
 		return;
 	}
@@ -63,6 +74,7 @@ void UExitManager::SpawnCharacter()
 		Exit->SetExtractAvailable(false);
 
 		FVector ExitLocation = Exit->GetActorLocation();
+		ExitLocation.Z += 100.0f;
 		FRotator ExitRotation = Exit->GetActorRotation();
 
 		Character->TeleportTo(ExitLocation, ExitRotation);
@@ -91,8 +103,10 @@ AExitActor* UExitManager::SelectRandomExit()
 	int32 Size = Exits.Num();
 	int32 Index = FMath::RandRange(0, Size - 1);
 
+	UE_LOG(LogTemp, Warning, TEXT("Exit Number : %d"), Size);
 	if (Index < Size)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Exit : %s"), *Exits[Index]->GetName());
 		return Exits[Index];
 	}
 	else

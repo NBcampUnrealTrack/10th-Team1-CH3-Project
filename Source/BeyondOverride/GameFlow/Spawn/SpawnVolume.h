@@ -47,13 +47,13 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpawnVolume")
 	TObjectPtr<UBoxComponent> BoxComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpawnVolume")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
 	FName Id;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpawnVolume")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
 	float SpawnMinRadius;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpawnVolume")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
 	float SpawnMaxRadius;
 
   private:

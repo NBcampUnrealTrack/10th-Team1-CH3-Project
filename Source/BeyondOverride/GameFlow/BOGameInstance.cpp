@@ -5,20 +5,21 @@
 #include "BOGameMode.h"
 #include "BOWorldSubsystem.h"
 
+#include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
+#include "Subsystems/ItemDataSubsystem.h"
 
 void UBOGameInstance::Init()
 {
 	Super::Init();
 
 	BODataAsset = nullptr;
-	Levels.Empty();
-	Regions.Empty();
-	BasicEquipments.Empty();
 	ExitActivateProb = 0.5f;
 
 	LoadMonsterData();
@@ -64,7 +65,10 @@ void UBOGameInstance::InitSetting()
 	CurHealth = 0;
 	CurShield = 0;
 	TotalMoney = 0;
-	// Inventory.Empty();
+
+	PlayerItemInventory.Empty();
+	PlayerEquipmentInventory.Empty();
+	StorageInventory.Empty();
 
 	IsKeyCardAcquired = false;
 
@@ -101,6 +105,11 @@ void UBOGameInstance::StartFarming()
 	KilledMonsters.Empty();
 	KillerMonster = "None";
 
+	if (!IsKeyCardAcquired)
+	{
+		CheckKeyCard();
+	}
+
 	OpenLevel(ELevel::Main);
 }
 
@@ -118,18 +127,14 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 {
 	SavePlayerData();
 
+	if (Level == ELevel::Main)
+	{
+		SaveStorageData();
+	}
+
 	if (GetWorld() && Levels.Contains(Level))
 	{
 		UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
-
-		if (Level == ELevel::Main)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Main"));
-		}
-		else if (Level == ELevel::Bunker)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Bunker"));
-		}
 	}
 }
 
@@ -145,7 +150,28 @@ void UBOGameInstance::SavePlayerData()
 		}
 
 		// inventory
-		// search key card in the inventory
+		if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
+		{
+			PlayerItemInventory = InventoryComponent->GetSlots();
+			PlayerEquipmentInventory = InventoryComponent->GetEquipmentSlots();
+		}
+	}
+}
+
+void UBOGameInstance::SaveStorageData()
+{
+	TArray<AActor*> AllActors{};
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AStorageContainerActor::StaticClass(), AllActors);
+
+	if (!AllActors.IsEmpty())
+	{
+		if (AStorageContainerActor* Storage = Cast<AStorageContainerActor>(AllActors[0]))
+		{
+			/*if (UInventoryComponent* InventoryComponent = Storage->GetInventoryComponent())
+			{
+				StorageInventory = InventoryComponent->GetSlots();
+			}*/
+		}
 	}
 }
 
@@ -185,6 +211,52 @@ void UBOGameInstance::SaveFarmingData()
 			else
 			{
 				TotalKilledMonsters.Add(Id, Count);
+			}
+		}
+	}
+}
+
+void UBOGameInstance::CheckKeyCard()
+{
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
+	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
+	if (!ItemDataSubsystem)
+	{
+		return;
+	}
+
+	for (TObjectPtr<UItemInstanceBase> Item : PlayerItemInventory)
+	{
+		if (IsValid(Item))
+		{
+			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
+			{
+				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
+				{
+					IsKeyCardAcquired = true;
+
+					return;
+				}
+			}
+		}
+	}
+
+	for (TObjectPtr<UItemInstanceBase> Item : StorageInventory)
+	{
+		if (IsValid(Item))
+		{
+			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
+			{
+				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
+				{
+					IsKeyCardAcquired = true;
+
+					return;
+				}
 			}
 		}
 	}

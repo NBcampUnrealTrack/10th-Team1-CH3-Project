@@ -10,6 +10,8 @@
 
 #include "BOGameInstance.generated.h"
 
+class UItemInstanceBase;
+
 UCLASS()
 class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 {
@@ -29,7 +31,9 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void OpenLevel(ELevel Level);
 
 	void SavePlayerData();
+	void SaveStorageData();
 	void SaveFarmingData();
+	void CheckKeyCard();
 
   public:
 	UBODataAsset* GetBODataAsset() const;
@@ -85,7 +89,10 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 CurHealth;
 	int32 CurShield;
 	int32 TotalMoney;
-	// TArray<FInventorySlot> Inventory;
+
+	TArray<TObjectPtr<UItemInstanceBase>> PlayerItemInventory;
+	TArray<TObjectPtr<UItemInstanceBase>> PlayerEquipmentInventory;
+	TArray<TObjectPtr<UItemInstanceBase>> StorageInventory;
 
 	bool IsKeyCardAcquired;
 

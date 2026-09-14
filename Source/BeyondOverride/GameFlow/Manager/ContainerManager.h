@@ -10,6 +10,7 @@
 #include "ContainerManager.generated.h"
 
 class UItemInstanceBase;
+class AStorageContainerActor;
 
 UCLASS()
 class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
@@ -32,5 +33,5 @@ class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 	bool bShouldSpawnKeyCard;
 
 	TMap<FName, FSpawnData> ContainerDatas;
-	TMap<FName, TArray<TObjectPtr<AActor>>> ContainerByRegion; // AContainer·Î º¯°æ
+	TMap<FName, TArray<TObjectPtr<AStorageContainerActor>>> ContainerByRegion;
 };

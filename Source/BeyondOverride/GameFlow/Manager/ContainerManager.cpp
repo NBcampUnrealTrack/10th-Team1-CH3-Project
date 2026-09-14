@@ -7,6 +7,7 @@
 #include "Algo/RandomShuffle.h"
 #include "Factory/ItemFactory.h"
 #include "GameFlow/BOGameInstance.h"
+#include "Interaction/Actors/StorageContainerActor.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Subsystems/ItemDataSubsystem.h"
@@ -69,24 +70,22 @@ void UContainerManager::InitSetting(bool IsKeyCardAcquired)
 	}
 
 	TArray<AActor*> AllActors{};
-	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);  // change AActor -> AContainer
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Container"), AllActors); // test code
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AStorageContainerActor::StaticClass(), AllActors);
 
 	for (AActor* Actor : AllActors)
 	{
-		// cast to Container
-		// AContainer* Container = Cast<AContainer>(Actor);
+		AStorageContainerActor* Container = Cast<AStorageContainerActor>(Actor);
 
-		// save container by region
-		/*FName RegionId = Container->GetRegionId();
-		if (ContainerByRegion.Contains(RegionId))
+		// FName ContainerId = Container->GetId();
+		FName ContainerId{};
+		FName RegionId = ContainerDatas[ContainerId].RegionId;
+
+		if (!ContainerByRegion.Contains(RegionId))
 		{
-			ContainerByRegion[RegionId].Add(Actor);
+			ContainerByRegion.Add(RegionId);
 		}
-		else
-		{
-			ContainerByRegion.Add(RegionId, Actor);
-		}*/
+
+		ContainerByRegion[RegionId].Add(Container);
 	}
 
 	ActivateContainer();
@@ -105,10 +104,10 @@ void UContainerManager::ActivateContainer()
 		return;
 	}
 
-	for (const TPair<FName, TArray<TObjectPtr<AActor>>>& Pair : ContainerByRegion) // change AActor -> AContainer
+	for (const TPair<FName, TArray<TObjectPtr<AStorageContainerActor>>>& Pair : ContainerByRegion)
 	{
 		FName RegionId = Pair.Key;
-		TArray<TObjectPtr<AActor>> Containers = Pair.Value;
+		TArray<TObjectPtr<AStorageContainerActor>> Containers = Pair.Value;
 
 		FRegionData RegionData{};
 		if (!RegionManager->GetRegiondata(RegionId, RegionData))
@@ -124,12 +123,12 @@ void UContainerManager::ActivateContainer()
 
 		for (int i = 0; i < Count; i++)
 		{
-			TObjectPtr<AActor> Container = Containers[i];
+			TObjectPtr<AStorageContainerActor> Container = Containers[i];
 
 			TArray<TObjectPtr<UItemInstanceBase>> Items;
 			GetSpawnItems(Container, Items);
 
-			// Container->SetItems(Items);
+			Container->SetItems(Items);
 		}
 	}
 }
