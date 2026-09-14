@@ -10,12 +10,15 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
 #include "Items/Actors/ItemPickupBase.h"
+#include "Items/Objects/ItemInstanceBase.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
+#include "UI/Manager/UIManager.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -37,6 +40,7 @@ ABOCharacter::ABOCharacter()
 	EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipementComponent"));
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	InventoryInteractionComponent = CreateDefaultSubobject<UInventoryInteractionComponent>(TEXT("InventoryInteractionComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 }
@@ -49,6 +53,11 @@ void ABOCharacter::BeginPlay()
 
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	BindingEquipmentManagerComponentDelegates();
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->BindInteractPrompt(InteractComponent);
+	}
 }
 
 void ABOCharacter::Tick(float DeltaTime)
@@ -351,10 +360,18 @@ void ABOCharacter::InteractRelease(const FInputActionValue& value)
 
 void ABOCharacter::Inventory(const FInputActionValue& value)
 {
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->PushScreen(EUIScreen::Inventory, EUIInputMode::GameAndUI);
+	}
 }
 
 void ABOCharacter::Escape(const FInputActionValue& value)
 {
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->PushScreen(EUIScreen::PauseMenu, EUIInputMode::UIOnly);
+	}
 }
 
 void ABOCharacter::EquipSlot1(const FInputActionValue& value)
@@ -455,4 +472,22 @@ int32 ABOCharacter::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstanc
 {
 	// TEMP: 재장전 탄약 충분
 	return 100;
+}
+
+void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
+{
+	if (!InventoryComponent)
+		return;
+
+	UItemInstanceBase* Item = FItemFactory::CreateItemInstance(this, ItemID, Count);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: '%s' 아이템을 찾을 수 없습니다. DataTable의 Row Name을 확인하세요."), *ItemID.ToString());
+		return;
+	}
+
+	if (!InventoryComponent->AddItem(Item))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: 인벤토리에 빈 슬롯이 없습니다."));
+	}
 }

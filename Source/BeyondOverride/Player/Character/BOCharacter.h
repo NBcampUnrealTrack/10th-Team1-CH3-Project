@@ -11,6 +11,7 @@ class UCameraComponent;
 class UEquipmentComponent;
 class UStatComponent;
 class UInventoryComponent;
+class UInventoryInteractionComponent;
 class UInteractComponent;
 class UEquipmentManagerComponent;
 
@@ -29,6 +30,10 @@ public:
 	UStatComponent* GetStatComponent() const { return StatComponent; }
 	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
+	UInventoryInteractionComponent* GetInventoryInteractionComponent() const
+	{
+		return InventoryInteractionComponent;
+	}
 
 	const bool GetIsAiming() const { return bIsAiming; }
 
@@ -65,6 +70,8 @@ protected:
 	UStatComponent* StatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInventoryComponent* InventoryComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UInventoryInteractionComponent* InventoryInteractionComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInteractComponent* InteractComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
@@ -119,6 +126,9 @@ private:
 
 	bool bIsSprint = false;
 	bool bIsAiming = false;
+
+	UFUNCTION(Exec)
+	void AddTestItem(FName ItemID, int32 Count = 1);
 
 public:
 	// 장비 슬롯에 아이템 등록 및 해제
