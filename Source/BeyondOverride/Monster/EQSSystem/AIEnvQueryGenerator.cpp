@@ -21,7 +21,6 @@ UAIEnvQueryGenerator::UAIEnvQueryGenerator(
 
 void UAIEnvQueryGenerator::GenerateItems(FEnvQueryInstance& QueryInstance) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("AIEnvQueryGenerator Called"));
 	UObject* QuerierObject = QueryInstance.Owner.Get();
 
 	AMonsterCharacter* QuerierMonster = Cast<AMonsterCharacter>(QuerierObject);
@@ -65,7 +64,6 @@ void UAIEnvQueryGenerator::GenerateItems(FEnvQueryInstance& QueryInstance) const
 		Point.X += FMath::Cos(Angle) * Radius;
 		Point.Y += FMath::Sin(Angle) * Radius;
 
-		UE_LOG(LogTemp, Warning, TEXT("EQS Point: %s"), *Point.ToString());
 		QueryInstance.AddItemData<UEnvQueryItemType_Point>(Point);
 	}
 }

@@ -52,6 +52,12 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
+	FVector NowEQSPoint = BlackboardComp->GetValueAsVector(TEXT("EQSPoint"));
+	if (NowEQSPoint == FVector::ZeroVector)
+	{
+		return EBTNodeResult::Failed;
+	}
+
 	if (AIState->CheckStandOff() && !AIState->IsContinueStandOff() && !AIState->IsStandOff())
 	{
 		AIState->SetContinueStandOffTimer();
