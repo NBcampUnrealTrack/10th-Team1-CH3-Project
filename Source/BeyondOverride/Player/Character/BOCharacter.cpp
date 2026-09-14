@@ -31,7 +31,7 @@ ABOCharacter::ABOCharacter()
 	GetCharacterMovement()->SetCrouchedHalfHeight(60.0f);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->TargetArmLength = 250.0f;
+	SpringArm->TargetArmLength = 180.0f;
 	SpringArm->SetRelativeLocation(FVector(0.0f, 20.0f, 90.0f));
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->SetupAttachment(RootComponent);
