@@ -66,8 +66,11 @@ class BEYONDOVERRIDE_API UStateComponent : public UActorComponent
 	bool IsCalling() const;
 	void SetCallingTimer();
 
-	bool IsSttandOff() const;
-	void SetSttandOffTimer();
+	bool IsStandOff() const;
+	void SetStandOffTimer();
+
+	bool IsContinueStandOff() const;
+	void SetContinueStandOffTimer();
 
   protected:
 	virtual void BeginPlay() override;
@@ -105,5 +108,7 @@ class BEYONDOVERRIDE_API UStateComponent : public UActorComponent
 
 	FTimerHandle CallingTimer;
 
-	FTimerHandle SttandOffTimer;
+	FTimerHandle StandOffTimer;
+
+	FTimerHandle ContinueStandOffTimer;
 };

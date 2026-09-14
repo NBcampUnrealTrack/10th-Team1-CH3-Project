@@ -1,4 +1,4 @@
-// 26/09/13 Copyright CH3 Team1 Jinho Song
+// 26/09/14 Copyright CH3 Team1 Jinho Song
 
 #pragma once
 
@@ -9,15 +9,15 @@
 #include "EnvironmentQuery/EnvQueryTest.h"
 
 // UHT Header
-#include "EnvQueryTestCover.generated.h"
+#include "EnvQueryTestRand.generated.h"
 
 UCLASS()
-class BEYONDOVERRIDE_API UEnvQueryTestCover : public UEnvQueryTest
+class BEYONDOVERRIDE_API UEnvQueryTestRand : public UEnvQueryTest
 {
 	GENERATED_BODY()
 
   public:
-	UEnvQueryTestCover();
+	UEnvQueryTestRand();
 
   protected:
 	virtual void RunTest(FEnvQueryInstance& QueryInstance) const override;
