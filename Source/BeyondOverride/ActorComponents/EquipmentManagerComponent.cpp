@@ -189,11 +189,10 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 		UE_LOG(LogTemp, Warning, TEXT("이미 활성화된 슬롯에 등록함"));
 		EquipmentHandlerComponents[Slot]->Equip();
 	}
-	// 비활성화 슬롯에 장착 시 Unequip()
-	else
+	// 현재 비무장일 때 장착 시 슬롯 전환
+	else if (ActiveSlot == EEquipmentSlot::Unarmed)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("활성화 슬롯과 다른 슬롯에 등록함"));
-		EquipmentHandlerComponents[Slot]->Unequip();
+		Equip(Slot);
 	}
 
 	return true;
