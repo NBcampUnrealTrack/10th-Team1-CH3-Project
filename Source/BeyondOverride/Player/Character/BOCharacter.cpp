@@ -412,7 +412,10 @@ void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 
 void ABOCharacter::Unarm(const FInputActionValue& value)
 {
-	// TODO
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Unequip();
+	}
 }
 
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
