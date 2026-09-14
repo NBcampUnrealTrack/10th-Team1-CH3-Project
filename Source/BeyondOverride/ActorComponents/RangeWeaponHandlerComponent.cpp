@@ -31,7 +31,7 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance
 
 bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
-	if (!Assign(InEquippableItemInstance))
+	if (!Super::Assign(InEquippableItemInstance))
 	{
 		return false;
 	}
@@ -72,7 +72,7 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 
 bool URangeWeaponHandlerComponent::Equip()
 {
-	if (!Equip())
+	if (!Super::Equip())
 	{
 		return false;
 	}
