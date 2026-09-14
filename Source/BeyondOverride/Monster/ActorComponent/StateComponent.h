@@ -22,19 +22,20 @@ class BEYONDOVERRIDE_API UStateComponent : public UActorComponent
   public:
 	UStateComponent();
 
+	void StartStandOff();
+	void EndStandOff();
+	bool CheckStandOff() const;
+
 	void SetIsCallLocation(bool value);
 	bool GetIsCallLocation() const;
 
 	void SetTarget(ABOCharacter* Character);
-
 	ABOCharacter* GetTarget() const;
 
 	void SetLocationPatrolActor(AActor* PlayActor);
-
 	AActor* GetLocationPatrolActor() const;
 
 	void SetLocationPatrolPoint(FVector Location);
-
 	FVector GetLocationPatrolPoint() const;
 
 	FVector GetSpawnPoint() const;
@@ -95,6 +96,9 @@ class BEYONDOVERRIDE_API UStateComponent : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere, Category = "State|AI Flag")
 	bool IsCallLocation = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|AI Flag")
+	bool bStandOff = false;
 
 	FTimerHandle GetDamageTimer;
 
