@@ -6,6 +6,10 @@
 
 #include "ExitActor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExtractRequested,
+											 AExitActor*, ExitPoint,
+											 AActor*, Interactor);
+
 UCLASS()
 class BEYONDOVERRIDE_API AExitActor : public AInteractableActorBase
 {
@@ -26,6 +30,9 @@ class BEYONDOVERRIDE_API AExitActor : public AInteractableActorBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exit")
 	FName RegionId = "Default";
+	
+	UPROPERTY(BlueprintAssignable, Category = "Extraction")
+	FOnExtractRequested OnExtractRequested;
 
   protected:
 	virtual void PerformInteract(AActor* Interactor) override;
