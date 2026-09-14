@@ -65,7 +65,7 @@ bool UMeleeWeaponHandlerComponent::Unequip()
 
 bool UMeleeWeaponHandlerComponent::Use()
 {
-	if (!Super::Use())
+	if (!CanAttack())
 	{
 		return false;
 	}
@@ -119,4 +119,22 @@ bool UMeleeWeaponHandlerComponent::CanUse() const
 	}
 
 	return true;
+}
+
+bool UMeleeWeaponHandlerComponent::CanAttack() const
+{
+	if (!CanUse())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void UMeleeWeaponHandlerComponent::StartAttackTimer()
+{
+}
+
+void UMeleeWeaponHandlerComponent::PlayAttackAnimation()
+{
 }

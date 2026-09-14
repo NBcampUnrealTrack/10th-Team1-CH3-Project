@@ -47,4 +47,18 @@ class BEYONDOVERRIDE_API UMeleeWeaponHandlerComponent : public UEquipmentHandler
 	virtual bool CanUnequip() const override;
 	// 장비 사용 가능 여부
 	virtual bool CanUse() const override;
+
+  protected:
+	// 공격 타이머
+	FTimerHandle AttackTimerHandle;
+
+  protected:
+	// 공격 가능 여부
+	bool CanAttack() const;
+
+	// 공격 타이머 시작
+	void StartAttackTimer();
+
+	// 공격 애니메이션 재생
+	void PlayAttackAnimation();
 };
