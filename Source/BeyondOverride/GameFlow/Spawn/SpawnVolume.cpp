@@ -134,6 +134,7 @@ void ASpawnVolume::StartPhase()
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Start Phase"));
 	float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
 
 	GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);

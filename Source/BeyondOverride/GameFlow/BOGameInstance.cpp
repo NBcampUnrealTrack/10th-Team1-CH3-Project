@@ -84,10 +84,10 @@ void UBOGameInstance::Start()
 	GameState = EGameState::Playing;
 	PlayingState = EPlayingState::Bunker;
 
-	// if (UUIManager* UIManager = UUIManager::Get(this))
-	// {
-	// 	UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
-	// }
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
+	}
 }
 
 void UBOGameInstance::Restart()
@@ -173,10 +173,10 @@ void UBOGameInstance::SaveStorageData()
 	{
 		if (AStorageContainerActor* Storage = Cast<AStorageContainerActor>(AllActors[0]))
 		{
-			/*if (UInventoryComponent* InventoryComponent = Storage->GetInventoryComponent())
+			if (UInventoryComponent* InventoryComponent = Storage->GetInventoryComponent())
 			{
 				StorageInventory = InventoryComponent->GetSlots();
-			}*/
+			}
 		}
 	}
 }

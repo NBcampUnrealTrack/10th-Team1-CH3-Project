@@ -76,8 +76,7 @@ void UContainerManager::InitSetting(bool IsKeyCardAcquired)
 	{
 		AStorageContainerActor* Container = Cast<AStorageContainerActor>(Actor);
 
-		// FName ContainerId = Container->GetId();
-		FName ContainerId{};
+		FName ContainerId = Container->StorageContainerId; // change to getter function
 		FName RegionId = ContainerDatas[ContainerId].RegionId;
 
 		if (!ContainerByRegion.Contains(RegionId))
@@ -133,7 +132,7 @@ void UContainerManager::ActivateContainer()
 	}
 }
 
-void UContainerManager::GetSpawnItems(AActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items)
+void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items)
 {
 	if (!Container)
 	{
@@ -144,7 +143,7 @@ void UContainerManager::GetSpawnItems(AActor* Container, TArray<TObjectPtr<UItem
 	TMap<FName, int32> SpawnItems{};
 
 	FSpawnData ContainerData{};
-	// GetContainerData(Container->GetId(), ContainerData);
+	GetContainerData(Container->StorageContainerId, ContainerData); // change to GetId()
 
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);

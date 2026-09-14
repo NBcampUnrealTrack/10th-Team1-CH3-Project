@@ -24,7 +24,7 @@ class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
   public:
 	void InitSetting(bool IsKeyCardAcquired);
 	void ActivateContainer();
-	void GetSpawnItems(AActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items);
+	void GetSpawnItems(AStorageContainerActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items);
 	FName AddRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries);
 
 	bool GetContainerData(FName ContainerId, FSpawnData& Data) const;

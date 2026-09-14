@@ -30,7 +30,14 @@ void ABOGameMode::BeginPlay()
 		EPlayingState BOPlayingState = GameInstance->GetPlayingState();
 		EFarmingResult BOFarmingResult = GameInstance->GetFarmingResult();
 
-		if (BOGameState == EGameState::Playing)
+		if (BOGameState == EGameState::Begin)
+		{
+			if (UUIManager* UIManager = UUIManager::Get(this))
+			{
+				UIManager->ShowScreen(EUIScreen::Title, EUIInputMode::UIOnly);
+			}
+		}
+		else if (BOGameState == EGameState::Playing)
 		{
 			if (BOPlayingState == EPlayingState::Bunker && BOFarmingResult != EFarmingResult::Success)
 			{
@@ -79,16 +86,7 @@ void ABOGameMode::ProvideBasicEquipment()
 			FRotator Rotation = TargetPoint->GetActorRotation();
 			ItemFactory.SpawnItemPickup(GetWorld(), BasicEquipments[Tag], 1, Location, Rotation);
 		}
-
-		if (BOGameState == EGameState::Begin)
-		{
-			if (UUIManager* UIManager = UUIManager::Get(this))
-			{
-				UIManager->ShowScreen(EUIScreen::Title, EUIInputMode::UIOnly);
-			}
-		}
 	}
-
 }
 
 void ABOGameMode::StartFarming()

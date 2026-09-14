@@ -41,7 +41,7 @@ void UExitManager::InitSetting()
 	{
 		if (AExitActor* Exit = Cast<AExitActor>(Actor))
 		{
-			// Exit->OnExtractRequested.AddDynamic(this, &UExitManager::HandleExtract);
+			Exit->OnExtractRequested.AddDynamic(this, &UExitManager::HandleExtract);
 			Exits.Add(Exit);
 		}
 	}
@@ -103,10 +103,8 @@ AExitActor* UExitManager::SelectRandomExit()
 	int32 Size = Exits.Num();
 	int32 Index = FMath::RandRange(0, Size - 1);
 
-	UE_LOG(LogTemp, Warning, TEXT("Exit Number : %d"), Size);
 	if (Index < Size)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Exit : %s"), *Exits[Index]->GetName());
 		return Exits[Index];
 	}
 	else
@@ -128,10 +126,10 @@ void UExitManager::HandleExtract(AExitActor* ExitPoint, AActor* Interactor)
 		return;
 	}
 
-	/*FName RegionId = ExitPoint->GetRegionId();
+	FName RegionId = ExitPoint->RegionId; // change to getter function
 
 	if (ASpawnVolume* SpawnVolume = SpawnVolumeManager->GetSpawnVolume(RegionId))
 	{
 		SpawnVolume->StartPhase();
-	}*/
+	}
 }
