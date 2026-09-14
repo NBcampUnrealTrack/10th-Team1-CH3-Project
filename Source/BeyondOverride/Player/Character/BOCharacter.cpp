@@ -58,8 +58,9 @@ void ABOCharacter::BeginPlay()
 
 	ChangeMoveSpeed();
 
-	// EquipmentManagerComponent의 델리게이트 바인딩
-	BindingEquipmentManagerComponentDelegates();
+	// EquipmentManagerComponent 설정
+	BindingEquipmentManagerComponentDelegates(); // 델리게이트 바인딩
+	EquipmentManagerComponent->Initialize();     // 초기 설정
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{

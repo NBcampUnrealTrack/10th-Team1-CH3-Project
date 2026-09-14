@@ -34,18 +34,8 @@ bool UEquipmentManagerComponent::HasEquipment(EEquipmentSlot Slot) const
 	return EquipmentHandlerComponents[Slot]->GetEquippableItemInstance() != nullptr;
 }
 
-void UEquipmentManagerComponent::OnRegister()
+void UEquipmentManagerComponent::Initialize()
 {
-	Super::OnRegister();
-
-	// 장비 핸들러의 델리게이트 연결
-	BindDelegates();
-}
-
-void UEquipmentManagerComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
 	// Unarmed 설정
 	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Unarmed))
 	{
@@ -58,11 +48,11 @@ void UEquipmentManagerComponent::BeginPlay()
 			EquipmentHandlerComponents[ActiveSlot]->Equip();
 			OnActiveSlotChangedDelegate.Broadcast(ActiveSlot, EquippableItemInstance);
 			GEngine->AddOnScreenDebugMessage(100, 1000.f, FColor::Yellow, FString::Printf(TEXT("현재 슬롯 - %s"), *UEnum::GetValueAsString(ActiveSlot)));
-			return;
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Unarmed 설정 실패"));
+	// 각 장비 핸들러의 델리게이트 연결
+	BindDelegates();
 }
 
 bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
