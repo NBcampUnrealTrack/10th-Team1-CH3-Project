@@ -1,9 +1,14 @@
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 
+#include "CollisionShape.h"
+
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/MeleeWeaponDataRow.h"
+#include "Engine/OverlapResult.h"
+#include "Engine/World.h"
 #include "Items/Objects/MeleeWeaponInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 UMeleeWeaponHandlerComponent::UMeleeWeaponHandlerComponent()
 {
@@ -71,6 +76,52 @@ bool UMeleeWeaponHandlerComponent::Use()
 		return false;
 	}
 
+	// 근접무기 데이터
+	const FMeleeWeaponDataRow* MeleeWeaponData = MeleeWeaponInstance->GetMeleeWeaponData();
+
+	// 결과 값 저장 배열
+	TArray<FOverlapResult> OverlapResults;
+
+	// Query 설정
+	FCollisionObjectQueryParams ObjectQueryParams;
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(GetOwner());
+
+	// 콜리전
+	float AttackRadius = MeleeWeaponData->AttackRadius;
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(AttackRadius / 2);
+
+	// 콜리전 생성 및 오버랩 액터 확인
+	bool bHit = GetWorld()->OverlapMultiByObjectType(
+		OverlapResults,
+		GetOwner()->GetActorLocation() + AttackRadius / 2 * GetOwner()->GetActorForwardVector(),
+		FQuat::Identity,
+		ObjectQueryParams,
+		CollisionShape,
+		QueryParams);
+
+	// 공격 범위 내 액터에 데미지 적용
+	for (const FOverlapResult& Result : OverlapResults)
+	{
+		AActor* Actor = Result.GetActor();
+		if (Actor && Actor != GetOwner())
+		{
+			UGameplayStatics::ApplyDamage(
+				Actor,
+				MeleeWeaponData->Damage,
+				GetOwner()->GetInstigatorController(),
+				GetOwner(),
+				UDamageType::StaticClass());
+		}
+	}
+
+	// 공격 애니메이션 재생
+	PlayAttackAnimation();
+
+	// 공격 타이머 활성화
+	StartAttackTimer();
+
 	return true;
 }
 
@@ -136,6 +187,12 @@ bool UMeleeWeaponHandlerComponent::CanUse() const
 bool UMeleeWeaponHandlerComponent::CanAttack() const
 {
 	if (!CanUse())
+	{
+		return false;
+	}
+
+	// 공격 딜레이
+	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(AttackTimerHandle))
 	{
 		return false;
 	}
