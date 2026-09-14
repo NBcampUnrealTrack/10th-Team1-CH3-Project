@@ -55,6 +55,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 
   protected:
 	virtual void OnRegister() override;
+	virtual void BeginPlay() override;
 
   public:
 	// 슬롯 전환

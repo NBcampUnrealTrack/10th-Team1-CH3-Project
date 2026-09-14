@@ -3,14 +3,17 @@
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 #include "Enums/EquipmentSlot.h"
+#include "Factory/ItemFactory.h"
 #include "Items/Objects/EquippableItemInstance.h"
+#include "Items/Objects/ItemInstanceBase.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	ActiveSlot = EEquipmentSlot::Primary;
+	ActiveSlot = EEquipmentSlot::Unarmed;
 
+	EquipmentHandlerComponents.Add(EEquipmentSlot::Unarmed, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("Unarmed Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Melee, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("MeleeWeapon Handler Component")));
@@ -37,6 +40,26 @@ void UEquipmentManagerComponent::OnRegister()
 
 	// 장비 핸들러의 델리게이트 연결
 	BindDelegates();
+}
+
+void UEquipmentManagerComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Unarmed 설정
+	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Unarmed))
+	{
+		// UNARM 아이템 생성 후 Unarmed 슬롯에 할당
+		UItemInstanceBase* ItemInstance = FItemFactory::CreateItemInstance(GetOwner(), FName("UNARM"));
+		if (UEquippableItemInstance* EquippableItemInstance = Cast<UEquippableItemInstance>(ItemInstance))
+		{
+			EquipmentHandlerComponents[EEquipmentSlot::Unarmed]->Assign(EquippableItemInstance);
+			Equip(EEquipmentSlot::Unarmed);
+			return;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Unarmed 설정 실패"));
 }
 
 bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
