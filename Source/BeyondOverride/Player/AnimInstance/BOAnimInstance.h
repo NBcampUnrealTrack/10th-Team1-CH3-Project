@@ -35,6 +35,8 @@ protected:
 	FVector Velocity = FVector::ZeroVector;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	float GroundSpeed = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float EquipmentGroundSpeed = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	float Direction = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
@@ -45,11 +47,13 @@ protected:
 	bool bIsCrouch = false;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	bool bIsAiming = false;
+	UPROPERTY(BlueprintReadOnly, Category = "Aim")
+	float AimPitch = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UAnimSequenceBase* EquipmentHipIdle = nullptr;
-	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	UAnimSequenceBase* EquipmentAimIdle = nullptr;
+	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	//UAnimSequenceBase* EquipmentHipIdle = nullptr;
+	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	//UAnimSequenceBase* EquipmentAimIdle = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	UBlendSpace* EquipmentHipLocomotion = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")

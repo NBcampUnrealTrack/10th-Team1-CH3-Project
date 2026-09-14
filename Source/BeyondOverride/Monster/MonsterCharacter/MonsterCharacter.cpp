@@ -83,9 +83,9 @@ UAttackDataComponent* AMonsterCharacter::GetAttackData() const
 }
 
 float AMonsterCharacter::TakeDamage(float DamageAmount,
-									FDamageEvent const& DamageEvent,
-									AController* EventInstigator,
-									AActor* DamageCauser)
+	FDamageEvent const& DamageEvent,
+	AController* EventInstigator,
+	AActor* DamageCauser)
 {
 	// 기본 데미지 처리 로직 호출 (필수는 아님)
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -97,7 +97,7 @@ float AMonsterCharacter::TakeDamage(float DamageAmount,
 		Target = Cast<ABOCharacter>(EventInstigator->GetPawn());
 	}
 
-	StatComponent->TakeDamage(GetDamage);
+	StatComponent->TakeDamage(GetDamage, DamageCauser);
 
 	if (Target)
 	{
@@ -129,10 +129,10 @@ void AMonsterCharacter::CallBallistic()
 		if (Ballistic.bHit)
 		{
 			UGameplayStatics::ApplyDamage(Ballistic.HitResult.GetActor(),
-										  AttackDataComponent->GetAttackDamage(),
-										  GetController(),
-										  this,
-										  UDamageType::StaticClass());
+				AttackDataComponent->GetAttackDamage(),
+				GetController(),
+				this,
+				UDamageType::StaticClass());
 		}
 
 		Ballistic.BulletLocation = FVector::ZeroVector;
@@ -153,10 +153,10 @@ void AMonsterCharacter::CallBallistic()
 		if (FireParticle)
 		{
 			Particle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
-																FireParticle,
-																Ballistic.BulletLocation,
-																GetMesh()->GetSocketRotation(TEXT("Muzzle_01")),
-																true);
+				FireParticle,
+				Ballistic.BulletLocation,
+				GetMesh()->GetSocketRotation(TEXT("Muzzle_01")),
+				true);
 			if (Particle)
 			{
 				FTimerHandle DestroyParticleTimerHandle;
@@ -189,16 +189,16 @@ void AMonsterCharacter::CallBallistic()
 	Ballistic.EndCount = Ballistic.EndCount + 1;
 
 	Ballistic.bHit = GetWorld()->LineTraceSingleByObjectType(Ballistic.HitResult,
-															 Ballistic.StartLocation,
-															 Ballistic.EndLocation,
-															 Ballistic.TraceParams,
-															 Ballistic.QueryParams);
+		Ballistic.StartLocation,
+		Ballistic.EndLocation,
+		Ballistic.TraceParams,
+		Ballistic.QueryParams);
 
 	GetWorld()->GetTimerManager().SetTimer(Ballistic.Update,
-										   this,
-										   &AMonsterCharacter::CallBallistic,
-										   Ballistic.FlyTime,
-										   false);
+		this,
+		&AMonsterCharacter::CallBallistic,
+		Ballistic.FlyTime,
+		false);
 }
 
 void AMonsterCharacter::BeginPlay()

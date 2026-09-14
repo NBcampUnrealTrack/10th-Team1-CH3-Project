@@ -14,7 +14,7 @@ class BEYONDOVERRIDE_API UStatComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	void TakeDamage(int32 DamageAmount);
+	void TakeDamage(int32 DamageAmount, AActor* DamageCauser);
 	void Heal(int32 HealAmount);
 
 	int32 GetCurHealth() const { return CurHealth; }
@@ -56,7 +56,7 @@ private:
 	void ResetShieldRegenTimer();
 	void StartShieldRegen();
 	void RegenerateShield();
-	void Die();
+	void Die(AActor* DamageCauser);
 
 private:
 	FTimerHandle ShieldDelayTimerHandle; // 피격 이후 첫 쉴드가 차기까지의 대기시간 관리 타이머

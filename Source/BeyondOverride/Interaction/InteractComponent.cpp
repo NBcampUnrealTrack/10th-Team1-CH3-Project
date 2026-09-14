@@ -1,6 +1,10 @@
 #include "Interaction/InteractComponent.h"
 
 #include "DrawDebugHelpers.h"
+
+#include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Engine/OverlapResult.h"
 #include "Engine/World.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Pawn.h"
@@ -12,11 +16,72 @@ UInteractComponent::UInteractComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UInteractComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AActor* Owner = GetOwner();
+	if (!Owner)
+		return;
+
+	UCameraComponent* Camera = Owner->FindComponentByClass<UCameraComponent>();
+	USceneComponent* AttachTarget = Camera ? static_cast<USceneComponent*>(Camera) : Owner->GetRootComponent();
+	if (!AttachTarget)
+		return;
+
+	const float CameraOffset = FVector::Dist(AttachTarget->GetComponentLocation(), Owner->GetActorLocation());
+	const float TotalLength = TraceDistance + CameraOffset;
+	const float HalfHeight = FMath::Max(TotalLength * 0.5f, TraceRadius);
+
+	DetectionCollision = NewObject<UCapsuleComponent>(Owner, TEXT("InteractDetactionCollision"));
+	if (DetectionCollision)
+	{
+		DetectionCollision->SetCapsuleSize(TraceRadius, HalfHeight);
+		DetectionCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		DetectionCollision->SetGenerateOverlapEvents(true);
+		//DetectionCollision->SetCollisionObjectType(ECC_InteractionDetector);
+		DetectionCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+		//DetectionCollision->SetCollisionResponseToChannel(ECC_InteractionDetector, ECR_Overlap);
+
+		DetectionCollision->SetupAttachment(AttachTarget);
+		DetectionCollision->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+		DetectionCollision->SetRelativeLocation(FVector(HalfHeight, 0.f, 0.f));
+
+		DetectionCollision->RegisterComponent();
+
+		//DetectionCollision->OnComponentBeginOverlap.AddDynamic(this, &UInteractComponent::OnDetectionBeginOverlap);
+		//DetectionCollision->OnComponentEndOverlap.AddDynamic(this, &UInteractComponent::OnDetectionEndOverlap);
+	}
+}
+
+void UInteractComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (DetectionCollision)
+	{
+		DetectionCollision->DestroyComponent();
+		DetectionCollision = nullptr;
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 void UInteractComponent::TickComponent(
 	float DeltaTime, ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bDrawDebug && DetectionCollision && GetWorld())
+	{
+		DrawDebugCapsule(
+			GetWorld(),
+			DetectionCollision->GetComponentLocation(),
+			DetectionCollision->GetScaledCapsuleHalfHeight(),
+			DetectionCollision->GetScaledCapsuleRadius(),
+			DetectionCollision->GetComponentQuat(),
+			FColor::Cyan,
+			false, -1.f, 0, 1.f);
+	}
 
 	FVector ViewLoc, TraceEnd, HitPoint;
 	bool bHitSomething = false;
@@ -35,13 +100,11 @@ void UInteractComponent::TickComponent(
 		if (Target)
 			LineColor = FColor::Green;
 
-		DrawDebugLine(GetWorld(), ViewLoc, TraceEnd, LineColor, false, -1.f, 0,
-			1.f);
+		DrawDebugLine(GetWorld(), ViewLoc, TraceEnd, LineColor, false, -1.f, 0, 1.f);
 
 		if (bHitSomething)
 		{
-			DrawDebugPoint(GetWorld(), HitPoint, 12.f, FColor::White, false,
-				-1.f);
+			DrawDebugPoint(GetWorld(), HitPoint, 12.f, FColor::White, false, -1.f);
 		}
 	}
 
@@ -51,9 +114,9 @@ void UInteractComponent::TickComponent(
 
 // 광선 쏘기
 AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
-	FVector& OutTraceEnd,
-	bool& bOutHitSomething,
-	FVector& OutHitPoint) const
+										   FVector& OutTraceEnd,
+										   bool& bOutHitSomething,
+										   FVector& OutHitPoint) const
 {
 	OutViewLoc = FVector::ZeroVector;
 	OutTraceEnd = FVector::ZeroVector;
@@ -85,23 +148,20 @@ AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
 	// 카메라가 캐릭터 뒤 500 쯤에 있으면 광선이 카메라에서 출발하므로,
 	// TraceDistance 만큼만 쏘면 광선이 캐릭터 등 뒤에서 끝나 버린다.
 	// 카메라~캐릭터 거리를 더해서 "캐릭터 기준 250" 이 되게 맞춘다.
-	const float CameraOffset =
-		FVector::Dist(OutViewLoc, Owner->GetActorLocation());
+	const float CameraOffset = FVector::Dist(OutViewLoc, Owner->GetActorLocation());
 
-	OutTraceEnd =
-		OutViewLoc + ViewRot.Vector() * (TraceDistance + CameraOffset);
+	OutTraceEnd = OutViewLoc + ViewRot.Vector() * (TraceDistance + CameraOffset);
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(Owner);
 
+	FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(TraceRadius, TraceRadius);
+
 	FHitResult Hit;
-	bOutHitSomething = World->LineTraceSingleByChannel(
-		Hit, OutViewLoc, OutTraceEnd, ECC_Interaction, Params);
+	bOutHitSomething = World->SweepSingleByChannel(Hit, OutViewLoc, OutTraceEnd, FQuat::Identity, ECC_Interaction, CapsuleShape, Params);
 
 	if (!bOutHitSomething)
-	{
 		return nullptr;
-	}
 
 	OutHitPoint = Hit.ImpactPoint;
 
@@ -110,9 +170,7 @@ AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
 	const float Reach =
 		FVector::Dist(Owner->GetActorLocation(), Hit.ImpactPoint);
 	if (Reach > TraceDistance)
-	{
 		return nullptr;
-	}
 
 	// 약속을 지킨 물건인지. 안 지켰으면 nullptr 이 나온다.
 	if (!Cast<IInteractableInterface>(Hit.GetActor()))
@@ -335,7 +393,7 @@ void UInteractComponent::CancelHold()
 	OnHoldProgress.Broadcast(0.f);
 
 	if (IInteractableInterface* I =
-		Cast<IInteractableInterface>(FocusedActor.Get()))
+			Cast<IInteractableInterface>(FocusedActor.Get()))
 	{
 		I->OnInteractCancel(GetOwner());
 	}
@@ -354,10 +412,41 @@ void UInteractComponent::CompleteHold()
 	OnHoldProgress.Broadcast(0.f);
 
 	if (IInteractableInterface* I =
-		Cast<IInteractableInterface>(FocusedActor.Get()))
+			Cast<IInteractableInterface>(FocusedActor.Get()))
 	{
 		// 이 호출로 액터가 Destroy 될 수 있다 (아이템 줍기 등)
 		// 이 줄 아래에서 I 나 FocusedActor 를 다시 쓰면 안 된다.
 		I->OnInteractComplete(GetOwner());
 	}
 }
+
+//void UInteractComponent::OnDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("BeginOverlap: %s"), OtherActor ? *OtherActor->GetName() : TEXT("NULL"));
+//
+//	if (!Cast<IInteractableInterface>(OtherActor))
+//		return;
+//
+//	NearbyInteractableCount++;
+//
+//	if (NearbyInteractableCount >= 1)
+//		SetComponentTickEnabled(true);
+//}
+//
+//void UInteractComponent::OnDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("EndOverlap: %s"), OtherActor ? *OtherActor->GetName() : TEXT("NULL"));
+//
+//	if (!Cast<IInteractableInterface>(OtherActor))
+//		return;
+//
+//	NearbyInteractableCount = FMath::Max(0, NearbyInteractableCount - 1);
+//
+//	if (NearbyInteractableCount <= 0)
+//	{
+//		SetComponentTickEnabled(false);
+//
+//		SetFocus(nullptr);
+//		ClearPrompt();
+//	}
+//}

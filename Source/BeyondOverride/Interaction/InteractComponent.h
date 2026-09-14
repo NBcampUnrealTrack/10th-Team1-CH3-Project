@@ -7,6 +7,8 @@
 
 #include "InteractComponent.generated.h"
 
+class UCapsuleComponent;
+
 // 밖으로 나가는 신호
 //
 // DYNAMIC 인 이유: 블루프린트에서도 붙일 수 있어야 한다.
@@ -82,7 +84,7 @@ class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 
 	// 지금 쳐다보는 대상, 없으면 nullptr
 	UFUNCTION(BlueprintPure, Category = "Interaction")
-	AActor *GetFocusedActor() const
+	AActor* GetFocusedActor() const
 	{
 		return FocusedActor.Get();
 	}
@@ -98,15 +100,24 @@ class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 	}
 
   protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void
 	TickComponent(float DeltaTime, ELevelTick TickType,
-				  FActorComponentTickFunction *ThisTickFunction) override;
+				  FActorComponentTickFunction* ThisTickFunction) override;
 
 	// 광선이 닿는 최대 거리 (cm) 250 = 대략 두 걸음
 	// 카메라 거리는 자동 보정돼 3인칭이어도 이 값은 "캐릭터 기준" 거리다
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction",
 			  meta = (ClampMin = "50.0", UIMax = "500.0"))
 	float TraceDistance = 250.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (ClampMin = "0.0", UIMax = "50.0"))
+	float TraceRadius = 15.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (ClampMin = "50.0"))
+	float DetectionRadius = 300.0f;
 
 	// 홀드 중 이 거리를 넘게 움직이면 취소된다 (bMoveCancel 인 물건만)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction",
@@ -119,11 +130,11 @@ class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 
   private:
 	// 쳐다보는 대상을 바꾼다. 이전 것 끄고 새 것 켜는 처리가 들어 있다.
-	void SetFocus(AActor *NewTarget);
+	void SetFocus(AActor* NewTarget);
 
 	// 광선을 쏘고 유효한 상호작용 대상을 돌려준다. (없으면 nullptr)
-	AActor *TraceForTarget(FVector &OutViewLoc, FVector &OutTraceEnd,
-						   bool &bOutHitSomething, FVector &OutHitPoint) const;
+	AActor* TraceForTarget(FVector& OutViewLoc, FVector& OutTraceEnd,
+						   bool& bOutHitSomething, FVector& OutHitPoint) const;
 
 	// 프롬프트를 UI 에 보낸다. 값이 바뀌었을 때만 실제로 쏜다.
 	void PushPrompt();
@@ -135,8 +146,19 @@ class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 	void CancelHold();
 	void CompleteHold();
 
-	// 지금 쳐다보는 대상
+	UPROPERTY()
+	TObjectPtr<UCapsuleComponent> DetectionCollision;
 
+	//UFUNCTION()
+	//void OnDetectionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//UFUNCTION()
+	//void OnDetectionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	//						   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	int32 NearbyInteractableCount = 0;
+
+	// 지금 쳐다보는 대상
 	// TWeakObjectPtr 인 이유: 그냥 AActor* 로 들고 있으면 그 액터가 파괴됐을 때(아이템을 주워서
 	// 사라지는 경우) 쓰레기 주소가 남아 크래시난다.
 	// 약한 참조는 파괴되면 자동으로 null 이 된다.

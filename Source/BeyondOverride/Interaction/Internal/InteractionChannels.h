@@ -17,3 +17,5 @@
 //
 // 프로젝트 세팅 > Collision > Trace Channels 에서도 확인할 수 있다.
 #define ECC_Interaction ECollisionChannel::ECC_GameTraceChannel1
+
+//#define ECC_InteractionDetector ECollisionChannel::ECC_GameTraceChannel2

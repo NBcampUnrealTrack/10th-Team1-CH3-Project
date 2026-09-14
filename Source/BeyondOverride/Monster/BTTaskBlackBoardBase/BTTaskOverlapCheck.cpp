@@ -64,7 +64,10 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
 		AIState->TrueContinueTargeting();
 		AIState->CallContinueTimer();
-		AIState->SetStandOffTimer();
+		if (!AIState->IsStandOff() && !AIState->IsContinueStandOff())
+		{
+			AIState->SetStandOffTimer();
+		}
 	}
 
 	return EBTNodeResult::Succeeded;
