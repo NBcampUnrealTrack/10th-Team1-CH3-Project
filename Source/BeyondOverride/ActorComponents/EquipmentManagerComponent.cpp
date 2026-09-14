@@ -195,18 +195,29 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 
 UItemInstanceBase* UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 {
+	// 유효하지 않은 슬롯
 	if (!EquipmentHandlerComponents.Contains(Slot))
 	{
 		return nullptr;
 	}
 
+	// 비무장 제거 불가
+	if (Slot == EEquipmentSlot::Unarmed)
+	{
+		return nullptr;
+	}
+
+	// 장비 제거
 	UItemInstanceBase* ItemInstance = EquipmentHandlerComponents[Slot]->Unassign();
+
+	// 장비 제거 실패
 	if (!ItemInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 실패 - %s 슬롯의 장비 제거 실패"), *UEnum::GetValueAsString(Slot));
 		return nullptr;
 	}
 
+	// 제거한 장비 반환
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 성공 - 슬롯의 장비 제거 성공"), *UEnum::GetValueAsString(Slot));
 	return ItemInstance;
 }
