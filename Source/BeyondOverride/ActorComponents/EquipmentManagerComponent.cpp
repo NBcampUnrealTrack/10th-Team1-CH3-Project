@@ -100,8 +100,8 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	// 장비 인스턴스
 	UEquippableItemInstance* EquippableItemInstance = EquipmentHandlerComponents[Slot]->GetEquippableItemInstance();
 
-	// OnEquipmentChangedDelegate 송출
-	OnEquipmentChangedDelegate.Broadcast(EquippableItemInstance);
+	// OnActiveSlotChangedDelegate 송출 - 현재 활성화된 슬롯과 장비 전달
+	OnActiveSlotChangedDelegate.Broadcast(ActiveSlot, EquippableItemInstance);
 
 	return true;
 }
