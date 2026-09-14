@@ -45,7 +45,32 @@ bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 
 UEquippableItemInstance* UMeleeWeaponHandlerComponent::Unassign()
 {
-	return nullptr;
+	// 등록된 장비 없음
+	if (!MeleeWeaponInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Unassign 실패 - 등록된 장비가 없음"))
+		return nullptr;
+	}
+
+	// 장착 해제 시도
+	if (!Unequip())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Unassign 실패 - Unequip 실패"))
+		return nullptr;
+	}
+
+	// 장비 메시 제거
+	if (EquipMeshComponent)
+	{
+		EquipMeshComponent->SetSkeletalMesh(nullptr);
+	}
+
+	// 장비 제거
+	UEquippableItemInstance* OutEquippableItemInstance = MeleeWeaponInstance;
+	MeleeWeaponInstance = nullptr;
+
+	// 제거한 장비 반환
+	return OutEquippableItemInstance;
 }
 
 bool UMeleeWeaponHandlerComponent::Equip()
