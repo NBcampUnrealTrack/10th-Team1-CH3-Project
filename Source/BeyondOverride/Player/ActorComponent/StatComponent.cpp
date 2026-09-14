@@ -47,7 +47,7 @@ void UStatComponent::TakeDamage(int32 DamageAmount, AActor* DamageCauser)
 
 		if (CurHealth <= 0)
 		{
-			Die(AActor * DamageCauser);
+			Die(DamageCauser);
 			return;
 		}
 	}
