@@ -3,7 +3,6 @@
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "Items/Objects/EquippableItemInstance.h"
