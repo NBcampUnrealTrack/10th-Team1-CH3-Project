@@ -1,0 +1,54 @@
+[
+    {
+        "Name": "UNARM",
+        "DisplayName": "UNARM",
+        "Description": "",
+        "ItemType": "MeleeWeapon",
+        "ItemRarity": "None",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Unarm/BP_ItemInstance_Unarm.BP_ItemInstance_Unarm_C'",
+        "ItemPickupClass": "",
+        "ItemPickupMesh": "",
+        "MaxStackCount": 0,
+        "Weight": 0.0,
+        "ItemIcon": ""
+    },
+    {
+        "Name": "ASSAULT_RIFLE_A",
+        "DisplayName": "Assault Rifle A",
+        "Description": "Assault Rifle A Description",
+        "ItemType": "RangeWeapon",
+        "ItemRarity": "Rare",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/AssaultRifleA/BP_ItemInstance_AssaultRifleA.BP_ItemInstance_AssaultRifleA_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/AssaultRifleA/BP_ItemPickup_AssaultRifleA.BP_ItemPickup_AssaultRifleA_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Assault_Rifle_A_StaticMesh.Assault_Rifle_A_StaticMesh'",
+        "MaxStackCount": 1,
+        "Weight": 10.0,
+        "ItemIcon": ""
+    },
+    {
+        "Name": "ASSAULT_RIFLE_B",
+        "DisplayName": "Assault Rifle B",
+        "Description": "Assault Rifle B Description",
+        "ItemType": "RangeWeapon",
+        "ItemRarity": "Rare",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/AssaultRifleB/BP_ItemInstance_AssaultRifleB.BP_ItemInstance_AssaultRifleB_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/AssaultRifleB/BP_ItemPickup_AssaultRifleB.BP_ItemPickup_AssaultRifleB_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Assault_Rifle_B_StaticMesh.Assault_Rifle_B_StaticMesh'",
+        "MaxStackCount": 1,
+        "Weight": 9.5,
+        "ItemIcon": ""
+    },
+    {
+        "Name": "GONBONG",
+        "DisplayName": "Gonbong",
+        "Description": "Gonbong Description",
+        "ItemType": "MeleeWeapon",
+        "ItemRarity": "Uncommon",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Gonbong/BP_ItemInstance_Gonbong.BP_ItemInstance_Gonbong_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Gonbong/BP_ItemPickup_Gonbong.BP_ItemPickup_Gonbong_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/Gonbong/Meshs/SM_Gonbong.SM_Gonbong'",
+        "MaxStackCount": 1,
+        "Weight": 5.0,
+        "ItemIcon": ""
+    }
+]

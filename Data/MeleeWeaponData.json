@@ -1,0 +1,14 @@
+[
+    {
+        "Name": "UNARM",
+        "Damage": 10,
+        "AttackInterval": 2.0,
+        "AttackRadius": 150.0
+    },
+    {
+        "Name": "GONBONG",
+        "Damage": 35,
+        "AttackInterval": 2.5,
+        "AttackRadius": 200.0
+    }
+]
