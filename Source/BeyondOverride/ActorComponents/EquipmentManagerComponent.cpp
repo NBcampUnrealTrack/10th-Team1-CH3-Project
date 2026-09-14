@@ -67,52 +67,81 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 		}
 	}
 
-	// 활성화 슬롯 전환 및 장비 장착
-	if (!EquipmentHandlerComponents[Slot]->Equip())
-	{
-		// TODO: 전환한 슬롯에 장비가 없으면, Unarmed 상태로 전환
-		return false;
-	}
+	//// 활성화 슬롯 전환 및 장비 장착
+	//if (!EquipmentHandlerComponents[Slot]->Equip())
+	//{
+	//	// TODO: 전환한 슬롯에 장비가 없으면, Unarmed 상태로 전환
+	//	return false;
+	//}
+	//ActiveSlot = Slot;
+
+	//// 장비 인스턴스
+	//UEquippableItemInstance* EquippableItemInstance = EquipmentHandlerComponents[Slot]->GetEquippableItemInstance();
+
+	//// OnEquipmentChangedDelegate 송출
+	//OnEquipmentChangedDelegate.Broadcast(EquippableItemInstance);
+	//if (!EquippableItemInstance)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: 등록된 장비가 없음"), *UEnum::GetValueAsString(Slot))
+	//		return false;
+	//}
+
+	//// 장비 데이터 확인
+	//const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
+	//if (!EquippableItemData)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 EquippableItemData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
+	//		return false;
+	//}
+
+	//// 장비 애니메이션 데이터 확인
+	//const UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
+	//if (!WeaponAnimationData)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 WeaponAnimationData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
+	//		return false;
+	//}
+
+	//// UBOAnimInstance 확인 - TODO: 결합도 낮추는 방향으로 리팩토링 필요
+	//if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	//{
+	//	if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
+	//	{
+	//		if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
+	//		{
+	//			BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+	//		}
+	//	}
+	//}
+
+	//return true;
+
+	// 새로운 활성 슬롯으로 변경
 	ActiveSlot = Slot;
 
-	// 장비 인스턴스
-	UEquippableItemInstance* EquippableItemInstance = EquipmentHandlerComponents[Slot]->GetEquippableItemInstance();
+	UEquipmentHandlerComponent* NewHandler = EquipmentHandlerComponents[ActiveSlot];
+	UEquippableItemInstance* NewEquipment = NewHandler->GetEquippableItemInstance();
 
-	// OnEquipmentChangedDelegate 송출
-	OnEquipmentChangedDelegate.Broadcast(EquippableItemInstance);
-	if (!EquippableItemInstance)
+	// 전환한 슬롯이 비어 있는 경우
+	if (!IsValid(NewEquipment))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: 등록된 장비가 없음"), *UEnum::GetValueAsString(Slot))
-			return false;
+		// Character의 OnEquipmentChanged(nullptr) 호출
+		OnEquipmentChangedDelegate.Broadcast(nullptr);
+
+		return true;
 	}
 
-	// 장비 데이터 확인
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
+	// 새로운 슬롯의 장비를 실제로 장착
+	if (!NewHandler->Equip())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 EquippableItemData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-			return false;
+		// 장착 실패 시 기본 비무장 애니메이션
+		OnEquipmentChangedDelegate.Broadcast(nullptr);
+
+		return false;
 	}
 
-	// 장비 애니메이션 데이터 확인
-	const UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
-	if (!WeaponAnimationData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 WeaponAnimationData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-			return false;
-	}
-
-	// UBOAnimInstance 확인 - TODO: 결합도 낮추는 방향으로 리팩토링 필요
-	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
-	{
-		if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
-		{
-			if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
-			{
-				BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
-			}
-		}
-	}
+	// 새로운 장비를 Character에 전달
+	OnEquipmentChangedDelegate.Broadcast(NewEquipment);
 
 	return true;
 }
@@ -130,7 +159,15 @@ bool UEquipmentManagerComponent::Unequip()
 	}
 
 	// 장비 해제
-	EquipmentHandlerComponents[ActiveSlot]->Unequip();
+	const bool bSucceed = EquipmentHandlerComponents[ActiveSlot]->Unequip();
+
+	if (!bSucceed)
+	{
+		return false;
+	}
+
+	// 현재 손에 든 장비가 없음을 전달
+	OnEquipmentChangedDelegate.Broadcast(nullptr);
 
 	return true;
 }
@@ -220,53 +257,77 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 	//return true;
 
 	// 활성화 슬롯에 장착
+	//if (Slot == ActiveSlot)
+	//{
+	//	if (!EquipmentHandlerComponents[Slot]->Equip())
+	//	{
+	//		return false;
+	//	}
+
+	//	OnEquipmentChangedDelegate.Broadcast(EquippableItemInstance);
+
+	//	// 장비 애니메이션 데이터 확인
+	//	const FEquippableItemDataRow* EquippableItemData =
+	//		EquippableItemInstance->GetEquippableItemData();
+
+	//	if (!EquippableItemData)
+	//	{
+	//		return false;
+	//	}
+
+	//	const UEquipmentAnimationDataAsset* AnimationData =
+	//		EquippableItemData->EquipmentAnimationData;
+
+	//	if (!AnimationData)
+	//	{
+	//		return false;
+	//	}
+
+	//	// 캐릭터 AnimInstance에 장비 애니메이션 전달
+	//	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
+
+	//	if (!OwnerCharacter)
+	//	{
+	//		return false;
+	//	}
+
+	//	UBOAnimInstance* BOAnimInstance =
+	//		Cast<UBOAnimInstance>(
+	//			OwnerCharacter->GetMesh()->GetAnimInstance());
+
+	//	if (!BOAnimInstance)
+	//	{
+	//		return false;
+	//	}
+
+	//	BOAnimInstance->ApplyEquipmentAnimation(AnimationData);
+
+	//	if (IsValid(EquippableItemInstance))
+	//	{
+	//		// 장착 Montage까지 바로 재생하려면 추가
+	//		BOAnimInstance->PlayEquipMontage();
+	//	}
+	//}
+	//else
+	//{
+	//	// 비활성 슬롯의 장비는 손에서 숨김
+	//	EquipmentHandlerComponents[Slot]->Unequip();
+	//}
+
+	//return true;
+
 	if (Slot == ActiveSlot)
 	{
-		EquipmentHandlerComponents[Slot]->Equip();
-
-		// 장비 애니메이션 데이터 확인
-		const FEquippableItemDataRow* EquippableItemData =
-			EquippableItemInstance->GetEquippableItemData();
-
-		if (!EquippableItemData)
+		if (!EquipmentHandlerComponents[Slot]->Equip())
 		{
 			return false;
 		}
 
-		const UEquipmentAnimationDataAsset* AnimationData =
-			EquippableItemData->EquipmentAnimationData;
-
-		if (!AnimationData)
-		{
-			return false;
-		}
-
-		// 캐릭터 AnimInstance에 장비 애니메이션 전달
-		ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-
-		if (!OwnerCharacter)
-		{
-			return false;
-		}
-
-		UBOAnimInstance* BOAnimInstance =
-			Cast<UBOAnimInstance>(
-				OwnerCharacter->GetMesh()->GetAnimInstance());
-
-		if (!BOAnimInstance)
-		{
-			return false;
-		}
-
-		BOAnimInstance->ApplyEquipmentAnimation(AnimationData);
-
-
-		// 장착 Montage까지 바로 재생하려면 추가
-		BOAnimInstance->PlayEquipMontage();
+		OnEquipmentChangedDelegate.Broadcast(
+			EquippableItemInstance);
 	}
 	else
 	{
-		// 비활성 슬롯의 장비는 손에서 숨김
 		EquipmentHandlerComponents[Slot]->Unequip();
 	}
 
@@ -288,6 +349,12 @@ UItemInstanceBase* UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 성공 - 슬롯의 장비 제거 성공"), *UEnum::GetValueAsString(Slot));
+
+	if (Slot == ActiveSlot)
+	{
+		OnEquipmentChangedDelegate.Broadcast(nullptr);
+	}
+
 	return ItemInstance;
 }
 

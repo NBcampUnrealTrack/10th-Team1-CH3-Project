@@ -18,6 +18,7 @@ class UEquipmentHandlerComponent;
 class UItemInstanceBase;
 class UEquippableItemInstance;
 class URangeWeaponInstance;
+class UEquipmentAnimationDataAsset;
 
 // [UEquipmentManagerComponent] 장비 변경 시 인스턴스 전달하는 델리게이트
 DECLARE_MULTICAST_DELEGATE_OneParam(
@@ -40,23 +41,28 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	// 활성화된 장비 슬롯
 	EEquipmentSlot ActiveSlot;
 	// 각 장비 슬롯 별 컴포넌트
 	TMap<EEquipmentSlot, UEquipmentHandlerComponent*> EquipmentHandlerComponents;
 
-  public:
+	// 미착용 애니메이션
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UEquipmentAnimationDataAsset> UnequipAnimationData;
+
+public:
 	UEquipmentManagerComponent();
 
 	// Getters
 	EEquipmentSlot GetActiveSlot() const;         // 현재 활성화 슬롯 반환
 	bool HasEquipment(EEquipmentSlot Slot) const; // 슬롯에 장비가 등록되었는지 여부
+	const UEquipmentAnimationDataAsset* GetUnequipAnimationData() const { return UnequipAnimationData; }
 
-  protected:
+protected:
 	virtual void OnRegister() override;
 
-  public:
+public:
 	// 슬롯 전환
 	bool Equip(EEquipmentSlot Slot);
 	// 비무장 전환
@@ -73,7 +79,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 슬롯에서 장비 해제
 	UItemInstanceBase* Unassign(EEquipmentSlot Slot);
 
-  public:
+public:
 	// 장비 인스턴스 전달 델리게이트
 	FOnEquipmentChangedDelegate OnEquipmentChangedDelegate;
 
@@ -82,7 +88,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
-  protected:
+protected:
 	// 델리게이트 바인딩
 	void BindDelegates();
 

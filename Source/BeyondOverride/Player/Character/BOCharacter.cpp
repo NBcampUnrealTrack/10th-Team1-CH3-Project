@@ -21,6 +21,7 @@
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
+#include "DataAssets/EquipmentAnimationDataAsset.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -65,6 +66,8 @@ void ABOCharacter::BeginPlay()
 	{
 		UIManager->BindInteractPrompt(InteractComponent);
 	}
+
+	OnEquipmentChanged(nullptr);
 }
 
 void ABOCharacter::Tick(float DeltaTime)
@@ -489,32 +492,76 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 
 void ABOCharacter::OnEquipmentChanged(UEquippableItemInstance* EquippableItemInstance)
 {
-	if (!EquippableItemInstance)
+	//if (!EquippableItemInstance)
+	//{
+	//	return;
+	//}
+
+	//// 장비 데이터 확인
+	//const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
+	//if (!EquippableItemData)
+	//{
+	//	return;
+	//}
+
+	//// 장비 애니메이션 데이터 확인
+	//UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
+	//if (!WeaponAnimationData)
+	//{
+	//	return;
+	//}
+
+	//// 애니메이션 데이터 적용
+	//if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	//{
+	//	if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
+	//	{
+	//		BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+	//	}
+	//}
+
+	if (!IsValid(EquipmentManagerComponent) || !IsValid(GetMesh()))
 	{
 		return;
 	}
 
-	// 장비 데이터 확인
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
+	UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
+
+	if (!IsValid(BOAnimInstance))
 	{
 		return;
 	}
 
-	// 장비 애니메이션 데이터 확인
-	UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
-	if (!WeaponAnimationData)
-	{
-		return;
-	}
+	const UEquipmentAnimationDataAsset* AnimationData = nullptr;
 
-	// 애니메이션 데이터 적용
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	if (IsValid(EquippableItemInstance))
 	{
-		if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
+		const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
+
+		if (!EquippableItemData)
 		{
-			BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+			return;
 		}
+
+		AnimationData = EquippableItemData->EquipmentAnimationData;
+	}
+	else
+	{
+		AnimationData = EquipmentManagerComponent->GetUnequipAnimationData();
+	}
+
+	if (!IsValid(AnimationData))
+	{
+		return;
+	}
+
+	// 장비 또는 비무장 애니메이션 데이터 적용
+	BOAnimInstance->ApplyEquipmentAnimation(AnimationData);
+
+	// 실제 장비가 들어온 경우에만 장착 Montage 재생
+	if (IsValid(EquippableItemInstance))
+	{
+		BOAnimInstance->PlayEquipMontage();
 	}
 }
 
