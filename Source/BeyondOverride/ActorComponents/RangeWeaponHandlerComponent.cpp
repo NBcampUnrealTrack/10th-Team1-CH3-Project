@@ -189,6 +189,18 @@ bool URangeWeaponHandlerComponent::CanUnequip() const
 
 bool URangeWeaponHandlerComponent::CanUse() const
 {
+	if (!Super::CanUse())
+	{
+		return false;
+	}
+
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -215,15 +227,8 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 bool URangeWeaponHandlerComponent::CanFire() const
 {
-	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
-	{
-		return false;
-	}
-
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
+	// 사용 불가
+	if (!CanUse())
 	{
 		return false;
 	}

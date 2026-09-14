@@ -239,6 +239,12 @@ bool UEquipmentHandlerComponent::CanUnequip() const
 
 bool UEquipmentHandlerComponent::CanUse() const
 {
+	// 등록된 장비 없음
+	if (!EquippableItemInstance)
+	{
+		return false;
+	}
+
 	return true;
 }
 

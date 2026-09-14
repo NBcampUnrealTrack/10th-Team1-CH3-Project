@@ -65,7 +65,12 @@ bool UMeleeWeaponHandlerComponent::Unequip()
 
 bool UMeleeWeaponHandlerComponent::Use()
 {
-	return false;
+	if (!Super::Use())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool UMeleeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
@@ -101,5 +106,17 @@ bool UMeleeWeaponHandlerComponent::CanUnequip() const
 
 bool UMeleeWeaponHandlerComponent::CanUse() const
 {
+	if (!Super::CanUse())
+	{
+		return false;
+	}
+
+	// 데이터 유효성 검증
+	const FMeleeWeaponDataRow* RangeWeaponData = MeleeWeaponInstance->GetMeleeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return false;
+	}
+
 	return true;
 }
