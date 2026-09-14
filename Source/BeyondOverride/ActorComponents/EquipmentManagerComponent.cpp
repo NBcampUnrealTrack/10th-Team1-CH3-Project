@@ -1,5 +1,6 @@
 #include "ActorComponents/EquipmentManagerComponent.h"
 
+#include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
@@ -15,6 +16,7 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
+	EquipmentHandlerComponents.Add(EEquipmentSlot::Melee, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("MeleeWeapon Handler Component")));
 }
 
 EEquipmentSlot UEquipmentManagerComponent::GetActiveSlot() const
