@@ -65,21 +65,10 @@ void AMonsterAIController::BeginPlay()
 void AMonsterAIController::OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 
-	UE_LOG(LogTemp, Warning, TEXT("Perception Updated : %s"), *GetNameSafe(Actor));
 	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hearing"));
-	}
-	else if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Sight"));
-	}
-	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hearing Success : %s"), Stimulus.WasSuccessfullySensed() ? TEXT("TRUE") : TEXT("FALSE"));
 		if (Stimulus.WasSuccessfullySensed())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Hearing Stimulus"));
 
 			ABOCharacter* NoiseActor = Cast<ABOCharacter>(Actor);
 			AMonsterCharacter* Monster = Cast<AMonsterCharacter>(GetPawn());
@@ -91,7 +80,6 @@ void AMonsterAIController::OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimul
 				return;
 			}
 
-			UE_LOG(LogTemp, Warning, TEXT("Heard Actor: %s"), *GetNameSafe(Actor));
 			Monster->GetState()->SetLocationPatrolPoint(NoiseLocation);
 			Monster->GetState()->SetLocationPatrolActor(NoiseActor);
 			Monster->GetState()->CallHearingTimer();
