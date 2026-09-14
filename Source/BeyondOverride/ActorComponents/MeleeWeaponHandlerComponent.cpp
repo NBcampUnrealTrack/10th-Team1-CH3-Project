@@ -22,7 +22,7 @@ UEquippableItemInstance* UMeleeWeaponHandlerComponent::GetEquippableItemInstance
 
 bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
-	if (!Assign(InEquippableItemInstance))
+	if (!Super::Assign(InEquippableItemInstance))
 	{
 		return false;
 	}
@@ -51,7 +51,7 @@ UEquippableItemInstance* UMeleeWeaponHandlerComponent::Unassign()
 
 bool UMeleeWeaponHandlerComponent::Equip()
 {
-	if (!Equip())
+	if (!Super::Equip())
 	{
 		return false;
 	}
