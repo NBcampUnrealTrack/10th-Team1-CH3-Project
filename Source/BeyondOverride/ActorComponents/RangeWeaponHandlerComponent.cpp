@@ -3,7 +3,6 @@
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "Items/Objects/EquippableItemInstance.h"
@@ -24,36 +23,41 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	RecoilApplySpeed = 10;
 }
 
+void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// 적용할 반동 값 계산
+	FVector2D RecoilDelta = FMath::Vector2DInterpConstantTo(FVector2D::ZeroVector, RecoilAccumulator, DeltaTime, RecoilApplySpeed);
+
+	// 반동 적용
+	APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!Pawn)
+	{
+		return;
+	}
+
+	Pawn->AddControllerPitchInput(-RecoilDelta.Y);
+	Pawn->AddControllerYawInput(RecoilDelta.X);
+
+	// 누적에 반영
+	RecoilAccumulator -= RecoilDelta;
+}
+
 UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance() const
 {
 	return RangeWeaponInstance;
 }
 
-bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableItemInstance)
+bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
-	// 이미 등록된 장비 존재
-	if (RangeWeaponInstance)
+	if (!Super::Assign(InEquippableItemInstance))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Assign 실패 - %s 장비가 이미 등록됨"), *GetNameSafe(RangeWeaponInstance))
 		return false;
 	}
 
-	// 잘못된 아이템 장착 시도
+	// Range Weapon 인스턴스 저장
 	RangeWeaponInstance = Cast<URangeWeaponInstance>(EquippableItemInstance);
-	if (!RangeWeaponInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Assign 실패 - %s: URangeWeaponInstance가 아님"), *GetNameSafe(EquippableItemInstance))
-		return false;
-	}
-
-	// 장비 메시 설정
-	if (EquipMeshComponent)
-	{
-		if (USkeletalMesh* Mesh = RangeWeaponInstance->GetEquippableItemData()->EquipMesh)
-		{
-			EquipMeshComponent->SetSkeletalMesh(Mesh);
-		}
-	}
 
 	// 틱 활성화
 	SetComponentTickEnabled(true);
@@ -67,24 +71,10 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* EquippableIte
 
 UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 {
-	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	UEquippableItemInstance* OutEquippableItemInstance = Super::Unassign();
+	if (!OutEquippableItemInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - 등록된 장비가 없음"))
 		return nullptr;
-	}
-
-	// 장착 해제 시도
-	if (!Unequip())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unassign 실패 - Unequip 실패"))
-		return nullptr;
-	}
-
-	// 장비 메시 제거
-	if (EquipMeshComponent)
-	{
-		EquipMeshComponent->SetSkeletalMesh(nullptr);
 	}
 
 	// 틱 비활성화
@@ -93,8 +83,7 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 	// 타임라인 제거
 	ClearTimeline();
 
-	// 장비 제거
-	UEquippableItemInstance* OutEquippableItemInstance = RangeWeaponInstance;
+	// Range Weapon 인스턴스 제거
 	RangeWeaponInstance = nullptr;
 
 	// 제거한 장비 반환
@@ -103,47 +92,9 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 
 bool URangeWeaponHandlerComponent::Equip()
 {
-	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	if (!Super::Equip())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - 등록된 장비가 없음"))
 		return false;
-	}
-
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(RangeWeaponInstance))
-		return false;
-	}
-
-	// 캐릭터 메시 확인
-	ACharacter* Character = GetOwner<ACharacter>();
-	if (!Character)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - Owner가 Character가 아님 (Owner=%s)"), *GetNameSafe(GetOwner()))
-		return false;
-	}
-
-	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
-	if (!CharacterMeshComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Equip 실패 - Character가 SkeletalMeshComponent를 갖지 않음 (Character=%s)"), *GetNameSafe(Character))
-		return false;
-	}
-
-	// 메시 설정
-	EquipMeshComponent->SetSkeletalMesh(EquippableItemData->EquipMesh);
-
-	// 장착 소켓에 메시 부착
-	const FName EquipSocketName = EquippableItemData->EquipSocketName;
-	if (CharacterMeshComponent->DoesSocketExist(EquipSocketName))
-	{
-		EquipMeshComponent->AttachToComponent( // 소켓에 부착
-			CharacterMeshComponent,
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			EquipSocketName);
 	}
 
 	return true;
@@ -151,48 +102,9 @@ bool URangeWeaponHandlerComponent::Equip()
 
 bool URangeWeaponHandlerComponent::Unequip()
 {
-	// 해제 불가
-	if (!CanUnequip())
+	if (!Super::Unequip())
 	{
 		return false;
-	}
-
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(RangeWeaponInstance))
-		return false;
-	}
-
-	// 캐릭터 메시 확인
-	ACharacter* Character = GetOwner<ACharacter>();
-	if (!Character)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - Owner가 Character가 아님 (Owner=%s)"), *GetNameSafe(GetOwner()))
-		return false;
-	}
-
-	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
-	if (!CharacterMeshComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - Character가 SkeletalMeshComponent를 갖지 않음 (Character=%s)"), *GetNameSafe(Character))
-		return false;
-	}
-
-	// 보관 소켓에 메시 부착
-	const FName HolsterSocketName = EquippableItemData->HolsterSocketName;
-	if (CharacterMeshComponent->DoesSocketExist(HolsterSocketName))
-	{
-		EquipMeshComponent->AttachToComponent( // 소켓에 부착
-			CharacterMeshComponent,
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			HolsterSocketName);
-	}
-	// 보관 소켓이 없는 경우 메시 제거
-	else
-	{
-		EquipMeshComponent->SetSkeletalMesh(nullptr);
 	}
 
 	// 재장전 중이면 취소
@@ -235,25 +147,7 @@ bool URangeWeaponHandlerComponent::Use()
 	StartFireTimer();
 
 	// 사격 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
-
-	return true;
-}
-
-bool URangeWeaponHandlerComponent::CanUnequip()
-{
-	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] Unequip 실패 - 등록된 장비가 없음"))
-		return false;
-	}
-
-	// 사용 중
-	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
-	{
-		return false;
-	}
+	GEngine->AddOnScreenDebugMessage(1000, 5.0f, FColor::Red, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
 
 	return true;
 }
@@ -271,31 +165,51 @@ bool URangeWeaponHandlerComponent::Reload()
 	return true;
 }
 
-void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// 적용할 반동 값 계산
-	FVector2D RecoilDelta = FMath::Vector2DInterpConstantTo(FVector2D::ZeroVector, RecoilAccumulator, DeltaTime, RecoilApplySpeed);
-
-	// 반동 적용
-	APawn* Pawn = Cast<APawn>(GetOwner());
-	if (!Pawn)
+	if (!Super::CanAssign(InEquippableItemInstance))
 	{
-		return;
+		return false;
 	}
 
-	Pawn->AddControllerPitchInput(-RecoilDelta.Y);
-	Pawn->AddControllerYawInput(RecoilDelta.X);
+	// 잘못된 아이템 타입
+	if (!InEquippableItemInstance->IsA(URangeWeaponInstance::StaticClass()))
+	{
+		return false;
+	}
 
-	// 누적에 반영
-	RecoilAccumulator -= RecoilDelta;
+	return true;
 }
 
-bool URangeWeaponHandlerComponent::CanFire() const
+bool URangeWeaponHandlerComponent::CanUnassign() const
 {
-	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	return Super::CanUnassign();
+}
+
+bool URangeWeaponHandlerComponent::CanEquip() const
+{
+	return Super::CanEquip();
+}
+
+bool URangeWeaponHandlerComponent::CanUnequip() const
+{
+	if (!Super::CanUnequip())
+	{
+		return false;
+	}
+
+	// 사용 중
+	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanUse() const
+{
+	if (!Super::CanUse())
 	{
 		return false;
 	}
@@ -303,6 +217,17 @@ bool URangeWeaponHandlerComponent::CanFire() const
 	// 데이터 유효성 검증
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 	if (!RangeWeaponData)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanFire() const
+{
+	// 사용 불가
+	if (!CanUse())
 	{
 		return false;
 	}
@@ -635,7 +560,7 @@ void URangeWeaponHandlerComponent::PlayFireAnimation()
 	}
 
 	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = RangeWeaponInstance->GetEquippableItemData();
+	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
 	if (!EquippableItemData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 애니메이션 재생 실패 - 유효하지 않은 EquippableItemData"));
@@ -718,7 +643,7 @@ void URangeWeaponHandlerComponent::OnReloadStarted()
 	StartReloadTimer();
 
 	// 재장전 시작 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Started")));
+	GEngine->AddOnScreenDebugMessage(1001, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Started")));
 }
 
 void URangeWeaponHandlerComponent::OnReloadCompleted()
@@ -737,7 +662,7 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
 
 	// 재장전 완료 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Completed")));
+	GEngine->AddOnScreenDebugMessage(1001, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Completed")));
 }
 
 void URangeWeaponHandlerComponent::OnReloadInterrupted()
@@ -755,5 +680,5 @@ void URangeWeaponHandlerComponent::OnReloadInterrupted()
 	StopReloadAnimation();
 
 	// 재장전 취소 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Interrupted")));
+	GEngine->AddOnScreenDebugMessage(1001, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Interrupted")));
 }
