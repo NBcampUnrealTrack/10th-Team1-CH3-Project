@@ -104,7 +104,7 @@ void UEnvQueryTestCover::RunTest(FEnvQueryInstance& QueryInstance) const
 			Score = 1;
 			break;
 		default:
-			Score = 1;
+			Score = 0;
 			break;
 		}
 		It.SetScore(TestPurpose,
