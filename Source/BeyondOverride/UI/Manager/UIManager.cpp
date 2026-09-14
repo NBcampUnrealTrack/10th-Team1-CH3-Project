@@ -143,6 +143,11 @@ void UUIManager::PopScreen()
 
 	ScreenStack.RemoveAt(ScreenStack.Num() - 1);
 
+	if (ScreenStack.Num() == 0)
+	{
+		ApplyInputMode(EUIInputMode::GameOnly, nullptr);
+		return;
+	}
 	const FUIScreenEntry& ChangedCurrent = ScreenStack.Last();
 	ApplyInputMode(ChangedCurrent.InputMode, ChangedCurrent.Widget);
 }
