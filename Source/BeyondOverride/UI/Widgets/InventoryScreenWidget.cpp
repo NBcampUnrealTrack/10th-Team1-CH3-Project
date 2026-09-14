@@ -4,6 +4,7 @@
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/Character/BOCharacter.h"
+#include "UI/Widgets/HeldItemWidget.h"
 #include "UI/Widgets/ItemSlotPanelWidget.h"
 
 void UInventoryScreenWidget::NativeConstruct()
@@ -24,6 +25,11 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (ContainerSlotPanel)
 	{
 		ContainerSlotPanel->SetContainerName(FText::FromString(TEXT("주변")));
+	}
+
+	if (HeldItem)
+	{
+		HeldItem->BindInteraction(OwnerCharacter->GetInventoryInteractionComponent());
 	}
 }
 
