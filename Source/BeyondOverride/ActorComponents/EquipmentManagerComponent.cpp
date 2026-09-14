@@ -85,6 +85,12 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 		return false;
 	}
 
+	// 장비가 없는 슬롯으로 전환 - 비무장(Unarmed) 슬롯 전환
+	if (!EquipmentHandlerComponents[Slot]->GetEquippableItemInstance())
+	{
+		Slot = EEquipmentSlot::Unarmed;
+	}
+
 	GEngine->AddOnScreenDebugMessage(100, 1000.f, FColor::Yellow, FString::Printf(TEXT("현재 슬롯 - %s"), *UEnum::GetValueAsString(Slot)));
 
 	// 현재 장비 해제 성공 - 슬롯 전환
