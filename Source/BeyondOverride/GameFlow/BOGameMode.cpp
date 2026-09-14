@@ -11,6 +11,7 @@
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "State/FarmingStateMachine.h"
+#include "UI/Manager/UIManager.h"
 
 ABOGameMode::ABOGameMode()
 	: StateMachine(nullptr)
@@ -78,7 +79,16 @@ void ABOGameMode::ProvideBasicEquipment()
 			FRotator Rotation = TargetPoint->GetActorRotation();
 			ItemFactory.SpawnItemPickup(GetWorld(), BasicEquipments[Tag], 1, Location, Rotation);
 		}
+
+		if (BOGameState == EGameState::Begin)
+		{
+			if (UUIManager* UIManager = UUIManager::Get(this))
+			{
+				UIManager->ShowScreen(EUIScreen::Title, EUIInputMode::UIOnly);
+			}
+		}
 	}
+
 }
 
 void ABOGameMode::StartFarming()

@@ -3,17 +3,17 @@
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 #include "Enums/EquipmentSlot.h"
+#include "Factory/ItemFactory.h"
 #include "Items/Objects/EquippableItemInstance.h"
-#include "Player/AnimInstance/BOAnimInstance.h"
-#include "DataTables/Items/EquippableItemDataRow.h"
-#include "Player/Character/BOCharacter.h"
+#include "Items/Objects/ItemInstanceBase.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	ActiveSlot = EEquipmentSlot::Primary;
+	ActiveSlot = EEquipmentSlot::Unarmed;
 
+	EquipmentHandlerComponents.Add(EEquipmentSlot::Unarmed, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("Unarmed Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Melee, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("MeleeWeapon Handler Component")));
@@ -34,21 +34,33 @@ bool UEquipmentManagerComponent::HasEquipment(EEquipmentSlot Slot) const
 	return EquipmentHandlerComponents[Slot]->GetEquippableItemInstance() != nullptr;
 }
 
-void UEquipmentManagerComponent::OnRegister()
+void UEquipmentManagerComponent::Initialize()
 {
-	Super::OnRegister();
+	// Unarmed 설정
+	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Unarmed))
+	{
+		// UNARM 아이템 생성 후 Unarmed 슬롯에 할당
+		UItemInstanceBase* ItemInstance = FItemFactory::CreateItemInstance(GetOwner(), FName("UNARM"));
+		if (UEquippableItemInstance* EquippableItemInstance = Cast<UEquippableItemInstance>(ItemInstance))
+		{
+			ActiveSlot = EEquipmentSlot::Unarmed;
+			EquipmentHandlerComponents[ActiveSlot]->Assign(EquippableItemInstance);
+			EquipmentHandlerComponents[ActiveSlot]->Equip();
+			OnActiveSlotChangedDelegate.Broadcast(ActiveSlot, EquippableItemInstance);
+			GEngine->AddOnScreenDebugMessage(100, 1000.f, FColor::Yellow, FString::Printf(TEXT("현재 슬롯 - %s"), *UEnum::GetValueAsString(ActiveSlot)));
+		}
+	}
 
-	// 장비 핸들러의 델리게이트 연결
+	// 각 장비 핸들러의 델리게이트 연결
 	BindDelegates();
 }
 
 bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 {
-	// 슬롯 확인
+	// 유효하지 않은 슬롯
 	if (!EquipmentHandlerComponents.Contains(Slot) || !EquipmentHandlerComponents[Slot])
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
-			return false;
+		return false;
 	}
 
 	// 이미 활성화된 슬롯인 경우 유지
@@ -57,82 +69,40 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 		return false;
 	}
 
-	// 이전 슬롯의 장비 해제
-	if (EquipmentHandlerComponents.Contains(ActiveSlot))
+	// 현재 슬롯에 장착된 장비 존재 & 해제 실패 - 슬롯 유지
+	if (EquipmentHandlerComponents.Contains(ActiveSlot) && EquipmentHandlerComponents[ActiveSlot]->GetEquippableItemInstance())
 	{
-		// 장비 해제 실패
 		if (!EquipmentHandlerComponents[ActiveSlot]->Unequip())
 		{
 			return false;
 		}
 	}
 
-	// 활성화 슬롯 전환 및 장비 장착
-	if (!EquipmentHandlerComponents[Slot]->Equip())
+	// 장비가 없는 슬롯으로 전환 - 비무장(Unarmed) 슬롯 전환
+	if (!EquipmentHandlerComponents[Slot]->GetEquippableItemInstance())
 	{
-		// TODO: 전환한 슬롯에 장비가 없으면, Unarmed 상태로 전환
-		return false;
+		Slot = EEquipmentSlot::Unarmed;
 	}
+
+	GEngine->AddOnScreenDebugMessage(100, 1000.f, FColor::Yellow, FString::Printf(TEXT("현재 슬롯 - %s"), *UEnum::GetValueAsString(Slot)));
+
+	// 현재 장비 해제 성공 - 슬롯 전환
 	ActiveSlot = Slot;
+	EquipmentHandlerComponents[ActiveSlot]->Equip();
 
 	// 장비 인스턴스
 	UEquippableItemInstance* EquippableItemInstance = EquipmentHandlerComponents[Slot]->GetEquippableItemInstance();
 
-	// OnEquipmentChangedDelegate 송출
-	OnEquipmentChangedDelegate.Broadcast(EquippableItemInstance);
-	if (!EquippableItemInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: 등록된 장비가 없음"), *UEnum::GetValueAsString(Slot))
-			return false;
-	}
-
-	// 장비 데이터 확인
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 EquippableItemData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-			return false;
-	}
-
-	// 장비 애니메이션 데이터 확인
-	const UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
-	if (!WeaponAnimationData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 WeaponAnimationData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-			return false;
-	}
-
-	// UBOAnimInstance 확인 - TODO: 결합도 낮추는 방향으로 리팩토링 필요
-	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
-	{
-		if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
-		{
-			if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
-			{
-				BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
-			}
-		}
-	}
+	// OnActiveSlotChangedDelegate 송출 - 현재 활성화된 슬롯과 장비 전달
+	OnActiveSlotChangedDelegate.Broadcast(ActiveSlot, EquippableItemInstance);
 
 	return true;
 }
 
 bool UEquipmentManagerComponent::Unequip()
 {
-	// 장비 애니메이션 해제 (기본 애니메이션)
-	// TODO: ABOAnimInstance에 기본 애니메이션 등록 후 함수 호출하여 기본 애니메이션으로 복구
-
-	// 슬롯 확인
-	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unequip 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
-	}
-
-	// 장비 해제
-	EquipmentHandlerComponents[ActiveSlot]->Unequip();
-
-	return true;
+	// 비무장 슬롯 전환
+	return Equip(EEquipmentSlot::Unarmed);
 }
 
 bool UEquipmentManagerComponent::Use()
@@ -141,13 +111,11 @@ bool UEquipmentManagerComponent::Use()
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Use 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// 장비 사용
-	EquipmentHandlerComponents[ActiveSlot]->Use();
-
-	return true;
+	return EquipmentHandlerComponents[ActiveSlot]->Use();
 }
 
 bool UEquipmentManagerComponent::Reload()
@@ -156,7 +124,7 @@ bool UEquipmentManagerComponent::Reload()
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// RangeWeapon이 아닌 경우
@@ -164,7 +132,7 @@ bool UEquipmentManagerComponent::Reload()
 	if (!RangeWeaponHandler)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 URangeWeaponHandlerComponent가 아님"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// 재장전
@@ -193,7 +161,7 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 	if (!EquipmentHandlerComponents.Contains(Slot) || !EquipmentHandlerComponents[Slot])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
-			return false;
+		return false;
 	}
 
 	// 등록 시도
@@ -206,68 +174,16 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 성공 - %s를 %s 슬롯에 등록 성공"), *GetNameSafe(ItemInstanceBase), *UEnum::GetValueAsString(Slot));
 
-	//// 활성화 슬롯에 장착 시 Equip()
-	//if (Slot == ActiveSlot)
-	//{
-	//	EquipmentHandlerComponents[Slot]->Equip();
-	//}
-	//// 비활성화 슬롯에 장착 시 Unequip()
-	//else
-	//{
-	//	EquipmentHandlerComponents[Slot]->Unequip();
-	//}
-
-	//return true;
-
-	// 활성화 슬롯에 장착
+	// 활성화 슬롯에 장착 시 Equip()
 	if (Slot == ActiveSlot)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("이미 활성화된 슬롯에 등록함"));
 		EquipmentHandlerComponents[Slot]->Equip();
-
-		// 장비 애니메이션 데이터 확인
-		const FEquippableItemDataRow* EquippableItemData =
-			EquippableItemInstance->GetEquippableItemData();
-
-		if (!EquippableItemData)
-		{
-			return false;
-		}
-
-		const UEquipmentAnimationDataAsset* AnimationData =
-			EquippableItemData->EquipmentAnimationData;
-
-		if (!AnimationData)
-		{
-			return false;
-		}
-
-		// 캐릭터 AnimInstance에 장비 애니메이션 전달
-		ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-
-		if (!OwnerCharacter)
-		{
-			return false;
-		}
-
-		UBOAnimInstance* BOAnimInstance =
-			Cast<UBOAnimInstance>(
-				OwnerCharacter->GetMesh()->GetAnimInstance());
-
-		if (!BOAnimInstance)
-		{
-			return false;
-		}
-
-		BOAnimInstance->ApplyEquipmentAnimation(AnimationData);
-
-
-		// 장착 Montage까지 바로 재생하려면 추가
-		BOAnimInstance->PlayEquipMontage();
 	}
-	else
+	// 현재 비무장일 때 장착 시 슬롯 전환
+	else if (ActiveSlot == EEquipmentSlot::Unarmed)
 	{
-		// 비활성 슬롯의 장비는 손에서 숨김
-		EquipmentHandlerComponents[Slot]->Unequip();
+		Equip(Slot);
 	}
 
 	return true;
@@ -275,18 +191,32 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 
 UItemInstanceBase* UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 {
+	// 유효하지 않은 슬롯
 	if (!EquipmentHandlerComponents.Contains(Slot))
 	{
 		return nullptr;
 	}
 
+	// 비무장 제거 불가
+	if (Slot == EEquipmentSlot::Unarmed)
+	{
+		return nullptr;
+	}
+
+	// 장비 제거
 	UItemInstanceBase* ItemInstance = EquipmentHandlerComponents[Slot]->Unassign();
+
+	// 장비 제거 실패
 	if (!ItemInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 실패 - %s 슬롯의 장비 제거 실패"), *UEnum::GetValueAsString(Slot));
 		return nullptr;
 	}
 
+	// 비무장 슬롯 전환
+	Equip(EEquipmentSlot::Unarmed);
+
+	// 제거한 장비 반환
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 성공 - 슬롯의 장비 제거 성공"), *UEnum::GetValueAsString(Slot));
 	return ItemInstance;
 }

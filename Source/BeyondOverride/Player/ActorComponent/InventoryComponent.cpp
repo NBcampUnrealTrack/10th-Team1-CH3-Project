@@ -128,11 +128,14 @@ bool UInventoryComponent::SetSlots(const TArray<UItemInstanceBase*>& NewSlots)
 		return false;
 	}
 
-	Slots.Reset();
-	for (int32 i = 0; i < NewSlots.Num(); i++)
+	Slots.Init(nullptr, MaxSlotCount);
+
+	for (int32 i = 0; i < NewSlots.Num(); ++i)
 	{
 		Slots[i] = NewSlots[i];
 	}
+
+	OnInventoryChanged.Broadcast(Slots);
 
 	return true;
 }

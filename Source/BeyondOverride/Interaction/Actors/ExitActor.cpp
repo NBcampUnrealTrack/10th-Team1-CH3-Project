@@ -40,8 +40,5 @@ void AExitActor::SetExtractAvailable(bool bAvailable)
 
 void AExitActor::PerformInteract(AActor* Interactor)
 {
-	UBOGameInstance* GI = Cast<UBOGameInstance>(UGameplayStatics::GetGameInstance(this));
-	if (!GI)
-		return;
-	GI->EndFarming(EFarmingResult::Success);
+	OnExtractRequested.Broadcast(this, Interactor);
 }

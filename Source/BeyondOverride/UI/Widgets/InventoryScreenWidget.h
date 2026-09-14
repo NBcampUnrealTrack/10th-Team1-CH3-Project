@@ -17,6 +17,7 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 
   protected:
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
   public:
 	void OpenContainer(UInventoryComponent* ContainerInventory, const FText& ContainerName);

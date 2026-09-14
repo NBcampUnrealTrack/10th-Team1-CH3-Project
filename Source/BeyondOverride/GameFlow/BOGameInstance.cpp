@@ -14,6 +14,7 @@
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "Subsystems/ItemDataSubsystem.h"
+#include "UI/Manager/UIManager.h"
 
 void UBOGameInstance::Init()
 {
@@ -82,6 +83,11 @@ void UBOGameInstance::Start()
 {
 	GameState = EGameState::Playing;
 	PlayingState = EPlayingState::Bunker;
+
+	// if (UUIManager* UIManager = UUIManager::Get(this))
+	// {
+	// 	UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
+	// }
 }
 
 void UBOGameInstance::Restart()

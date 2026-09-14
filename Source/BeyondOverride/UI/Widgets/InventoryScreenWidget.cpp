@@ -33,6 +33,26 @@ void UInventoryScreenWidget::NativeConstruct()
 	}
 }
 
+FReply UInventoryScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
+	if (OwnerCharacter)
+	{
+		UInventoryInteractionComponent* Interaction = OwnerCharacter->GetInventoryInteractionComponent();
+		if (Interaction && Interaction->IsHoldingItem())
+		{
+			const FKey EffectingButton = InMouseEvent.GetEffectingButton();
+			if (EffectingButton == EKeys::LeftMouseButton || EffectingButton == EKeys::RightMouseButton)
+			{
+				Interaction->DropItem(EffectingButton == EKeys::LeftMouseButton);
+				return FReply::Handled();
+			}
+		}
+	}
+
+	return FReply::Unhandled();
+}
+
 void UInventoryScreenWidget::OpenContainer(UInventoryComponent* ContainerInventory, const FText& ContainerName)
 {
 	if (!ContainerSlotPanel || !ContainerInventory)
@@ -53,3 +73,4 @@ void UInventoryScreenWidget::CloseContainer()
 
 	ContainerSlotPanel->SetInventory(nullptr, nullptr);
 }
+

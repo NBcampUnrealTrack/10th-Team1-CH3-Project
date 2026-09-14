@@ -15,8 +15,8 @@
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
-#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -58,8 +58,9 @@ void ABOCharacter::BeginPlay()
 
 	ChangeMoveSpeed();
 
-	// EquipmentManagerComponent의 델리게이트 바인딩
-	BindingEquipmentManagerComponentDelegates();
+	// EquipmentManagerComponent 설정
+	BindingEquipmentManagerComponentDelegates(); // 델리게이트 바인딩
+	EquipmentManagerComponent->Initialize();     // 초기 설정
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
@@ -171,6 +172,11 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				EnhancedInput->BindAction(PlayerController->EquipSlot5Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot5);
 			}
 
+			if (PlayerController->UnarmAction)
+			{
+				EnhancedInput->BindAction(PlayerController->UnarmAction, ETriggerEvent::Started, this, &ABOCharacter::Unarm);
+			}
+
 			if (PlayerController->DropEquipmentAction)
 			{
 				EnhancedInput->BindAction(PlayerController->DropEquipmentAction, ETriggerEvent::Started, this, &ABOCharacter::DropEquipment);
@@ -265,10 +271,10 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
-	// 현재 장비 사용
-	if (EquipmentManagerComponent)
+	// 현재 장비 사용 시도
+	if (!EquipmentManagerComponent || !EquipmentManagerComponent->Use())
 	{
-		EquipmentManagerComponent->Use();
+		return;
 	}
 
 	if (!GetMesh() || !GetMesh()->GetAnimInstance())
@@ -436,6 +442,14 @@ void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 	}
 }
 
+void ABOCharacter::Unarm(const FInputActionValue& value)
+{
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->Unequip();
+	}
+}
+
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
 {
 	if (EquipmentManagerComponent)
@@ -480,14 +494,14 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	}
 
 	// Equipment Changed
-	EquipmentManagerComponent->OnEquipmentChangedDelegate.AddUObject(this, &ABOCharacter::OnEquipmentChanged);
+	EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &ABOCharacter::OnActiveSlotChanged);
 
 	// Primary & Secondary (Range Weapon)
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
 }
 
-void ABOCharacter::OnEquipmentChanged(UEquippableItemInstance* EquippableItemInstance)
+void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)
 {
 	if (!EquippableItemInstance)
 	{
@@ -502,8 +516,8 @@ void ABOCharacter::OnEquipmentChanged(UEquippableItemInstance* EquippableItemIns
 	}
 
 	// 장비 애니메이션 데이터 확인
-	UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
-	if (!WeaponAnimationData)
+	UEquipmentAnimationDataAsset* EquipmentAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!EquipmentAnimationData)
 	{
 		return;
 	}
@@ -513,7 +527,7 @@ void ABOCharacter::OnEquipmentChanged(UEquippableItemInstance* EquippableItemIns
 	{
 		if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
 		{
-			BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+			BOAnimInstance->ApplyEquipmentAnimation(EquipmentAnimationData);
 		}
 	}
 }
