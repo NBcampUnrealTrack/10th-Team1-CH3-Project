@@ -21,6 +21,11 @@ class BEYONDOVERRIDE_API AStorageContainerActor : public AInteractableActorBase
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetItems(const TArray<UItemInstanceBase*>& Items);
 
+	UInventoryComponent* GetInventoryComponent()
+	{
+		return InventoryComponent;
+	}
+
   protected:
 	virtual void PerformInteract(AActor* Interactor) override;
 
