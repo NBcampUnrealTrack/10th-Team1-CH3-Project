@@ -64,8 +64,11 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	}
 
 	// 활성화 슬롯 전환 및 장비 장착
+	if (!EquipmentHandlerComponents[Slot]->Equip())
+	{
+		return false;
+	}
 	ActiveSlot = Slot;
-	EquipmentHandlerComponents[Slot]->Equip();
 
 	// TODO: 전환한 슬롯에 장비가 없으면, Unarmed 상태로 전환
 
