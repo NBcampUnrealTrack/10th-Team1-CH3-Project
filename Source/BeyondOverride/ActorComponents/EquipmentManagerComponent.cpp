@@ -53,8 +53,9 @@ void UEquipmentManagerComponent::BeginPlay()
 		UItemInstanceBase* ItemInstance = FItemFactory::CreateItemInstance(GetOwner(), FName("UNARM"));
 		if (UEquippableItemInstance* EquippableItemInstance = Cast<UEquippableItemInstance>(ItemInstance))
 		{
-			EquipmentHandlerComponents[EEquipmentSlot::Unarmed]->Assign(EquippableItemInstance);
-			Equip(EEquipmentSlot::Unarmed);
+			ActiveSlot = EEquipmentSlot::Unarmed;
+			EquipmentHandlerComponents[ActiveSlot]->Assign(EquippableItemInstance);
+			EquipmentHandlerComponents[ActiveSlot]->Equip();
 			return;
 		}
 	}
