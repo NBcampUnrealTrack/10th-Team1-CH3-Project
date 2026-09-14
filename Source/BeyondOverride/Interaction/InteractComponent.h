@@ -17,12 +17,12 @@ class UCapsuleComponent;
 // 쳐다보는 대상이 생기거나 사라지거나, 표시 내용이 바뀔 때
 // bHasTarget == false 면 Prompt 는 빈 값이다 (UI 를 숨기라는 뜻)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractPromptChanged, bool,
-											 bHasTarget, FInteractPrompt,
-											 Prompt);
+	bHasTarget, FInteractPrompt,
+	Prompt);
 
 // 홀드 게이지. 0.0 ~ 1.0. 취소·완료 시 0 이 한 번 더 온다.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractHoldProgress, float,
-											Progress);
+	Progress);
 
 // 상호작용 탐지기: 플레이어 캐릭터에 붙인다
 //
@@ -49,12 +49,19 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractHoldProgress, float,
 // 창이 열려 있을 때 (UI 담당)
 //   SetInteractionEnabled(false) 를 부르면 탐지가 멈추고 프롬프트가 꺼진다.
 //   인벤토리 · 상점 같은 전체 화면 창을 열 때 반드시 호출할 것.
+
+class USphereComponent;
+class UItemInstanceBase;
+class UPrimitiveComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNearbyItemsChanged, const TArray<UItemInstanceBase*>&, NearbyItems);
+
 UCLASS(ClassGroup = (Interaction), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UInteractComponent();
 
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
@@ -99,18 +106,25 @@ class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 		return bHolding;
 	}
 
-  protected:
+	// 주변 아이템 관련
+	UPROPERTY(BlueprintAssignable)
+	FOnNearbyItemsChanged OnNearbyItemsChanged;
+
+	UFUNCTION(BlueprintPure)
+	TArray<UItemInstanceBase*> GetNearbyItems() const { return NearbyItems; }
+
+protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void
-	TickComponent(float DeltaTime, ELevelTick TickType,
-				  FActorComponentTickFunction* ThisTickFunction) override;
+		TickComponent(float DeltaTime, ELevelTick TickType,
+			FActorComponentTickFunction* ThisTickFunction) override;
 
 	// 광선이 닿는 최대 거리 (cm) 250 = 대략 두 걸음
 	// 카메라 거리는 자동 보정돼 3인칭이어도 이 값은 "캐릭터 기준" 거리다
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction",
-			  meta = (ClampMin = "50.0", UIMax = "500.0"))
+		meta = (ClampMin = "50.0", UIMax = "500.0"))
 	float TraceDistance = 250.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (ClampMin = "0.0", UIMax = "50.0"))
@@ -121,20 +135,47 @@ class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 
 	// 홀드 중 이 거리를 넘게 움직이면 취소된다 (bMoveCancel 인 물건만)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction",
-			  meta = (ClampMin = "0.0"))
+		meta = (ClampMin = "0.0"))
 	float MoveCancelDistance = 50.f;
 
 	// 켜면 광선이 화면에 그려진다. (개발 중에만)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction|Debug")
 	bool bDrawDebug = true;
 
-  private:
+	// 주변 아이템 관련
+	UPROPERTY()
+	TObjectPtr<USphereComponent> InteractionSphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	TArray<TObjectPtr<UItemInstanceBase>> NearbyItems;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
+	float InteractionRadius = 300.0f;
+
+	UFUNCTION()
+	void OnInteractionBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+
+	UFUNCTION()
+	void OnInteractionEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex
+	);
+private:
 	// 쳐다보는 대상을 바꾼다. 이전 것 끄고 새 것 켜는 처리가 들어 있다.
 	void SetFocus(AActor* NewTarget);
 
 	// 광선을 쏘고 유효한 상호작용 대상을 돌려준다. (없으면 nullptr)
 	AActor* TraceForTarget(FVector& OutViewLoc, FVector& OutTraceEnd,
-						   bool& bOutHitSomething, FVector& OutHitPoint) const;
+		bool& bOutHitSomething, FVector& OutHitPoint) const;
 
 	// 프롬프트를 UI 에 보낸다. 값이 바뀌었을 때만 실제로 쏜다.
 	void PushPrompt();

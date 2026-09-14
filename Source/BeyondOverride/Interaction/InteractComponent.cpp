@@ -11,6 +11,10 @@
 #include "Interaction/Internal/InteractableInterface.h"
 #include "Interaction/Internal/InteractionChannels.h"
 
+#include "Components/SphereComponent.h"
+#include "Items/Actors/ItemPickupBase.h"
+#include "Items/Objects/ItemInstanceBase.h"
+
 UInteractComponent::UInteractComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -52,6 +56,23 @@ void UInteractComponent::BeginPlay()
 		//DetectionCollision->OnComponentBeginOverlap.AddDynamic(this, &UInteractComponent::OnDetectionBeginOverlap);
 		//DetectionCollision->OnComponentEndOverlap.AddDynamic(this, &UInteractComponent::OnDetectionEndOverlap);
 	}
+
+	InteractionSphere = NewObject<USphereComponent>(Owner, TEXT("InteractionSphere"));
+
+	if (!IsValid(InteractionSphere))
+	{
+		return;
+	}
+
+	InteractionSphere->SetupAttachment(Owner->GetRootComponent());
+	InteractionSphere->SetSphereRadius(InteractionRadius);
+	InteractionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	InteractionSphere->SetGenerateOverlapEvents(true);
+	InteractionSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	InteractionSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	InteractionSphere->RegisterComponent();
+	InteractionSphere->OnComponentBeginOverlap.AddDynamic(this, &UInteractComponent::OnInteractionBeginOverlap);
+	InteractionSphere->OnComponentEndOverlap.AddDynamic(this, &UInteractComponent::OnInteractionEndOverlap);
 }
 
 void UInteractComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -114,9 +135,9 @@ void UInteractComponent::TickComponent(
 
 // 광선 쏘기
 AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
-										   FVector& OutTraceEnd,
-										   bool& bOutHitSomething,
-										   FVector& OutHitPoint) const
+	FVector& OutTraceEnd,
+	bool& bOutHitSomething,
+	FVector& OutHitPoint) const
 {
 	OutViewLoc = FVector::ZeroVector;
 	OutTraceEnd = FVector::ZeroVector;
@@ -179,6 +200,56 @@ AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
 	}
 
 	return Hit.GetActor();
+}
+
+void UInteractComponent::OnInteractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(OtherActor);
+
+	if (!IsValid(ItemPickup))
+	{
+		return;
+	}
+
+	UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
+
+	if (!IsValid(ItemInstance))
+	{
+		return;
+	}
+
+	if (NearbyItems.Contains(ItemInstance))
+	{
+		return;
+	}
+
+	NearbyItems.Add(ItemInstance);
+
+	OnNearbyItemsChanged.Broadcast(NearbyItems);
+}
+
+void UInteractComponent::OnInteractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
+{
+	AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(OtherActor);
+
+	if (!IsValid(ItemPickup))
+	{
+		return;
+	}
+
+	UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
+
+	if (!IsValid(ItemInstance))
+	{
+		return;
+	}
+
+	if (NearbyItems.Remove(ItemInstance) <= 0)
+	{
+		return;
+	}
+
+	OnNearbyItemsChanged.Broadcast(NearbyItems);
 }
 
 // 대상 전환
@@ -393,7 +464,7 @@ void UInteractComponent::CancelHold()
 	OnHoldProgress.Broadcast(0.f);
 
 	if (IInteractableInterface* I =
-			Cast<IInteractableInterface>(FocusedActor.Get()))
+		Cast<IInteractableInterface>(FocusedActor.Get()))
 	{
 		I->OnInteractCancel(GetOwner());
 	}
@@ -412,7 +483,7 @@ void UInteractComponent::CompleteHold()
 	OnHoldProgress.Broadcast(0.f);
 
 	if (IInteractableInterface* I =
-			Cast<IInteractableInterface>(FocusedActor.Get()))
+		Cast<IInteractableInterface>(FocusedActor.Get()))
 	{
 		// 이 호출로 액터가 Destroy 될 수 있다 (아이템 줍기 등)
 		// 이 줄 아래에서 I 나 FocusedActor 를 다시 쓰면 안 된다.
