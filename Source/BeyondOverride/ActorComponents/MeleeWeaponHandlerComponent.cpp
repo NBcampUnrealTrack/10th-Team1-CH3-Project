@@ -102,7 +102,18 @@ bool UMeleeWeaponHandlerComponent::CanEquip() const
 
 bool UMeleeWeaponHandlerComponent::CanUnequip() const
 {
-	return Super::CanUnequip();
+	if (!Super::CanUnequip())
+	{
+		return false;
+	}
+
+	// 공격 중
+	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(AttackTimerHandle))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool UMeleeWeaponHandlerComponent::CanUse() const
