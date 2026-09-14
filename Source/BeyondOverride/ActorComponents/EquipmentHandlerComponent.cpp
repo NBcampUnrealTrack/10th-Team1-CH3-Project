@@ -150,7 +150,7 @@ bool UEquipmentHandlerComponent::CanAssign(const UEquippableItemInstance* InEqui
 	}
 
 	// 유효하지 않은 EquippableItemData
-	if (!EquippableItemInstance->GetEquippableItemData())
+	if (!InEquippableItemInstance->GetEquippableItemData())
 	{
 		return false;
 	}
