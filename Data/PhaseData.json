@@ -1,0 +1,97 @@
+[
+    {
+        "Name": "PHASE_01",
+        "Id": "PHASE_01",
+        "SpawnVolumeId": "SPAWN_VOLUME_01",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "Id": "MONSTER_01",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 2,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "PHASE_02",
+        "Id": "PHASE_02",
+        "SpawnVolumeId": "SPAWN_VOLUME_02",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "Id": "MONSTER_01",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 2,
+                "Duration": 5.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "Id": "MONSTER_01",
+                        "Prob": 0.5
+                    },
+                    {
+                        "Id": "MONSTER_02",
+                        "Prob": 0.5
+                    }
+                ],
+                "SpawnCount": 4,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "PHASE_03",
+        "Id": "PHASE_03",
+        "SpawnVolumeId": "SPAWN_VOLUME_03",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "Id": "MONSTER_01",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 2,
+                "Duration": 5.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "Id": "MONSTER_02",
+                        "Prob": 0.4
+                    },
+                    {
+                        "Id": "MONSTER_03",
+                        "Prob": 0.6
+                    }
+                ],
+                "SpawnCount": 5,
+                "Duration": 7.0
+            },
+            {
+                "PhaseIndex": 2,
+                "SpawnEntries": [
+                    {
+                        "Id": "MONSTER_03",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 7,
+                "Duration": 0.0
+            }
+        ]
+    }
+]

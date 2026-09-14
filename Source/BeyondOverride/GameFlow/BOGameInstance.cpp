@@ -71,7 +71,7 @@ void UBOGameInstance::InitSetting()
 	// MonsterDatas.Empty();
 
 	OpenLevel(ELevel::Bunker);
-	StartFarming(); // test code
+	Start(); // test code
 }
 
 void UBOGameInstance::Start()
@@ -95,7 +95,6 @@ void UBOGameInstance::Exit()
 
 void UBOGameInstance::StartFarming()
 {
-	GameState = EGameState::Playing; // test code
 	PlayingState = EPlayingState::Farming;
 
 	SurvivalTime = 0.0f;

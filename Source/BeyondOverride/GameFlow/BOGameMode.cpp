@@ -4,6 +4,9 @@
 
 #include "BOGameInstance.h"
 
+#include "DataTables/Items/ItemDataRow.h"
+#include "Engine/TargetPoint.h"
+#include "Factory/ItemFactory.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -44,7 +47,7 @@ void ABOGameMode::BeginPlay()
 
 void ABOGameMode::ProvideBasicEquipment()
 {
-	if (!GetWorld())
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
 	{
 		return;
 	}
@@ -57,15 +60,21 @@ void ABOGameMode::ProvideBasicEquipment()
 
 	TArray<FName> BasicEquipments{};
 	GameInstance->GetBasicEquipments(BasicEquipments);
+	int32 Count = BasicEquipments.Num();
 
 	TArray<AActor*> AllActors{};
-	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors); // change AActor -> AContainer
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AActor::StaticClass(), TEXT("Container"), AllActors); // test code
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), AllActors);
 
-	if (!AllActors.IsEmpty())
+	FItemFactory ItemFactory{};
+
+	for (int i = 0; i < Count; i++)
 	{
-		// provide basic equipments to bunker container
-		// AllActors[0]->SetInventoryItems(BasicEquipments);
+		AActor* TargetPoint = AllActors[i];
+		if (TargetPoint)
+		{
+			FVector Location = TargetPoint->GetActorLocation();
+			ItemFactory.SpawnItemPickup(GetWorld(), BasicEquipments[i], 1, Location, FRotator::ZeroRotator);
+		}
 	}
 }
 

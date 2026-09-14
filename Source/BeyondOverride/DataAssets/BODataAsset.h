@@ -24,9 +24,18 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	UDataTable* GetContainerDataTable() const;
 
   public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* RegionDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* SpawnVolumeDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* PhaseDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* MonsterDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* ContainerDataTable;
 };
