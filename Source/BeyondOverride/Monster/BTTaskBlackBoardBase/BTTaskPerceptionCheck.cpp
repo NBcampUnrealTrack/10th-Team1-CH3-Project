@@ -60,7 +60,10 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
 		AIState->TrueContinueTargeting();
 		AIState->CallContinueTimer();
-		AIState->SetStandOffTimer();
+		if (!AIState->IsStandOff() && !AIState->IsContinueStandOff())
+		{
+			AIState->SetStandOffTimer();
+		}
 	}
 
 	return EBTNodeResult::Succeeded;

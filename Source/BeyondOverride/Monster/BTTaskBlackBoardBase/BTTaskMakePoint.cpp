@@ -51,13 +51,11 @@ EBTNodeResult::Type UBTTaskMakePoint::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	TargetCenter.X += FMath::RandRange(-RangeRand, RangeRand);
 	TargetCenter.Y += FMath::RandRange(-RangeRand, RangeRand);
 
-	UNavigationSystemV1* NavSystem =
-		FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
 	FNavLocation NavLocation;
 
-	if (NavSystem &&
-		NavSystem->ProjectPointToNavigation(TargetCenter, NavLocation))
+	if (NavSystem && NavSystem->ProjectPointToNavigation(TargetCenter, NavLocation))
 	{
 		PatrolPoint = NavLocation.Location;
 	}

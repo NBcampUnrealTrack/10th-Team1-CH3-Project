@@ -69,7 +69,7 @@ void UEnvQueryTestCover::RunTest(FEnvQueryInstance& QueryInstance) const
 			Point.Y += FMath::Sin(Angle) * PointRange;
 
 			FVector StartTrace = TargetPlayer->GetActorLocation();
-			FVector EndTrace = ItemLocation;
+			FVector EndTrace = Point;
 
 			FCollisionObjectQueryParams TraceQueryParams;
 			TraceQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
