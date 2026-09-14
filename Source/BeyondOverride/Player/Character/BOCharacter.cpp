@@ -15,7 +15,7 @@
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
-#include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
@@ -41,7 +41,7 @@ ABOCharacter::ABOCharacter()
 
 	// EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipementComponent"));
 	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
-	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("InventoryComponent"));
 	InventoryInteractionComponent = CreateDefaultSubobject<UInventoryInteractionComponent>(TEXT("InventoryInteractionComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
@@ -532,7 +532,7 @@ int32 ABOCharacter::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstanc
 
 void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
 {
-	if (!InventoryComponent)
+	if (!PlayerInventoryComponent)
 		return;
 
 	UItemInstanceBase* Item = FItemFactory::CreateItemInstance(this, ItemID, Count);
@@ -542,7 +542,7 @@ void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
 		return;
 	}
 
-	if (!InventoryComponent->AddItem(Item))
+	if (!PlayerInventoryComponent->AddItem(Item))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: 인벤토리에 빈 슬롯이 없습니다."));
 	}

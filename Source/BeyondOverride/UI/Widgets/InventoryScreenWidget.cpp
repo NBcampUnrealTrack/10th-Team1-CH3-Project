@@ -1,7 +1,7 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
 #include "Blueprint/WidgetTree.h"
-#include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "UI/Widgets/HeldItemWidget.h"
@@ -18,7 +18,7 @@ void UInventoryScreenWidget::NativeConstruct()
 
 	if (BackpackSlotPanel)
 	{
-		BackpackSlotPanel->SetInventory(OwnerCharacter->GetInventoryComponent(), OwnerCharacter->GetInventoryInteractionComponent());
+		BackpackSlotPanel->SetInventory(OwnerCharacter->GetPlayerInventoryComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 		BackpackSlotPanel->SetContainerName(FText::FromString(TEXT("가방")));
 	}
 

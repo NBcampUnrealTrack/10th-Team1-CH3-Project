@@ -10,7 +10,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UEquipmentManagerComponent;
 class UStatComponent;
-class UInventoryComponent;
+class UPlayerInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
 
@@ -30,10 +30,7 @@ public:
 	UStatComponent* GetStatComponent() const { return StatComponent; }
 	UPlayerInventoryComponent* GetPlayerInventoryComponent() const { return PlayerInventoryComponent; }
 	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
-	UInventoryInteractionComponent* GetInventoryInteractionComponent() const
-	{
-		return InventoryInteractionComponent;
-	}
+	UInventoryInteractionComponent* GetInventoryInteractionComponent() const { return InventoryInteractionComponent; }
 
 	const bool GetIsAiming() const { return bIsAiming; }
 

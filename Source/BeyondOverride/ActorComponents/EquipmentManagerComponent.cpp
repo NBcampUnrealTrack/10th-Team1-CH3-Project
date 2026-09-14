@@ -4,6 +4,9 @@
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 #include "Enums/EquipmentSlot.h"
 #include "Items/Objects/EquippableItemInstance.h"
+#include "Player/AnimInstance/BOAnimInstance.h"
+#include "DataTables/Items/EquippableItemDataRow.h"
+#include "Player/Character/BOCharacter.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
