@@ -1,7 +1,7 @@
-// 26/09/13 Copyright CH3 Team1 Jinho Song
+// 26/09/14 Copyright CH3 Team1 Jinho Song
 
 // Base include
-#include "Monster/BTTaskBlackBoardBase/BTTaskStandOffCheck.h"
+#include "Monster/BTTaskBlackBoardBase/BTTaskStandOffContinue.h"
 
 // Add include
 #include "NavigationSystem.h"
@@ -15,12 +15,12 @@
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
 
-UBTTaskStandOffCheck::UBTTaskStandOffCheck()
+UBTTaskStandOffContinue::UBTTaskStandOffContinue()
 {
-	NodeName = TEXT("StandOff Check");
+	NodeName = TEXT("Continue StandOff");
 }
 
-EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTaskStandOffContinue::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp)
@@ -46,17 +46,14 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	ABOCharacter* Target = AIState->GetTarget();
-	if (!Target)
+	if (!AIState->IsContinueStandOff())
 	{
-		return EBTNodeResult::Failed;
-	}
-
-	if (!AIState->IsStandOff())
-	{
-		AIState->SetContinueStandOffTimer();
+		AIState->SetStandOffTimer();
 		return EBTNodeResult::Succeeded;
 	}
-
-	return EBTNodeResult::Failed;
+	else
+	{
+		BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
+		return EBTNodeResult::Succeeded;
+	}
 }
