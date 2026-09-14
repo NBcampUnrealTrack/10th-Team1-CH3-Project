@@ -12,6 +12,7 @@
 #include "Interaction/InteractComponent.h"
 #include "Items/Actors/ItemPickupBase.h"
 #include "Items/Objects/EquippableItemInstance.h"
+#include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
@@ -317,25 +318,30 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 		// TEMP: 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
 		{
-			UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
-			if (EquipmentManagerComponent)
+			if (UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance())
 			{
-				EEquipmentSlot ActiveSlot = EquipmentManagerComponent->GetActiveSlot();
-				// 현재 빈손인 경우
-				if (EquipmentManagerComponent->HasEquipment(ActiveSlot))
+				if (EquipmentManagerComponent)
 				{
-					EquipmentManagerComponent->Assign(ActiveSlot, ItemInstance);
-					ItemPickup->Destroy();
-				}
-				if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Primary))
-				{
-					EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance);
-					ItemPickup->Destroy();
-				}
-				else if (!EquipmentManagerComponent->HasEquipment(EEquipmentSlot::Secondary))
-				{
-					EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance);
-					ItemPickup->Destroy();
+					// Range Weapon
+					if (ItemInstance->IsA(URangeWeaponInstance::StaticClass()))
+					{
+						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
+						{
+							ItemPickup->Destroy();
+						}
+						else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
+						{
+							ItemPickup->Destroy();
+						}
+					}
+					// Melee Weapon
+					else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
+					{
+						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
+						{
+							ItemPickup->Destroy();
+						}
+					}
 				}
 			}
 		}
