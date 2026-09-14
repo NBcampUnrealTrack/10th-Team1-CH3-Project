@@ -1,7 +1,8 @@
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 
+#include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
-#include "GameFramework/Character.h"
+#include "DataTables/Items/MeleeWeaponDataRow.h"
 #include "Items/Objects/MeleeWeaponInstance.h"
 
 UMeleeWeaponHandlerComponent::UMeleeWeaponHandlerComponent()
@@ -133,8 +134,53 @@ bool UMeleeWeaponHandlerComponent::CanAttack() const
 
 void UMeleeWeaponHandlerComponent::StartAttackTimer()
 {
+	// 데이터 유효성 검증
+	const FMeleeWeaponDataRow* MeleeWeaponData = MeleeWeaponInstance->GetMeleeWeaponData();
+	if (!MeleeWeaponData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 타이머 활성화 실패 - 유효하지 않은 MeleeWeaponData"));
+		return;
+	}
+
+	// 공격 타이머 활성화
+	GetWorld()->GetTimerManager().SetTimer(
+		AttackTimerHandle,
+		MeleeWeaponData->AttackInterval,
+		false);
 }
 
 void UMeleeWeaponHandlerComponent::PlayAttackAnimation()
 {
+	// 장비 메시 컴포넌트 확인
+	if (!EquipMeshComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 애니메이션 재생 실패 - 유효하지 않은 EquipMeshComponent"));
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
+	if (!EquippableItemData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 애니메이션 재생 실패 - 유효하지 않은 EquippableItemData"));
+		return;
+	}
+
+	// 장비 애니메이션 검증
+	UEquipmentAnimationDataAsset* EquipmentAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!EquipmentAnimationData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 애니메이션 재생 실패 - 유효하지 않은 EquipmentAnimationData"));
+		return;
+	}
+
+	// 사격 애니메이션 검증
+	UAnimMontage* FireAnim = EquipmentAnimationData->WeaponFire;
+	if (!FireAnim)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 애니메이션 재생 실패 - 유효하지 않은 FireAnim"));
+		return;
+	}
+
+	EquipMeshComponent->PlayAnimation(FireAnim, false);
 }
