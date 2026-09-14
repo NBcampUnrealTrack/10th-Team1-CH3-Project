@@ -1,6 +1,7 @@
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 
 #include "DataTables/Items/EquippableItemDataRow.h"
+#include "GameFramework/Character.h"
 #include "Items/Objects/MeleeWeaponInstance.h"
 
 UMeleeWeaponHandlerComponent::UMeleeWeaponHandlerComponent()
@@ -75,7 +76,50 @@ UEquippableItemInstance* UMeleeWeaponHandlerComponent::Unassign()
 
 bool UMeleeWeaponHandlerComponent::Equip()
 {
-	return false;
+	// 등록된 장비 없음
+	if (!MeleeWeaponInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Equip 실패 - 등록된 장비가 없음"))
+		return false;
+	}
+
+	// 데이터 유효성 검증
+	const FEquippableItemDataRow* EquippableItemData = MeleeWeaponInstance->GetEquippableItemData();
+	if (!EquippableItemData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Equip 실패 - %s: 유효하지 않은 EquippableItemData"), *GetNameSafe(MeleeWeaponInstance))
+		return false;
+	}
+
+	// 캐릭터 메시 확인
+	ACharacter* Character = GetOwner<ACharacter>();
+	if (!Character)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Equip 실패 - Owner가 Character가 아님 (Owner=%s)"), *GetNameSafe(GetOwner()))
+		return false;
+	}
+
+	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
+	if (!CharacterMeshComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] Equip 실패 - Character가 SkeletalMeshComponent를 갖지 않음 (Character=%s)"), *GetNameSafe(Character))
+		return false;
+	}
+
+	// 메시 설정
+	EquipMeshComponent->SetSkeletalMesh(EquippableItemData->EquipMesh);
+
+	// 장착 소켓에 메시 부착
+	const FName EquipSocketName = EquippableItemData->EquipSocketName;
+	if (CharacterMeshComponent->DoesSocketExist(EquipSocketName))
+	{
+		EquipMeshComponent->AttachToComponent( // 소켓에 부착
+			CharacterMeshComponent,
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			EquipSocketName);
+	}
+
+	return true;
 }
 
 bool UMeleeWeaponHandlerComponent::Unequip()
