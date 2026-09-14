@@ -270,10 +270,10 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
-	// 현재 장비 사용
-	if (EquipmentManagerComponent)
+	// 현재 장비 사용 시도
+	if (!EquipmentManagerComponent || !EquipmentManagerComponent->Use())
 	{
-		EquipmentManagerComponent->Use();
+		return;
 	}
 
 	if (!GetMesh() || !GetMesh()->GetAnimInstance())
