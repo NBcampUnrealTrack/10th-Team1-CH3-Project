@@ -15,6 +15,7 @@ class UInteractComponent;
 class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
+class UEquippableItemInstance;
 class URangeWeaponInstance;
 
 enum class EEquipmentSlot : uint8;
@@ -141,6 +142,8 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
+	// EquipmentManagerComponent - 장비 애니메이션 설정
+	void OnEquipmentChanged(UEquippableItemInstance* EquippableItemInstance);
 	// EquipmentManagerComponent - Range Weapon 델리게이트 연결 이벤트
 	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
 	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);

@@ -2,11 +2,8 @@
 
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
-#include "DataTables/Items/EquippableItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
-#include "GameFramework/Character.h"
 #include "Items/Objects/EquippableItemInstance.h"
-#include "Player/AnimInstance/BOAnimInstance.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
@@ -66,47 +63,16 @@ bool UEquipmentManagerComponent::Equip(EEquipmentSlot Slot)
 	// 활성화 슬롯 전환 및 장비 장착
 	if (!EquipmentHandlerComponents[Slot]->Equip())
 	{
+		// TODO: 전환한 슬롯에 장비가 없으면, Unarmed 상태로 전환
 		return false;
 	}
 	ActiveSlot = Slot;
 
-	// TODO: 전환한 슬롯에 장비가 없으면, Unarmed 상태로 전환
-
-	// 장비 인스턴스 확인
+	// 장비 인스턴스
 	UEquippableItemInstance* EquippableItemInstance = EquipmentHandlerComponents[Slot]->GetEquippableItemInstance();
-	if (!EquippableItemInstance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: 등록된 장비가 없음"), *UEnum::GetValueAsString(Slot))
-		return false;
-	}
 
-	// 장비 데이터 확인
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 EquippableItemData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-		return false;
-	}
-
-	// 장비 애니메이션 데이터 확인
-	const UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
-	if (!WeaponAnimationData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장착 실패 - %s 슬롯: %s 장비의 WeaponAnimationData가 유효하지 않음"), *UEnum::GetValueAsString(Slot), *GetNameSafe(EquippableItemInstance))
-		return false;
-	}
-
-	// UBOAnimInstance 확인 - TODO: 결합도 낮추는 방향으로 리팩토링 필요
-	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
-	{
-		if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
-		{
-			if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
-			{
-				BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
-			}
-		}
-	}
+	// OnEquipmentChangedDelegate 송출
+	OnEquipmentChangedDelegate.Broadcast(EquippableItemInstance);
 
 	return true;
 }

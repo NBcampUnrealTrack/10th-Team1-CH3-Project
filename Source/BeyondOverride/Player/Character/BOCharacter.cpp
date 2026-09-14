@@ -4,12 +4,14 @@
 
 #include "ActorComponents/EquipmentManagerComponent.h"
 #include "Camera/CameraComponent.h"
+#include "DataTables/Items/EquippableItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
 #include "Items/Actors/ItemPickupBase.h"
+#include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryComponent.h"
@@ -440,9 +442,43 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 		return;
 	}
 
+	// Equipment Changed
+	EquipmentManagerComponent->OnEquipmentChangedDelegate.AddUObject(this, &ABOCharacter::OnEquipmentChanged);
+
 	// Primary & Secondary (Range Weapon)
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
+}
+
+void ABOCharacter::OnEquipmentChanged(UEquippableItemInstance* EquippableItemInstance)
+{
+	if (!EquippableItemInstance)
+	{
+		return;
+	}
+
+	// 장비 데이터 확인
+	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
+	if (!EquippableItemData)
+	{
+		return;
+	}
+
+	// 장비 애니메이션 데이터 확인
+	UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!WeaponAnimationData)
+	{
+		return;
+	}
+
+	// 애니메이션 데이터 적용
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
+		{
+			BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+		}
+	}
 }
 
 bool ABOCharacter::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
