@@ -20,6 +20,8 @@ class BEYONDOVERRIDE_API UPlayerInventoryComponent : public UInventoryComponent
 	GENERATED_BODY()
 
 public:
+	TArray<UItemInstanceBase*> GetEquipmentSlots() const { return EquipmentSlots; }
+
 	// 장비 슬롯 조작
 	UFUNCTION(BlueprintCallable)
 	bool SetEquipmentItem(EEquipmentSlot Slot, UItemInstanceBase* Item);
@@ -54,4 +56,10 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Equipment", meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UItemInstanceBase>> EquipmentSlots;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	float CurCarryWeight = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	float MaxCarryWeight = 500.0f;
 };

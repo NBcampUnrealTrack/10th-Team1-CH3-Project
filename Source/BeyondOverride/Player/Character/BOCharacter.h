@@ -25,27 +25,12 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	UEquipmentComponent* GetEquipmentComponent() const
-	{
-		return EquipmentComponent;
-	}
-	UStatComponent* GetStatComponent() const
-	{
-		return StatComponent;
-	}
-	UInventoryComponent* GetInventoryComponent() const
-	{
-		return InventoryComponent;
-	}
-	UInteractComponent* GetInteractComponent() const
-	{
-		return InteractComponent;
-	}
+	UEquipmentComponent* GetEquipmentComponent() const { return EquipmentComponent; }
+	UStatComponent* GetStatComponent() const { return StatComponent; }
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
 
-	const bool GetIsAiming() const
-	{
-		return bIsAiming;
-	}
+	const bool GetIsAiming() const { return bIsAiming; }
 
 public:
 	ABOCharacter();

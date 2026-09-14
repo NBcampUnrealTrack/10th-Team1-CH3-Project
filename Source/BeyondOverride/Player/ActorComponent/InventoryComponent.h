@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	UItemInstanceBase* GetItem(int32 SlotIndex) const;
 	UFUNCTION(BlueprintCallable)
-	bool SetSlots(TArray<UItemInstanceBase*> NewSlots);
+	bool SetSlots(const TArray<UItemInstanceBase*>& NewSlots);
 	UFUNCTION(BlueprintCallable)
 	bool SetItem(int32 SlotIndex, UItemInstanceBase* Item);
 
@@ -65,10 +65,4 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	int32 MaxSlotCount = 16;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	float CurCarryWeight = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	float MaxCarryWeight = 500.0f;
 };

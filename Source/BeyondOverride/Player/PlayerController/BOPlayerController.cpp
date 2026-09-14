@@ -19,6 +19,18 @@ void ABOPlayerController::BeginPlay()
 			}
 		}
 	}
+
+	/*
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->BindInteractPrompt(InteractComponent);
+	}
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
+	}
+	*/
 }
 
 void ABOPlayerController::ShowMainHUDWidget()

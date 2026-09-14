@@ -121,7 +121,7 @@ UItemInstanceBase* UInventoryComponent::GetItem(const int32 SlotIndex) const
 	return Slots[SlotIndex];
 }
 
-bool UInventoryComponent::SetSlots(TArray<UItemInstanceBase*> NewSlots)
+bool UInventoryComponent::SetSlots(const TArray<UItemInstanceBase*>& NewSlots)
 {
 	if (NewSlots.Num() > Slots.Num())
 	{
