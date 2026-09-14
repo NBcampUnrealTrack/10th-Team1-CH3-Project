@@ -41,3 +41,20 @@ void AStorageContainerActor::SetOpened()
 	StaticMeshComp->SetStaticMesh(OpenedMesh);
 	bIsOpened = true;
 }
+
+void AStorageContainerActor::SetItems(const TArray<UItemInstanceBase*>& Items)
+{
+	if (!InventoryComponent)
+		return;
+
+	for (UItemInstanceBase* Item : Items)
+	{
+		if (!IsValid(Item))
+			continue;
+
+		if (!InventoryComponent->AddItem(Item))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("StorageContainerActor: 슬롯이 부족해서 아이템(%s)을 넣지 못했습니다."), *Item->GetName());
+		}
+	}
+}
