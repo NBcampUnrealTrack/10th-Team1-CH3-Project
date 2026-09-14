@@ -176,7 +176,27 @@ bool UMeleeWeaponHandlerComponent::Use()
 	return false;
 }
 
-bool UMeleeWeaponHandlerComponent::CanUnequip()
+bool UMeleeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* EquippableItemInstance) const
+{
+	return true;
+}
+
+bool UMeleeWeaponHandlerComponent::CanUnassign() const
+{
+	return true;
+}
+
+bool UMeleeWeaponHandlerComponent::CanEquip() const
+{
+	return true;
+}
+
+bool UMeleeWeaponHandlerComponent::CanUnequip() const
+{
+	return true;
+}
+
+bool UMeleeWeaponHandlerComponent::CanUse() const
 {
 	return true;
 }

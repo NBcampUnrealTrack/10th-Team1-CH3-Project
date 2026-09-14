@@ -240,7 +240,35 @@ bool URangeWeaponHandlerComponent::Use()
 	return true;
 }
 
-bool URangeWeaponHandlerComponent::CanUnequip()
+bool URangeWeaponHandlerComponent::Reload()
+{
+	// 재장전 불가
+	if (!CanReload())
+	{
+		return false;
+	}
+
+	OnReloadStarted();
+
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* EquippableItemInstance) const
+{
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanUnassign() const
+{
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanEquip() const
+{
+	return true;
+}
+
+bool URangeWeaponHandlerComponent::CanUnequip() const
 {
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
@@ -258,16 +286,8 @@ bool URangeWeaponHandlerComponent::CanUnequip()
 	return true;
 }
 
-bool URangeWeaponHandlerComponent::Reload()
+bool URangeWeaponHandlerComponent::CanUse() const
 {
-	// 재장전 불가
-	if (!CanReload())
-	{
-		return false;
-	}
-
-	OnReloadStarted();
-
 	return true;
 }
 

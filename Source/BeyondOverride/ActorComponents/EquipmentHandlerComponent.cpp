@@ -50,7 +50,27 @@ bool UEquipmentHandlerComponent::Use()
 	return true;
 }
 
-bool UEquipmentHandlerComponent::CanUnequip()
+bool UEquipmentHandlerComponent::CanAssign(const UEquippableItemInstance* EquippableItemInstance) const
+{
+	return true;
+}
+
+bool UEquipmentHandlerComponent::CanUnassign() const
+{
+	return true;
+}
+
+bool UEquipmentHandlerComponent::CanEquip() const
+{
+	return true;
+}
+
+bool UEquipmentHandlerComponent::CanUnequip() const
+{
+	return true;
+}
+
+bool UEquipmentHandlerComponent::CanUse() const
 {
 	return true;
 }
