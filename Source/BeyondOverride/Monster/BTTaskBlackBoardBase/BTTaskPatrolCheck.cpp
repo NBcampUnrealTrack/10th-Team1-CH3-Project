@@ -5,6 +5,7 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
@@ -28,22 +29,10 @@ EBTNodeResult::Type UBTTaskPatrolCheck::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-	AMonsterCharacter* AIMonster = Cast<AMonsterCharacter>(AIController->GetPawn());
-	if (!AIMonster)
+	if (AIController->GetState() == EMonsterState::Atmosphere &&
+		!AIController->IsContinueState())
 	{
-		return EBTNodeResult::Failed;
-	}
-
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	if (AIState->GetBeCanPatrol())
-	{
-		AIState->FalseBeCanPatrol();
-		AIState->CallPatrolTimer();
+		AIController->StateChange(EMonsterState::Patrol, 10.0f);
 		return EBTNodeResult::Succeeded;
 	}
 

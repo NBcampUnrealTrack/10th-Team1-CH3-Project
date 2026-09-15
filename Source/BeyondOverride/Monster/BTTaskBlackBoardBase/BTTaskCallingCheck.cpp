@@ -42,7 +42,7 @@ EBTNodeResult::Type UBTTaskCallingCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::Failed;
 	}
 
-	ABOCharacter* Target = AIState->GetTarget();
+	ABOCharacter* Target = AIController->GetTarget();
 	if (!Target)
 	{
 		return EBTNodeResult::Succeeded;

@@ -5,8 +5,6 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
@@ -35,29 +33,15 @@ EBTNodeResult::Type UBTTaskAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 		return EBTNodeResult::Failed;
 	}
 
-	UAttackDataComponent* AIAttackData = AIMonster->GetAttackData();
-	if (!AIAttackData)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	APawn* Target = Cast<APawn>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (!Target)
 	{
 		return EBTNodeResult::Failed;
 	}
 
-	AIAttackData->SetTargetLocation(Target->GetActorLocation());
-
+	AIController->SetTargetPoint(Target->GetActorLocation());
 	AIMonster->MonsterAttack();
-	AIState->ReCallContinueTimer();
-	AIAttackData->CallAttackDelay();
+	AIController->StateChange(EMonsterState::Chase, 30.0f);
 
 	return EBTNodeResult::Succeeded;
 }

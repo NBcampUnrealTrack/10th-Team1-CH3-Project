@@ -15,38 +15,8 @@
 class UStateComponent;
 class UAttackDataComponent;
 class UStatComponent;
-
-struct FBallisticInfo
-{
-	bool bHit;
-
-	uint32 EndCount = 0;
-
-	float BulletSpeed = 2500.0f;
-	FVector BulletLocation;
-	FVector BulletDirection;
-
-	FVector StartLocation = FVector::ZeroVector;
-	FVector EndLocation = FVector::ZeroVector;
-
-	float FlyTime = 0.1f;
-	const FVector Gravity = FVector(0.0f, 0.0f, -980.0f);
-
-	FHitResult HitResult;
-
-	FTimerHandle Update;
-
-	FCollisionQueryParams QueryParams;
-	FCollisionObjectQueryParams TraceParams;
-};
-
-UENUM(BlueprintType)
-enum class EMonsterType : uint8
-{
-	Special UMETA(DisplayName = "Special"),
-	Range UMETA(DisplayName = "Range"),
-	Melee UMETA(DisplayName = "Melee"),
-};
+class UMonsterStatComponent;
+class UMonsterDataAsset;
 
 UCLASS()
 class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
@@ -56,11 +26,16 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
   public:
 	AMonsterCharacter();
 
+	void SetMonsterID(FName ID);
+	FName GetMonsterID() const;
+
+	FVector GetAttackPoint() const;
+
+	float GetAttackRange() const;
+
+	bool IsDelay();
+
 	void MonsterAttack();
-
-	void CallBallistic();
-
-	FBallisticInfo Ballistic;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Monster")
 	UStateComponent* GetState() const;
@@ -78,22 +53,27 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, Category = "Monster|Stat")
 	float SprintSpeed = 800.0f;
 
-	UPROPERTY(EditAnywhere)
-	EMonsterType MonsterType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Effect")
-	UParticleSystem* FireParticle;
-
   protected:
-	UPROPERTY(VisibleAnywhere, Category = "Coponent|Stat")
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+
+	void SetUpMesh();
+
+	// Properties
+  public:
+  protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
+	TObjectPtr<UMonsterDataAsset> MonsterData;
+	UPROPERTY(VisibleAnywhere, Category = "Monster|Stat")
+	TObjectPtr<UMonsterStatComponent> MonsterStat;
+
+	FName SocketName;
+	TObjectPtr<UParticleSystem> Effect;
+
+	UPROPERTY(VisibleAnywhere, Category = "Moster|Stat")
 	TObjectPtr<UStatComponent> StatComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Coponent|State")
 	TObjectPtr<UStateComponent> StateComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Coponent|Stat")
 	TObjectPtr<UAttackDataComponent> AttackDataComponent;
-
-	virtual void BeginPlay() override;
-
-  public:
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };

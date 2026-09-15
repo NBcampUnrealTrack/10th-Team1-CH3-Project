@@ -104,13 +104,13 @@ class BEYONDOVERRIDE_API UStateComponent : public UActorComponent
 
 	FTimerHandle HearingTimer;
 
+	FTimerHandle CallingTimer;
+
 	FTimerHandle PatrolTimer;
 
 	FTimerHandle ContinueTimer;
 
 	FTimerHandle LocationPatrolTimer;
-
-	FTimerHandle CallingTimer;
 
 	FTimerHandle StandOffTimer;
 
