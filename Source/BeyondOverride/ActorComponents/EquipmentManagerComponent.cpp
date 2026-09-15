@@ -180,7 +180,6 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 	// 활성화 슬롯에 장착 시 Equip()
 	if (Slot == ActiveSlot)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("이미 활성화된 슬롯에 등록함"));
 		EquipmentHandlerComponents[Slot]->Equip();
 	}
 	// 현재 비무장이면, 장비가 등록된 슬롯으로 자동 전환 (비활성화)
