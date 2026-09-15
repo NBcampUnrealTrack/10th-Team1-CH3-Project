@@ -4,6 +4,8 @@
 
 #include "RangeWeaponDataRow.generated.h"
 
+enum class EFireMode : uint8;
+
 class ABulletProjectile;
 
 USTRUCT(BlueprintType)
@@ -16,6 +18,8 @@ struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
 	int32 Damage; // 데미지
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float FireRate; // 발사 간격
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+	EFireMode FireMode; // 사격 모드
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
 	TSubclassOf<ABulletProjectile> BulletClass; // 투사체 클래스
@@ -25,7 +29,11 @@ struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
 	float ProjectileGravityScale; // 투사체 중력 스케일
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
 	float ProjectileRange; // 사거리
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
+	int32 ProjectilesPerShot; // 사격 당 투사체 개수
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammo")
+	FName AmmoItemID; // 탄약 아이템 ID
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammo")
 	int32 MagazineSize; // 탄창 크기
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammo")
