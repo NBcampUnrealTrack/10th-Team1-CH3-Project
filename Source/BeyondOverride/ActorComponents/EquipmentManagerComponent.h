@@ -30,6 +30,12 @@ DECLARE_DELEGATE_RetVal_OneParam(
 	FRequestReloadAmmoDelegate,
 	URangeWeaponInstance*);
 
+// [Throwable & Effect Item] 아이템 사용 시 개수 변경 알리는 델리게이트
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+	FOnEquipmentStackCountUpdatedDelegate,
+	EEquipmentSlot,
+	UEquippableItemInstance*);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 {
@@ -76,11 +82,17 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
+	// 사용 후 아이템 개수 변경 알림 델리게이트
+	FOnEquipmentStackCountUpdatedDelegate OnEquipmentStackCountUpdatedDelegate;
+
   protected:
 	// 델리게이트 바인딩
 	void BindDelegates();
 
-	// Range Weapon 델리게이트
+	// [TRange Weapon] 델리게이트 바인딩 이벤트
 	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
 	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance) const;
+
+	// [Throwable & Effect Item] 델리게이트 바인딩 이벤트
+	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance) const;
 };

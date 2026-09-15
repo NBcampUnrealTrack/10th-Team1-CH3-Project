@@ -7,6 +7,7 @@
 #include "Factory/ItemFactory.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/ItemInstanceBase.h"
+#include "Items/Objects/ThrowableItemInstance.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
@@ -244,6 +245,17 @@ void UEquipmentManagerComponent::BindDelegates()
 			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
 		}
 	}
+
+	// Throwable
+	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Throwable))
+	{
+		if (UThrowableItemHandlerComponent* ThrowableItemHandler = Cast<UThrowableItemHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Throwable]))
+		{
+			ThrowableItemHandler->OnCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnEquipmentCountUpdated);
+		}
+	}
+
+	// Effect
 }
 
 bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
@@ -268,4 +280,25 @@ int32 UEquipmentManagerComponent::OnRequestReloadAmmo(URangeWeaponInstance* Rang
 
 	// 재장전에 사용할 탄약 개수 전달
 	return RequestReloadAmmoDelegate.Execute(RangeWeaponInstance);
+}
+
+void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance) const
+{
+	if (!OnEquipmentStackCountUpdatedDelegate.IsBound())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장비 개수 변경 이벤트 송출 실패 - OnEquipmentCountUpdatedDelegate is not Bound"));
+		return;
+	}
+
+	// 슬롯과 장비 인스턴스 송출
+	if (EquippableItemInstance->IsA(UThrowableItemInstance::StaticClass()))
+	{
+		OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Throwable, EquippableItemInstance);
+	}
+	// else if (EquippableItemInstance->IsA(UEffectItemInstance::StaticClass()))
+	// {
+	//	OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Effect, EquippableItemInstance);
+	// }
+
+	// TODO: 캐릭터에서 해당 델리게이트 바인딩. 개수가 0개면 제거 수행
 }
