@@ -56,10 +56,17 @@ protected:
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DeathMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> RollMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Roll")
+	float RollSpeed = 600.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -115,6 +122,8 @@ private:
 	UFUNCTION()
 	void Reload(const FInputActionValue& value);
 	UFUNCTION()
+	void Roll(const FInputActionValue& Value);
+	UFUNCTION()
 	void InteractPress(const FInputActionValue& value);
 	UFUNCTION()
 	void InteractRelease(const FInputActionValue& value);
@@ -140,6 +149,7 @@ private:
 
 	void ChangeMoveSpeed();
 
+	bool bIsRolling = false;
 	bool bIsSprint = false;
 	bool bIsAiming = false;
 	bool bMovementEnabled = true;
@@ -151,9 +161,6 @@ private:
 	void UpdateMovementEnabled();
 
 	// 사망 관련
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation|Death", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> DeathMontage;
-
 	UFUNCTION()
 	void HandleDeath(AActor* DamageCauser);
 	void FinishPlayerDeath();
@@ -179,4 +186,12 @@ public:
 
 private:
 	FTimerHandle DeathTimerHandle;
+
+	FVector2D MoveInput = FVector2D::ZeroVector;
+	FVector RollDirection = FVector::ZeroVector;
+
+	FName GetRollSectionName() const;
+
+	FVector GetRollDirection() const;
+	void OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 };
