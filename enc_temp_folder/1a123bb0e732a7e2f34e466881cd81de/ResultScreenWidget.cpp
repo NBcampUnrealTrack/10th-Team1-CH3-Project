@@ -38,17 +38,7 @@ void UResultScreenWidget::NativeConstruct()
 
 	// 공통 부분
 	float SurvivalTime = GI->GetSurvivalTime();
-	int32 Hours = FMath::FloorToInt(SurvivalTime / 3600.0f);
-	int32 Minutes = FMath::FloorToInt(FMath::Fmod(SurvivalTime, 3600.0f) / 60.0f);
-	int32 Seconds = FMath::FloorToInt(FMath::Fmod(SurvivalTime, 60.0f));
-
-	FString TimeString = FString::Printf(TEXT("%02d:%02d:%02d"), Hours, Minutes, Seconds);
-
-	SurvivalTimeText->SetText(FText::FromString(TimeString));
-
-	FString TimeString = FString::Printf(TEXT("%d:%02d"), Minutes, Seconds);
-
-	SurvivalTimeText->SetText(FText::FromString(TimeString));
+	SurvivalTimeText->SetText(FText::AsNumber(SurvivalTime));
 
 	if (KillCountList && KillCountEntryClass)
 	{
