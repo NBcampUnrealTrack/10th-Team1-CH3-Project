@@ -41,12 +41,18 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	TObjectPtr<UTextBlock> WpnNumberInHead;
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	TObjectPtr<UTextBlock> WpnNumberInBody;
 
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	TObjectPtr<UTextBlock> CurrentAmmoCount;
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	TObjectPtr<UTextBlock> CurrentAmmoCountInBody;
 
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	TObjectPtr<UTextBlock> TotalAmmoCount;
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	TObjectPtr<UTextBlock> TotalAmmoCountInBody;
 
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	TObjectPtr<UTextBlock> WpnAmmoType;
