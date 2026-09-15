@@ -242,6 +242,9 @@ void URangeWeaponHandlerComponent::Fire()
 	// 사격 쿨다운 설정
 	StartFireTimer();
 
+	// 사격 실행 델리게이트 송출
+	OnFireExecutedDelegate.Broadcast();
+
 	// 사격 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
 }
