@@ -17,6 +17,7 @@ void UEquipmentSlotWidget::NativeConstruct()
 	if (WpnNumberInHead)
 	{
 		WpnNumberInHead->SetText(FText::AsNumber(static_cast<int32>(EquipmentSlot)));
+		WpnNumberInBody->SetText(FText::AsNumber(static_cast<int32>(EquipmentSlot)));
 	}
 
 	if (ItemSlot)
@@ -98,14 +99,9 @@ void UEquipmentSlotWidget::RefreshItem()
 {
 	UItemInstanceBase* Item = InventoryComponent ? InventoryComponent->GetEquipmentItem(EquipmentSlot) : nullptr;
 
-	UE_LOG(LogTemp, Warning, TEXT("[EquipmentSlotWidget] RefreshItem - Slot=%d, InventoryComponent=%s, Item=%s"),
-		   static_cast<int32>(EquipmentSlot),
-		   InventoryComponent ? TEXT("Valid") : TEXT("NULL"),
-		   Item ? TEXT("Valid") : TEXT("NULL"));
-
 	if (ItemSlot)
 	{
-		ItemSlot->SetItem(Item);
+		ItemSlot->SetItem(Item, true);
 	}
 
 	if (WpnName)
@@ -115,14 +111,22 @@ void UEquipmentSlotWidget::RefreshItem()
 
 	URangeWeaponInstance* Weapon = Cast<URangeWeaponInstance>(Item);
 
-	if (CurrentAmmoCount)
+	if (CurrentAmmoCount )
 	{
 		CurrentAmmoCount->SetText(Weapon ? FText::AsNumber(Weapon->GetCurrentAmmo()) : FText::GetEmpty());
+	}
+	if (CurrentAmmoCountInBody )
+	{
+		CurrentAmmoCountInBody->SetText(Weapon ? FText::AsNumber(Weapon->GetCurrentAmmo()) : FText::GetEmpty());
 	}
 
 	if (TotalAmmoCount)
 	{
 		TotalAmmoCount->SetText(FText::GetEmpty());
+	}
+	if (TotalAmmoCountInBody)
+	{
+		TotalAmmoCountInBody->SetText(FText::GetEmpty());
 	}
 	if (WpnAmmoType)
 	{
@@ -139,6 +143,13 @@ void UEquipmentSlotWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 		if (URangeWeaponInstance* Weapon = Cast<URangeWeaponInstance>(InventoryComponent->GetEquipmentItem(EquipmentSlot)))
 		{
 			CurrentAmmoCount->SetText(FText::AsNumber(Weapon->GetCurrentAmmo()));
+		}
+	}
+	if (CurrentAmmoCountInBody && InventoryComponent)
+	{
+		if (URangeWeaponInstance* Weapon = Cast<URangeWeaponInstance>(InventoryComponent->GetEquipmentItem(EquipmentSlot)))
+		{
+			CurrentAmmoCountInBody->SetText(FText::AsNumber(Weapon->GetCurrentAmmo()));
 		}
 	}
 }

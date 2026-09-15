@@ -7,12 +7,22 @@
 #include "ThrowableItemHandlerComponent.generated.h"
 
 class UThrowableItemInstance;
+class UEquippableItemInstance;
 class AThrowableProjectile;
+
+// 사용하여 아이템 개수 변경 알림 델리게이트
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnCountUpdatedDelegate,
+	UEquippableItemInstance*);
 
 UCLASS()
 class BEYONDOVERRIDE_API UThrowableItemHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
+
+  public:
+	// 아이템 사용 후 개수 변경 알림 델리게이트
+	FOnCountUpdatedDelegate OnCountUpdatedDelegate;
 
   protected:
 	UPROPERTY()
