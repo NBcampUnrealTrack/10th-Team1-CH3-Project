@@ -148,7 +148,31 @@ void ASpawnVolume::StartPhase()
 		return;
 	}
 
-	if (PhaseIndex == Size)
+	UE_LOG(LogTemp, Warning, TEXT("Start Phase"));
+	UE_LOG(LogTemp, Warning, TEXT("Phase Count : %d"), Size);
+
+	SpawnPhaseMonsters();
+}
+
+void ASpawnVolume::SpawnPhaseMonsters()
+{
+	int32 Size = PhaseData.PhaseEntries.Num();
+
+	UE_LOG(LogTemp, Warning, TEXT("Spawn Phase Monster"));
+
+	TArray<FPhaseEntry> PhaseEntries = PhaseData.PhaseEntries;
+	TArray<FSpawnEntry> SpawnEntries = PhaseEntries[PhaseIndex].SpawnEntries;
+	int32 SpawnCount = PhaseEntries[PhaseIndex].SpawnCount;
+
+	UE_LOG(LogTemp, Warning, TEXT("Phase Monster Count : %d"), SpawnCount);
+
+	for (int i = 0; i < SpawnCount; i++)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Phase Random Monster"));
+		SpawnRandomMonster(SpawnEntries, SpawnMinRadius, SpawnMaxRadius, true);
+	}
+
+	if (PhaseIndex == Size - 1)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("End Phase"));
 		PhaseIndex = 0;
@@ -156,28 +180,11 @@ void ASpawnVolume::StartPhase()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Start Phase"));
-	SpawnPhaseMonsters();
-}
-
-void ASpawnVolume::SpawnPhaseMonsters()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Phase Monster"));
-	TArray<FPhaseEntry> PhaseEntries = PhaseData.PhaseEntries;
-	TArray<FSpawnEntry> SpawnEntries = PhaseEntries[PhaseIndex].SpawnEntries;
-	int32 SpawnCount = PhaseEntries[PhaseIndex].SpawnCount;
-	UE_LOG(LogTemp, Warning, TEXT("Phase Monster Count : %d"), SpawnCount);
-	for (int i = 0; i < SpawnCount; i++)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Phase Random Monster"));
-		SpawnRandomMonster(SpawnEntries, SpawnMinRadius, SpawnMaxRadius, true);
-	}
-
-	PhaseIndex += 1;
-
 	float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
 
 	GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
+
+	PhaseIndex += 1;
 }
 
 FName ASpawnVolume::GetId() const
