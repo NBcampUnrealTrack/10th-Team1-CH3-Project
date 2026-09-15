@@ -12,12 +12,8 @@ class UEquipmentAnimationDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	// Character Locomotion
-	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
-	TObjectPtr<UAnimSequence> IdleHip; // 캐릭터 Hip Idle
-	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
-	TObjectPtr<UAnimSequence> IdleAim; // 캐릭터 Aim Idle
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
 	TObjectPtr<UBlendSpace> LocomotionHip; // 캐릭터 Hip Locomotion
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")

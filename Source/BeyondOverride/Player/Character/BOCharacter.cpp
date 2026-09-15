@@ -23,6 +23,10 @@
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "GameFlow/BOGameMode.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -54,6 +58,17 @@ void ABOCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (IsValid(StatComponent))
+	{
+		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
+	}
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->OnMenuOpenStateChanged.AddDynamic(this, &ABOCharacter::OnMenuOpenStateChanged);
+		OnMenuOpenStateChanged(UIManager->IsAnyMenuOpen());
+	}
+
 	if (IsValid(Camera))
 	{
 		DefaultFOV = Camera->FieldOfView;
@@ -74,6 +89,21 @@ void ABOCharacter::BeginPlay()
 	{
 		UIManager->BindInteractPrompt(InteractComponent);
 	}
+}
+
+void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (IsValid(StatComponent))
+	{
+		StatComponent->OnDeath.RemoveAll(this);
+	}
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->OnMenuOpenStateChanged.RemoveDynamic(this, &ABOCharacter::OnMenuOpenStateChanged);
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void ABOCharacter::Tick(float DeltaTime)
@@ -217,18 +247,39 @@ void ABOCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdj
 	ChangeMoveSpeed();
 }
 
+void ABOCharacter::SetMovementEnabled(bool bEnabled)
+{
+	if (bMovementEnabled == bEnabled)
+	{
+		return;
+	}
+
+	bMovementEnabled = bEnabled;
+
+	AController* CharacterController = GetController();
+
+	if (IsValid(CharacterController))
+	{
+		CharacterController->SetIgnoreMoveInput(!bEnabled);
+	}
+
+	if (!bEnabled)
+	{
+		bIsSprint = false;
+
+		if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+		{
+			MovementComponent->StopMovementImmediately();
+		}
+
+		ChangeMoveSpeed();
+	}
+}
+
 void ABOCharacter::Move(const FInputActionValue& value)
 {
-	if (!Controller)
+	if (!bMovementEnabled || !Controller)
 		return;
-
-	if (UUIManager* UIManager = UUIManager::Get(this))
-	{
-		if (UIManager->IsAnyMenuOpen())
-		{
-			return;
-		}
-	}
 
 	const FVector2D MoveInput = value.Get<FVector2D>();
 
@@ -253,6 +304,11 @@ void ABOCharacter::Look(const FInputActionValue& value)
 
 void ABOCharacter::StartJump(const FInputActionValue& value)
 {
+	if (!bMovementEnabled)
+	{
+		return;
+	}
+
 	Jump();
 }
 
@@ -263,6 +319,11 @@ void ABOCharacter::StopJump(const FInputActionValue& value)
 
 void ABOCharacter::StartSprint(const FInputActionValue& value)
 {
+	if (!bMovementEnabled)
+	{
+		return;
+	}
+
 	bIsSprint = true;
 	ChangeMoveSpeed();
 }
@@ -275,6 +336,11 @@ void ABOCharacter::StopSprint(const FInputActionValue& value)
 
 void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 {
+	if (!bMovementEnabled)
+	{
+		return;
+	}
+
 	if (bIsCrouched)
 	{
 		UnCrouch();
@@ -371,59 +437,6 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 					{
 						ItemPickup->Destroy();
 					}
-				}
-
-				if (EquipmentManagerComponent)
-				{
-
-
-					//// Range Weapon
-					//if (ItemInstance->IsA(URangeWeaponInstance::StaticClass()))
-					//{
-					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
-					//	{
-					//		if (PlayerInventoryComponent)
-					//		{
-					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Primary, ItemInstance);
-					//		}
-					//		ItemPickup->Destroy();
-					//	}
-					//	else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
-					//	{
-					//		if (PlayerInventoryComponent)
-					//		{
-					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Secondary, ItemInstance);
-					//		}
-					//		ItemPickup->Destroy();
-					//	}
-					//}
-					//// Melee Weapon
-					//else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
-					//{
-					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
-					//	{
-					//		if (PlayerInventoryComponent)
-					//		{
-					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Melee, ItemInstance);
-					//		}
-					//		ItemPickup->Destroy();
-					//	}
-					//}
-					////// throwable Weapon
-					////else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
-					////{
-					////	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
-					////	{
-					////		ItemPickup->Destroy();
-					////	}
-					////}
-					//else
-					//{
-					//	if (PlayerInventoryComponent->AddItem(ItemInstance))
-					//	{
-					//		ItemPickup->Destroy();
-					//	}
-					//}
 				}
 			}
 		}
@@ -572,6 +585,102 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 		EquipmentManagerComponent->Equip(Slot);
 	}
 
+}
+
+void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
+{
+	UpdateMovementEnabled();
+}
+
+void ABOCharacter::UpdateMovementEnabled()
+{
+	const bool bIsDead = IsValid(StatComponent) && StatComponent->GetIsDead();
+
+	const UUIManager* UIManager = UUIManager::Get(this);
+
+	const bool bAnyMenuOpen = IsValid(UIManager) && UIManager->IsAnyMenuOpen();
+
+	SetMovementEnabled(!bIsDead && !bAnyMenuOpen);
+}
+
+void ABOCharacter::HandleDeath(AActor* DamageCauser)
+{
+	DeathDamageCauser = DamageCauser;
+	bDeathSequenceFinished = false;
+
+	// 사망 상태를 반영하여 이동 차단
+	UpdateMovementEnabled();
+
+	if (IsValid(InteractComponent))
+	{
+		InteractComponent->SetInteractionEnabled(false);
+	}
+
+	// 달리기와 조준 해제
+	bIsSprint = false;
+	bIsAiming = false;
+
+	ChangeMoveSpeed();
+
+	if (IsValid(EquipmentManagerComponent))
+	{
+		EquipmentManagerComponent->Unequip();
+	}
+
+	if (!IsValid(DeathMontage) || !IsValid(GetMesh()))
+	{
+		FinishPlayerDeath();
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (!IsValid(AnimInstance))
+	{
+		FinishPlayerDeath();
+		return;
+	}
+
+	const float MontageDuration = AnimInstance->Montage_Play(DeathMontage);
+
+	if (MontageDuration <= 0.0f)
+	{
+		FinishPlayerDeath();
+		return;
+	}
+
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ABOCharacter::FinishPlayerDeath, MontageDuration, false);
+}
+
+void ABOCharacter::FinishPlayerDeath()
+{
+	if (bDeathSequenceFinished)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return;
+	}
+
+	ABOGameMode* GameMode = World->GetAuthGameMode<ABOGameMode>();
+
+	if (!IsValid(GameMode))
+	{
+		return;
+	}
+
+	bDeathSequenceFinished = true;
+
+	if (AMonsterCharacter* KillerMonster = Cast<AMonsterCharacter>(DeathDamageCauser.Get()))
+	{
+		// GameMode->SetKillerMonster(KillerMonster->GetId());
+	}
+
+	GameMode->EndFarming(EFarmingResult::Fail);
 }
 
 void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)

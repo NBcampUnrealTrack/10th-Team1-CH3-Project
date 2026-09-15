@@ -6,7 +6,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, int32, CurHealth, int32, MaxHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShieldChanged, int32, CurShield, int32, MaxShield);
-DECLARE_MULTICAST_DELEGATE(FOnDeath);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UStatComponent : public UActorComponent
