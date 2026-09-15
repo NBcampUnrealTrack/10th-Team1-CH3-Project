@@ -28,9 +28,11 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
 
-  private:
+  public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
 	TObjectPtr<UFarmingStateMachine> StateMachine;
 
+  private:
 	TMap<FName, int32> KilledMonsters;
 	FName KillerMonster;
 };

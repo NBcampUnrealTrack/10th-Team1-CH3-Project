@@ -23,10 +23,10 @@ class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 	void InitSetting();
 	void SpawnCharacter();
 	void ActivateExit();
-	AExitActor* SelectRandomExit();
+	AExitControllerActor* SelectRandomExit();
 
 	UFUNCTION(BlueprintCallable, Category = "Exit")
-	void HandleExtract(AExitActor* ExitPoint, AActor* Interactor);
+	void HandleExtract(AExitControllerActor* ExitPoint, AActor* Interactor);
 
   private:
 	float ExitActivateProb;

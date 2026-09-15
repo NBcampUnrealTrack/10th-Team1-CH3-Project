@@ -135,10 +135,10 @@ void ASpawnVolume::StartPhase()
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Start Phase"));
-	float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
+	/*float Duration = PhaseData.PhaseEntries[PhaseIndex].Duration;
 
 	GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
-	SpawnPhaseMonsters();
+	SpawnPhaseMonsters();*/
 }
 
 void ASpawnVolume::SpawnPhaseMonsters()

@@ -52,7 +52,7 @@ void UExitManager::InitSetting()
 	{
 		if (AExitControllerActor* ExitController = Cast<AExitControllerActor>(Actor))
 		{
-			// ExitController->OnExtractRequested.AddDynamic(this, &UExitManager::HandleExtract);
+			ExitController->OnExtractControlRequested.AddDynamic(this, &UExitManager::HandleExtract);
 			ExitControllers.Add(ExitController);
 		}
 	}
@@ -80,43 +80,43 @@ void UExitManager::SpawnCharacter()
 		return;
 	}
 
-	if (AExitActor* Exit = SelectRandomExit())
+	if (AExitControllerActor* ExitController = SelectRandomExit())
 	{
-		Exit->SetExtractAvailable(false);
+		if (AExitActor* Exit = ExitController->TargetExit)
+		{
+			ExitController->SetControllerAvailable(false);
 
-		FVector ExitLocation = Exit->GetActorLocation();
-		ExitLocation.Z += 100.0f;
-		FRotator ExitRotation = Exit->GetActorRotation();
+			FVector ExitLocation = Exit->GetActorLocation();
+			ExitLocation.Z += 100.0f;
+			FRotator ExitRotation = Exit->GetActorRotation();
 
-		Character->TeleportTo(ExitLocation, ExitRotation);
-		PlayerController->SetControlRotation(ExitRotation);
+			Character->TeleportTo(ExitLocation, ExitRotation);
+			PlayerController->SetControlRotation(ExitRotation);
+		}
 	}
 }
 
 void UExitManager::ActivateExit()
 {
-	int32 Size = Exits.Num();
-	int32 Count = FMath::RoundToInt(Size * ExitActivateProb) - 1; // except character spawn point
+	int32 Size = ExitControllers.Num();
+	int32 Count = FMath::RoundToInt(Size * ExitActivateProb);
 
-	Algo::RandomShuffle(Exits);
-
-	for (int i = 0; i < Count; i++)
+	for (int i = 1; i <= Count; i++)
 	{
-		if (Exits[i])
+		if (i < Size && ExitControllers[i])
 		{
-			// Exits[i]->SetExtractAvailable(true);
+			ExitControllers[i]->SetControllerAvailable(true);
 		}
 	}
 }
 
-AExitActor* UExitManager::SelectRandomExit()
+AExitControllerActor* UExitManager::SelectRandomExit()
 {
-	int32 Size = Exits.Num();
-	int32 Index = FMath::RandRange(0, Size - 1);
+	Algo::RandomShuffle(ExitControllers);
 
-	if (Index < Size)
+	if (ExitControllers.Num() != 0)
 	{
-		return Exits[Index];
+		return ExitControllers[0];
 	}
 	else
 	{
@@ -124,7 +124,7 @@ AExitActor* UExitManager::SelectRandomExit()
 	}
 }
 
-void UExitManager::HandleExtract(AExitActor* ExitPoint, AActor* Interactor)
+void UExitManager::HandleExtract(AExitControllerActor* ExitPoint, AActor* Interactor)
 {
 	if (!ExitPoint || !GetWorld() || !GetWorld()->GetGameInstance())
 	{
