@@ -7,7 +7,7 @@
 #include "Algo/RandomShuffle.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/Spawn/SpawnVolume.h"
-#include "Interaction/Actors/ExitActor.h"
+#include "Interaction/Actors/ExitControllerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -28,21 +28,32 @@ void UExitManager::Initialize(FSubsystemCollectionBase& Collection)
 void UExitManager::InitSetting()
 {
 	Exits.Empty();
+	ExitControllers.Empty();
 
 	if (!GetWorld())
 	{
 		return;
 	}
 
-	TArray<AActor*> AllActors{};
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AExitActor::StaticClass(), AllActors);
+	TArray<AActor*> AllExits{};
+	TArray<AActor*> AllExitControllers{};
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AExitActor::StaticClass(), AllExits);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AExitControllerActor::StaticClass(), AllExitControllers);
 
-	for (AActor* Actor : AllActors)
+	for (AActor* Actor : AllExits)
 	{
 		if (AExitActor* Exit = Cast<AExitActor>(Actor))
 		{
-			Exit->OnExtractRequested.AddDynamic(this, &UExitManager::HandleExtract);
 			Exits.Add(Exit);
+		}
+	}
+
+	for (AActor* Actor : AllExitControllers)
+	{
+		if (AExitControllerActor* ExitController = Cast<AExitControllerActor>(Actor))
+		{
+			// ExitController->OnExtractRequested.AddDynamic(this, &UExitManager::HandleExtract);
+			ExitControllers.Add(ExitController);
 		}
 	}
 
@@ -93,7 +104,7 @@ void UExitManager::ActivateExit()
 	{
 		if (Exits[i])
 		{
-			Exits[i]->SetExtractAvailable(true);
+			// Exits[i]->SetExtractAvailable(true);
 		}
 	}
 }

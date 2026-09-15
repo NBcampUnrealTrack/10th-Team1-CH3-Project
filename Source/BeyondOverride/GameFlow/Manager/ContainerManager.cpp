@@ -77,14 +77,18 @@ void UContainerManager::InitSetting(bool IsKeyCardAcquired)
 		AStorageContainerActor* Container = Cast<AStorageContainerActor>(Actor);
 
 		FName ContainerId = Container->StorageContainerId; // change to getter function
-		FName RegionId = ContainerDatas[ContainerId].RegionId;
 
-		if (!ContainerByRegion.Contains(RegionId))
+		if (ContainerDatas.Contains(ContainerId))
 		{
-			ContainerByRegion.Add(RegionId);
-		}
+			FName RegionId = ContainerDatas[ContainerId].RegionId;
 
-		ContainerByRegion[RegionId].Add(Container);
+			if (!ContainerByRegion.Contains(RegionId))
+			{
+				ContainerByRegion.Add(RegionId);
+			}
+
+			ContainerByRegion[RegionId].Add(Container);
+		}
 	}
 
 	ActivateContainer();

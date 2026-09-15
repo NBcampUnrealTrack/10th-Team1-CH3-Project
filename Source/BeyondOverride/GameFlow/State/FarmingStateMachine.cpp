@@ -21,11 +21,6 @@ void UFarmingStateMachine::Initialize(ABOGameMode* InGameMode)
 
 void UFarmingStateMachine::ChangeState(EFarmingState FarmingState)
 {
-	if (CurrentState)
-	{
-		CurrentState->Exit();
-	}
-
 	CurrentFarmingState = FarmingState;
 	CreateState(CurrentFarmingState);
 
@@ -50,25 +45,25 @@ void UFarmingStateMachine::CreateState(EFarmingState FarmingState)
 {
 	switch (FarmingState)
 	{
-		case EFarmingState::Begin:
-		{
-			UE_LOG(LogTemp, Warning, TEXT("State Begin"));
-			CurrentState = NewObject<UBeginFarmingState>(this, UBeginFarmingState::StaticClass());
-			break;
-		}
-		case EFarmingState::Progress:
-		{
-			UE_LOG(LogTemp, Warning, TEXT("State Progress"));
-			CurrentState = NewObject<UProgressFarmingState>(this, UProgressFarmingState::StaticClass());
-			break;
-		}
-		case EFarmingState::End:
-		{
-			UE_LOG(LogTemp, Warning, TEXT("State End"));
-			CurrentState = NewObject<UEndFarmingState>(this, UEndFarmingState::StaticClass());
-			break;
-		}
-		default:
-			break;
+	case EFarmingState::Begin:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Begin"));
+		CurrentState = NewObject<UBeginFarmingState>(this, UBeginFarmingState::StaticClass());
+		break;
+	}
+	case EFarmingState::Progress:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Progress"));
+		CurrentState = NewObject<UProgressFarmingState>(this, UProgressFarmingState::StaticClass());
+		break;
+	}
+	case EFarmingState::End:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State End"));
+		CurrentState = NewObject<UEndFarmingState>(this, UEndFarmingState::StaticClass());
+		break;
+	}
+	default:
+		break;
 	}
 }

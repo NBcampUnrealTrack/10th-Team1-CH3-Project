@@ -26,5 +26,12 @@
         "EquipSocketName": "Gonbong",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Gonbong/DA_EquipmentAnimation_Gonbong.DA_EquipmentAnimation_Gonbong'"
+    },
+    {
+        "Name": "BASIC_RIFLE",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Maps/Safe_House/meshes/SKM_assualt_rifle_01_dual_mag.SKM_assualt_rifle_01_dual_mag'",
+        "EquipSocketName": "Assault_Rifle_A",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleA/DA_EquipmentAnimation_AssaultRifleA.DA_EquipmentAnimation_AssaultRifleA'"
     }
 ]
