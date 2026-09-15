@@ -21,5 +21,6 @@ class BEYONDOVERRIDE_API UEndFarmingState : public UBaseFarmingState
 
   private:
 	void SetEndTime();
+	void CleanRegions();
 	void SetFarmingResult();
 };

@@ -31,8 +31,8 @@
     },
     {
         "Name": "SPAWN_VOLUME_03",
-        "Id": "SPAWN_VOLUME_01",
-        "RegionId": "REGION_01",
+        "Id": "SPAWN_VOLUME_03",
+        "RegionId": "REGION_03",
         "SpawnEntries": [
             {
                 "Id": "MONSTER_01",

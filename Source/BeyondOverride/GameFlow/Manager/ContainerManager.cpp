@@ -234,3 +234,9 @@ bool UContainerManager::GetContainerData(FName ContainerId, FSpawnData& Data) co
 
 	return false;
 }
+
+void UContainerManager::CleanSetting()
+{
+	ContainerDatas.Empty();
+	ContainerByRegion.Empty();
+}

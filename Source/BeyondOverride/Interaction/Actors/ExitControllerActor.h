@@ -24,6 +24,12 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 	void SetControllerAvailable(bool bNewEnabled, const FText& Reason = FText::GetEmpty());
 
 	UFUNCTION(BlueprintCallable, Category = "Extraction")
+	AExitActor* GetTargetExit() const
+	{
+		return TargetExit;
+	};
+
+	UFUNCTION(BlueprintCallable, Category = "Extraction")
 	FName GetRegionId() const
 	{
 		return RegionId;

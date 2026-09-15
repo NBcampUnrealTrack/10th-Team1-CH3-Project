@@ -71,7 +71,7 @@ void UExitManager::SpawnCharacter()
 
 	if (AExitControllerActor* ExitController = SelectRandomExit())
 	{
-		if (AExitActor* Exit = ExitController->TargetExit)
+		if (AExitActor* Exit = ExitController->GetTargetExit())
 		{
 			ExitController->SetControllerAvailable(false);
 
@@ -126,10 +126,15 @@ void UExitManager::HandleExtract(AExitControllerActor* ExitPoint, AActor* Intera
 		return;
 	}
 
-	FName RegionId = ExitPoint->GetRegionId(); // change to getter function
+	FName RegionId = ExitPoint->GetRegionId();
 
 	if (ASpawnVolume* SpawnVolume = SpawnVolumeManager->GetSpawnVolume(RegionId))
 	{
 		SpawnVolume->StartPhase();
 	}
+}
+
+void UExitManager::CleanSetting()
+{
+	ExitControllers.Empty();
 }
