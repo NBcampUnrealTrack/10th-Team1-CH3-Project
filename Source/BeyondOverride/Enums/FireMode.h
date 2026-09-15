@@ -7,6 +7,7 @@
 UENUM(BlueprintType)
 enum class EFireMode : uint8
 {
+	None,
 	SemiAuto, // 단발 사격
 	FullAuto, // 연발 사격
 	// Burst, // 점사
