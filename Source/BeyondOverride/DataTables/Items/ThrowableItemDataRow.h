@@ -18,6 +18,8 @@ struct BEYONDOVERRIDE_API FThrowableItemDataRow : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float Radius; // 범위
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+	float ThrowDuration; // 투척에 걸리는 시간
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	float ActivationDelay; // 투척 후 활성화까지 시간
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
