@@ -75,7 +75,18 @@ bool UThrowableItemHandlerComponent::Use()
 
 bool UThrowableItemHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
+	if (!Super::CanAssign(InEquippableItemInstance))
+	{
 	return false;
+}
+
+	// 잘못된 아이템 타입
+	if (!InEquippableItemInstance->IsA(UThrowableItemInstance::StaticClass()))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool UThrowableItemHandlerComponent::CanUnassign() const
