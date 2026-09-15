@@ -43,6 +43,8 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 
 	bool FoldFlags(EFlag Target);
 
+	bool FoldFlags(EFlag Target, bool& Type);
+
 	void StateChange(EMonsterState Input);
 
 	void StateChange(EMonsterState Input, float HoldTime);

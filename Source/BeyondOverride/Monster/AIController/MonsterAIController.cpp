@@ -129,6 +129,11 @@ bool AMonsterAIController::FoldFlags(EFlag Target)
 	return Flag->FoldFlags(Target);
 }
 
+bool AMonsterAIController::FoldFlags(EFlag Target, bool& Type)
+{
+	return Flag->FoldFlags(Target, Type);
+}
+
 void AMonsterAIController::StateChange(EMonsterState Input)
 {
 	State->StateChange(Input);
@@ -141,7 +146,6 @@ void AMonsterAIController::StateChange(EMonsterState Input, float HoldTime)
 
 EMonsterState AMonsterAIController::GetState() const
 {
-
 	return State->GetState();
 }
 
