@@ -3,6 +3,7 @@
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
+#include "Enums/FireMode.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "Items/Objects/EquippableItemInstance.h"
@@ -21,6 +22,9 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 
 	// 반동 적용 속도
 	RecoilApplySpeed = 10;
+
+	// 활성화 여부
+	bIsActive = false;
 }
 
 void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -122,50 +126,22 @@ bool URangeWeaponHandlerComponent::Unequip()
 
 bool URangeWeaponHandlerComponent::Use()
 {
-	// 사격 불가
-	if (!CanFire())
-	{
-		return false;
-	}
-
-	// 총구 위치 & 방향
-	const FVector MuzzleLocation = GetMuzzleLocation();
-	const FRotator AimRotation = GetAimRotation();
-
-	// 총알 소환
-	ABulletProjectile* Bullet = SpawnBullet();
-	if (!Bullet) // 소환 실패
-	{
-		return false;
-	}
-
-	// 재장전 중이면, 취소 후 사격
-	OnReloadInterrupted();
-
-	// 반동 추가
-	AddRecoil();
-
-	// 사격 애니메이션 재생
-	PlayFireAnimation();
-
-	// 탄약 소모
-	RangeWeaponInstance->ConsumeAmmo();
-
-	// 사격 쿨다운 설정
-	StartFireTimer();
-
-	// 사격 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
-
-	return true;
+	return false;
 }
 
 void URangeWeaponHandlerComponent::StartAction()
 {
+	// 활성화 플래그 설정
+	bIsActive = true;
+
+	// 사격
+	Fire();
 }
 
 void URangeWeaponHandlerComponent::EndAction()
 {
+	// 활성화 플래그 제거
+	bIsActive = false;
 }
 
 bool URangeWeaponHandlerComponent::Reload()
@@ -238,6 +214,44 @@ bool URangeWeaponHandlerComponent::CanUse() const
 	}
 
 	return true;
+}
+
+void URangeWeaponHandlerComponent::Fire()
+{
+	// 사격 불가
+	if (!CanFire())
+	{
+		return;
+	}
+
+	// 총구 위치 & 방향
+	const FVector MuzzleLocation = GetMuzzleLocation();
+	const FRotator AimRotation = GetAimRotation();
+
+	// 총알 소환
+	ABulletProjectile* Bullet = SpawnBullet();
+	if (!Bullet) // 소환 실패
+	{
+		return;
+	}
+
+	// 재장전 중이면, 취소 후 사격
+	OnReloadInterrupted();
+
+	// 반동 추가
+	AddRecoil();
+
+	// 사격 애니메이션 재생
+	PlayFireAnimation();
+
+	// 탄약 소모
+	RangeWeaponInstance->ConsumeAmmo();
+
+	// 사격 쿨다운 설정
+	StartFireTimer();
+
+	// 사격 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
 }
 
 bool URangeWeaponHandlerComponent::CanFire() const
@@ -544,6 +558,8 @@ void URangeWeaponHandlerComponent::StartFireTimer()
 	// 사격 타이머 활성화
 	GetWorld()->GetTimerManager().SetTimer(
 		FireTimerHandle,
+		this,
+		&URangeWeaponHandlerComponent::OnFireCompleted,
 		RangeWeaponData->FireRate,
 		false);
 }
@@ -649,6 +665,35 @@ void URangeWeaponHandlerComponent::StopReloadAnimation()
 	}
 
 	EquipMeshComponent->Stop();
+}
+
+void URangeWeaponHandlerComponent::OnFireCompleted()
+{
+	// 등록된 장비 없음
+	if (!RangeWeaponInstance)
+	{
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+	if (!RangeWeaponData)
+	{
+		return;
+	}
+
+	// 타이머를 명시적으로 제거
+	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+
+	// 사격 모드
+	const EFireMode FireMode = RangeWeaponData->FireMode;
+
+	// 활성화 & FullAuto -> 반복 사격
+	if (bIsActive && FireMode == EFireMode::FullAuto)
+	{
+		// 사격
+		Fire();
+	}
 }
 
 void URangeWeaponHandlerComponent::OnReloadStarted()

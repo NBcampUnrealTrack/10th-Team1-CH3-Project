@@ -80,6 +80,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual bool CanUse() const override;
 
   protected:
+	// 활성화 여부
+	bool bIsActive;
+
 	// 사격 타이머
 	FTimerHandle FireTimerHandle;
 	// 재장전 타이머
@@ -99,6 +102,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FTimeline SpreadDegreeTimeline;
 
   protected:
+	// 사격
+	void Fire();
+
 	// 사격 가능 여부 반환
 	bool CanFire() const;
 	// 재장전 가능 여부 반환
@@ -137,9 +143,12 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	void StopReloadAnimation();
 
   protected:
+	// 사격 종료 시 호출
+	void OnFireCompleted();
+
 	// 재장전 시작 시 호출
 	void OnReloadStarted();
-	// 재장전 완료 시 호출
+	// 재장전 종료 시 호출
 	void OnReloadCompleted();
 	// 재장전 중단 시 호출
 	void OnReloadInterrupted();
