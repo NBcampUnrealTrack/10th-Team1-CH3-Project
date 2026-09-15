@@ -2,10 +2,12 @@
 
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
+#include "ActorComponents/ThrowableItemHandlerComponent.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/ItemInstanceBase.h"
+#include "Items/Objects/ThrowableItemInstance.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
@@ -17,6 +19,7 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Melee, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("MeleeWeapon Handler Component")));
+	EquipmentHandlerComponents.Add(EEquipmentSlot::Throwable, CreateDefaultSubobject<UThrowableItemHandlerComponent>(TEXT("ThrowableItem Handler Component")));
 }
 
 EEquipmentSlot UEquipmentManagerComponent::GetActiveSlot() const
@@ -214,7 +217,10 @@ UItemInstanceBase* UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 	}
 
 	// 비무장 슬롯 전환
-	Equip(EEquipmentSlot::Unarmed);
+	if (ActiveSlot == Slot)
+	{
+		Equip(EEquipmentSlot::Unarmed);
+	}
 
 	// 제거한 장비 반환
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 성공 - 슬롯의 장비 제거 성공"), *UEnum::GetValueAsString(Slot));
@@ -242,6 +248,17 @@ void UEquipmentManagerComponent::BindDelegates()
 			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
 		}
 	}
+
+	// Throwable
+	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Throwable))
+	{
+		if (UThrowableItemHandlerComponent* ThrowableItemHandler = Cast<UThrowableItemHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Throwable]))
+		{
+			ThrowableItemHandler->OnCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnEquipmentCountUpdated);
+		}
+	}
+
+	// Effect
 }
 
 bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
@@ -266,4 +283,25 @@ int32 UEquipmentManagerComponent::OnRequestReloadAmmo(URangeWeaponInstance* Rang
 
 	// 재장전에 사용할 탄약 개수 전달
 	return RequestReloadAmmoDelegate.Execute(RangeWeaponInstance);
+}
+
+void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance) const
+{
+	if (!OnEquipmentStackCountUpdatedDelegate.IsBound())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장비 개수 변경 이벤트 송출 실패 - OnEquipmentCountUpdatedDelegate is not Bound"));
+		return;
+	}
+
+	// 슬롯과 장비 인스턴스 송출
+	if (EquippableItemInstance->IsA(UThrowableItemInstance::StaticClass()))
+	{
+		OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Throwable, EquippableItemInstance);
+	}
+	// else if (EquippableItemInstance->IsA(UEffectItemInstance::StaticClass()))
+	// {
+	//	OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Effect, EquippableItemInstance);
+	// }
+
+	// TODO: 캐릭터에서 해당 델리게이트 바인딩. 개수가 0개면 제거 수행
 }

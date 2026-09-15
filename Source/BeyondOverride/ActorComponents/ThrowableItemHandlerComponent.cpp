@@ -71,6 +71,13 @@ bool UThrowableItemHandlerComponent::Use()
 	// 투척 시작
 	StartThrow();
 
+	// 사용 후 개수 차감
+	const int Count = ThrowableItemInstance->GetStackCount();
+	ThrowableItemInstance->SetStackCount(Count - 1);
+
+	// 사용 후 개수 변경 델리게이트 송출
+	OnCountUpdatedDelegate.Broadcast(ThrowableItemInstance);
+
 	return true;
 }
 

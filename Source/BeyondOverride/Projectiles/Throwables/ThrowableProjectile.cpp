@@ -7,7 +7,7 @@ AThrowableProjectile::AThrowableProjectile()
 {
 	// StaticMesh 생성
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	StaticMesh->SetupAttachment(GetRootComponent());
+	SetRootComponent(StaticMesh);
 
 	StaticMesh->SetSimulatePhysics(false);
 	StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
