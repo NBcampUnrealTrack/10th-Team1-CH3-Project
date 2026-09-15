@@ -13,6 +13,7 @@ class UItemSlotWidget;
 class UItemInstanceBase;
 class AItemPickupBase;
 class UPanelFrameWidget;
+class UNearbyItemComponent;
 
 UENUM()
 enum class EItemSlotPanelMode : uint8
@@ -28,14 +29,14 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 
   protected:
 	virtual void NativeDestruct() override;
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override; 
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
   public:
 	UItemSlotPanelWidget(const FObjectInitializer& ObjectInitializer);
 
 	void SetInventory(UInventoryComponent* InInventory, UInventoryInteractionComponent* InInteraction);
 
-	void SetWorldItems(const TArray<AItemPickupBase*>& InItems, UInventoryInteractionComponent* InInteraction);
+	void SetWorldItems(const TArray<AItemPickupBase*>& InItems, UNearbyItemComponent* InNearbyItemComponent, UInventoryInteractionComponent* InInteraction);
 
 	void RefreshSlots();
 
@@ -54,9 +55,11 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 	UPROPERTY(EditDefaultsOnly, Category = "Slot")
 	int32 ColumnCount = 5;
 
-
   private:
 	EItemSlotPanelMode Mode = EItemSlotPanelMode::WorldItems;
+
+	UPROPERTY()
+	TObjectPtr<UNearbyItemComponent> NearbyItemComponent;
 
 	UPROPERTY()
 	TObjectPtr<UInventoryComponent> InventoryComponent;

@@ -6,7 +6,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, int32, CurHealth, int32, MaxHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShieldChanged, int32, CurShield, int32, MaxShield);
-DECLARE_MULTICAST_DELEGATE(FOnDeath);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UStatComponent : public UActorComponent
@@ -16,6 +16,11 @@ class BEYONDOVERRIDE_API UStatComponent : public UActorComponent
 public:
 	void TakeDamage(int32 DamageAmount, AActor* DamageCauser);
 	void Heal(int32 HealAmount);
+
+	void GetCurHealth(int32 NewCurHealth) { CurHealth = NewCurHealth; }
+	void GetMaxHealth(int32 NewMaxHealth) { MaxHealth = NewMaxHealth; }
+	void GetCurShield(int32 NewCurShield) { CurShield = NewCurShield; }
+	void GetMaxShield(int32 NewMaxShield) { MaxShield = NewMaxShield; }
 
 	int32 GetCurHealth() const { return CurHealth; }
 	int32 GetMaxHealth() const { return MaxHealth; }

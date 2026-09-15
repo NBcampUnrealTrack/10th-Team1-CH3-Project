@@ -25,6 +25,9 @@ bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Melee Weapon 인스턴스 저장
 	MeleeWeaponInstance = Cast<UMeleeWeaponInstance>(EquippableItemInstance);
 
+	// Assign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3000, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 등록 성공
 	return true;
 }
@@ -40,6 +43,9 @@ UEquippableItemInstance* UMeleeWeaponHandlerComponent::Unassign()
 	// Melee Weapon 인스턴스 제거
 	MeleeWeaponInstance = nullptr;
 
+	// Unassign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3000, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 제거한 장비 반환
 	return OutEquippableItemInstance;
 }
@@ -51,6 +57,9 @@ bool UMeleeWeaponHandlerComponent::Equip()
 		return false;
 	}
 
+	// Equip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3001, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	return true;
 }
 
@@ -60,6 +69,9 @@ bool UMeleeWeaponHandlerComponent::Unequip()
 	{
 		return false;
 	}
+
+	// Unequip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3001, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
 	return true;
 }
@@ -111,11 +123,8 @@ bool UMeleeWeaponHandlerComponent::Use()
 		}
 	}
 
-	// 공격 애니메이션 재생
-	PlayAttackAnimation();
-
-	// 공격 타이머 활성화
-	StartAttackTimer();
+	// 공격 시작
+	OnAttackStarted();
 
 	return true;
 }
@@ -195,6 +204,24 @@ bool UMeleeWeaponHandlerComponent::CanAttack() const
 	return true;
 }
 
+void UMeleeWeaponHandlerComponent::OnAttackStarted()
+{
+	// 공격 애니메이션 재생
+	PlayAttackAnimation();
+
+	// 공격 타이머 활성화
+	StartAttackTimer();
+
+	// 공격 시작 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3002, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Attack Started - %s"), *GetNameSafe(EquippableItemInstance)));
+}
+
+void UMeleeWeaponHandlerComponent::OnAttackCompleted()
+{
+	// 공격 종료 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3002, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Attack Completed - %s"), *GetNameSafe(EquippableItemInstance)));
+}
+
 void UMeleeWeaponHandlerComponent::StartAttackTimer()
 {
 	// 데이터 유효성 검증
@@ -208,6 +235,8 @@ void UMeleeWeaponHandlerComponent::StartAttackTimer()
 	// 공격 타이머 활성화
 	GetWorld()->GetTimerManager().SetTimer(
 		AttackTimerHandle,
+		this,
+		&UMeleeWeaponHandlerComponent::OnAttackCompleted,
 		MeleeWeaponData->AttackInterval,
 		false);
 }

@@ -39,16 +39,12 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		if (IsValid(CurrentEquipmentData->FireHip))
 		{
-			bIsFireMontagePlaying |=
-				Montage_IsPlaying(
-					CurrentEquipmentData->FireHip);
+			bIsFireMontagePlaying |= Montage_IsPlaying(CurrentEquipmentData->FireHip);
 		}
 
 		if (IsValid(CurrentEquipmentData->FireAim))
 		{
-			bIsFireMontagePlaying |=
-				Montage_IsPlaying(
-					CurrentEquipmentData->FireAim);
+			bIsFireMontagePlaying |= Montage_IsPlaying(CurrentEquipmentData->FireAim);
 		}
 	}
 

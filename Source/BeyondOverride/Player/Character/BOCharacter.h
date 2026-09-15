@@ -14,11 +14,12 @@ class UPlayerInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
 class UNearbyItemComponent;
-class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
 class UEquippableItemInstance;
 class URangeWeaponInstance;
+
+class UAnimMontage;
 
 enum class EEquipmentSlot : uint8;
 
@@ -35,13 +36,19 @@ public:
 	UInventoryInteractionComponent* GetInventoryInteractionComponent() const { return InventoryInteractionComponent; }
 	UNearbyItemComponent* GetNearbyItemComponent() const { return NearbyItemComponent; }
 
-	const bool GetIsAiming() const { return bIsAiming; }
+	bool GetIsAiming() const { return bIsAiming; }
 
+	UFUNCTION(BlueprintCallable)
+	void SetMovementEnabled(bool bEnabled);
+
+	UFUNCTION(BlueprintPure)
+	bool IsMovementEnabled() const { return bMovementEnabled; }
 public:
 	ABOCharacter();
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -49,10 +56,17 @@ protected:
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DeathMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> RollMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Roll")
+	float RollSpeed = 600.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -108,6 +122,8 @@ private:
 	UFUNCTION()
 	void Reload(const FInputActionValue& value);
 	UFUNCTION()
+	void Roll(const FInputActionValue& Value);
+	UFUNCTION()
 	void InteractPress(const FInputActionValue& value);
 	UFUNCTION()
 	void InteractRelease(const FInputActionValue& value);
@@ -133,11 +149,25 @@ private:
 
 	void ChangeMoveSpeed();
 
+	bool bIsRolling = false;
 	bool bIsSprint = false;
 	bool bIsAiming = false;
+	bool bMovementEnabled = true;
 
 	UFUNCTION(Exec)
 	void AddTestItem(FName ItemID, int32 Count = 1);
+	UFUNCTION()
+	void OnMenuOpenStateChanged(bool bAnyMenuOpen);
+	void UpdateMovementEnabled();
+
+	// 사망 관련
+	UFUNCTION()
+	void HandleDeath(AActor* DamageCauser);
+	void FinishPlayerDeath();
+
+	TWeakObjectPtr<AActor> DeathDamageCauser;
+	bool bDeathSequenceFinished = false;
+
 
 public:
 	// 장비 슬롯에 아이템 등록 및 해제
@@ -153,4 +183,15 @@ public:
 	// EquipmentManagerComponent - Range Weapon 델리게이트 연결 이벤트
 	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
 	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);
+
+private:
+	FTimerHandle DeathTimerHandle;
+
+	FVector2D MoveInput = FVector2D::ZeroVector;
+	FVector RollDirection = FVector::ZeroVector;
+
+	FName GetRollSectionName() const;
+
+	FVector GetRollDirection() const;
+	void OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 };

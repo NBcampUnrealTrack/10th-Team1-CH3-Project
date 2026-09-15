@@ -53,6 +53,11 @@ class BEYONDOVERRIDE_API UMeleeWeaponHandlerComponent : public UEquipmentHandler
 	// 공격 가능 여부
 	bool CanAttack() const;
 
+	// 공격 시작
+	void OnAttackStarted();
+	// 공격 종료
+	void OnAttackCompleted();
+
 	// 공격 타이머 시작
 	void StartAttackTimer();
 

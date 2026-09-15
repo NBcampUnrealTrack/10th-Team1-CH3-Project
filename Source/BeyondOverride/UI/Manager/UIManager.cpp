@@ -93,6 +93,8 @@ UUserWidget* UUIManager::ShowScreen(EUIScreen Screen, EUIInputMode InputMode)
 		ApplyInputMode(InputMode, NewWidget);
 	}
 
+	NotifyMenuOpenStateChanged();
+
 	return NewWidget;
 }
 
@@ -120,6 +122,8 @@ UUserWidget* UUIManager::PushScreen(EUIScreen Screen, EUIInputMode InputMode)
 		NewWidget->AddToViewport(ScreenStack.Num() + 1);
 		ScreenStack.Add({ NewWidget, Screen, InputMode });
 		ApplyInputMode(InputMode, NewWidget);
+
+		NotifyMenuOpenStateChanged();
 	}
 
 	return NewWidget;
@@ -141,10 +145,13 @@ void UUIManager::PopScreen()
 	if (ScreenStack.Num() == 0)
 	{
 		ApplyInputMode(EUIInputMode::GameOnly, nullptr);
+		NotifyMenuOpenStateChanged();
 		return;
 	}
 	const FUIScreenEntry& ChangedCurrent = ScreenStack.Last();
 	ApplyInputMode(ChangedCurrent.InputMode, ChangedCurrent.Widget);
+
+	NotifyMenuOpenStateChanged();
 }
 
 void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
@@ -201,6 +208,20 @@ void UUIManager::CenterMouseCursor(APlayerController* PC)
 		FMath::RoundToInt(ViewportSize.Y * 0.5f));
 }
 
+void UUIManager::NotifyMenuOpenStateChanged()
+{
+	const bool bAnyMenuOpen = IsAnyMenuOpen();
+
+	if (bLastAnyMenuOpen == bAnyMenuOpen)
+	{
+		return;
+	}
+
+	bLastAnyMenuOpen = bAnyMenuOpen;
+
+	OnMenuOpenStateChanged.Broadcast(IsAnyMenuOpen());
+}
+
 void UUIManager::BindInteractPrompt(UInteractComponent* InteractComponent)
 {
 	if (!InteractComponent)
@@ -229,5 +250,13 @@ void UUIManager::BindInteractPrompt(UInteractComponent* InteractComponent)
 
 bool UUIManager::IsAnyMenuOpen() const
 {
-	return ScreenStack.Num() >= 2;
+	for (const FUIScreenEntry& Entry : ScreenStack)
+	{
+		if (Entry.Screen != EUIScreen::HUD && Entry.Screen != EUIScreen::None)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

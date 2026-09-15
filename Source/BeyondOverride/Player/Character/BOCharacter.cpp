@@ -24,6 +24,10 @@
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "GameFlow/BOGameMode.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -54,6 +58,17 @@ ABOCharacter::ABOCharacter()
 void ABOCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (IsValid(StatComponent))
+	{
+		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
+	}
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->OnMenuOpenStateChanged.AddDynamic(this, &ABOCharacter::OnMenuOpenStateChanged);
+		OnMenuOpenStateChanged(UIManager->IsAnyMenuOpen());
+	}
 
 	if (IsValid(Camera))
 	{
@@ -92,19 +107,47 @@ void ABOCharacter::BeginPlay()
 	}
 }
 
+void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (IsValid(StatComponent))
+	{
+		StatComponent->OnDeath.RemoveAll(this);
+	}
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->OnMenuOpenStateChanged.RemoveDynamic(this, &ABOCharacter::OnMenuOpenStateChanged);
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 void ABOCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!IsValid(Camera))
+	if (bIsRolling)
 	{
-		return;
+		UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+		if (!IsValid(MovementComponent))
+		{
+			return;
+		}
+
+		const FVector RollVelocity = RollDirection * RollSpeed;
+
+		MovementComponent->Velocity.X = RollVelocity.X;
+		MovementComponent->Velocity.Y = RollVelocity.Y;
 	}
 
-	const float TargetFOV = bIsAiming ? AimFOV : DefaultFOV;
-	const float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomSpeed);
+	if (IsValid(Camera))
+	{
+		const float TargetFOV = bIsAiming ? AimFOV : DefaultFOV;
+		const float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomSpeed);
 
-	Camera->SetFieldOfView(NewFOV);
+		Camera->SetFieldOfView(NewFOV);
+	}
 }
 
 void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -118,6 +161,8 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->MoveAction)
 			{
 				EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Triggered, this, &ABOCharacter::Move);
+				EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Completed, this, &ABOCharacter::Move);
+				EnhancedInput->BindAction(PlayerController->MoveAction, ETriggerEvent::Canceled, this, &ABOCharacter::Move);
 			}
 
 			if (PlayerController->LookAction)
@@ -157,6 +202,11 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->ReloadAction)
 			{
 				EnhancedInput->BindAction(PlayerController->ReloadAction, ETriggerEvent::Started, this, &ABOCharacter::Reload);
+			}
+
+			if (PlayerController->RollAction)
+			{
+				EnhancedInput->BindAction(PlayerController->RollAction, ETriggerEvent::Started, this, &ABOCharacter::Roll);
 			}
 
 			if (PlayerController->InteractAction)
@@ -233,20 +283,48 @@ void ABOCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdj
 	ChangeMoveSpeed();
 }
 
+void ABOCharacter::SetMovementEnabled(bool bEnabled)
+{
+	if (bMovementEnabled == bEnabled)
+	{
+		return;
+	}
+
+	bMovementEnabled = bEnabled;
+
+	AController* CharacterController = GetController();
+
+	if (IsValid(CharacterController))
+	{
+		CharacterController->SetIgnoreMoveInput(!bEnabled);
+	}
+
+	if (!bEnabled)
+	{
+		bIsSprint = false;
+
+		if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+		{
+			MovementComponent->StopMovementImmediately();
+		}
+
+		ChangeMoveSpeed();
+	}
+}
+
 void ABOCharacter::Move(const FInputActionValue& value)
 {
 	if (!Controller)
-		return;
-
-	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
-		if (UIManager->IsAnyMenuOpen())
-		{
-			return;
-		}
+		return;
 	}
 
-	const FVector2D MoveInput = value.Get<FVector2D>();
+	MoveInput = value.Get<FVector2D>();
+
+	if (!bMovementEnabled || bIsRolling)
+	{
+		return;
+	}
 
 	if (!FMath::IsNearlyZero(MoveInput.X))
 	{
@@ -269,6 +347,11 @@ void ABOCharacter::Look(const FInputActionValue& value)
 
 void ABOCharacter::StartJump(const FInputActionValue& value)
 {
+	if (!bMovementEnabled)
+	{
+		return;
+	}
+
 	Jump();
 }
 
@@ -279,6 +362,11 @@ void ABOCharacter::StopJump(const FInputActionValue& value)
 
 void ABOCharacter::StartSprint(const FInputActionValue& value)
 {
+	if (!bMovementEnabled)
+	{
+		return;
+	}
+
 	bIsSprint = true;
 	ChangeMoveSpeed();
 }
@@ -291,6 +379,11 @@ void ABOCharacter::StopSprint(const FInputActionValue& value)
 
 void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 {
+	if (!bMovementEnabled)
+	{
+		return;
+	}
+
 	if (bIsCrouched)
 	{
 		UnCrouch();
@@ -303,6 +396,11 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
+	if (bIsRolling)
+	{
+		return;
+	}
+
 	// 현재 장비 사용 시도
 	if (!EquipmentManagerComponent || !EquipmentManagerComponent->Use())
 	{
@@ -337,6 +435,11 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
+	if (bIsRolling)
+	{
+		return;
+	}
+
 	// 장비 재장전
 	if (EquipmentManagerComponent)
 	{
@@ -362,6 +465,72 @@ void ABOCharacter::Reload(const FInputActionValue& value)
 	{
 		AnimInstance->PlayReloadHipMontage();
 	}
+}
+
+void ABOCharacter::Roll(const FInputActionValue& Value)
+{
+	/*if (!IsValid(RollMontage) || !IsValid(GetMesh()))
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	if (AnimInstance->Montage_IsPlaying(RollMontage))
+	{
+		return;
+	}
+
+	const FName SectionName = GetRollSectionName();
+
+	const float Duration = AnimInstance->Montage_Play(RollMontage);
+
+	if (Duration <= 0.0f)
+	{
+		return;
+	}
+
+	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);*/
+
+	if (bIsRolling || !IsValid(RollMontage) || !IsValid(GetMesh()))
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	const FName SectionName = GetRollSectionName();
+
+	RollDirection = GetRollDirection();
+	ConsumeMovementInputVector();
+	bIsRolling = true;
+
+	const float Duration = AnimInstance->Montage_Play(RollMontage);
+
+	if (Duration <= 0.0f)
+	{
+		bIsRolling = false;
+		RollDirection = FVector::ZeroVector;
+		return;
+	}
+
+	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);
+
+	FOnMontageEnded MontageEndedDelegate;
+
+	MontageEndedDelegate.BindUObject(this, &ABOCharacter::OnRollMontageEnded);
+
+	AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, RollMontage);
 }
 
 void ABOCharacter::Aim(const FInputActionValue& value)
@@ -588,6 +757,102 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 	}
 }
 
+void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
+{
+	UpdateMovementEnabled();
+}
+
+void ABOCharacter::UpdateMovementEnabled()
+{
+	const bool bIsDead = IsValid(StatComponent) && StatComponent->GetIsDead();
+
+	const UUIManager* UIManager = UUIManager::Get(this);
+
+	const bool bAnyMenuOpen = IsValid(UIManager) && UIManager->IsAnyMenuOpen();
+
+	SetMovementEnabled(!bIsDead && !bAnyMenuOpen);
+}
+
+void ABOCharacter::HandleDeath(AActor* DamageCauser)
+{
+	DeathDamageCauser = DamageCauser;
+	bDeathSequenceFinished = false;
+
+	// 사망 상태를 반영하여 이동 차단
+	UpdateMovementEnabled();
+
+	if (IsValid(InteractComponent))
+	{
+		InteractComponent->SetInteractionEnabled(false);
+	}
+
+	// 달리기와 조준 해제
+	bIsSprint = false;
+	bIsAiming = false;
+
+	ChangeMoveSpeed();
+
+	if (IsValid(EquipmentManagerComponent))
+	{
+		EquipmentManagerComponent->Unequip();
+	}
+
+	if (!IsValid(DeathMontage) || !IsValid(GetMesh()))
+	{
+		FinishPlayerDeath();
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (!IsValid(AnimInstance))
+	{
+		FinishPlayerDeath();
+		return;
+	}
+
+	const float MontageDuration = AnimInstance->Montage_Play(DeathMontage);
+
+	if (MontageDuration <= 0.0f)
+	{
+		FinishPlayerDeath();
+		return;
+	}
+
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ABOCharacter::FinishPlayerDeath, MontageDuration, false);
+}
+
+void ABOCharacter::FinishPlayerDeath()
+{
+	if (bDeathSequenceFinished)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return;
+	}
+
+	ABOGameMode* GameMode = World->GetAuthGameMode<ABOGameMode>();
+
+	if (!IsValid(GameMode))
+	{
+		return;
+	}
+
+	bDeathSequenceFinished = true;
+
+	if (AMonsterCharacter* KillerMonster = Cast<AMonsterCharacter>(DeathDamageCauser.Get()))
+	{
+		// GameMode->SetKillerMonster(KillerMonster->GetId());
+	}
+
+	GameMode->EndFarming(EFarmingResult::Fail);
+}
+
 void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
 {
 	if (!IsValid(PlayerInventoryComponent) || !IsValid(EquipmentManagerComponent))
@@ -661,6 +926,95 @@ int32 ABOCharacter::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstanc
 {
 	// TEMP: 재장전 탄약 충분
 	return 100;
+}
+
+FName ABOCharacter::GetRollSectionName() const
+{
+	if (MoveInput.IsNearlyZero())
+	{
+		return TEXT("Roll_F");
+	}
+
+	const float Angle = FMath::RadiansToDegrees(FMath::Atan2(MoveInput.Y, MoveInput.X));
+
+	// W
+	if (Angle >= -22.5f && Angle < 22.5f)
+	{
+		return TEXT("Roll_F");
+	}
+
+	// W + D
+	if (Angle >= 22.5f && Angle < 67.5f)
+	{
+		return TEXT("Roll_FR");
+	}
+
+	// D
+	if (Angle >= 67.5f && Angle < 112.5f)
+	{
+		return TEXT("Roll_R");
+	}
+
+	// S + D
+	if (Angle >= 112.5f && Angle < 157.5f)
+	{
+		return TEXT("Roll_BR");
+	}
+
+	// S
+	if (Angle >= 157.5f || Angle < -157.5f)
+	{
+		return TEXT("Roll_B");
+	}
+
+	// S + A
+	if (Angle >= -157.5f && Angle < -112.5f)
+	{
+		return TEXT("Roll_BL");
+	}
+
+	// A
+	if (Angle >= -112.5f && Angle < -67.5f)
+	{
+		return TEXT("Roll_L");
+	}
+
+	// W + A
+	return TEXT("Roll_FL");
+}
+
+FVector ABOCharacter::GetRollDirection() const
+{
+	FVector Direction = GetActorForwardVector() * MoveInput.X + GetActorRightVector() * MoveInput.Y;
+
+	Direction.Z = 0.0f;
+
+	if (Direction.IsNearlyZero())
+	{
+		Direction = GetActorForwardVector();
+		Direction.Z = 0.0f;
+	}
+
+	return Direction.GetSafeNormal();
+}
+
+void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage != RollMontage)
+	{
+		return;
+	}
+
+	bIsRolling = false;
+	RollDirection = FVector::ZeroVector;
+
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+	if (IsValid(MovementComponent))
+	{
+		MovementComponent->Velocity.X = 0.0f;
+		MovementComponent->Velocity.Y = 0.0f;
+	}
 }
 
 void ABOCharacter::AddTestItem(FName ItemID, int32 Count)

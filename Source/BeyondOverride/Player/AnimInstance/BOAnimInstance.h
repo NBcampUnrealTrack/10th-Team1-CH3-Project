@@ -50,10 +50,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Aim")
 	float AimPitch = 0.0f;
 
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentHipIdle = nullptr;
-	//UPROPERTY(BlueprintReadOnly, Category = "Equipment")
-	//UAnimSequenceBase* EquipmentAimIdle = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	UBlendSpace* EquipmentHipLocomotion = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
@@ -67,4 +63,5 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	const UEquipmentAnimationDataAsset* CurrentEquipmentData = nullptr;
+
 };

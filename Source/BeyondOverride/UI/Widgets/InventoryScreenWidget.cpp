@@ -1,7 +1,10 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
 #include "Blueprint/WidgetTree.h"
+#include "Items/Actors/ItemPickupBase.h"
+#include "Player/Character/BOCharacter.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "UI/Widgets/EquipmentSlotWidget.h"
@@ -26,6 +29,12 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (ContainerSlotPanel)
 	{
 		ContainerSlotPanel->SetContainerName(FText::FromString(TEXT("주변")));
+
+		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
+		{
+			PlayerNearbyItemComponent->OnNearbyItemsChanged.AddDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
+			ContainerSlotPanel->SetWorldItems(PlayerNearbyItemComponent->GetItemPickups(), PlayerNearbyItemComponent, OwnerCharacter->GetInventoryInteractionComponent());
+		}
 	}
 
 	if (HeldItem)
@@ -36,14 +45,14 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (WidgetTree)
 	{
 		WidgetTree->ForEachWidget([OwnerCharacter](UWidget* Widget)
-								  { 
-			if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget)) 
 			{
-				EquipmentSlot->SetupEquipmentSlot(
-					OwnerCharacter->GetPlayerInventoryComponent(),
-					OwnerCharacter->GetInventoryInteractionComponent(),
-					OwnerCharacter->GetEquipmentComponent());
-		} });
+				if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget))
+				{
+					EquipmentSlot->SetupEquipmentSlot(
+						OwnerCharacter->GetPlayerInventoryComponent(),
+						OwnerCharacter->GetInventoryInteractionComponent(),
+						OwnerCharacter->GetEquipmentComponent());
+				} });
 	}
 }
 
@@ -67,6 +76,34 @@ FReply UInventoryScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeomet
 	return FReply::Unhandled();
 }
 
+void UInventoryScreenWidget::NativeDestruct()
+{
+	APawn* OwningPawn = GetOwningPlayerPawn();
+	ABOCharacter* Character = Cast<ABOCharacter>(OwningPawn);
+
+	if (IsValid(Character))
+	{
+		UInventoryInteractionComponent* InteractionComponent = Character->GetInventoryInteractionComponent();
+
+		if (IsValid(InteractionComponent) && InteractionComponent->IsHoldingItem())
+		{
+			// 손에 들고 있는 아이템 전부 버리기
+			InteractionComponent->DropItem(true);
+		}
+	}
+
+	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
+	if (OwnerCharacter)
+	{
+		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
+		{
+			PlayerNearbyItemComponent->OnNearbyItemsChanged.RemoveDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
+		}
+	}
+
+	Super::NativeDestruct();
+}
+
 void UInventoryScreenWidget::OpenContainer(UInventoryComponent* ContainerInventory, const FText& ContainerName)
 {
 	if (!ContainerSlotPanel || !ContainerInventory)
@@ -86,4 +123,16 @@ void UInventoryScreenWidget::CloseContainer()
 		return;
 
 	ContainerSlotPanel->SetInventory(nullptr, nullptr);
+}
+
+void UInventoryScreenWidget::OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems)
+{
+	if (!ContainerSlotPanel)
+		return;
+
+	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
+	if (!OwnerCharacter)
+		return;
+
+	ContainerSlotPanel->SetWorldItems(NearbyItems, OwnerCharacter->GetNearbyItemComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 }
