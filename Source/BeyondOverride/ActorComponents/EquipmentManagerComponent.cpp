@@ -252,6 +252,7 @@ void UEquipmentManagerComponent::BindDelegates()
 	{
 		if (URangeWeaponHandlerComponent* PrimaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Primary]))
 		{
+			PrimaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
 			PrimaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
 			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
 		}
@@ -262,6 +263,7 @@ void UEquipmentManagerComponent::BindDelegates()
 	{
 		if (URangeWeaponHandlerComponent* SecondaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Secondary]))
 		{
+			SecondaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
 			SecondaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
 			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
 		}
@@ -285,6 +287,11 @@ void UEquipmentManagerComponent::BindDelegates()
 			UtilityItemHandler->OnEffectAppliedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnEffectApplied);
 		}
 	}
+}
+
+void UEquipmentManagerComponent::OnFireExecuted() const
+{
+	OnFireExecutedDelegate.Broadcast();
 }
 
 bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
