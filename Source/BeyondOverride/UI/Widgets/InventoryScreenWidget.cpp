@@ -56,20 +56,6 @@ void UInventoryScreenWidget::NativeConstruct()
 	}
 }
 
-void UInventoryScreenWidget::NativeDestruct()
-{
-	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
-	if (OwnerCharacter)
-	{
-		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
-		{
-			PlayerNearbyItemComponent->OnNearbyItemsChanged.RemoveDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
-		}
-	}
-
-	Super::NativeDestruct();
-}
-
 FReply UInventoryScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
@@ -103,6 +89,15 @@ void UInventoryScreenWidget::NativeDestruct()
 		{
 			// 손에 들고 있는 아이템 전부 버리기
 			InteractionComponent->DropItem(true);
+		}
+	}
+
+	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
+	if (OwnerCharacter)
+	{
+		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
+		{
+			PlayerNearbyItemComponent->OnNearbyItemsChanged.RemoveDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
 		}
 	}
 
