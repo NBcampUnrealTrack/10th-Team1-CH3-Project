@@ -386,6 +386,11 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
+	if (bIsRolling)
+	{
+		return;
+	}
+
 	// 현재 장비 사용 시도
 	if (!EquipmentManagerComponent || !EquipmentManagerComponent->Use())
 	{
@@ -420,6 +425,11 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
+	if (bIsRolling)
+	{
+		return;
+	}
+
 	// 장비 재장전
 	if (EquipmentManagerComponent)
 	{
