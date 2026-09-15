@@ -2,9 +2,8 @@
 
 #include "GameFlow/State/BeginFarmingState.h"
 
-#include "../Manager/ContainerManager.h"
-#include "../Manager/ExitManager.h"
-#include "../Manager/SpawnVolumeManager.h"
+#include "GameFlow/BOWorldSubsystem.h"
+#include "GameFlow/Manager/RegionManager.h"
 #include "Kismet/GameplayStatics.h"
 
 void UBeginFarmingState::Enter()
@@ -12,72 +11,35 @@ void UBeginFarmingState::Enter()
 	UE_LOG(LogTemp, Warning, TEXT("Begin Enter"));
 	Super::Enter();
 
-	SpawnCharacter();
-	SpawnAI();
-	ActivateContainer();
-	ActivateExit();
+	InitRegions();
+	SetStartTime();
 
 	ChangeState(EFarmingState::Progress);
 }
 
-void UBeginFarmingState::SpawnCharacter()
-{
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	APawn* Character = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-
-	if (!PlayerController || !Character || !GetWorld() || !GetWorld()->GetGameInstance())
-	{
-		return;
-	}
-
-	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
-	{
-		if (AActor* Exit = ExitManager->SelectRandomExit())
-		{
-			FVector ExitLocation = Exit->GetActorLocation();
-			FRotator ExitRotation = Exit->GetActorRotation();
-
-			Character->TeleportTo(ExitLocation, ExitRotation);
-			PlayerController->SetControlRotation(ExitRotation);
-		}
-	}
-}
-
-void UBeginFarmingState::SpawnAI()
+void UBeginFarmingState::InitRegions()
 {
 	if (!GetWorld() || !GetWorld()->GetGameInstance())
 	{
 		return;
 	}
 
-	if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
+	if (URegionManager* RegionManager = GetWorld()->GetGameInstance()->GetSubsystem<URegionManager>())
 	{
-		SpawnVolumeManager->SpawnAI();
+		RegionManager->InitSetting();
 	}
 }
 
-void UBeginFarmingState::ActivateContainer()
+void UBeginFarmingState::SetStartTime()
 {
-	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	if (!GetWorld())
 	{
 		return;
 	}
 
-	if (UContainerManager* ContainerManager = GetWorld()->GetGameInstance()->GetSubsystem<UContainerManager>())
+	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
 	{
-		ContainerManager->ActivateContainer();
-	}
-}
-
-void UBeginFarmingState::ActivateExit()
-{
-	if (!GetWorld() || !GetWorld()->GetGameInstance())
-	{
-		return;
-	}
-
-	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
-	{
-		ExitManager->ActivateExit();
+		UE_LOG(LogTemp, Warning, TEXT("Set Start Time"));
+		WorldSubsystem->SetStartTime();
 	}
 }

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "../BOEnums.h"
+#include "../../Enums/BOEnums.h"
 #include "UObject/NoExportTypes.h"
 
 #include "BaseFarmingState.generated.h"

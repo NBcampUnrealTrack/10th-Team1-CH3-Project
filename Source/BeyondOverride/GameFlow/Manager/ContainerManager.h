@@ -4,25 +4,34 @@
 
 #include "CoreMinimal.h"
 
+#include "DataTables/Farming/SpawnData.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 
 #include "ContainerManager.generated.h"
 
-/**
- *
- */
+class UItemInstanceBase;
+class AStorageContainerActor;
+
 UCLASS()
 class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-  public:
-	void Initialize();
-	void ActivateContainer();
+  private:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	void LoadContainerData();
 
   public:
-	TMap<FName, bool> LimitedItems;
+	void InitSetting(bool IsKeyCardAcquired);
+	void ActivateContainer();
+	void GetSpawnItems(AStorageContainerActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items);
+	FName AddRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries);
+
+	bool GetContainerData(FName ContainerId, FSpawnData& Data) const;
 
   private:
-	// TArray<TObjectPtr<AContainer>> Containers;
+	bool bShouldSpawnKeyCard;
+
+	TMap<FName, FSpawnData> ContainerDatas;
+	TMap<FName, TArray<TObjectPtr<AStorageContainerActor>>> ContainerByRegion;
 };

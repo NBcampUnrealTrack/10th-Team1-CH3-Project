@@ -23,6 +23,9 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 	UFUNCTION(BlueprintCallable, Category = "Extraction")
 	void SetControllerAvailable(bool bNewEnabled, const FText& Reason = FText::GetEmpty());
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exit")
+	FName RegionId = "Default";
+
 	UPROPERTY(BlueprintAssignable, Category = "Extraction")
 	FOnExtractControlRequested OnExtractControlRequested;
 
@@ -34,6 +37,7 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
 
+  public:
 	UPROPERTY(EditInstanceOnly, Category = "Extraction")
 	TObjectPtr<AExitActor> TargetExit;
 };

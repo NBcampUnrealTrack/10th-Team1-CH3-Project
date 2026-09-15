@@ -16,11 +16,6 @@ void UProgressFarmingState::Enter()
 	}
 
 	ShowHUDWidget();
-
-	if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
-	{
-		GameMode->EndFarming(EFarmingResult::Success);
-	}
 }
 
 void UProgressFarmingState::ShowHUDWidget()
