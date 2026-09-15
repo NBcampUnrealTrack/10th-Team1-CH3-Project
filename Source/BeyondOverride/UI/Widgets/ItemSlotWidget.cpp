@@ -3,7 +3,9 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "DataTables/Items/ItemDataRow.h"
+#include "DataTables/Items/RangeWeaponDataRow.h"
 #include "Items/Objects/ItemInstanceBase.h"
+#include "Items/Objects/RangeWeaponInstance.h"
 
 void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 {
@@ -11,7 +13,23 @@ void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 	{
 		if (IconImage)
 		{
-			IconImage->SetBrushFromTexture(bUseLongImg ? Item->GetItemData()->ItemIcon : Item->GetItemData()->ItemIcon);
+			UTexture2D* Icon = Item->GetItemData()->ItemIcon;
+
+			if (bUseLongImg)
+			{
+				if (URangeWeaponInstance* RangeWeapon = Cast<URangeWeaponInstance>(Item))
+				{
+					if (const FRangeWeaponDataRow* RangeData = RangeWeapon->GetRangeWeaponData())
+					{
+						if (RangeData->ItemIconLong)
+						{
+							Icon = RangeData->ItemIconLong;
+						}
+					}
+				}
+			}
+
+			IconImage->SetBrushFromTexture(Icon);
 			IconImage->SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
 
