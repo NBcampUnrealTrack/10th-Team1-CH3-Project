@@ -101,7 +101,7 @@ void UEquipmentSlotWidget::RefreshItem()
 
 	if (ItemSlot)
 	{
-		ItemSlot->SetItem(Item);
+		ItemSlot->SetItem(Item, true);
 	}
 
 	if (WpnName)

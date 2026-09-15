@@ -25,6 +25,11 @@ void UItemSlotPanelWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+FReply UItemSlotPanelWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	return FReply::Handled();
+}
+
 void UItemSlotPanelWidget::UnbindInventory()
 {
 	if (InventoryComponent)

@@ -28,6 +28,7 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 
   protected:
 	virtual void NativeDestruct() override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override; 
 
   public:
 	UItemSlotPanelWidget(const FObjectInitializer& ObjectInitializer);
