@@ -34,4 +34,12 @@
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleA/DA_EquipmentAnimation_AssaultRifleA.DA_EquipmentAnimation_AssaultRifleA'"
     }
+    ,
+    {
+        "Name": "BASIC_GRENADE",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/ThrowingWeapon/Grenade/SKM_Grenade.SKM_Grenade'",
+        "EquipSocketName": "Grenade",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Grenade/DA_EquipmentAnimation_Grenade.DA_EquipmentAnimation_Grenade'"
+    }
 ]
