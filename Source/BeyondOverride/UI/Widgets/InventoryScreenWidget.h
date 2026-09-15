@@ -21,7 +21,6 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual void NativeDestruct() override;
 
 public:
 	void OpenContainer(UInventoryComponent* ContainerInventory, const FText& ContainerName);
