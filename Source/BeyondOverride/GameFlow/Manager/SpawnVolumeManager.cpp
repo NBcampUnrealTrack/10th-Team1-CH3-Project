@@ -11,6 +11,7 @@ void USpawnVolumeManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	SpawnVolumeDatas.Empty();
+	PhaseDatas.Empty();
 
 	LoadSpawnVolumeData();
 	LoadPhaseData();
@@ -117,6 +118,7 @@ void USpawnVolumeManager::ActivateSpawnVolume(ASpawnVolume* SpawnVolume)
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Activate Spawn Volume"));
 	ActivatedSpawnVolumes.Add(SpawnVolume);
 	SpawnVolume->SpawnMonsters();
 }
