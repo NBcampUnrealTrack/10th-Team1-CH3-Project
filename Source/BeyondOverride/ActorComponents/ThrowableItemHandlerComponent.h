@@ -7,6 +7,7 @@
 #include "ThrowableItemHandlerComponent.generated.h"
 
 class UThrowableItemInstance;
+class AThrowableProjectile;
 
 UCLASS()
 class BEYONDOVERRIDE_API UThrowableItemHandlerComponent : public UEquipmentHandlerComponent
@@ -53,6 +54,17 @@ class BEYONDOVERRIDE_API UThrowableItemHandlerComponent : public UEquipmentHandl
 	// 투척 가능 여부
 	bool CanThrow() const;
 
-	// 투척 타이머 시작
-	void StartThrowTimer();
+	// 실제 목표 방향
+	FRotator GetAimRotation() const;
+	// 투척 시작 위치 반환
+	FVector GetThrowStartLocation() const;
+
+	// 투척 시작
+	void StartThrow();
+
+	// 투척 수행
+	void Throw();
+
+	// 투척 아이템 소환
+	AThrowableProjectile* SpawnThrowable();
 };
