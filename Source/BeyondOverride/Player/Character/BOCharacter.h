@@ -13,6 +13,7 @@ class UStatComponent;
 class UPlayerInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
+class UNearbyItemComponent;
 class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
@@ -32,6 +33,7 @@ public:
 	UPlayerInventoryComponent* GetPlayerInventoryComponent() const { return PlayerInventoryComponent; }
 	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
 	UInventoryInteractionComponent* GetInventoryInteractionComponent() const { return InventoryInteractionComponent; }
+	UNearbyItemComponent* GetNearbyItemComponent() const { return NearbyItemComponent; }
 
 	const bool GetIsAiming() const { return bIsAiming; }
 
@@ -77,6 +79,8 @@ protected:
 	UInventoryInteractionComponent* InventoryInteractionComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UInteractComponent* InteractComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UNearbyItemComponent* NearbyItemComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UEquipmentManagerComponent* EquipmentManagerComponent; // 장비 관리 컴포넌트
 

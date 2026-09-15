@@ -4,6 +4,7 @@
 #include "DataTables/Items/ItemDataRow.h"
 #include "Factory/ItemFactory.h"
 #include "Items/Actors/ItemPickupBase.h"
+#include "Player/ActorComponent/NearbyItemComponent.h"
 
 UInventoryInteractionComponent::UInventoryInteractionComponent()
 {
@@ -113,7 +114,7 @@ bool UInventoryInteractionComponent::HandleEquipmentSlotClick(UPlayerInventoryCo
 		return PlaceEquipmentOne(Inventory, Slot);
 	}
 
-	// 손에 아이템이 있음 + 같은 아이템
+	// 손에 아이템이 있음 + 장비 슬롯에도 같은 아이템이 있음
 	if (IsSameItem(HoldItem, SlotItem))
 	{
 		if (bLeftClick)
@@ -124,23 +125,102 @@ bool UInventoryInteractionComponent::HandleEquipmentSlotClick(UPlayerInventoryCo
 		return MergeEquipmentOne(Inventory, Slot);
 	}
 
-	// 손에 아이템이 있음 + 장비 슬롯에 아이템이 있음
+	// 손에 아이템이 있음 + 장비 슬롯에는 다른 아이템이 있음
 	return SwapEquipmentItem(Inventory, Slot);
 }
 
-bool UInventoryInteractionComponent::HandlePickupSlotClick(AItemPickupBase* ItemPickup, UInventoryComponent* TargetInventory)
+bool UInventoryInteractionComponent::HandleNearbySlotClick(UNearbyItemComponent* NearbyItemComponent, int32 SlotIndex, bool bLeftClick)
 {
-	return true;
+	if (!IsValid(NearbyItemComponent))
+	{
+		return false;
+	}
+
+	const int32 ItemCount = NearbyItemComponent->GetItemCount();
+
+	// 0 ~ ItemCount - 1: 실제 바닥 아이템
+	// ItemCount: 새 아이템을 버리는 빈 슬롯
+	if (SlotIndex < 0 || SlotIndex > ItemCount)
+	{
+		return false;
+	}
+
+	AItemPickupBase* ItemPickup = nullptr;
+
+	if (SlotIndex < ItemCount)
+	{
+		ItemPickup = NearbyItemComponent->GetItemPickup(SlotIndex);
+	}
+
+	UItemInstanceBase* PickupItem = nullptr;
+
+	if (IsValid(ItemPickup))
+	{
+		PickupItem = ItemPickup->GetItemInstance();
+	}
+
+	const bool bHoldingItem = IsValid(HoldItem);
+	const bool bSlotHasItem = IsValid(PickupItem);
+
+	// 손에 아무 것도 없음
+	if (!bHoldingItem)
+	{
+		if (!bSlotHasItem)
+		{
+			return false;
+		}
+
+		if (bLeftClick)
+		{
+			return PickupWorldAll(NearbyItemComponent, ItemPickup);
+		}
+
+		return PickupWorldHalf(NearbyItemComponent, ItemPickup);
+	}
+
+	// 손에 아이템이 있음 + 외부 슬롯이 비어 있음
+	if (!bSlotHasItem)
+	{
+		if (bLeftClick)
+		{
+			return DropAll(NearbyItemComponent);
+		}
+
+		return DropOne(NearbyItemComponent);
+	}
+
+	// 손에 아이템이 있음 + 외부 슬롯에도 같은 아이템이 있음
+	if (IsSameItem(HoldItem, PickupItem))
+	{
+		if (bLeftClick)
+		{
+			return MergeWorldAll(NearbyItemComponent, ItemPickup);
+		}
+
+		return MergeWorldOne(NearbyItemComponent, ItemPickup);
+	}
+
+	// 손에 아이템이 있음 + 외부 슬롯에는 다른 아이템이 있음
+	return SwapWorldItem(NearbyItemComponent, ItemPickup);
 }
 
 bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
 {
-	if (bLeftClick)
+	UNearbyItemComponent* NearbyItemComponent = nullptr;
+
+	AActor* Owner = GetOwner();
+
+	if (IsValid(Owner))
 	{
-		return DropAll();
+		NearbyItemComponent = Owner->FindComponentByClass<UNearbyItemComponent>();
 	}
 
-	return DropOne();
+	if (bLeftClick)
+	{
+		return DropAll(NearbyItemComponent);
+	}
+
+	return DropOne(NearbyItemComponent);
 }
 
 bool UInventoryInteractionComponent::IsHoldingItem() const
@@ -788,6 +868,233 @@ bool UInventoryInteractionComponent::SwapEquipmentItem(UPlayerInventoryComponent
 	return true;
 }
 
+bool UInventoryInteractionComponent::PickupWorldAll(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup)
+{
+	if (!IsValid(NearbyItemComponent) || !IsValid(ItemPickup))
+	{
+		return false;
+	}
+
+	if (IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* PickupItem = ItemPickup->GetItemInstance();
+
+	if (!IsValid(PickupItem))
+	{
+		return false;
+	}
+
+	HoldItem = PickupItem;
+
+	NearbyItemComponent->RemoveItemPickup(ItemPickup);
+
+	ItemPickup->Destroy();
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::PickupWorldHalf(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup)
+{
+	if (!IsValid(NearbyItemComponent) || !IsValid(ItemPickup))
+	{
+		return false;
+	}
+
+	if (IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* PickupItem = ItemPickup->GetItemInstance();
+
+	if (!IsValid(PickupItem))
+	{
+		return false;
+	}
+
+	const int32 StackCount = PickupItem->GetStackCount();
+
+	if (StackCount <= 1)
+	{
+		return PickupWorldAll(NearbyItemComponent, ItemPickup);
+	}
+
+	const int32 HoldCount = StackCount / 2;
+	const int32 RemainingCount = StackCount - HoldCount;
+
+	UItemInstanceBase* NewItem = CreateItemInstance(PickupItem);
+
+	if (!IsValid(NewItem))
+	{
+		return false;
+	}
+
+	NewItem->SetStackCount(HoldCount);
+	PickupItem->SetStackCount(RemainingCount);
+
+	HoldItem = NewItem;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	NearbyItemComponent->NotifyItemsChanged();
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::MergeWorldAll(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup)
+{
+	if (!IsValid(NearbyItemComponent) || !IsValid(ItemPickup) || !IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* PickupItem = ItemPickup->GetItemInstance();
+
+	if (!IsValid(PickupItem))
+	{
+		return false;
+	}
+
+	if (!IsSameItem(HoldItem, PickupItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = PickupItem->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	const int32 MaxStackCount = ItemData->MaxStackCount;
+	const int32 CurrentCount = PickupItem->GetStackCount();
+	const int32 HoldCount = HoldItem->GetStackCount();
+	const int32 Space = MaxStackCount - CurrentCount;
+
+	if (Space <= 0)
+	{
+		return false;
+	}
+
+	const int32 MoveCount = FMath::Min(Space, HoldCount);
+
+	PickupItem->SetStackCount(CurrentCount + MoveCount);
+	HoldItem->SetStackCount(HoldCount - MoveCount);
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		HoldItem = nullptr;
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	NearbyItemComponent->NotifyItemsChanged();
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::MergeWorldOne(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup)
+{
+	if (!IsValid(NearbyItemComponent) || !IsValid(ItemPickup) || !IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* PickupItem = ItemPickup->GetItemInstance();
+
+	if (!IsValid(PickupItem))
+	{
+		return false;
+	}
+
+	if (!IsSameItem(HoldItem, PickupItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = PickupItem->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	if (PickupItem->GetStackCount() >= ItemData->MaxStackCount)
+	{
+		return false;
+	}
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		return false;
+	}
+
+	PickupItem->SetStackCount(PickupItem->GetStackCount() + 1);
+	HoldItem->SetStackCount(HoldItem->GetStackCount() - 1);
+
+	if (HoldItem->GetStackCount() <= 0)
+	{
+		HoldItem = nullptr;
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	NearbyItemComponent->NotifyItemsChanged();
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::SwapWorldItem(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup)
+{
+	if (!IsValid(NearbyItemComponent) || !IsValid(ItemPickup) || !IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	UItemInstanceBase* PickupItem = ItemPickup->GetItemInstance();
+
+	if (!IsValid(PickupItem))
+	{
+		return false;
+	}
+
+	UWorld* World = GetWorld();
+
+	if (!World)
+	{
+		return false;
+	}
+
+	const FVector SpawnLocation = ItemPickup->GetActorLocation();
+	const FRotator SpawnRotation = ItemPickup->GetActorRotation();
+
+	AItemPickupBase* NewItemPickup = FItemFactory::SpawnItemPickup(World, HoldItem, SpawnLocation, SpawnRotation);
+
+	if (!IsValid(NewItemPickup))
+	{
+		return false;
+	}
+
+	NearbyItemComponent->RemoveItemPickup(ItemPickup);
+
+	ItemPickup->Destroy();
+
+	NearbyItemComponent->AddItemPickup(NewItemPickup);
+
+	HoldItem = PickupItem;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+
 bool UInventoryInteractionComponent::IsSameItem(const UItemInstanceBase* FirstItem, const UItemInstanceBase* SecondItem) const
 {
 	if (!IsValid(FirstItem) || !IsValid(SecondItem))
@@ -808,7 +1115,7 @@ UItemInstanceBase* UInventoryInteractionComponent::CreateItemInstance(UItemInsta
 	return FItemFactory::CreateItemInstance(this, ItemInstance->GetItemID(), ItemInstance->GetStackCount());
 }
 
-bool UInventoryInteractionComponent::DropAll()
+bool UInventoryInteractionComponent::DropAll(UNearbyItemComponent* NearbyItemComponent)
 {
 	if (!IsValid(HoldItem))
 	{
@@ -839,6 +1146,12 @@ bool UInventoryInteractionComponent::DropAll()
 		return false;
 	}
 
+	if (IsValid(NearbyItemComponent))
+	{
+		NearbyItemComponent->AddItemPickup(ItemPickup);
+	}
+
+
 	HoldItem = nullptr;
 
 	OnHoldItemChanged.Broadcast(HoldItem);
@@ -846,11 +1159,23 @@ bool UInventoryInteractionComponent::DropAll()
 	return true;
 }
 
-bool UInventoryInteractionComponent::DropOne()
+bool UInventoryInteractionComponent::DropOne(UNearbyItemComponent* NearbyItemComponent)
 {
 	if (!IsValid(HoldItem))
 	{
 		return false;
+	}
+
+	const int32 HoldCount = HoldItem->GetStackCount();
+
+	if (HoldCount <= 0)
+	{
+		return false;
+	}
+
+	if (HoldCount == 1)
+	{
+		return DropAll(NearbyItemComponent);
 	}
 
 	AActor* Owner = GetOwner();
@@ -867,20 +1192,15 @@ bool UInventoryInteractionComponent::DropOne()
 		return false;
 	}
 
-	if (HoldItem->GetStackCount() <= 0)
-	{
-		return false;
-	}
-
-	const FVector DropLocation = Owner->GetActorLocation() + Owner->GetActorForwardVector() * 100.0f;
-	const FRotator DropRotation = FRotator::ZeroRotator;
-
 	UItemInstanceBase* DropItem = FItemFactory::CreateItemInstance(this, HoldItem->GetItemID(), 1);
 
 	if (!IsValid(DropItem))
 	{
 		return false;
 	}
+
+	const FVector DropLocation = Owner->GetActorLocation() + Owner->GetActorForwardVector() * 100.0f;
+	const FRotator DropRotation = FRotator::ZeroRotator;
 
 	AItemPickupBase* ItemPickup = FItemFactory::SpawnItemPickup(World, DropItem, DropLocation, DropRotation);
 
@@ -889,12 +1209,12 @@ bool UInventoryInteractionComponent::DropOne()
 		return false;
 	}
 
-	HoldItem->SetStackCount(HoldItem->GetStackCount() - 1);
-
-	if (HoldItem->GetStackCount() <= 0)
+	if (IsValid(NearbyItemComponent))
 	{
-		HoldItem = nullptr;
+		NearbyItemComponent->AddItemPickup(ItemPickup);
 	}
+
+	HoldItem->SetStackCount(HoldCount - 1);
 
 	OnHoldItemChanged.Broadcast(HoldItem);
 

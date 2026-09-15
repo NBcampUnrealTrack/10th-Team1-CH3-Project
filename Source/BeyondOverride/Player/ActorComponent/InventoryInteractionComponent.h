@@ -4,6 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "InventoryInteractionComponent.generated.h"
 
+class AItemPickupBase;
+class UNearbyItemComponent;
 class UInventoryComponent;
 class UPlayerInventoryComponent;
 class UItemInstanceBase;
@@ -24,7 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool HandleEquipmentSlotClick(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot, bool bLeftClick); // 무기 칸 좌/우클릭
 	UFUNCTION(BlueprintCallable)
-	bool HandlePickupSlotClick(AItemPickupBase* ItemPickup, UInventoryComponent* TargetInventory);
+	bool HandleNearbySlotClick(UNearbyItemComponent* NearbyItemComponent, int32 SlotIndex, bool bLeftClick);
 	UFUNCTION(BlueprintCallable)
 	bool DropItem(bool bLeftClick); // 손에 들고 있는 아이템 버리기
 
@@ -78,19 +80,15 @@ private:
 
 	// --------------- 주변 슬롯 함수 -------------------
 	// 아이템 집기
-	bool PickupWorldAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
-	bool PickupWorldHalf(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
-
-	// 아이템 놓기
-	bool PlaceWorldAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
-	bool PlaceWorldOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool PickupWorldAll(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
+	bool PickupWorldHalf(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
 
 	// 아이템 합치기
-	bool MergeWorldAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
-	bool MergeWorldOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool MergeWorldAll(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
+	bool MergeWorldOne(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
 
 	// 아이템 교체
-	bool SwapWorldItem(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool SwapWorldItem(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
 	// --------------------------------------------------
 
 	// ------------------ 공용 함수 ---------------------
@@ -101,8 +99,8 @@ private:
 	UItemInstanceBase* CreateItemInstance(UItemInstanceBase* ItemInstance);
 
 	// 아이템 버리기
-	bool DropAll();
-	bool DropOne();
+	bool DropAll(UNearbyItemComponent* NearbyItemComponent = nullptr);
+	bool DropOne(UNearbyItemComponent* NearbyItemComponent = nullptr);
 	// --------------------------------------------------
 
 private:

@@ -18,6 +18,7 @@
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
+#include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -45,6 +46,7 @@ ABOCharacter::ABOCharacter()
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("InventoryComponent"));
 	InventoryInteractionComponent = CreateDefaultSubobject<UInventoryInteractionComponent>(TEXT("InventoryInteractionComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
+	NearbyItemComponent = CreateDefaultSubobject<UNearbyItemComponent>(TEXT("NearbyItemComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 }
 
