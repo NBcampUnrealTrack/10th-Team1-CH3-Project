@@ -119,7 +119,7 @@ void UBOAnimInstance::PlayFireHipMontage()
 		return;
 	}
 
-	// Montage_Play(CurrentEquipmentData->WeaponFire);
+	Montage_Play(CurrentEquipmentData->WeaponFire);
 }
 
 void UBOAnimInstance::PlayFireAimMontage()
@@ -141,7 +141,7 @@ void UBOAnimInstance::PlayFireAimMontage()
 		return;
 	}
 
-	// Montage_Play(CurrentEquipmentData->WeaponFire);
+	Montage_Play(CurrentEquipmentData->WeaponFire);
 }
 
 void UBOAnimInstance::PlayReloadHipMontage()

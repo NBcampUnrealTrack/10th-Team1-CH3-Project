@@ -51,6 +51,8 @@ struct FUIScreenEntry
 	EUIInputMode InputMode = EUIInputMode::GameOnly;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMenuOpenStateChanged, bool, bAnyMenuOpen);
+
 UCLASS()
 class BEYONDOVERRIDE_API UUIManager : public UGameInstanceSubsystem
 {
@@ -75,10 +77,15 @@ public:
 
 	bool IsAnyMenuOpen() const;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnMenuOpenStateChanged OnMenuOpenStateChanged;
 
 private:
 	void ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget);
 	void CenterMouseCursor(APlayerController* PC);
+	void NotifyMenuOpenStateChanged();
+
+	bool bLastAnyMenuOpen = false;
 
 	UPROPERTY()
 	TMap<EUIScreen, TSubclassOf<UUserWidget>> ScreenClasses;

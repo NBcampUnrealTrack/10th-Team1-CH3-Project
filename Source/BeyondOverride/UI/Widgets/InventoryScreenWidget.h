@@ -17,16 +17,17 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeDestruct() override;
 
-  public:
+public:
 	void OpenContainer(UInventoryComponent* ContainerInventory, const FText& ContainerName);
 	void CloseContainer();
 
-  protected:
+protected:
 	UPROPERTY(meta = (BindWidget))
 	UItemSlotPanelWidget* ContainerSlotPanel;
 

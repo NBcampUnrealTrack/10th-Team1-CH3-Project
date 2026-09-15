@@ -14,11 +14,12 @@ class UPlayerInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
 class UNearbyItemComponent;
-class UEquipmentManagerComponent;
 
 class UItemInstanceBase;
 class UEquippableItemInstance;
 class URangeWeaponInstance;
+
+class UAnimMontage;
 
 enum class EEquipmentSlot : uint8;
 
@@ -35,13 +36,19 @@ public:
 	UInventoryInteractionComponent* GetInventoryInteractionComponent() const { return InventoryInteractionComponent; }
 	UNearbyItemComponent* GetNearbyItemComponent() const { return NearbyItemComponent; }
 
-	const bool GetIsAiming() const { return bIsAiming; }
+	bool GetIsAiming() const { return bIsAiming; }
 
+	UFUNCTION(BlueprintCallable)
+	void SetMovementEnabled(bool bEnabled);
+
+	UFUNCTION(BlueprintPure)
+	bool IsMovementEnabled() const { return bMovementEnabled; }
 public:
 	ABOCharacter();
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -135,9 +142,25 @@ private:
 
 	bool bIsSprint = false;
 	bool bIsAiming = false;
+	bool bMovementEnabled = true;
 
 	UFUNCTION(Exec)
 	void AddTestItem(FName ItemID, int32 Count = 1);
+	UFUNCTION()
+	void OnMenuOpenStateChanged(bool bAnyMenuOpen);
+	void UpdateMovementEnabled();
+
+	// 사망 관련
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation|Death", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DeathMontage;
+
+	UFUNCTION()
+	void HandleDeath(AActor* DamageCauser);
+	void FinishPlayerDeath();
+
+	TWeakObjectPtr<AActor> DeathDamageCauser;
+	bool bDeathSequenceFinished = false;
+
 
 public:
 	// 장비 슬롯에 아이템 등록 및 해제
@@ -153,4 +176,7 @@ public:
 	// EquipmentManagerComponent - Range Weapon 델리게이트 연결 이벤트
 	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
 	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);
+
+private:
+	FTimerHandle DeathTimerHandle;
 };
