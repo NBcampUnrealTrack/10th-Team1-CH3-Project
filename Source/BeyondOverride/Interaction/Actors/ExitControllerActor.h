@@ -40,4 +40,12 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
   public:
 	UPROPERTY(EditInstanceOnly, Category = "Extraction")
 	TObjectPtr<AExitActor> TargetExit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Extraction")
+	float ControlTime = 30.f;
+
+  private:
+	void SetExitActorOpenTimer();
+
+	FTimerHandle ControlTimer;
 };
