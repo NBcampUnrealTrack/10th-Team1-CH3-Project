@@ -25,6 +25,9 @@ bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Melee Weapon 인스턴스 저장
 	MeleeWeaponInstance = Cast<UMeleeWeaponInstance>(EquippableItemInstance);
 
+	// Assign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3000, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 등록 성공
 	return true;
 }
@@ -40,6 +43,9 @@ UEquippableItemInstance* UMeleeWeaponHandlerComponent::Unassign()
 	// Melee Weapon 인스턴스 제거
 	MeleeWeaponInstance = nullptr;
 
+	// Unassign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3000, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 제거한 장비 반환
 	return OutEquippableItemInstance;
 }
@@ -51,6 +57,9 @@ bool UMeleeWeaponHandlerComponent::Equip()
 		return false;
 	}
 
+	// Equip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3001, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	return true;
 }
 
@@ -60,6 +69,9 @@ bool UMeleeWeaponHandlerComponent::Unequip()
 	{
 		return false;
 	}
+
+	// Unequip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3001, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
 	return true;
 }
@@ -210,6 +222,9 @@ void UMeleeWeaponHandlerComponent::StartAttackTimer()
 		AttackTimerHandle,
 		MeleeWeaponData->AttackInterval,
 		false);
+
+	// 공격 시작 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(3002, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Attack Started - %s"), *GetNameSafe(EquippableItemInstance)));
 }
 
 void UMeleeWeaponHandlerComponent::PlayAttackAnimation()
