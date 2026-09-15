@@ -14,6 +14,7 @@
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
+#include "Items/Objects/ThrowableItemInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
@@ -71,8 +72,6 @@ void ABOCharacter::BeginPlay()
 	{
 		UIManager->BindInteractPrompt(InteractComponent);
 	}
-
-
 }
 
 void ABOCharacter::Tick(float DeltaTime)
