@@ -211,21 +211,18 @@ void UInteractComponent::OnInteractionBeginOverlap(UPrimitiveComponent* Overlapp
 		return;
 	}
 
-	UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
-
-	if (!IsValid(ItemInstance))
+	if (!IsValid(ItemPickup->GetItemInstance()))
 	{
 		return;
 	}
 
-	if (NearbyItems.Contains(ItemInstance))
+	if (NearbyItemPickups.Contains(ItemPickup))
 	{
 		return;
 	}
 
-	NearbyItems.Add(ItemInstance);
-
-	OnNearbyItemsChanged.Broadcast(NearbyItems);
+	NearbyItemPickups.Add(ItemPickup);
+	OnNearbyItemsChanged.Broadcast(NearbyItemPickups);
 }
 
 void UInteractComponent::OnInteractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
@@ -237,19 +234,12 @@ void UInteractComponent::OnInteractionEndOverlap(UPrimitiveComponent* Overlapped
 		return;
 	}
 
-	UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
-
-	if (!IsValid(ItemInstance))
+	if (NearbyItemPickups.Remove(ItemPickup) <= 0)
 	{
 		return;
 	}
 
-	if (NearbyItems.Remove(ItemInstance) <= 0)
-	{
-		return;
-	}
-
-	OnNearbyItemsChanged.Broadcast(NearbyItems);
+	OnNearbyItemsChanged.Broadcast(NearbyItemPickups);
 }
 
 // 대상 전환

@@ -128,6 +128,11 @@ bool UInventoryInteractionComponent::HandleEquipmentSlotClick(UPlayerInventoryCo
 	return SwapEquipmentItem(Inventory, Slot);
 }
 
+bool UInventoryInteractionComponent::HandlePickupSlotClick(AItemPickupBase* ItemPickup, UInventoryComponent* TargetInventory)
+{
+	return true;
+}
+
 bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
 {
 	if (bLeftClick)
@@ -500,6 +505,8 @@ bool UInventoryInteractionComponent::PickupEquipmentAll(UPlayerInventoryComponen
 	}
 
 	OnHoldItemChanged.Broadcast(HoldItem);
+
+
 
 	return true;
 }

@@ -24,6 +24,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool HandleEquipmentSlotClick(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot, bool bLeftClick); // 무기 칸 좌/우클릭
 	UFUNCTION(BlueprintCallable)
+	bool HandlePickupSlotClick(AItemPickupBase* ItemPickup, UInventoryComponent* TargetInventory);
+	UFUNCTION(BlueprintCallable)
 	bool DropItem(bool bLeftClick); // 손에 들고 있는 아이템 버리기
 
 	// 현재 손에 들고 있는 아이템 정보
@@ -72,6 +74,23 @@ private:
 
 	// 아이템 교체
 	bool SwapEquipmentItem(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	// --------------------------------------------------
+
+	// --------------- 주변 슬롯 함수 -------------------
+	// 아이템 집기
+	bool PickupWorldAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool PickupWorldHalf(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+
+	// 아이템 놓기
+	bool PlaceWorldAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool PlaceWorldOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+
+	// 아이템 합치기
+	bool MergeWorldAll(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+	bool MergeWorldOne(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
+
+	// 아이템 교체
+	bool SwapWorldItem(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
 	// --------------------------------------------------
 
 	// ------------------ 공용 함수 ---------------------

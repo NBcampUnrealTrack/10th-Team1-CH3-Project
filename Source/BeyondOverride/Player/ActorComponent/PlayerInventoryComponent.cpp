@@ -78,6 +78,7 @@ bool UPlayerInventoryComponent::SetEquipmentItemStackCount(EEquipmentSlot Slot, 
 	{
 		EquipmentSlots[SlotIndex] = nullptr;
 
+		OnEquipmentItemChanged.Broadcast(Slot, nullptr);
 		OnEquipmentSlotChanged.Broadcast(Slot, nullptr);
 
 		return true;
@@ -119,10 +120,28 @@ bool UPlayerInventoryComponent::SetEquipmentSlots(const TArray<UItemInstanceBase
 		return false;
 	}
 
-	EquipmentSlots.Reset();
-	for (int32 i = 0; i < NewSlots.Num(); i++)
+	const TArray<TObjectPtr<UItemInstanceBase>> PreviousSlots = EquipmentSlots;
+
+	EquipmentSlots.Init(nullptr, 7);
+
+	for (int32 i = 0; i < NewSlots.Num(); ++i)
 	{
 		EquipmentSlots[i] = NewSlots[i];
+	}
+
+	for (int32 i = 0; i < EquipmentSlots.Num(); ++i)
+	{
+		const EEquipmentSlot Slot = static_cast<EEquipmentSlot>(i);
+
+		UItemInstanceBase* PreviousItem = PreviousSlots.IsValidIndex(i) ? PreviousSlots[i].Get() : nullptr;
+		UItemInstanceBase* NewItem = EquipmentSlots[i];
+
+		if (PreviousItem != NewItem)
+		{
+			OnEquipmentItemChanged.Broadcast(Slot, NewItem);
+		}
+
+		OnEquipmentSlotChanged.Broadcast(Slot, NewItem);
 	}
 
 	return true;
@@ -142,8 +161,17 @@ bool UPlayerInventoryComponent::SetEquipmentItem(EEquipmentSlot Slot, UItemInsta
 		return false;
 	}
 
+	UItemInstanceBase* PreviousItem = EquipmentSlots[SlotIndex];
+
 	EquipmentSlots[SlotIndex] = Item;
 
+	// 아이템 자체가 달라졌을 때만 장비 동기화 이벤트 호출
+	if (PreviousItem != Item)
+	{
+		OnEquipmentItemChanged.Broadcast(Slot, Item);
+	}
+
+	// UI는 항상 갱신
 	OnEquipmentSlotChanged.Broadcast(Slot, Item);
 
 	return true;

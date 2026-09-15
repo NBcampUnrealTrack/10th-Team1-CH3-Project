@@ -54,7 +54,7 @@ class USphereComponent;
 class UItemInstanceBase;
 class UPrimitiveComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNearbyItemsChanged, const TArray<UItemInstanceBase*>&, NearbyItems);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNearbyItemsChanged, const TArray<AItemPickupBase*>&, NearbyPickupItems);
 
 UCLASS(ClassGroup = (Interaction), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
@@ -111,7 +111,7 @@ public:
 	FOnNearbyItemsChanged OnNearbyItemsChanged;
 
 	UFUNCTION(BlueprintPure)
-	TArray<UItemInstanceBase*> GetNearbyItems() const { return NearbyItems; }
+	TArray<AItemPickupBase*> GetNearbyItemPickups() const { return NearbyItemPickups; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -147,7 +147,7 @@ protected:
 	TObjectPtr<USphereComponent> InteractionSphere;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TArray<TObjectPtr<UItemInstanceBase>> NearbyItems;
+	TArray<TObjectPtr<AItemPickupBase>> NearbyItemPickups;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	float InteractionRadius = 300.0f;

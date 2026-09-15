@@ -137,7 +137,10 @@ private:
 
 public:
 	// 장비 슬롯에 아이템 등록 및 해제
-	void OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
+	UFUNCTION()
+	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
+
+	void TryEquipSlot(EEquipmentSlot Slot);
 
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
