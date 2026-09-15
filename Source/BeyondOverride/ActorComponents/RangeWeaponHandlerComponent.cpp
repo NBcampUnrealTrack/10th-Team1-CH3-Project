@@ -44,11 +44,6 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 	RecoilAccumulator -= RecoilDelta;
 }
 
-UEquippableItemInstance* URangeWeaponHandlerComponent::GetEquippableItemInstance() const
-{
-	return RangeWeaponInstance;
-}
-
 bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
 	if (!Super::Assign(InEquippableItemInstance))

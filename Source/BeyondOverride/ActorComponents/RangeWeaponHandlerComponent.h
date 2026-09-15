@@ -46,9 +46,6 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
   public:
-	// 등록된 장비 반환
-	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
-
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
 	// 장비 제거
