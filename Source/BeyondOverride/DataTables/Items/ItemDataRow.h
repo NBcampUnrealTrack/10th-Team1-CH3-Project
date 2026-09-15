@@ -16,6 +16,8 @@ enum class EItemType : uint8
 	MeleeWeapon,    // 근접 무기
 	ThrowableItem,  // 투척 아이템
 	EffectItem,     // 효과 아이템
+	BagItem,
+	ShieldItem
 };
 
 UENUM(BlueprintType)
@@ -34,7 +36,7 @@ struct BEYONDOVERRIDE_API FItemDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")
 	FText DisplayName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")

@@ -14,7 +14,7 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-protected:
+  protected:
 	// 캐릭터에 부착 및 장비 메시를 설정할 메시 컴포넌트
 	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> EquipMeshComponent;
@@ -23,15 +23,15 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UEquippableItemInstance> EquippableItemInstance;
 
-public:
+  public:
 	UEquipmentHandlerComponent();
 
-protected:
+  protected:
 	virtual void OnRegister() override;
 
-public:
+  public:
 	// 등록된 장비 반환
-	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
+	UEquippableItemInstance* GetEquippableItemInstance() const;
 
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance);
@@ -44,7 +44,7 @@ public:
 	// 장비 사용
 	virtual bool Use();
 
-protected:
+  protected:
 	// 장비 등록 가능 여부
 	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const;
 	// 장비 제거 가능 여부

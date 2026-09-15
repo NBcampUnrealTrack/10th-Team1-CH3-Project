@@ -15,11 +15,6 @@ UMeleeWeaponHandlerComponent::UMeleeWeaponHandlerComponent()
 	MeleeWeaponInstance = nullptr;
 }
 
-UEquippableItemInstance* UMeleeWeaponHandlerComponent::GetEquippableItemInstance() const
-{
-	return MeleeWeaponInstance;
-}
-
 bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
 	if (!Super::Assign(InEquippableItemInstance))

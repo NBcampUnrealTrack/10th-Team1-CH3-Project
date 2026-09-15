@@ -281,9 +281,16 @@ bool UInventoryInteractionComponent::PlaceOne(UInventoryComponent* Inventory, co
 		return false;
 	}
 
-	if (HoldItem->GetStackCount() <= 0)
+	const int32 HoldCount = HoldItem->GetStackCount();
+
+	if (HoldCount <= 0)
 	{
 		return false;
+	}
+
+	if (HoldCount == 1)
+	{
+		return PlaceAll(Inventory, SlotIndex);
 	}
 
 	UItemInstanceBase* NewItem = CreateItemInstance(HoldItem);

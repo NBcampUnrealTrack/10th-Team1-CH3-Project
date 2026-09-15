@@ -13,13 +13,13 @@ class URangeWeaponInstance : public UEquippableItemInstance
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	const FRangeWeaponDataRow* RangeWeaponData;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Properties")
 	int32 CurrentAmmo;
 
-  public:
+public:
 	URangeWeaponInstance();
 
 	// 아이템 정보 초기 로드
