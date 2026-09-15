@@ -60,6 +60,9 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// 타임라인 설정
 	SetupTimeline();
 
+	// Assign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(2000, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 등록 성공
 	return true;
 }
@@ -81,6 +84,9 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 	// Range Weapon 인스턴스 제거
 	RangeWeaponInstance = nullptr;
 
+	// Unassign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(2000, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 제거한 장비 반환
 	return OutEquippableItemInstance;
 }
@@ -91,6 +97,9 @@ bool URangeWeaponHandlerComponent::Equip()
 	{
 		return false;
 	}
+
+	// Equip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
 	return true;
 }
@@ -104,6 +113,9 @@ bool URangeWeaponHandlerComponent::Unequip()
 
 	// 재장전 중이면 취소
 	OnReloadInterrupted();
+
+	// Unequip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
 	return true;
 }
@@ -143,7 +155,7 @@ bool URangeWeaponHandlerComponent::Use()
 	StartFireTimer();
 
 	// 사격 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(1000, 5.0f, FColor::Red, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
+	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
 
 	return true;
 }
@@ -640,7 +652,7 @@ void URangeWeaponHandlerComponent::OnReloadStarted()
 	StartReloadTimer();
 
 	// 재장전 시작 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(1001, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Started")));
+	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Reload Started - %s"), *GetNameSafe(EquippableItemInstance)));
 }
 
 void URangeWeaponHandlerComponent::OnReloadCompleted()
@@ -659,7 +671,7 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
 
 	// 재장전 완료 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(1001, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Completed")));
+	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Reload Completed - %s"), *GetNameSafe(EquippableItemInstance)));
 }
 
 void URangeWeaponHandlerComponent::OnReloadInterrupted()
@@ -676,6 +688,6 @@ void URangeWeaponHandlerComponent::OnReloadInterrupted()
 	// 재장전 애니메이션 중단
 	StopReloadAnimation();
 
-	// 재장전 취소 디버그 메시지 출력
-	GEngine->AddOnScreenDebugMessage(1001, 5.0f, FColor::Red, FString::Printf(TEXT("Reload Interrupted")));
+	// 재장전 중단 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Reload Interrupted - %s"), *GetNameSafe(EquippableItemInstance)));
 }

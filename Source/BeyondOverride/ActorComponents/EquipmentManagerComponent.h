@@ -12,6 +12,7 @@ class UEquipmentHandlerComponent;
 class UItemInstanceBase;
 class UEquippableItemInstance;
 class URangeWeaponInstance;
+class UUtilityItemInstance;
 
 // [UEquipmentManagerComponent] 활성화 슬롯 전환 시 송출하는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
@@ -30,11 +31,16 @@ DECLARE_DELEGATE_RetVal_OneParam(
 	FRequestReloadAmmoDelegate,
 	URangeWeaponInstance*);
 
-// [Throwable & Effect Item] 아이템 사용 시 개수 변경 알리는 델리게이트
+// [Throwable & Utility Item] 아이템 사용 시 개수 변경 알리는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
 	FOnEquipmentStackCountUpdatedDelegate,
 	EEquipmentSlot,
 	UEquippableItemInstance*);
+
+// [Utility Item] 아이템 사용 완료 후 적용할 효과 알리는 델리게이트
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnEffectAppliedDelegate,
+	UUtilityItemInstance*);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
@@ -85,14 +91,20 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 사용 후 아이템 개수 변경 알림 델리게이트
 	FOnEquipmentStackCountUpdatedDelegate OnEquipmentStackCountUpdatedDelegate;
 
+	// 아이템 효과 적용 델리게이트
+	FOnEffectAppliedDelegate OnEffectAppliedDelegate;
+
   protected:
 	// 델리게이트 바인딩
 	void BindDelegates();
 
-	// [TRange Weapon] 델리게이트 바인딩 이벤트
+	// [Range Weapon] 델리게이트 바인딩 이벤트
 	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
 	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance) const;
 
-	// [Throwable & Effect Item] 델리게이트 바인딩 이벤트
+	// [Throwable & Utility Item] 델리게이트 바인딩 이벤트
 	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance);
+
+	// [Utility Item] 델리게이트 바인딩
+	void OnEffectApplied(UUtilityItemInstance* UtilityItemInstance) const;
 };
