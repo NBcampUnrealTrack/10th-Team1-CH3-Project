@@ -4,21 +4,22 @@
 
 #include "ActorComponents/EquipmentHandlerComponent.h"
 
-#include "MeleeWeaponHandlerComponent.generated.h"
+#include "ThrowableItemHandlerComponent.generated.h"
 
-class UMeleeWeaponInstance;
+class UThrowableItemInstance;
+class AThrowableProjectile;
 
 UCLASS()
-class BEYONDOVERRIDE_API UMeleeWeaponHandlerComponent : public UEquipmentHandlerComponent
+class BEYONDOVERRIDE_API UThrowableItemHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
 
   protected:
 	UPROPERTY()
-	TObjectPtr<UMeleeWeaponInstance> MeleeWeaponInstance;
+	TObjectPtr<UThrowableItemInstance> ThrowableItemInstance;
 
   public:
-	UMeleeWeaponHandlerComponent();
+	UThrowableItemHandlerComponent();
 
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
@@ -46,16 +47,24 @@ class BEYONDOVERRIDE_API UMeleeWeaponHandlerComponent : public UEquipmentHandler
 	virtual bool CanUse() const override;
 
   protected:
-	// 공격 타이머
-	FTimerHandle AttackTimerHandle;
+	// 투척 타이머
+	FTimerHandle ThrowTimerHandle;
 
   protected:
-	// 공격 가능 여부
-	bool CanAttack() const;
+	// 투척 가능 여부
+	bool CanThrow() const;
 
-	// 공격 타이머 시작
-	void StartAttackTimer();
+	// 실제 목표 방향
+	FRotator GetAimRotation() const;
+	// 투척 시작 위치 반환
+	FVector GetThrowStartLocation() const;
 
-	// 공격 애니메이션 재생
-	void PlayAttackAnimation();
+	// 투척 시작
+	void StartThrow();
+
+	// 투척 수행
+	void Throw();
+
+	// 투척 아이템 소환
+	AThrowableProjectile* SpawnThrowable();
 };

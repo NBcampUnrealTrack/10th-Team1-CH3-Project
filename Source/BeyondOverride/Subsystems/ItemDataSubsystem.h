@@ -12,6 +12,7 @@ struct FItemDataRow;
 struct FEquippableItemDataRow;
 struct FRangeWeaponDataRow;
 struct FMeleeWeaponDataRow;
+struct FThrowableItemDataRow;
 
 UCLASS()
 class BEYONDOVERRIDE_API UItemDataSubsystem : public UGameInstanceSubsystem
@@ -31,4 +32,5 @@ class BEYONDOVERRIDE_API UItemDataSubsystem : public UGameInstanceSubsystem
 	const FEquippableItemDataRow* GetEquippableItemData(const FName ItemID) const;
 	const FRangeWeaponDataRow* GetRangeWeaponData(const FName ItemID) const;
 	const FMeleeWeaponDataRow* GetMeleeWeaponData(const FName ItemID) const;
+	const FThrowableItemDataRow* GetThrowableItemData(const FName ItemID) const;
 };

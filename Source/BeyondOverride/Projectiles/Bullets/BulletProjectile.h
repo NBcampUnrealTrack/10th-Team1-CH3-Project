@@ -14,6 +14,7 @@ class ABulletProjectile : public AProjectileBase
 	GENERATED_BODY()
 
   protected:
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Collision;
 
   public:
