@@ -124,6 +124,14 @@ bool UEquipmentManagerComponent::Use()
 	return EquipmentHandlerComponents[ActiveSlot]->Use();
 }
 
+void UEquipmentManagerComponent::StartAction()
+{
+}
+
+void UEquipmentManagerComponent::EndAction()
+{
+}
+
 bool UEquipmentManagerComponent::Reload()
 {
 	// 슬롯 확인

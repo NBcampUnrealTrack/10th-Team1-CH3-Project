@@ -59,6 +59,11 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 장비 사용
 	virtual bool Use() override;
 
+	// 사용 시작
+	virtual void StartAction();
+	// 사용 종료
+	virtual void EndAction();
+
 	// 재장전
 	bool Reload();
 

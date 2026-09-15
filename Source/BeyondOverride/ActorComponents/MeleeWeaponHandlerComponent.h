@@ -33,6 +33,11 @@ class BEYONDOVERRIDE_API UMeleeWeaponHandlerComponent : public UEquipmentHandler
 	// 장비 사용
 	virtual bool Use() override;
 
+	// 사용 시작
+	virtual void StartAction();
+	// 사용 종료
+	virtual void EndAction();
+
   protected:
 	// 장비 등록 가능 여부
 	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const override;

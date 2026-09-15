@@ -71,6 +71,11 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 현재 장비 사용
 	bool Use();
 
+	// 사용 시작
+	virtual void StartAction();
+	// 사용 종료
+	virtual void EndAction();
+
 	// 현재 장비 재장전 - RangeWeapon 전용
 	bool Reload();
 

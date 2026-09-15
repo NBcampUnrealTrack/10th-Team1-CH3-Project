@@ -160,6 +160,14 @@ bool URangeWeaponHandlerComponent::Use()
 	return true;
 }
 
+void URangeWeaponHandlerComponent::StartAction()
+{
+}
+
+void URangeWeaponHandlerComponent::EndAction()
+{
+}
+
 bool URangeWeaponHandlerComponent::Reload()
 {
 	// 재장전 불가
