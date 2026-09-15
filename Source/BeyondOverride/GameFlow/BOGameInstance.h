@@ -53,9 +53,16 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
 
-	float GetCurrentHealth() const;
-	float GetCurrentShield() const;
+	float GetCurHealth() const;
+	float GetCurShield() const;
 	int32 GetTotalMoney() const;
+
+	bool IsPlayerInventorySaved() const;
+	bool IsStorageInventorySaved() const;
+
+	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
+	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
+	TArray<UItemInstanceBase*> GetStorageInventory() const;
 
 	bool GetIsKeyCardAcquired() const;
 
@@ -90,9 +97,14 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 CurShield;
 	int32 TotalMoney;
 
-	TArray<TObjectPtr<UItemInstanceBase>> PlayerItemInventory;
-	TArray<TObjectPtr<UItemInstanceBase>> PlayerEquipmentInventory;
-	TArray<TObjectPtr<UItemInstanceBase>> StorageInventory;
+	UPROPERTY()
+	TArray<UItemInstanceBase*> PlayerItemInventory;
+
+	UPROPERTY()
+	TArray<UItemInstanceBase*> PlayerEquipmentInventory;
+
+	UPROPERTY()
+	TArray<UItemInstanceBase*> StorageInventory;
 
 	bool IsKeyCardAcquired;
 

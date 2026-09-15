@@ -9,6 +9,7 @@
 
 #include "BOGameMode.generated.h"
 
+class UBOGameInstance;
 class UFarmingStateMachine;
 
 UCLASS()
@@ -21,14 +22,20 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
 	virtual void BeginPlay() override;
 
+	void Start();
+	void EnterBunker(EFarmingResult Result);
 	void ProvideBasicEquipment();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
+	void Exit();
 
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
 
   public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
+	TObjectPtr<UBOGameInstance> GameInstance;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
 	TObjectPtr<UFarmingStateMachine> StateMachine;
 

@@ -1,5 +1,6 @@
 #include "Interaction/Actors/StorageContainerActor.h"
 
+#include "GameFlow/BOGameInstance.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "UI/Manager/UIManager.h"
 #include "UI/Widgets/InventoryScreenWidget.h"
@@ -16,6 +17,22 @@ AStorageContainerActor::AStorageContainerActor()
 	PromptData.HoldSeconds = 3.f;
 	PromptData.bMoveCancel = true;
 	PromptData.bEnabled = true;
+}
+
+void AStorageContainerActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			if (GameInstance->IsStorageInventorySaved() && InventoryComponent)
+			{
+				InventoryComponent->SetSlots(GameInstance->GetStorageInventory());
+			}
+		}
+	}
 }
 
 void AStorageContainerActor::PerformInteract(AActor* Interactor)
