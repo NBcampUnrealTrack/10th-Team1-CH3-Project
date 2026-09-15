@@ -74,9 +74,9 @@ void UMonsterStatComponent::Attack()
 	CallAttackLock();
 }
 
-void UMonsterStatComponent::ApplyProtect(int32 getdamage)
+void UMonsterStatComponent::ApplyProtect(int32 getdamage, AActor* DamageCauser)
 {
-	TakeDamage(FMath::Max(1, getdamage - Protect));
+	TakeDamage(FMath::Max(1, getdamage - Protect), DamageCauser);
 }
 
 bool UMonsterStatComponent::IsDelay() const

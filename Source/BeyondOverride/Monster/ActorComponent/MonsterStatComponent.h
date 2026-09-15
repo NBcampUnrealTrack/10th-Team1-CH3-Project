@@ -11,7 +11,6 @@
 // UHT Header
 #include "MonsterStatComponent.generated.h"
 
-/*
 UENUM(BlueprintType)
 enum class EMonsterType : uint8
 {
@@ -19,7 +18,6 @@ enum class EMonsterType : uint8
 	Range UMETA(DisplayName = "Range"),
 	Melee UMETA(DisplayName = "Melee"),
 };
-*/
 
 UCLASS()
 class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
@@ -44,7 +42,7 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	void Attack();
 
 	// Protect System
-	void ApplyProtect(int32 getdamage);
+	void ApplyProtect(int32 getdamage, AActor* DamageCauser);
 
   protected:
 	virtual void BeginPlay() override;

@@ -22,8 +22,6 @@
 AMonsterCharacter::AMonsterCharacter()
 {
 
-	MonsterType = EMonsterType::Range;
-
 	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
 
 	StateComponent = CreateDefaultSubobject<UStateComponent>(TEXT("StateComponent"));
@@ -40,20 +38,7 @@ AMonsterCharacter::AMonsterCharacter()
 
 	if (Movement)
 	{
-
-		if (MonsterType == EMonsterType::Special)
-		{
-			Movement->MaxWalkSpeed = WalkSpeed * 0.6;
-		}
-		if (MonsterType == EMonsterType::Range)
-		{
-			Movement->MaxWalkSpeed = WalkSpeed * 0.8;
-		}
-		if (MonsterType == EMonsterType::Melee)
-		{
-			Movement->MaxWalkSpeed = WalkSpeed * 1;
-		}
-
+		Movement->MaxWalkSpeed = WalkSpeed * 1;
 		Movement->bOrientRotationToMovement = true;
 		Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	}
@@ -68,11 +53,7 @@ void AMonsterCharacter::MonsterAttack()
 	}
 
 	MonsterController->StateChange(EMonsterState::Attack, 0.3f);
-
-	if (MonsterType == EMonsterType::Range)
-	{
-		MonsterStat->Attack();
-	}
+	MonsterStat->Attack();
 
 	UParticleSystemComponent* Particle = nullptr;
 
@@ -136,7 +117,7 @@ float AMonsterCharacter::TakeDamage(float DamageAmount,
 
 	MonsterController->PlantFlag(EFlag::TakeDamage, CurrentTime);
 	MonsterController->SetTarget(Target);
-	MonsterStat->ApplyProtect(ActualDamage);
+	MonsterStat->ApplyProtect(ActualDamage, Target);
 
 	DeathSequence();
 

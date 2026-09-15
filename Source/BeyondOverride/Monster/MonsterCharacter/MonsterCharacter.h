@@ -18,14 +18,6 @@ class UStatComponent;
 class UMonsterStatComponent;
 class UMonsterDataAsset;
 
-UENUM(BlueprintType)
-enum class EMonsterType : uint8
-{
-	Special UMETA(DisplayName = "Special"),
-	Range UMETA(DisplayName = "Range"),
-	Melee UMETA(DisplayName = "Melee"),
-};
-
 UCLASS()
 class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 {
@@ -60,9 +52,6 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, Category = "Monster|Stat")
 	float SprintSpeed = 800.0f;
-
-	UPROPERTY(EditAnywhere)
-	EMonsterType MonsterType;
 
   protected:
 	virtual void PostInitializeComponents() override;
