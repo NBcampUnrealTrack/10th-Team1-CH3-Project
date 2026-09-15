@@ -1,12 +1,32 @@
 #include "Projectiles/Throwables/ThrowableProjectile.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 AThrowableProjectile::AThrowableProjectile()
 {
+	// StaticMesh 생성
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMesh->SetupAttachment(GetRootComponent());
+
+	StaticMesh->SetSimulatePhysics(false);
+	StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	StaticMesh->SetCollisionObjectType(ECC_WorldDynamic);
+	StaticMesh->SetCollisionResponseToAllChannels(ECR_Block);              // 나머지 Block
+	StaticMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore); // Visibility -> Ignore
+	StaticMesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);     // Camera -> Ignore
+	StaticMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);       // Pawn -> Ignore
+
 	// Collision 생성
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
-	Collision->SetupAttachment(GetRootComponent());
+	Collision->SetupAttachment(StaticMesh);
+
+	// ProjectileMovement 설정
+	ProjectileMovement->UpdatedComponent = StaticMesh;
+	ProjectileMovement->bShouldBounce = true;
+	ProjectileMovement->Bounciness = 0.3f;
+	ProjectileMovement->Friction = 0.5f;
+	ProjectileMovement->BounceVelocityStopSimulatingThreshold = 10.0f;
 }
 
 void AThrowableProjectile::Initalize(
