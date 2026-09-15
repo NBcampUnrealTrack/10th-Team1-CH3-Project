@@ -15,6 +15,8 @@ class AThrowableProjectile : public AProjectileBase
 
   protected:
 	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStaticMeshComponent> StaticMesh;
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Collision;
 
 	float Radius; // 적용 반경
