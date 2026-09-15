@@ -6,6 +6,7 @@
 #include "DataTables/Items/MeleeWeaponDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
 #include "DataTables/Items/ThrowableItemDataRow.h"
+#include "DataTables/Items/UtilityItemDataRow.h"
 
 void UItemDataSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -110,4 +111,22 @@ const FThrowableItemDataRow* UItemDataSubsystem::GetThrowableItemData(const FNam
 	}
 
 	return ThrowableItemData;
+}
+
+const FUtilityItemDataRow* UItemDataSubsystem::GetUtilityItemData(const FName ItemID) const
+{
+	if (!ItemDataRegistry || !ItemDataRegistry->UtilityItemTable)
+	{
+		return nullptr;
+	}
+
+	const FUtilityItemDataRow* UtilityItemData = ItemDataRegistry->UtilityItemTable->FindRow<FUtilityItemDataRow>(ItemID, TEXT("UItemDataSubsystem::GetUtilityItemData"));
+
+	if (!UtilityItemData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UtilityItemData not found: %s"), *ItemID.ToString());
+		return nullptr;
+	}
+
+	return UtilityItemData;
 }

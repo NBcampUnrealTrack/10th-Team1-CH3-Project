@@ -3,11 +3,13 @@
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
 #include "ActorComponents/ThrowableItemHandlerComponent.h"
+#include "ActorComponents/UtilityItemHandlerComponent.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Items/Objects/ThrowableItemInstance.h"
+#include "Items/Objects/UtilityItemInstance.h"
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
@@ -20,6 +22,7 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Melee, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("MeleeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Throwable, CreateDefaultSubobject<UThrowableItemHandlerComponent>(TEXT("ThrowableItem Handler Component")));
+	EquipmentHandlerComponents.Add(EEquipmentSlot::Effect, CreateDefaultSubobject<UUtilityItemHandlerComponent>(TEXT("UtilityItem Handler Component")));
 }
 
 EEquipmentSlot UEquipmentManagerComponent::GetActiveSlot() const
@@ -114,7 +117,7 @@ bool UEquipmentManagerComponent::Use()
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Use 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// 장비 사용
@@ -127,7 +130,7 @@ bool UEquipmentManagerComponent::Reload()
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// RangeWeapon이 아닌 경우
@@ -135,7 +138,7 @@ bool UEquipmentManagerComponent::Reload()
 	if (!RangeWeaponHandler)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 URangeWeaponHandlerComponent가 아님"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// 재장전
@@ -164,7 +167,7 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 	if (!EquipmentHandlerComponents.Contains(Slot) || !EquipmentHandlerComponents[Slot])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
-			return false;
+		return false;
 	}
 
 	// 등록 시도
@@ -258,6 +261,14 @@ void UEquipmentManagerComponent::BindDelegates()
 	}
 
 	// Effect
+	if (EquipmentHandlerComponents.Contains(EEquipmentSlot::Effect))
+	{
+		if (UUtilityItemHandlerComponent* UtilityItemHandler = Cast<UUtilityItemHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Effect]))
+		{
+			UtilityItemHandler->OnCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnEquipmentCountUpdated);
+			UtilityItemHandler->OnEffectAppliedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnEffectApplied);
+		}
+	}
 }
 
 bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
@@ -303,14 +314,20 @@ void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance
 			Unassign(EEquipmentSlot::Throwable);
 		}
 	}
-	// else if (EquippableItemInstance->IsA(UEffectItemInstance::StaticClass()))
-	//{
-	//	OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Effect, EquippableItemInstance);
-	//	if (EquippableItemInstance->GetStackCount() <= 0)
-	//	{
-	//		Unassign(EEquipmentSlot::Throwable);
-	//	}
-	// }
+	else if (EquippableItemInstance->IsA(UUtilityItemInstance::StaticClass()))
+	{
+		OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Effect, EquippableItemInstance);
+		if (EquippableItemInstance->GetStackCount() <= 0)
+		{
+			Unassign(EEquipmentSlot::Effect);
+		}
+	}
 
 	// TODO: 캐릭터에서 해당 델리게이트 바인딩. 개수가 0개면 제거 수행
+}
+
+void UEquipmentManagerComponent::OnEffectApplied(UUtilityItemInstance* UtilityItemInstance) const
+{
+	OnEffectAppliedDelegate.Broadcast(UtilityItemInstance);
+	// TODO: 캐릭터에서 전달받은 아이템에 따라 효과 적용
 }
