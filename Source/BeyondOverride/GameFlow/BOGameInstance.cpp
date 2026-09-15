@@ -265,7 +265,7 @@ void UBOGameInstance::CheckKeyCard()
 		{
 			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
 			{
-				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
+				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KEY CARD"))))
 				{
 					IsKeyCardAcquired = true;
 
@@ -281,7 +281,7 @@ void UBOGameInstance::CheckKeyCard()
 		{
 			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
 			{
-				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
+				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KEY CARD"))))
 				{
 					IsKeyCardAcquired = true;
 

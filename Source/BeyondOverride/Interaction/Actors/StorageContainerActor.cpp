@@ -73,5 +73,9 @@ void AStorageContainerActor::SetItems(const TArray<UItemInstanceBase*>& Items)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("StorageContainerActor: 슬롯이 부족해서 아이템(%s)을 넣지 못했습니다."), *Item->GetName());
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Item Added"));
+		}
 	}
 }
