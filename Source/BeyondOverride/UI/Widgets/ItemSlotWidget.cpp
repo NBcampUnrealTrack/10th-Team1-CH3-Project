@@ -5,13 +5,13 @@
 #include "DataTables/Items/ItemDataRow.h"
 #include "Items/Objects/ItemInstanceBase.h"
 
-void UItemSlotWidget::SetItem(UItemInstanceBase* Item)
+void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 {
 	if (Item && Item->GetItemData())
 	{
 		if (IconImage)
 		{
-			IconImage->SetBrushFromTexture(Item->GetItemData()->ItemIcon);
+			IconImage->SetBrushFromTexture(bUseLongImg ? Item->GetItemData()->ItemIcon : Item->GetItemData()->ItemIcon);
 			IconImage->SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
 
