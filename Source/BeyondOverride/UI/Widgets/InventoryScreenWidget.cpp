@@ -1,7 +1,9 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
 #include "Blueprint/WidgetTree.h"
+#include "Items/Actors/ItemPickupBase.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "UI/Widgets/EquipmentSlotWidget.h"
@@ -26,6 +28,12 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (ContainerSlotPanel)
 	{
 		ContainerSlotPanel->SetContainerName(FText::FromString(TEXT("주변")));
+
+		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
+		{
+			PlayerNearbyItemComponent->OnNearbyItemsChanged.AddDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
+			ContainerSlotPanel->SetWorldItems(PlayerNearbyItemComponent->GetItemPickups(), PlayerNearbyItemComponent, OwnerCharacter->GetInventoryInteractionComponent());
+		}
 	}
 
 	if (HeldItem)
@@ -45,6 +53,20 @@ void UInventoryScreenWidget::NativeConstruct()
 					OwnerCharacter->GetEquipmentComponent());
 		} });
 	}
+}
+
+void UInventoryScreenWidget::NativeDestruct()
+{
+	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
+	if (OwnerCharacter)
+	{
+		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
+		{
+			PlayerNearbyItemComponent->OnNearbyItemsChanged.RemoveDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
+		}
+	}
+
+	Super::NativeDestruct();
 }
 
 FReply UInventoryScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -86,4 +108,16 @@ void UInventoryScreenWidget::CloseContainer()
 		return;
 
 	ContainerSlotPanel->SetInventory(nullptr, nullptr);
+}
+
+void UInventoryScreenWidget::OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems)
+{
+	if (!ContainerSlotPanel)
+		return;
+
+	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
+	if (!OwnerCharacter)
+		return;
+
+	ContainerSlotPanel->SetWorldItems(NearbyItems, OwnerCharacter->GetNearbyItemComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 }

@@ -9,6 +9,8 @@
 class UItemSlotPanelWidget;
 class UInventoryComponent;
 class UHeldItemWidget;
+class AItemPickupBase;
+class UNearbyItemComponent;
 
 UCLASS()
 class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
@@ -17,6 +19,7 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 
   protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
   public:
@@ -32,4 +35,7 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	UHeldItemWidget* HeldItem;
+
+	UFUNCTION()
+	void OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems);
 };

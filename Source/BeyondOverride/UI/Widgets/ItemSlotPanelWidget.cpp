@@ -2,9 +2,11 @@
 
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
+#include "Items/Actors/ItemPickupBase.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/NearbyItemComponent.h"
 #include "UI/Widgets/ItemSlotWidget.h"
 #include "UI/Widgets/PanelFrameWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -56,12 +58,13 @@ void UItemSlotPanelWidget::SetInventory(UInventoryComponent* InInventory, UInven
 	RefreshSlots();
 }
 
-void UItemSlotPanelWidget::SetWorldItems(const TArray<AItemPickupBase*>& InItems, UInventoryInteractionComponent* InInteraction)
+void UItemSlotPanelWidget::SetWorldItems(const TArray<AItemPickupBase*>& InItems, UNearbyItemComponent* InNearbyItemComponent, UInventoryInteractionComponent* InInteraction)
 {
 	UnbindInventory();
 
 	Mode = EItemSlotPanelMode::WorldItems;
 	WorldItems = InItems;
+	NearbyItemComponent = InNearbyItemComponent;
 	InteractionComponent = InInteraction;
 
 	RefreshSlots();
@@ -108,7 +111,7 @@ void UItemSlotPanelWidget::RefreshSlots()
 		}
 		else if (WorldItems.IsValidIndex(Index) && WorldItems[Index])
 		{
-			// Item = WorldItems[Index]->GetItemInstance();
+			 Item = WorldItems[Index]->GetItemInstance();
 		}
 
 		if (Item)
@@ -145,11 +148,6 @@ void UItemSlotPanelWidget::HandleSlotClicked(int32 SlotIndex, bool bLeftClick)
 	}
 	else
 	{
-		if (!WorldItems.IsValidIndex(SlotIndex) || !WorldItems[SlotIndex])
-			return;
-
-		AItemPickupBase* Pickup = WorldItems[SlotIndex];
+		InteractionComponent->HandleNearbySlotClick(NearbyItemComponent, SlotIndex, bLeftClick);
 	}
-
-	//InteractionComponent->HandleSlotClick(InventoryComponent, SlotIndex, bLeftClick);
 }
