@@ -2,7 +2,6 @@
 
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/UtilityItemDataRow.h"
-#include "Enums/UtilityType.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/UtilityItemInstance.h"
 
@@ -168,12 +167,15 @@ void UUtilityItemHandlerComponent::OnUseCompleted()
 		return;
 	}
 
-	// 효과 적용
-	switch (UtilityItemData->EffectType)
-	{
-	case EUtilityType::HealHP:
-		break;
-	}
+	// 사용 후 개수 차감
+	const int Count = UtilityItemInstance->GetStackCount();
+	UtilityItemInstance->SetStackCount(Count - 1);
+
+	// 사용 후 개수 변경 델리게이트 송출
+	OnCountUpdatedDelegate.Broadcast(UtilityItemInstance);
+
+	// 효과 적용 델리게이트 송출
+	OnEffectAppliedDelegate.Broadcast(UtilityItemInstance);
 }
 
 void UUtilityItemHandlerComponent::OnUseInterrupted()

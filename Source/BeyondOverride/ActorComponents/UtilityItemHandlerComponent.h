@@ -6,12 +6,29 @@
 
 #include "UtilityItemHandlerComponent.generated.h"
 
+class UEquippableItemInstance;
 class UUtilityItemInstance;
+
+// 사용하여 아이템 개수 변경 알림 델리게이트
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnCountUpdatedDelegate,
+	UEquippableItemInstance*);
+
+// 효과 적용 알림 델리게이트
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnEffectAppliedDelegate,
+	UUtilityItemInstance*);
 
 UCLASS()
 class BEYONDOVERRIDE_API UUtilityItemHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
+
+  public:
+	// 아이템 사용 후 개수 변경 알림 델리게이트
+	FOnCountUpdatedDelegate OnCountUpdatedDelegate;
+	// 아이템 사용 후 효과 적용 알림 델리게이트
+	FOnEffectAppliedDelegate OnEffectAppliedDelegate;
 
   protected:
 	UPROPERTY()
