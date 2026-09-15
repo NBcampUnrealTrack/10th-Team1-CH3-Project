@@ -418,6 +418,7 @@ void ABOCharacter::StartFire(const FInputActionValue& value)
 {
 	// TODO
 }
+
 void ABOCharacter::CompleteFire(const FInputActionValue& value)
 {
 	// TODO
@@ -427,7 +428,6 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 {
 	bIsAiming = false;
 }
-
 
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
