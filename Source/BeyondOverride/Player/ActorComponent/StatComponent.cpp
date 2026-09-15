@@ -2,9 +2,6 @@
 
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "GameFlow/BOGameMode.h"
-#include "Monster/MonsterCharacter/MonsterCharacter.h"
-
 
 UStatComponent::UStatComponent()
 {
@@ -125,23 +122,9 @@ void UStatComponent::Die(AActor* DamageCauser)
 		return;
 	}
 
-	if (UWorld* World = GetWorld())
-	{
-		if (ABOGameMode* GameMode = World->GetAuthGameMode<ABOGameMode>())
-		{
-			GameMode->EndFarming(EFarmingResult::Fail);
-
-			AMonsterCharacter* Monster = Cast<AMonsterCharacter>(DamageCauser);
-			if (IsValid(Monster))
-			{
-				// GameMode->SetKillerMonster(Monster->GetId);
-			}
-		}
-	}
-
 	bIsDead = true;
 	ResetShieldRegenTimer();
 
-	OnDeath.Broadcast();
+	OnDeath.Broadcast(DamageCauser);
 }
 

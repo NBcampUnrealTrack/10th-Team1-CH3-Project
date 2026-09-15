@@ -1,6 +1,7 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
 #include "Blueprint/WidgetTree.h"
+#include "Player/Character/BOCharacter.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
@@ -36,14 +37,14 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (WidgetTree)
 	{
 		WidgetTree->ForEachWidget([OwnerCharacter](UWidget* Widget)
-								  { 
-			if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget)) 
 			{
-				EquipmentSlot->SetupEquipmentSlot(
-					OwnerCharacter->GetPlayerInventoryComponent(),
-					OwnerCharacter->GetInventoryInteractionComponent(),
-					OwnerCharacter->GetEquipmentComponent());
-		} });
+				if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget))
+				{
+					EquipmentSlot->SetupEquipmentSlot(
+						OwnerCharacter->GetPlayerInventoryComponent(),
+						OwnerCharacter->GetInventoryInteractionComponent(),
+						OwnerCharacter->GetEquipmentComponent());
+				} });
 	}
 }
 
@@ -65,6 +66,25 @@ FReply UInventoryScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeomet
 	}
 
 	return FReply::Unhandled();
+}
+
+void UInventoryScreenWidget::NativeDestruct()
+{
+	APawn* OwningPawn = GetOwningPlayerPawn();
+	ABOCharacter* Character = Cast<ABOCharacter>(OwningPawn);
+
+	if (IsValid(Character))
+	{
+		UInventoryInteractionComponent* InteractionComponent = Character->GetInventoryInteractionComponent();
+
+		if (IsValid(InteractionComponent) && InteractionComponent->IsHoldingItem())
+		{
+			// 손에 들고 있는 아이템 전부 버리기
+			InteractionComponent->DropItem(true);
+		}
+	}
+
+	Super::NativeDestruct();
 }
 
 void UInventoryScreenWidget::OpenContainer(UInventoryComponent* ContainerInventory, const FText& ContainerName)
