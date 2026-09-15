@@ -8,6 +8,7 @@
 
 class UInteractPromptWidget;
 class UInteractComponent;
+class APlayerController;
 
 UENUM(BlueprintType)
 enum class EUIInputMode : uint8
@@ -74,6 +75,7 @@ class BEYONDOVERRIDE_API UUIManager : public UGameInstanceSubsystem
 
   private:
 	void ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget);
+	void CenterMouseCursor(APlayerController* PC);
 
 	UPROPERTY()
 	TMap<EUIScreen, TSubclassOf<UUserWidget>> ScreenClasses;
