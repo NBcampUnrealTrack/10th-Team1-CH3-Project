@@ -1,0 +1,45 @@
+[
+    {
+        "Name": "CONTAINER_01",
+        "Id": "CONTAINER_01",
+        "RegionId": "REGION_01",
+        "SpawnEntries": [
+            {
+                "Id": "ASSAULT_RIFLE_A",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 1,
+        "MaxSpawnCount": 5
+    },
+    {
+        "Name": "CONTAINER_02",
+        "Id": "CONTAINER_02",
+        "RegionId": "REGION_02",
+        "SpawnEntries": [
+            {
+                "Id": "ASSAULT_RIFLE_B",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 5
+    },
+    {
+        "Name": "CONTAINER_03",
+        "Id": "CONTAINER_03",
+        "RegionId": "REGION_03",
+        "SpawnEntries": [
+            {
+                "Id": "ASSAULT_RIFLE_A",
+                "Prob": 0.5
+            },
+            {
+                "Id": "ASSAULT_RIFLE_B",
+                "Prob": 0.5
+            }
+        ],
+        "MinSpawnCount": 1,
+        "MaxSpawnCount": 3
+    }
+]

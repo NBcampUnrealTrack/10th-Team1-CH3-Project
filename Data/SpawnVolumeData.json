@@ -1,0 +1,53 @@
+[
+    {
+        "Name": "SPAWN_VOLUME_01",
+        "Id": "SPAWN_VOLUME_01",
+        "RegionId": "REGION_01",
+        "SpawnEntries": [
+            {
+                "Id": "MONSTER_01",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 1,
+        "MaxSpawnCount": 3
+    },
+    {
+        "Name": "SPAWN_VOLUME_02",
+        "Id": "SPAWN_VOLUME_02",
+        "RegionId": "REGION_02",
+        "SpawnEntries": [
+            {
+                "Id": "MONSTER_01",
+                "Prob": 0.5
+            },
+            {
+                "Id": "MONSTER_02",
+                "Prob": 0.5
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 5
+    },
+    {
+        "Name": "SPAWN_VOLUME_03",
+        "Id": "SPAWN_VOLUME_01",
+        "RegionId": "REGION_01",
+        "SpawnEntries": [
+            {
+                "Id": "MONSTER_01",
+                "Prob": 0.2
+            },
+            {
+                "Id": "MONSTER_02",
+                "Prob": 0.3
+            },
+            {
+                "Id": "MONSTER_03",
+                "Prob": 0.4
+            }
+        ],
+        "MinSpawnCount": 3,
+        "MaxSpawnCount": 7
+    }
+]
