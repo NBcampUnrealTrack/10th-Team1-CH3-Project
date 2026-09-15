@@ -8,8 +8,16 @@ class UItemInstanceBase;
 
 enum class EEquipmentSlot : uint8;
 
+// UI용 아이템 개수 변경 시
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnEquipmentSlotChanged,
+	EEquipmentSlot, Slot,
+	UItemInstanceBase*, ItemInstanceBase
+);
+
+// assign/unassign용 아이템 자체가 변경 시
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnEquipmentItemChanged,
 	EEquipmentSlot, Slot,
 	UItemInstanceBase*, ItemInstanceBase
 );
@@ -47,6 +55,7 @@ public:
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnEquipmentSlotChanged OnEquipmentSlotChanged;
+	FOnEquipmentItemChanged OnEquipmentItemChanged;
 
 public:
 	UPlayerInventoryComponent();

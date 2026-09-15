@@ -57,22 +57,6 @@ void UInteractComponent::BeginPlay()
 		//DetectionCollision->OnComponentEndOverlap.AddDynamic(this, &UInteractComponent::OnDetectionEndOverlap);
 	}
 
-	InteractionSphere = NewObject<USphereComponent>(Owner, TEXT("InteractionSphere"));
-
-	if (!IsValid(InteractionSphere))
-	{
-		return;
-	}
-
-	InteractionSphere->SetupAttachment(Owner->GetRootComponent());
-	InteractionSphere->SetSphereRadius(InteractionRadius);
-	InteractionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	InteractionSphere->SetGenerateOverlapEvents(true);
-	InteractionSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	InteractionSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	InteractionSphere->RegisterComponent();
-	InteractionSphere->OnComponentBeginOverlap.AddDynamic(this, &UInteractComponent::OnInteractionBeginOverlap);
-	InteractionSphere->OnComponentEndOverlap.AddDynamic(this, &UInteractComponent::OnInteractionEndOverlap);
 }
 
 void UInteractComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -202,55 +186,6 @@ AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
 	return Hit.GetActor();
 }
 
-void UInteractComponent::OnInteractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(OtherActor);
-
-	if (!IsValid(ItemPickup))
-	{
-		return;
-	}
-
-	UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
-
-	if (!IsValid(ItemInstance))
-	{
-		return;
-	}
-
-	if (NearbyItems.Contains(ItemInstance))
-	{
-		return;
-	}
-
-	NearbyItems.Add(ItemInstance);
-
-	OnNearbyItemsChanged.Broadcast(NearbyItems);
-}
-
-void UInteractComponent::OnInteractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
-{
-	AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(OtherActor);
-
-	if (!IsValid(ItemPickup))
-	{
-		return;
-	}
-
-	UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance();
-
-	if (!IsValid(ItemInstance))
-	{
-		return;
-	}
-
-	if (NearbyItems.Remove(ItemInstance) <= 0)
-	{
-		return;
-	}
-
-	OnNearbyItemsChanged.Broadcast(NearbyItems);
-}
 
 // 대상 전환
 void UInteractComponent::SetFocus(AActor* NewTarget)
