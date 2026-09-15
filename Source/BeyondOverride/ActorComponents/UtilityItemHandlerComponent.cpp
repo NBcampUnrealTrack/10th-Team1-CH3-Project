@@ -20,6 +20,9 @@ bool UUtilityItemHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Utility Item 인스턴스 저장
 	UtilityItemInstance = Cast<UUtilityItemInstance>(EquippableItemInstance);
 
+	// Assign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::Green, FString::Printf(TEXT("Utility Item Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 등록 성공
 	return true;
 }
@@ -35,6 +38,9 @@ UEquippableItemInstance* UUtilityItemHandlerComponent::Unassign()
 	// Utility Item 인스턴스 제거
 	UtilityItemInstance = nullptr;
 
+	// Unassign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::Green, FString::Printf(TEXT("Utility Item Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 제거한 장비 반환
 	return OutEquippableItemInstance;
 }
@@ -45,6 +51,9 @@ bool UUtilityItemHandlerComponent::Equip()
 	{
 		return false;
 	}
+
+	// Equip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(5001, 5.0f, FColor::Green, FString::Printf(TEXT("Utility Item Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
 	return true;
 }
@@ -58,6 +67,9 @@ bool UUtilityItemHandlerComponent::Unequip()
 
 	// 사용 중이면 취소
 	OnUseInterrupted();
+
+	// Unequip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(5001, 5.0f, FColor::Green, FString::Printf(TEXT("Utility Item Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
 	return true;
 }
@@ -150,6 +162,9 @@ void UUtilityItemHandlerComponent::OnUseStarted()
 		&UUtilityItemHandlerComponent::OnUseCompleted,
 		UtilityItemData->UseDuration,
 		false);
+
+	// 사용 시작 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(5002, 5.0f, FColor::Green, FString::Printf(TEXT("Using Utility Started")));
 }
 
 void UUtilityItemHandlerComponent::OnUseCompleted()
@@ -176,10 +191,16 @@ void UUtilityItemHandlerComponent::OnUseCompleted()
 
 	// 효과 적용 델리게이트 송출
 	OnEffectAppliedDelegate.Broadcast(UtilityItemInstance);
+
+	// 사용 완료 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(5002, 5.0f, FColor::Green, FString::Printf(TEXT("Using Utility Completed")));
 }
 
 void UUtilityItemHandlerComponent::OnUseInterrupted()
 {
 	// 타이머 제거
 	GetWorld()->GetTimerManager().ClearTimer(UseTimerHandle);
+
+	// 사용 취소 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(5002, 5.0f, FColor::Green, FString::Printf(TEXT("Using Utility Interrupted")));
 }
