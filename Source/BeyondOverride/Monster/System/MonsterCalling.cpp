@@ -7,11 +7,15 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
+#include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
+#include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
 void UMonsterCalling::CallMonsters(const FVector& CallCenter, float Radius, ABOCharacter*& Target, ECallType Type)
 {
+
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
 
 	// 결과 값 저장용 배열
 	TArray<FOverlapResult> OverlapResults;
@@ -50,12 +54,17 @@ void UMonsterCalling::CallMonsters(const FVector& CallCenter, float Radius, ABOC
 			continue;
 		}
 
-		CallTarget->GetState()->SetCallingTimer();
-		CallTarget->GetState()->SetTarget(Target);
+		AMonsterAIController* Controller = Cast<AMonsterAIController>(CallTarget->GetController());
+		if (!Controller)
+		{
+			continue;
+		}
+		Controller->PlantFlag(EFlag::Calling, CurrentTime);
+		Controller->SetTarget(Target);
 
 		if (Type == ECallType::LocationPatrol)
 		{
-			CallTarget->GetState()->SetIsCallLocation(true);
+			Controller->StateChange(EMonsterState::LocationPatrol, 10.0f);
 		}
 	}
 }

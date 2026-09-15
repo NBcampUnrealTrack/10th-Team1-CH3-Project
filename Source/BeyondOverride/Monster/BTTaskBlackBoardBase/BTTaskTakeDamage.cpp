@@ -65,23 +65,20 @@ EBTNodeResult::Type UBTTaskTakeDamage::ExecuteTask(UBehaviorTreeComponent& Owner
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, Target, ECallType::Attack);
-		AIState->TrueContinueTargeting();
-		AIState->CallContinueTimer();
+		AIController->StateChange(EMonsterState::Chase, 30.0f);
 
-		if (!AIState->IsStandOff() && !AIState->IsContinueStandOff())
+		/*
+		if (AIController->GetState() != EMonsterState::StandOff && !AIController->IsContinueState())
 		{
-			AIState->SetStandOffTimer();
+			AIController->StateChange(EMonsterState::StandOff, 10.0f);
 		}
+		*/
 
 		return EBTNodeResult::Succeeded;
 	}
 
 	if (TargetDist <= CanNotFind && bHitDamage)
 	{
-		AIState->CallLocationPatrolTimer();
-		AIState->SetLocationPatrolActor(Target);
-		AIState->SetLocationPatrolPoint(Target->GetActorLocation());
-		AIState->TrueBeCanPatrol();
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, Target, ECallType::LocationPatrol);
 	}
 

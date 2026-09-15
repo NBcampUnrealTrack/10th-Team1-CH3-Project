@@ -5,7 +5,6 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
@@ -33,13 +32,10 @@ EBTNodeResult::Type UBTTaskClearTarget::ExecuteTask(UBehaviorTreeComponent& Owne
 	{
 		return EBTNodeResult::Failed;
 	}
-
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-	if (!AIState->GetContinueTargeting())
+	if (!AIController->IsContinueState() &&
+		(AIController->GetState() == EMonsterState::Chase ||
+		 AIController->GetState() == EMonsterState::Attack ||
+		 AIController->GetState() == EMonsterState::StandOff))
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), nullptr);
 		return EBTNodeResult::Failed;

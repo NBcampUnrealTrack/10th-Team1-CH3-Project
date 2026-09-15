@@ -5,7 +5,6 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
@@ -29,27 +28,21 @@ EBTNodeResult::Type UBTTaskCanAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
-	AMonsterCharacter* AIMonster = Cast<AMonsterCharacter>(AIController->GetPawn());
-	if (!AIMonster)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	UAttackDataComponent* AIAttackData = AIMonster->GetAttackData();
-	if (!AIAttackData)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	ABOCharacter* Target = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (!Target)
 	{
 		return EBTNodeResult::Failed;
 	}
 
-	float AttackRange = AIAttackData->GetAttackRange() * AIAttackData->GetAttackRange();
+	AMonsterCharacter* AIMonster = Cast<AMonsterCharacter>(BlackboardComp->GetValueAsObject(TEXT("SelfActor")));
+	if (!AIMonster)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	float AttackRange = AIMonster->GetAttackRange() * AIMonster->GetAttackRange();
 	float TargetDistance = FVector::DistSquared(Target->GetActorLocation(), AIMonster->GetActorLocation());
 
-	BlackboardComp->SetValueAsBool(TEXT("bCanAttack"), TargetDistance < AttackRange && !AIAttackData->IsDelay());
+	BlackboardComp->SetValueAsBool(TEXT("bCanAttack"), TargetDistance < AttackRange && !AIMonster->IsDelay());
 	return EBTNodeResult::Succeeded;
 }

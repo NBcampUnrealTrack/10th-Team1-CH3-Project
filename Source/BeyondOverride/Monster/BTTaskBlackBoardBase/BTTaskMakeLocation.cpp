@@ -53,8 +53,13 @@ EBTNodeResult::Type UBTTaskMakeLocation::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::Failed;
 	}
 
-	AActor* Target = AIState->GetLocationPatrolActor();
-	FVector LocationPoint = AIState->GetLocationPatrolPoint();
+	ABOCharacter* Target = AIController->GetTarget();
+	if (!Target)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	FVector LocationPoint = AIController->GetTargetPoint();
 
 	float TargetDist = FVector::Distance(Target->GetActorLocation(), AIMonster->GetActorLocation());
 

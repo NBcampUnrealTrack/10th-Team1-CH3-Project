@@ -5,6 +5,8 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Monster/ActorComponent/ContinuousStateComponent.h"
+#include "Monster/ActorComponent/ShortTermStateComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
@@ -29,37 +31,23 @@ EBTNodeResult::Type UBTTaskHearCheck::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
-	UAIPerceptionComponent* Perception = AIController->GetPerceptionComponent();
-	if (!Perception)
-	{
-		return EBTNodeResult::Failed;
-	}
+	bool HearCheck = AIController->FoldFlags(EFlag::Hearing);
 
-	AMonsterCharacter* AIMonster = Cast<AMonsterCharacter>(AIController->GetPawn());
-	if (!AIMonster)
+	if (HearCheck || AIController->GetState() == EMonsterState::LocationPatrol)
 	{
-		return EBTNodeResult::Failed;
-	}
-
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	if (AIState->IsHearing() || AIState->IsLocation())
-	{
-		if (!AIState->GetBeCanPatrol())
+		if ((AIController->GetState() == EMonsterState::Chase ||
+			 AIController->GetState() == EMonsterState::Attack ||
+			 AIController->GetState() == EMonsterState::StandOff ||
+			 AIController->GetState() == EMonsterState::Atmosphere) &&
+			AIController->IsContinueState())
 		{
 			return EBTNodeResult::Failed;
 		}
-		if (AIState->IsHearing())
+		if (HearCheck)
 		{
-			AIState->CallLocationPatrolTimer();
+			AIController->StateChange(EMonsterState::LocationPatrol, 10.0f);
 		}
 
-		AIState->FalseBeCanPatrol();
-		AIState->CallPatrolTimer();
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;
