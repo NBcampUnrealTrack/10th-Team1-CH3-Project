@@ -7,7 +7,6 @@
 #include "NavigationSystem.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
@@ -36,12 +35,6 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-	UAttackDataComponent* AIAttackData = AIMonster->GetAttackData();
-	if (!AIAttackData)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	APawn* Target = Cast<APawn>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (!Target)
 	{
@@ -56,7 +49,7 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	FVector MoveLocation;
 
-	float AttackRange = AIAttackData->GetAttackRange() * AIAttackData->GetAttackRange();
+	float AttackRange = AIMonster->GetAttackRange() * AIMonster->GetAttackRange();
 	float TargetDistance = FVector::DistSquared(Target->GetActorLocation(), AIMonster->GetActorLocation());
 
 	float BaseAngle = (AIMonster->GetActorLocation() - TargetLocation).Rotation().Yaw;
@@ -64,7 +57,7 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 	if (NavSystem && (!NavSystem->ProjectPointToNavigation(TargetLocation, NavLocation) || TargetDistance < AttackRange))
 	{
 
-		float Radius = AIAttackData->GetAttackRange() - (AIAttackData->GetAttackRange() / 10);
+		float Radius = AIMonster->GetAttackRange() - (AIMonster->GetAttackRange() / 10);
 
 		for (int i = 0; i < 36; ++i)
 		{
@@ -76,7 +69,7 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 			Point.Y += FMath::Sin(Angle) * Radius;
 
 			// Point = Center에서 정확히 Radius만큼 떨어진 위치
-			if (NavSystem->ProjectPointToNavigation(Point, NavLocation, FVector((AIAttackData->GetAttackRange() / 20.0f), (AIAttackData->GetAttackRange() / 20.0f), 2000.0f)))
+			if (NavSystem->ProjectPointToNavigation(Point, NavLocation, FVector((AIMonster->GetAttackRange() / 20.0f), (AIMonster->GetAttackRange() / 20.0f), 2000.0f)))
 			{
 
 				MoveLocation = NavLocation.Location;

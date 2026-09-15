@@ -66,6 +66,8 @@ class BEYONDOVERRIDE_API UAttackDataComponent : public UActorComponent
 	float AttackRange = 600.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
 	FVector TargetLocation;
+	UPROPERTY(EditAnywhere, Category = "Monster|AttackData")
+	FName AttackPoint;
 
 	FTimerHandle AttackDelayHandler;
 

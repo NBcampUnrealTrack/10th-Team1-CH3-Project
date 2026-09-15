@@ -7,6 +7,9 @@
 #include "NavigationSystem.h"
 #include "TimerManager.h"
 
+#include "Monster/ActorComponent/ContinuousStateComponent.h"
+#include "Monster/ActorComponent/SenseComponent.h"
+#include "Monster/ActorComponent/ShortTermStateComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -16,6 +19,15 @@
 
 AMonsterAIController::AMonsterAIController()
 {
+	// 상태 데이터 컴포넌트
+	State = CreateDefaultSubobject<UContinuousStateComponent>(TEXT("State"));
+
+	// 플래그 컴포넌트
+	Flag = CreateDefaultSubobject<UShortTermStateComponent>(TEXT("Flag"));
+
+	// 센서 값 컴포넌트
+	SenseValue = CreateDefaultSubobject<USenseComponent>(TEXT("SenseValue"));
+
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SetPerceptionComponent(*AIPerception);
 
@@ -34,7 +46,7 @@ AMonsterAIController::AMonsterAIController()
 
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
 	HearingConfig->HearingRange = 1750.0f;
-	HearingConfig->SetMaxAge(3.0f);
+	HearingConfig->SetMaxAge(5.0f);
 
 	HearingConfig->DetectionByAffiliation.bDetectEnemies = true;
 	HearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
@@ -58,12 +70,15 @@ void AMonsterAIController::EnableBehaviorTree()
 void AMonsterAIController::BeginPlay()
 {
 	Super::BeginPlay();
+	SenseValue->SetSpawnPoint(GetPawn()->GetActorLocation());
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetHearUpdated);
 	EnableBehaviorTree();
 }
 
 void AMonsterAIController::OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
 
 	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
 	{
@@ -80,9 +95,9 @@ void AMonsterAIController::OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimul
 				return;
 			}
 
-			Monster->GetState()->SetLocationPatrolPoint(NoiseLocation);
-			Monster->GetState()->SetLocationPatrolActor(NoiseActor);
-			Monster->GetState()->CallHearingTimer();
+			PlantFlag(EFlag::Hearing, CurrentTime);
+			SetTargetPoint(NoiseLocation);
+			SetTarget(NoiseActor);
 		}
 	}
 }
@@ -95,4 +110,62 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 	if (!InPawn)
 	{
 	}
+}
+
+// 중재자 패턴용
+
+void AMonsterAIController::PlantFlag(FFlagInfo FlagInfo)
+{
+	Flag->PlantFlag(FlagInfo);
+}
+
+void AMonsterAIController::PlantFlag(EFlag PFlag, float Time)
+{
+	Flag->PlantFlag(PFlag, Time);
+}
+
+bool AMonsterAIController::FoldFlags(EFlag Target)
+{
+	return Flag->FoldFlags(Target);
+}
+
+void AMonsterAIController::StateChange(EMonsterState Input)
+{
+	State->StateChange(Input);
+}
+
+void AMonsterAIController::StateChange(EMonsterState Input, float HoldTime)
+{
+	State->StateChange(Input, HoldTime);
+}
+
+EMonsterState AMonsterAIController::GetState() const
+{
+
+	return State->GetState();
+}
+
+bool AMonsterAIController::IsContinueState() const
+{
+	return State->IsContinueState();
+}
+
+void AMonsterAIController::SetTarget(ABOCharacter* Target)
+{
+	SenseValue->SetTarget(Target);
+}
+
+void AMonsterAIController::SetTargetPoint(FVector Point)
+{
+	SenseValue->SetTargetPoint(Point);
+}
+
+ABOCharacter* AMonsterAIController::GetTarget() const
+{
+	return SenseValue->GetTarget();
+}
+
+FVector AMonsterAIController::GetTargetPoint() const
+{
+	return SenseValue->GetTargetPoint();
 }

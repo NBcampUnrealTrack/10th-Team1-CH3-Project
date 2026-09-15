@@ -58,8 +58,7 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
-		AIState->TrueContinueTargeting();
-		AIState->CallContinueTimer();
+		AIController->StateChange(EMonsterState::Chase, 30.0f);
 		if (!AIState->IsStandOff() && !AIState->IsContinueStandOff())
 		{
 			AIState->SetStandOffTimer();

@@ -1,0 +1,58 @@
+// 26/09/15 Copyright CH3 Team1 Jinho Song
+
+#pragma once
+
+// Core include
+#include "CoreMinimal.h"
+
+// Base include
+#include "Components/ActorComponent.h"
+
+// UHT Header
+#include "SenseComponent.generated.h"
+
+class ABOCharacter;
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
+{
+	GENERATED_BODY()
+
+  public:
+	USenseComponent();
+
+	void SetTarget(ABOCharacter* Target);
+	ABOCharacter* GetTarget() const;
+
+	void SetTargetPoint(FVector Point);
+	FVector GetTargetPoint() const;
+
+	void SetSpawnPoint(FVector Point);
+
+  protected:
+	virtual void BeginPlay() override;
+
+	// Properties
+  public:
+  protected:
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	TObjectPtr<ABOCharacter> MonsterTarget;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	FVector TargetPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	FVector SpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	float HearSenseSize = 1750.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	float SightSenseSize = 2500.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	float LoseSightSize = 3000.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	float VisionAngleDegrees = 50.0f;
+};
