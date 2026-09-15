@@ -3,10 +3,13 @@
 #include "EnhancedInputComponent.h"
 
 #include "ActorComponents/EquipmentManagerComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
+#include "GameFlow/BOGameMode.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
@@ -15,18 +18,15 @@
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Items/Objects/ThrowableItemInstance.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
-#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
-#include "Animation/AnimInstance.h"
-#include "Animation/AnimMontage.h"
-#include "GameFlow/BOGameMode.h"
-#include "Monster/MonsterCharacter/MonsterCharacter.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -419,7 +419,7 @@ void ABOCharacter::StartFire(const FInputActionValue& value)
 	if (bIsRolling)
 	{
 		return;
-}
+	}
 
 	// 장비 사용 시작
 	if (EquipmentManagerComponent)
@@ -647,7 +647,7 @@ void ABOCharacter::Unarm(const FInputActionValue& value)
 
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
 {
-	//if (EquipmentManagerComponent)
+	// if (EquipmentManagerComponent)
 	//{
 	//	// 장비 제거
 	//	UItemInstanceBase* ItemInstance = EquipmentManagerComponent->Unassign(EquipmentManagerComponent->GetActiveSlot());
@@ -854,6 +854,7 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &ABOCharacter::OnActiveSlotChanged);
 
 	// Primary & Secondary (Range Weapon)
+	EquipmentManagerComponent->OnFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
 }
@@ -886,6 +887,29 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 		{
 			BOAnimInstance->ApplyEquipmentAnimation(EquipmentAnimationData);
 		}
+	}
+}
+
+void ABOCharacter::OnFireExecuted() const
+{
+	if (!GetMesh() || !GetMesh()->GetAnimInstance())
+	{
+		return;
+	}
+
+	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	if (bIsAiming)
+	{
+		AnimInstance->PlayFireAimMontage();
+	}
+	else
+	{
+		AnimInstance->PlayFireHipMontage();
 	}
 }
 
