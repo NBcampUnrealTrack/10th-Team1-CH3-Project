@@ -6,6 +6,7 @@
 // Add include
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Monster/ActorComponent/ShortTermStateComponent.h"
 #include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
@@ -36,30 +37,25 @@ EBTNodeResult::Type UBTTaskCallingCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	ABOCharacter* Target = AIController->GetTarget();
 	if (!Target)
 	{
 		return EBTNodeResult::Succeeded;
 	}
 
-	if (!AIState->GetIsCallLocation() && AIState->IsCalling())
+	bool IsLocation;
+
+	bool IsCall = AIController->FoldFlags(EFlag::Calling, IsLocation);
+
+	if (!IsLocation && IsCall)
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
 		return EBTNodeResult::Succeeded;
 	}
 
-	if (AIState->GetIsCallLocation() && AIState->IsCalling())
+	if (IsLocation && IsCall)
 	{
-		AIState->CallLocationPatrolTimer();
-		AIState->SetLocationPatrolActor(Target);
-		AIState->TrueBeCanPatrol();
-		AIState->SetLocationPatrolPoint(Target->GetActorLocation());
+		AIController->StateChange(EMonsterState::LocationPatrol, 10.0f);
 		return EBTNodeResult::Succeeded;
 	}
 

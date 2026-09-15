@@ -3,7 +3,7 @@
 // Base include
 #include "Monster/System/BalisticTrace.h"
 
-void UBalisticTrace::BalisticStart(FHitResult& Result, const AActor*& Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed)
+void UBalisticTrace::BalisticStart(FHitResult& Result, const AActor* Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed)
 {
 
 	TraceParams.AddObjectTypesToQuery(ECC_Pawn);
