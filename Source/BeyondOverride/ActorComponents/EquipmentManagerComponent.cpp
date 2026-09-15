@@ -284,22 +284,32 @@ int32 UEquipmentManagerComponent::OnRequestReloadAmmo(URangeWeaponInstance* Rang
 	return RequestReloadAmmoDelegate.Execute(RangeWeaponInstance);
 }
 
-void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance) const
+void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance)
 {
 	if (!OnEquipmentStackCountUpdatedDelegate.IsBound())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장비 개수 변경 이벤트 송출 실패 - OnEquipmentCountUpdatedDelegate is not Bound"));
-		return;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장비 개수 변경 - %s: %d"), *GetNameSafe(EquippableItemInstance), EquippableItemInstance->GetStackCount());
 
 	// 슬롯과 장비 인스턴스 송출
 	if (EquippableItemInstance->IsA(UThrowableItemInstance::StaticClass()))
 	{
 		OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Throwable, EquippableItemInstance);
+		// 개수 0일면 자동 제거
+		if (EquippableItemInstance->GetStackCount() <= 0)
+		{
+			Unassign(EEquipmentSlot::Throwable);
+		}
 	}
 	// else if (EquippableItemInstance->IsA(UEffectItemInstance::StaticClass()))
-	// {
+	//{
 	//	OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Effect, EquippableItemInstance);
+	//	if (EquippableItemInstance->GetStackCount() <= 0)
+	//	{
+	//		Unassign(EEquipmentSlot::Throwable);
+	//	}
 	// }
 
 	// TODO: 캐릭터에서 해당 델리게이트 바인딩. 개수가 0개면 제거 수행

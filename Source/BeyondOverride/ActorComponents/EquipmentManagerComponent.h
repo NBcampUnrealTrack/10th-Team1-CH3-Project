@@ -94,5 +94,5 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance) const;
 
 	// [Throwable & Effect Item] 델리게이트 바인딩 이벤트
-	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance) const;
+	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance);
 };
