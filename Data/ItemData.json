@@ -96,10 +96,10 @@
         "Description": "Basically Provided Grenade",
         "ItemType": "ThrowableItem",
         "ItemRarity": "Common",
-        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_MeleeWeaponInstance_Grenade.BP_MeleeWeaponInstance_Grenade_C'",
-        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemPickupBase_Grenade.BP_ItemPickupBase_Grenade_C'",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Grenade/BP_ItemInstance_Grenade.BP_ItemInstance_Grenade_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Grenade/BP_ItemPickup_Grenade.BP_ItemPickup_Grenade_C'",
         "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/ThrowingWeapon/Grenade/SM_Grenade.SM_Grenade'",
-        "MaxStackCount": 1,
+        "MaxStackCount": 3,
         "Weight": 10.0,
         "ItemIcon": ""
     },

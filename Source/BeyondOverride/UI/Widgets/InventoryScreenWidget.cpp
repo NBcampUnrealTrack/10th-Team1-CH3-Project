@@ -1,9 +1,10 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
 #include "Blueprint/WidgetTree.h"
-#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
+#include "UI/Widgets/EquipmentSlotWidget.h"
 #include "UI/Widgets/HeldItemWidget.h"
 #include "UI/Widgets/ItemSlotPanelWidget.h"
 
@@ -30,6 +31,19 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (HeldItem)
 	{
 		HeldItem->BindInteraction(OwnerCharacter->GetInventoryInteractionComponent());
+	}
+
+	if (WidgetTree)
+	{
+		WidgetTree->ForEachWidget([OwnerCharacter](UWidget* Widget)
+								  { 
+			if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget)) 
+			{
+				EquipmentSlot->SetupEquipmentSlot(
+					OwnerCharacter->GetPlayerInventoryComponent(),
+					OwnerCharacter->GetInventoryInteractionComponent(),
+					OwnerCharacter->GetEquipmentComponent());
+		} });
 	}
 }
 
@@ -73,4 +87,3 @@ void UInventoryScreenWidget::CloseContainer()
 
 	ContainerSlotPanel->SetInventory(nullptr, nullptr);
 }
-

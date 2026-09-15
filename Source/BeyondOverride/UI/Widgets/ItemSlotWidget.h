@@ -22,7 +22,7 @@ class BEYONDOVERRIDE_API UItemSlotWidget : public UUserWidget
 	{
 		SlotIndex = InIndex;
 	}
-	void SetItem(UItemInstanceBase* Item);
+	void SetItem(UItemInstanceBase* Item, bool bUseLongImg = false);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnSlotClicked OnSlotClicked;
