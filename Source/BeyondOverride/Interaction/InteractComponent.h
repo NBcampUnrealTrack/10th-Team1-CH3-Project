@@ -50,12 +50,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractHoldProgress, float,
 //   SetInteractionEnabled(false) 를 부르면 탐지가 멈추고 프롬프트가 꺼진다.
 //   인벤토리 · 상점 같은 전체 화면 창을 열 때 반드시 호출할 것.
 
-class USphereComponent;
-class UItemInstanceBase;
-class UPrimitiveComponent;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNearbyItemsChanged, const TArray<UItemInstanceBase*>&, NearbyItems);
-
 UCLASS(ClassGroup = (Interaction), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UInteractComponent : public UActorComponent
 {
@@ -106,13 +100,6 @@ public:
 		return bHolding;
 	}
 
-	// 주변 아이템 관련
-	UPROPERTY(BlueprintAssignable)
-	FOnNearbyItemsChanged OnNearbyItemsChanged;
-
-	UFUNCTION(BlueprintPure)
-	TArray<UItemInstanceBase*> GetNearbyItems() const { return NearbyItems; }
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -142,33 +129,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction|Debug")
 	bool bDrawDebug = true;
 
-	// 주변 아이템 관련
-	UPROPERTY()
-	TObjectPtr<USphereComponent> InteractionSphere;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TArray<TObjectPtr<UItemInstanceBase>> NearbyItems;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
-	float InteractionRadius = 300.0f;
-
-	UFUNCTION()
-	void OnInteractionBeginOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComponent,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
-
-	UFUNCTION()
-	void OnInteractionEndOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComponent,
-		int32 OtherBodyIndex
-	);
 private:
 	// 쳐다보는 대상을 바꾼다. 이전 것 끄고 새 것 켜는 처리가 들어 있다.
 	void SetFocus(AActor* NewTarget);
