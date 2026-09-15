@@ -2,6 +2,7 @@
 
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
+#include "ActorComponents/ThrowableItemHandlerComponent.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
 #include "Items/Objects/EquippableItemInstance.h"
@@ -17,6 +18,7 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Primary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Primary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Secondary, CreateDefaultSubobject<URangeWeaponHandlerComponent>(TEXT("Secondary RangeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Melee, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("MeleeWeapon Handler Component")));
+	EquipmentHandlerComponents.Add(EEquipmentSlot::Throwable, CreateDefaultSubobject<UThrowableItemHandlerComponent>(TEXT("ThrowableItem Handler Component")));
 }
 
 EEquipmentSlot UEquipmentManagerComponent::GetActiveSlot() const
