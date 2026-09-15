@@ -4,6 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "InventoryInteractionComponent.generated.h"
 
+class AItemPickupBase;
+class UNearbyItemComponent;
 class UInventoryComponent;
 class UPlayerInventoryComponent;
 class UItemInstanceBase;
@@ -23,6 +25,8 @@ public:
 	bool HandleSlotClick(UInventoryComponent* Inventory, int32 SlotIndex, bool bLeftClick); // 일반 칸 좌/우클릭
 	UFUNCTION(BlueprintCallable)
 	bool HandleEquipmentSlotClick(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot, bool bLeftClick); // 무기 칸 좌/우클릭
+	UFUNCTION(BlueprintCallable)
+	bool HandleNearbySlotClick(UNearbyItemComponent* NearbyItemComponent, int32 SlotIndex, bool bLeftClick);
 	UFUNCTION(BlueprintCallable)
 	bool DropItem(bool bLeftClick); // 손에 들고 있는 아이템 버리기
 
@@ -74,6 +78,19 @@ private:
 	bool SwapEquipmentItem(UPlayerInventoryComponent* Inventory, EEquipmentSlot Slot);
 	// --------------------------------------------------
 
+	// --------------- 주변 슬롯 함수 -------------------
+	// 아이템 집기
+	bool PickupWorldAll(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
+	bool PickupWorldHalf(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
+
+	// 아이템 합치기
+	bool MergeWorldAll(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
+	bool MergeWorldOne(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
+
+	// 아이템 교체
+	bool SwapWorldItem(UNearbyItemComponent* NearbyItemComponent, AItemPickupBase* ItemPickup);
+	// --------------------------------------------------
+
 	// ------------------ 공용 함수 ---------------------
 	// 아이템 비교
 	bool IsSameItem(const UItemInstanceBase* FirstItem, const UItemInstanceBase* SecondItem) const;
@@ -82,8 +99,8 @@ private:
 	UItemInstanceBase* CreateItemInstance(UItemInstanceBase* ItemInstance);
 
 	// 아이템 버리기
-	bool DropAll();
-	bool DropOne();
+	bool DropAll(UNearbyItemComponent* NearbyItemComponent = nullptr);
+	bool DropOne(UNearbyItemComponent* NearbyItemComponent = nullptr);
 	// --------------------------------------------------
 
 private:

@@ -37,5 +37,5 @@ int32 UItemInstanceBase::GetStackCount() const
 
 void UItemInstanceBase::SetStackCount(int32 InStackCount)
 {
-	StackCount = FMath::Clamp(InStackCount, 1, ItemData->MaxStackCount);
+	StackCount = FMath::Clamp(InStackCount, 0, ItemData->MaxStackCount);
 }
