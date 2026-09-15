@@ -371,6 +371,11 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 							ItemPickup->Destroy();
 						}
 					}
+					else
+					{
+						PlayerInventoryComponent->AddItem(ItemInstance);
+						ItemPickup->Destroy();
+					}
 				}
 			}
 		}

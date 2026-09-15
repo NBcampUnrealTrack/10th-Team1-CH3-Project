@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/Widgets/InteractPromptWidget.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Player/PlayerController/BOPlayerController.h"
 
 UUIManager::UUIManager()
 {
@@ -170,6 +171,7 @@ void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		PC->SetInputMode(Mode);
 		PC->bShowMouseCursor = true;
+		CenterMouseCursor(PC);
 		break;
 	}
 	case EUIInputMode::GameAndUI:
@@ -181,6 +183,7 @@ void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
 		}
 		PC->SetInputMode(Mode);
 		PC->bShowMouseCursor = true;
+		CenterMouseCursor(PC);
 		break;
 	}
 	case EUIInputMode::GameOnly:
@@ -189,6 +192,19 @@ void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
 		PC->bShowMouseCursor = false;
 		break;
 	}
+}
+
+void UUIManager::CenterMouseCursor(APlayerController* PC)
+{
+	if (!PC || !GEngine || !GEngine->GameViewport)
+		return;
+
+	FVector2D ViewportSize;
+	GEngine->GameViewport->GetViewportSize(ViewportSize);
+
+	PC->SetMouseLocation(
+		FMath::RoundToInt(ViewportSize.X * 0.5f),
+		FMath::RoundToInt(ViewportSize.Y * 0.5f));
 }
 
 void UUIManager::BindInteractPrompt(UInteractComponent* InteractComponent)

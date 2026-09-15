@@ -8,6 +8,10 @@
 
 class AExitActor;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExtractControlRequested,
+											 AExitControllerActor*, ExitController,
+											 AActor*, Interactor);
+
 UCLASS()
 class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 {
@@ -15,6 +19,12 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 
   public:
 	AExitControllerActor();
+
+	UFUNCTION(BlueprintCallable, Category = "Extraction")
+	void SetControllerAvailable(bool bNewEnabled, const FText& Reason = FText::GetEmpty());
+
+	UPROPERTY(BlueprintAssignable, Category = "Extraction")
+	FOnExtractControlRequested OnExtractControlRequested;
 
   protected:
 	virtual void BeginPlay() override;
