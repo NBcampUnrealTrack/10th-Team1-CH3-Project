@@ -31,6 +31,16 @@ void UShortTermStateComponent::PlantFlag(EFlag State, float Time)
 	Flags.Add(Item);
 }
 
+void UShortTermStateComponent::PlantFlag(EFlag State, float Time, bool Type)
+{
+	FFlagInfo Item;
+	Item.Flag = State;
+	Item.CallTime = Time;
+	Item.IsLocation = Type;
+
+	Flags.Add(Item);
+}
+
 bool UShortTermStateComponent::FoldFlags(EFlag Target)
 {
 	bool IsFold = false;
@@ -43,6 +53,29 @@ bool UShortTermStateComponent::FoldFlags(EFlag Target)
 		{
 			Flags[index].Complete = true;
 			IsFold = true;
+		}
+	}
+
+	return IsFold;
+}
+
+bool UShortTermStateComponent::FoldFlags(EFlag Target, bool& Type)
+{
+	bool IsFold = false;
+
+	const float CurrentTime = GetWorld()->GetTimeSeconds();
+
+	for (size_t index = 0; index < Flags.Num(); index = index + 1)
+	{
+		if (Flags[index].Flag == Target && CurrentTime - Flags[index].CallTime <= 0.1f)
+		{
+			Flags[index].Complete = true;
+			IsFold = true;
+
+			if (Flags[index].IsLocation == true)
+			{
+				Type = true;
+			}
 		}
 	}
 
