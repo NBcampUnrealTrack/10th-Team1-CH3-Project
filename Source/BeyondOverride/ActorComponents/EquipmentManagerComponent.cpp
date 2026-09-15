@@ -126,10 +126,18 @@ bool UEquipmentManagerComponent::Use()
 
 void UEquipmentManagerComponent::StartAction()
 {
+	if (EquipmentHandlerComponents.Contains(ActiveSlot) && EquipmentHandlerComponents[ActiveSlot])
+	{
+		EquipmentHandlerComponents[ActiveSlot]->StartAction();
+	}
 }
 
 void UEquipmentManagerComponent::EndAction()
 {
+	if (EquipmentHandlerComponents.Contains(ActiveSlot) && EquipmentHandlerComponents[ActiveSlot])
+	{
+		EquipmentHandlerComponents[ActiveSlot]->EndAction();
+	}
 }
 
 bool UEquipmentManagerComponent::Reload()
