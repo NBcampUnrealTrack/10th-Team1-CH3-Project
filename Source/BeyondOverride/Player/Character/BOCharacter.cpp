@@ -356,10 +356,18 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 					{
 						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
 						{
+							if (PlayerInventoryComponent)
+							{
+								PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Primary, ItemInstance);
+							}
 							ItemPickup->Destroy();
 						}
 						else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
 						{
+							if (PlayerInventoryComponent)
+							{
+								PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Secondary, ItemInstance);
+							}
 							ItemPickup->Destroy();
 						}
 					}
@@ -368,6 +376,10 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 					{
 						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
 						{
+							if (PlayerInventoryComponent)
+							{
+								PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Melee, ItemInstance);
+							}
 							ItemPickup->Destroy();
 						}
 					}
