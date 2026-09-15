@@ -32,3 +32,7 @@ void ABOPlayerController::BeginPlay()
 	}
 	*/
 }
+
+void ABOPlayerController::ShowMainHUDWidget()
+{
+}

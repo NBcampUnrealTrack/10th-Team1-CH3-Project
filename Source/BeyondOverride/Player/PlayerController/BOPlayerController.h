@@ -63,4 +63,7 @@ public:
 	// 장비 버리기
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
 	UInputAction* DropEquipmentAction = nullptr;
+
+public:
+	void ShowMainHUDWidget();
 };
