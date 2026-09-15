@@ -38,4 +38,7 @@ struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spread")
 	TObjectPtr<UCurveFloat> SpreadCurve; // 탄 퍼짐
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Icon")
+	TObjectPtr<UTexture2D> ItemIconLong;
 };
