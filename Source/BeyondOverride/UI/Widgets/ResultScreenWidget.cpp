@@ -46,10 +46,6 @@ void UResultScreenWidget::NativeConstruct()
 
 	SurvivalTimeText->SetText(FText::FromString(TimeString));
 
-	FString TimeString = FString::Printf(TEXT("%d:%02d"), Minutes, Seconds);
-
-	SurvivalTimeText->SetText(FText::FromString(TimeString));
-
 	if (KillCountList && KillCountEntryClass)
 	{
 		KillCountList->ClearChildren();
