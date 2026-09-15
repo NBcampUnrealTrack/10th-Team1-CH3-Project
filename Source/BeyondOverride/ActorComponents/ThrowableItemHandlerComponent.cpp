@@ -22,6 +22,9 @@ bool UThrowableItemHandlerComponent::Assign(UEquippableItemInstance* InEquippabl
 	// Throwable Item 인스턴스 저장
 	ThrowableItemInstance = Cast<UThrowableItemInstance>(EquippableItemInstance);
 
+	// Assign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(4000, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 등록 성공
 	return true;
 }
@@ -37,6 +40,9 @@ UEquippableItemInstance* UThrowableItemHandlerComponent::Unassign()
 	// Throwable Item 인스턴스 제거
 	ThrowableItemInstance = nullptr;
 
+	// Unassign 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(4000, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 제거한 장비 반환
 	return OutEquippableItemInstance;
 }
@@ -48,6 +54,9 @@ bool UThrowableItemHandlerComponent::Equip()
 		return false;
 	}
 
+	// Equip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(4001, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	return true;
 }
 
@@ -57,6 +66,9 @@ bool UThrowableItemHandlerComponent::Unequip()
 	{
 		return false;
 	}
+
+	// Unequip 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(4001, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
 	return true;
 }
@@ -254,6 +266,9 @@ void UThrowableItemHandlerComponent::StartThrow()
 		&UThrowableItemHandlerComponent::Throw,
 		ThrowableItemData->ThrowDuration,
 		false);
+
+	// 투척 시작 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(4002, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Started - %s"), *GetNameSafe(EquippableItemInstance)));
 }
 
 void UThrowableItemHandlerComponent::Throw()
@@ -275,6 +290,9 @@ void UThrowableItemHandlerComponent::Throw()
 
 	// 사용 후 개수 변경 델리게이트 송출
 	OnCountUpdatedDelegate.Broadcast(ThrowableItemInstance);
+
+	// 투척 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(4002, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Throwed - %s"), *GetNameSafe(EquippableItemInstance)));
 }
 
 AThrowableProjectile* UThrowableItemHandlerComponent::SpawnThrowable()
