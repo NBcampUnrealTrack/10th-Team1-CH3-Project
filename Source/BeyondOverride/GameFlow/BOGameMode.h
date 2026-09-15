@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "BOEnums.h"
 #include "CoreMinimal.h"
 
+#include "Enums/BOEnums.h"
 #include "GameFramework/GameMode.h"
 
 #include "BOGameMode.generated.h"
@@ -21,9 +21,18 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
 	virtual void BeginPlay() override;
 
+	void ProvideBasicEquipment();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
 
-  private:
+	void GetKilledMonsters(TMap<FName, int32>& Data) const;
+	FName GetKillerMonster() const;
+
+  public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
 	TObjectPtr<UFarmingStateMachine> StateMachine;
+
+  private:
+	TMap<FName, int32> KilledMonsters;
+	FName KillerMonster;
 };

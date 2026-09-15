@@ -20,8 +20,6 @@ class BEYONDOVERRIDE_API UBeginFarmingState : public UBaseFarmingState
 	virtual void Enter() override;
 
   private:
-	void SpawnCharacter();
-	void SpawnAI();
-	void ActivateContainer();
-	void ActivateExit();
+	void InitRegions();
+	void SetStartTime();
 };

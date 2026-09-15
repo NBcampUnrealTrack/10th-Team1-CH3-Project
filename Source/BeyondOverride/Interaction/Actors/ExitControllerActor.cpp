@@ -45,8 +45,12 @@ void AExitControllerActor::PerformInteract(AActor* Interactor)
 	if (TargetExit)
 	{
 		// PromptData.bEnabled = false;
-		// TargetExit->SetExtractAvailable(true);
+		TargetExit->SetExtractAvailable(true);
 		PromptData.DisableReason = FText::FromString(TEXT("탈출 개방 장치가 작동하였습니다."));
-		OnExtractControlRequested.Broadcast(this, Interactor);
+
+		if (OnExtractControlRequested.IsBound())
+		{
+			OnExtractControlRequested.Broadcast(this, Interactor);
+		}
 	}
 }

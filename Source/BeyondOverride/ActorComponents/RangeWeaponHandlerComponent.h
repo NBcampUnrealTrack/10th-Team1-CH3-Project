@@ -46,9 +46,6 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
   public:
-	// 등록된 장비 반환
-	virtual UEquippableItemInstance* GetEquippableItemInstance() const;
-
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
 	// 장비 제거
@@ -120,10 +117,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FRotator GetSpreadRotation(const FRotator& AimRotation);
 
 	// 총알 소환
-	ABulletProjectile* SpawnProjectile(
-		APawn* Instigator,
-		const FVector& StartLocation,
-		const FRotator& Rotation);
+	ABulletProjectile* SpawnBullet();
 
 	// 사격 타이머 활성화
 	void StartFireTimer();

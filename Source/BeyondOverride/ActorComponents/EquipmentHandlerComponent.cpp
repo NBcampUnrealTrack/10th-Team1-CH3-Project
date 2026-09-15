@@ -24,7 +24,7 @@ void UEquipmentHandlerComponent::OnRegister()
 
 UEquippableItemInstance* UEquipmentHandlerComponent::GetEquippableItemInstance() const
 {
-	return nullptr;
+	return EquippableItemInstance;
 }
 
 bool UEquipmentHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
