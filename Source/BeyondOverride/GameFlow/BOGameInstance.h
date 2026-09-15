@@ -25,9 +25,11 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void InitSetting();
 	void Start();
 	void Restart();
+	void End();
 	void Exit();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
+	void ToEnding();
 	void OpenLevel(ELevel Level);
 
 	void SavePlayerData();
@@ -49,13 +51,22 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	float GetTotalSurvivalTime() const;
 	float GetSurvivalTime() const;
+	int32 GetFarmingCount() const;
+	int32 GetDeathCount() const;
 	void GetTotalKilledMonsters(TMap<FName, int32>& Data) const;
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
 
-	float GetCurrentHealth() const;
-	float GetCurrentShield() const;
+	float GetCurHealth() const;
+	float GetCurShield() const;
 	int32 GetTotalMoney() const;
+
+	bool IsPlayerInventorySaved() const;
+	bool IsStorageInventorySaved() const;
+
+	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
+	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
+	TArray<UItemInstanceBase*> GetStorageInventory() const;
 
 	bool GetIsKeyCardAcquired() const;
 
@@ -82,6 +93,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	float TotalSurvivalTime;
 	float SurvivalTime;
+	int32 FarmingCount;
+	int32 DeathCount;
 	TMap<FName, int32> TotalKilledMonsters;
 	TMap<FName, int32> KilledMonsters;
 	FName KillerMonster;
@@ -90,9 +103,14 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 CurShield;
 	int32 TotalMoney;
 
-	TArray<TObjectPtr<UItemInstanceBase>> PlayerItemInventory;
-	TArray<TObjectPtr<UItemInstanceBase>> PlayerEquipmentInventory;
-	TArray<TObjectPtr<UItemInstanceBase>> StorageInventory;
+	UPROPERTY()
+	TArray<UItemInstanceBase*> PlayerItemInventory;
+
+	UPROPERTY()
+	TArray<UItemInstanceBase*> PlayerEquipmentInventory;
+
+	UPROPERTY()
+	TArray<UItemInstanceBase*> StorageInventory;
 
 	bool IsKeyCardAcquired;
 

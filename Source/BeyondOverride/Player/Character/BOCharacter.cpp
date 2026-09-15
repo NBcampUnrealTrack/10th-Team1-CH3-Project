@@ -7,6 +7,7 @@
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
+#include "GameFlow/BOGameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
@@ -17,8 +18,8 @@
 #include "Items/Objects/ThrowableItemInstance.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
-#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -88,6 +89,21 @@ void ABOCharacter::BeginPlay()
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
 		UIManager->BindInteractPrompt(InteractComponent);
+	}
+
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			if (GameInstance->IsPlayerInventorySaved())
+			{
+				if (PlayerInventoryComponent)
+				{
+					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());
+					PlayerInventoryComponent->SetEquipmentSlots(GameInstance->GetPlayerEquipmentInventory());
+				}
+			}
+		}
 	}
 }
 
@@ -541,6 +557,58 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 						ItemPickup->Destroy();
 					}
 				}
+
+				if (EquipmentManagerComponent)
+				{
+
+					//// Range Weapon
+					// if (ItemInstance->IsA(URangeWeaponInstance::StaticClass()))
+					//{
+					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
+					//	{
+					//		if (PlayerInventoryComponent)
+					//		{
+					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Primary, ItemInstance);
+					//		}
+					//		ItemPickup->Destroy();
+					//	}
+					//	else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
+					//	{
+					//		if (PlayerInventoryComponent)
+					//		{
+					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Secondary, ItemInstance);
+					//		}
+					//		ItemPickup->Destroy();
+					//	}
+					// }
+					//// Melee Weapon
+					// else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
+					//{
+					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
+					//	{
+					//		if (PlayerInventoryComponent)
+					//		{
+					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Melee, ItemInstance);
+					//		}
+					//		ItemPickup->Destroy();
+					//	}
+					// }
+					////// throwable Weapon
+					////else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
+					////{
+					////	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
+					////	{
+					////		ItemPickup->Destroy();
+					////	}
+					////}
+					// else
+					//{
+					//	if (PlayerInventoryComponent->AddItem(ItemInstance))
+					//	{
+					//		ItemPickup->Destroy();
+					//	}
+					// }
+				}
 			}
 		}
 	}
@@ -606,7 +674,7 @@ void ABOCharacter::Unarm(const FInputActionValue& value)
 
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
 {
-	//if (EquipmentManagerComponent)
+	// if (EquipmentManagerComponent)
 	//{
 	//	// 장비 제거
 	//	UItemInstanceBase* ItemInstance = EquipmentManagerComponent->Unassign(EquipmentManagerComponent->GetActiveSlot());
@@ -687,7 +755,6 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 	{
 		EquipmentManagerComponent->Equip(Slot);
 	}
-
 }
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)

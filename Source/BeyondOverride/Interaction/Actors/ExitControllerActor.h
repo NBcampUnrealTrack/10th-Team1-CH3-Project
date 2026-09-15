@@ -23,11 +23,17 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 	UFUNCTION(BlueprintCallable, Category = "Extraction")
 	void SetControllerAvailable(bool bNewEnabled, const FText& Reason = FText::GetEmpty());
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exit")
-	FName RegionId = "Default";
+	UFUNCTION(BlueprintCallable, Category = "Extraction")
+	AExitActor* GetTargetExit() const
+	{
+		return TargetExit;
+	};
 
-	UPROPERTY(BlueprintAssignable, Category = "Extraction")
-	FOnExtractControlRequested OnExtractControlRequested;
+	UFUNCTION(BlueprintCallable, Category = "Extraction")
+	FName GetRegionId() const
+	{
+		return RegionId;
+	};
 
   protected:
 	virtual void BeginPlay() override;
@@ -42,7 +48,11 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 	TObjectPtr<AExitActor> TargetExit;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Extraction")
-	float ControlTime = 30.f;
+	FName RegionId = "Default";
+
+	UPROPERTY(BlueprintAssignable, Category = "Extraction")
+	FOnExtractControlRequested OnExtractControlRequested;
+	float ControlTime = 3.f;
 
   private:
 	void SetExitActorOpenTimer();

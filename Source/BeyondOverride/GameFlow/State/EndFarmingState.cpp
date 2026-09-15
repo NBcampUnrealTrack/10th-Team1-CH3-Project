@@ -6,6 +6,7 @@
 
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOWorldSubsystem.h"
+#include "GameFlow/Manager/RegionManager.h"
 
 void UEndFarmingState::Enter()
 {
@@ -27,6 +28,19 @@ void UEndFarmingState::SetEndTime()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Set End Time"));
 		WorldSubsystem->SetEndTime();
+	}
+}
+
+void UEndFarmingState::CleanRegions()
+{
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
+	if (URegionManager* RegionManager = GetWorld()->GetGameInstance()->GetSubsystem<URegionManager>())
+	{
+		RegionManager->CleanSetting();
 	}
 }
 

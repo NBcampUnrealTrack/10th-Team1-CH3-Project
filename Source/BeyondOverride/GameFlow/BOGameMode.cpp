@@ -7,7 +7,10 @@
 #include "DataTables/Items/ItemDataRow.h"
 #include "Engine/TargetPoint.h"
 #include "Factory/ItemFactory.h"
+#include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/ActorComponent/InventoryComponent.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "State/FarmingStateMachine.h"
@@ -16,6 +19,13 @@
 ABOGameMode::ABOGameMode()
 	: StateMachine(nullptr)
 {
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
+	GameInstance = GetGameInstance<UBOGameInstance>();
+
 	PlayerControllerClass = ABOPlayerController::StaticClass();
 	DefaultPawnClass = ABOCharacter::StaticClass();
 }
@@ -24,7 +34,9 @@ void ABOGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (UBOGameInstance* GameInstance = GetGameInstance<UBOGameInstance>())
+	UE_LOG(LogTemp, Warning, TEXT("Game Mode BeginPlay"));
+
+	if (GameInstance)
 	{
 		EGameState BOGameState = GameInstance->GetGameState();
 		EPlayingState BOPlayingState = GameInstance->GetPlayingState();
@@ -39,28 +51,49 @@ void ABOGameMode::BeginPlay()
 		}
 		else if (BOGameState == EGameState::Playing)
 		{
-			if (BOPlayingState == EPlayingState::Bunker && BOFarmingResult != EFarmingResult::Success)
+			if (UUIManager* UIManager = UUIManager::Get(this))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Provide Basic Equipments"));
-				ProvideBasicEquipment();
+				UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
+			}
+
+			if (BOPlayingState == EPlayingState::Bunker)
+			{
+				EnterBunker(BOFarmingResult);
 			}
 			else if (BOPlayingState == EPlayingState::Farming)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Game Mode Begin Play"));
 				StartFarming();
 			}
 		}
 	}
 }
 
-void ABOGameMode::ProvideBasicEquipment()
+void ABOGameMode::Start()
 {
-	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	if (GameInstance)
 	{
-		return;
+		GameInstance->Start();
+	}
+}
+
+void ABOGameMode::EnterBunker(EFarmingResult Result)
+{
+	if (Result != EFarmingResult::Success)
+	{
+		ProvideBasicEquipment();
 	}
 
-	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	if (Result != EFarmingResult::None)
+	{
+		if (UUIManager* UIManager = UUIManager::Get(this))
+		{
+			UIManager->ShowScreen(EUIScreen::Result, EUIInputMode::UIOnly);
+		}
+	}
+}
+
+void ABOGameMode::ProvideBasicEquipment()
+{
 	if (!GameInstance)
 	{
 		return;
@@ -91,6 +124,7 @@ void ABOGameMode::ProvideBasicEquipment()
 
 void ABOGameMode::StartFarming()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Game Mode Begin Farming"));
 	StateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
 
 	if (StateMachine)
@@ -107,6 +141,43 @@ void ABOGameMode::EndFarming(EFarmingResult Result)
 	{
 		StateMachine->SetFarmingResult(Result);
 		StateMachine->ChangeState(EFarmingState::End);
+	}
+}
+
+void ABOGameMode::ToEnding()
+{
+	if (GameInstance)
+	{
+		GameInstance->ToEnding();
+	}
+}
+
+void ABOGameMode::Explosion()
+{
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::FinalResult, EUIInputMode::UIOnly);
+	}
+}
+
+void ABOGameMode::End()
+{
+	if (GameInstance)
+	{
+		GameInstance->End();
+	}
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::Title, EUIInputMode::UIOnly);
+	}
+}
+
+void ABOGameMode::Exit()
+{
+	if (GameInstance)
+	{
+		GameInstance->Exit();
 	}
 }
 

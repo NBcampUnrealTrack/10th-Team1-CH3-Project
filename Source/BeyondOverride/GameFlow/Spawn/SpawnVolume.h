@@ -24,7 +24,7 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "SpawnVolume")
-	virtual void OnOverlapped(
+	void OnOverlapped(
 		UPrimitiveComponent* OverlappedComp,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
@@ -39,6 +39,8 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 
 	FName GetId() const;
 	FName GetRegionId() const;
+
+	void CleanSetting();
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SpawnVolume")

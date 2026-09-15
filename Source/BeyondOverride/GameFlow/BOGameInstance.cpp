@@ -74,9 +74,6 @@ void UBOGameInstance::InitSetting()
 	IsKeyCardAcquired = false;
 
 	// MonsterDatas.Empty();
-
-	OpenLevel(ELevel::Bunker);
-	Start(); // test code
 }
 
 void UBOGameInstance::Start()
@@ -84,13 +81,15 @@ void UBOGameInstance::Start()
 	GameState = EGameState::Playing;
 	PlayingState = EPlayingState::Bunker;
 
-	if (UUIManager* UIManager = UUIManager::Get(this))
-	{
-		UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
-	}
+	OpenLevel(ELevel::Bunker);
 }
 
 void UBOGameInstance::Restart()
+{
+	InitSetting();
+}
+
+void UBOGameInstance::End()
 {
 	InitSetting();
 }
@@ -123,10 +122,23 @@ void UBOGameInstance::EndFarming(EFarmingResult Result)
 {
 	PlayingState = EPlayingState::Bunker;
 	FarmingResult = Result;
+	FarmingCount += 1;
+
+	if (Result == EFarmingResult::Fail)
+	{
+		DeathCount += 1;
+	}
 
 	SaveFarmingData();
 
 	OpenLevel(ELevel::Bunker);
+}
+
+void UBOGameInstance::ToEnding()
+{
+	SaveFarmingData();
+
+	OpenLevel(ELevel::ServerRoom);
 }
 
 void UBOGameInstance::OpenLevel(ELevel Level)
@@ -146,7 +158,17 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 
 void UBOGameInstance::SavePlayerData()
 {
-	if (ABOCharacter* Character = Cast<ABOCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)))
+	UE_LOG(LogTemp, Warning, TEXT("Save Player Data"));
+
+	PlayerItemInventory.Empty();
+	PlayerEquipmentInventory.Empty();
+
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
+	{
+		return;
+	}
+
+	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
 	{
 		// health, shield
 		if (UStatComponent* StatComponent = Character->GetStatComponent())
@@ -158,14 +180,28 @@ void UBOGameInstance::SavePlayerData()
 		// inventory
 		if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
 		{
-			PlayerItemInventory = InventoryComponent->GetSlots();
-			PlayerEquipmentInventory = InventoryComponent->GetEquipmentSlots();
+			TArray<UItemInstanceBase*> InventorySlots = InventoryComponent->GetSlots();
+			TArray<UItemInstanceBase*> EquipmentSlots = InventoryComponent->GetEquipmentSlots();
+
+			for (UItemInstanceBase* InventorySlot : InventorySlots)
+			{
+				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
+				PlayerItemInventory.Add(Item);
+			}
+
+			for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
+			{
+				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
+				PlayerEquipmentInventory.Add(Item);
+			}
 		}
 	}
 }
 
 void UBOGameInstance::SaveStorageData()
 {
+	StorageInventory.Empty();
+
 	TArray<AActor*> AllActors{};
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AStorageContainerActor::StaticClass(), AllActors);
 
@@ -175,7 +211,13 @@ void UBOGameInstance::SaveStorageData()
 		{
 			if (UInventoryComponent* InventoryComponent = Storage->GetInventoryComponent())
 			{
-				StorageInventory = InventoryComponent->GetSlots();
+				TArray<UItemInstanceBase*> Slots = InventoryComponent->GetSlots();
+
+				for (UItemInstanceBase* Slot : Slots)
+				{
+					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(Slot, this);
+					StorageInventory.Add(Item);
+				}
 			}
 		}
 	}
@@ -239,14 +281,12 @@ void UBOGameInstance::CheckKeyCard()
 	{
 		if (IsValid(Item))
 		{
-			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
+			if (Item->GetItemID() == "KEY_CARD")
 			{
-				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
-				{
-					IsKeyCardAcquired = true;
+				UE_LOG(LogTemp, Warning, TEXT("Key Card Acquired"));
+				IsKeyCardAcquired = true;
 
-					return;
-				}
+				return;
 			}
 		}
 	}
@@ -255,14 +295,11 @@ void UBOGameInstance::CheckKeyCard()
 	{
 		if (IsValid(Item))
 		{
-			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
+			if (Item->GetItemID() == "KEY_CARD")
 			{
-				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
-				{
-					IsKeyCardAcquired = true;
+				IsKeyCardAcquired = true;
 
-					return;
-				}
+				return;
 			}
 		}
 	}
@@ -318,6 +355,16 @@ float UBOGameInstance::GetSurvivalTime() const
 	return SurvivalTime;
 }
 
+int32 UBOGameInstance::GetFarmingCount() const
+{
+	return FarmingCount;
+}
+
+int32 UBOGameInstance::GetDeathCount() const
+{
+	return DeathCount;
+}
+
 void UBOGameInstance::GetTotalKilledMonsters(TMap<FName, int32>& Data) const
 {
 	Data = TotalKilledMonsters;
@@ -333,12 +380,12 @@ FName UBOGameInstance::GetKillerMonster() const
 	return KillerMonster;
 }
 
-float UBOGameInstance::GetCurrentHealth() const
+float UBOGameInstance::GetCurHealth() const
 {
 	return CurHealth;
 }
 
-float UBOGameInstance::GetCurrentShield() const
+float UBOGameInstance::GetCurShield() const
 {
 	return CurShield;
 }
@@ -346,6 +393,41 @@ float UBOGameInstance::GetCurrentShield() const
 int32 UBOGameInstance::GetTotalMoney() const
 {
 	return TotalMoney;
+}
+
+bool UBOGameInstance::IsPlayerInventorySaved() const
+{
+	if (!PlayerItemInventory.IsEmpty() || !PlayerEquipmentInventory.IsEmpty())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool UBOGameInstance::IsStorageInventorySaved() const
+{
+	if (!StorageInventory.IsEmpty())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerItemInventory() const
+{
+	return PlayerItemInventory;
+}
+
+TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerEquipmentInventory() const
+{
+	return PlayerEquipmentInventory;
+}
+
+TArray<UItemInstanceBase*> UBOGameInstance::GetStorageInventory() const
+{
+	return StorageInventory;
 }
 
 bool UBOGameInstance::GetIsKeyCardAcquired() const

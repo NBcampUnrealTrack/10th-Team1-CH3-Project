@@ -1,6 +1,7 @@
 #include "Interaction/Actors/ScavengeActor.h"
 
 #include "GameFlow/BOGameInstance.h"
+#include "GameFlow/BOGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -24,7 +25,7 @@ AScavengeActor::AScavengeActor()
 
 void AScavengeActor::PerformInteract(AActor* Interactor)
 {
-	UBOGameInstance* GI = Cast<UBOGameInstance>(UGameplayStatics::GetGameInstance(this));
+	UBOGameInstance* GI = GetWorld()->GetGameInstance<UBOGameInstance>();
 	if (!GI)
 		return;
 	GI->StartFarming();

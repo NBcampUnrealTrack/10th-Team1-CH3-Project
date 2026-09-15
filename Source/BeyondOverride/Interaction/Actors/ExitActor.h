@@ -24,9 +24,6 @@ class BEYONDOVERRIDE_API AExitActor : public AInteractableActorBase
 		return PromptData.bEnabled;
 	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exit")
-	FName RegionId = "Default";
-
   protected:
 	virtual void PerformInteract(AActor* Interactor) override;
 
