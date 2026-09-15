@@ -18,6 +18,7 @@
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
+#include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
@@ -45,6 +46,7 @@ ABOCharacter::ABOCharacter()
 	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("InventoryComponent"));
 	InventoryInteractionComponent = CreateDefaultSubobject<UInventoryInteractionComponent>(TEXT("InventoryInteractionComponent"));
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
+	NearbyItemComponent = CreateDefaultSubobject<UNearbyItemComponent>(TEXT("NearbyItemComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 }
 
@@ -62,6 +64,11 @@ void ABOCharacter::BeginPlay()
 	// EquipmentManagerComponent 설정
 	BindingEquipmentManagerComponentDelegates(); // 델리게이트 바인딩
 	EquipmentManagerComponent->Initialize();     // 초기 설정
+
+	if (IsValid(PlayerInventoryComponent))
+	{
+		PlayerInventoryComponent->OnEquipmentItemChanged.AddDynamic(this, &ABOCharacter::OnEquipmentItemChanged);
+	}
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
@@ -164,11 +171,11 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot3Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot3);
 			}
-			if (PlayerController->EquipSlot3Action)
+			if (PlayerController->EquipSlot4Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot4Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot4);
 			}
-			if (PlayerController->EquipSlot4Action)
+			if (PlayerController->EquipSlot5Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot5Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot5);
 			}
@@ -358,57 +365,65 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 		{
 			if (UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance())
 			{
-				if (EquipmentManagerComponent)
+				if (IsValid(PlayerInventoryComponent))
 				{
-					// Range Weapon
-					if (ItemInstance->IsA(URangeWeaponInstance::StaticClass()))
+					if (PlayerInventoryComponent->AddItem(ItemInstance))
 					{
-						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
-						{
-							if (PlayerInventoryComponent)
-							{
-								PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Primary, ItemInstance);
-							}
-							ItemPickup->Destroy();
-						}
-						else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
-						{
-							if (PlayerInventoryComponent)
-							{
-								PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Secondary, ItemInstance);
-							}
-							ItemPickup->Destroy();
-						}
-					}
-					// Melee Weapon
-					else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
-					{
-						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
-						{
-							if (PlayerInventoryComponent)
-							{
-								PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Melee, ItemInstance);
-							}
-							ItemPickup->Destroy();
-						}
-					}
-					// Melee Weapon
-					else if (ItemInstance->IsA(UThrowableItemInstance::StaticClass()))
-					{
-						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Throwable, ItemInstance))
-						{
-							if (PlayerInventoryComponent)
-							{
-								PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Throwable, ItemInstance);
-							}
-							ItemPickup->Destroy();
-						}
-					}
-					else
-					{
-						PlayerInventoryComponent->AddItem(ItemInstance);
 						ItemPickup->Destroy();
 					}
+				}
+
+				if (EquipmentManagerComponent)
+				{
+
+
+					//// Range Weapon
+					//if (ItemInstance->IsA(URangeWeaponInstance::StaticClass()))
+					//{
+					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
+					//	{
+					//		if (PlayerInventoryComponent)
+					//		{
+					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Primary, ItemInstance);
+					//		}
+					//		ItemPickup->Destroy();
+					//	}
+					//	else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
+					//	{
+					//		if (PlayerInventoryComponent)
+					//		{
+					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Secondary, ItemInstance);
+					//		}
+					//		ItemPickup->Destroy();
+					//	}
+					//}
+					//// Melee Weapon
+					//else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
+					//{
+					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
+					//	{
+					//		if (PlayerInventoryComponent)
+					//		{
+					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Melee, ItemInstance);
+					//		}
+					//		ItemPickup->Destroy();
+					//	}
+					//}
+					////// throwable Weapon
+					////else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
+					////{
+					////	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
+					////	{
+					////		ItemPickup->Destroy();
+					////	}
+					////}
+					//else
+					//{
+					//	if (PlayerInventoryComponent->AddItem(ItemInstance))
+					//	{
+					//		ItemPickup->Destroy();
+					//	}
+					//}
 				}
 			}
 		}
@@ -442,42 +457,27 @@ void ABOCharacter::Escape(const FInputActionValue& value)
 
 void ABOCharacter::EquipSlot1(const FInputActionValue& value)
 {
-	if (EquipmentManagerComponent)
-	{
-		EquipmentManagerComponent->Equip(EEquipmentSlot::Primary);
-	}
+	TryEquipSlot(EEquipmentSlot::Primary);
 }
 
 void ABOCharacter::EquipSlot2(const FInputActionValue& value)
 {
-	if (EquipmentManagerComponent)
-	{
-		EquipmentManagerComponent->Equip(EEquipmentSlot::Secondary);
-	}
+	TryEquipSlot(EEquipmentSlot::Secondary);
 }
 
 void ABOCharacter::EquipSlot3(const FInputActionValue& value)
 {
-	if (EquipmentManagerComponent)
-	{
-		EquipmentManagerComponent->Equip(EEquipmentSlot::Melee);
-	}
+	TryEquipSlot(EEquipmentSlot::Melee);
 }
 
 void ABOCharacter::EquipSlot4(const FInputActionValue& value)
 {
-	if (EquipmentManagerComponent)
-	{
-		EquipmentManagerComponent->Equip(EEquipmentSlot::Throwable);
-	}
+	TryEquipSlot(EEquipmentSlot::Throwable);
 }
 
 void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 {
-	if (EquipmentManagerComponent)
-	{
-		EquipmentManagerComponent->Equip(EEquipmentSlot::Effect);
-	}
+	TryEquipSlot(EEquipmentSlot::Effect);
 }
 
 void ABOCharacter::Unarm(const FInputActionValue& value)
@@ -490,17 +490,45 @@ void ABOCharacter::Unarm(const FInputActionValue& value)
 
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
 {
-	if (EquipmentManagerComponent)
-	{
-		// 장비 제거
-		UItemInstanceBase* ItemInstance = EquipmentManagerComponent->Unassign(EquipmentManagerComponent->GetActiveSlot());
+	//if (EquipmentManagerComponent)
+	//{
+	//	// 장비 제거
+	//	UItemInstanceBase* ItemInstance = EquipmentManagerComponent->Unassign(EquipmentManagerComponent->GetActiveSlot());
 
-		// 제거한 장비 액터 소환
-		FItemFactory::SpawnItemPickup(
-			GetWorld(),
-			ItemInstance,
-			GetActorLocation() + 30 * GetActorForwardVector());
+	//	// 제거한 장비 액터 소환
+	//	FItemFactory::SpawnItemPickup(
+	//		GetWorld(),
+	//		ItemInstance,
+	//		GetActorLocation() + 30 * GetActorForwardVector());
+	//}
+
+	if (!IsValid(PlayerInventoryComponent) || !IsValid(EquipmentManagerComponent))
+	{
+		return;
 	}
+
+	const EEquipmentSlot ActiveSlot = EquipmentManagerComponent->GetActiveSlot();
+
+	// 맨손은 버릴 수 없음
+	if (ActiveSlot == EEquipmentSlot::Unarmed)
+	{
+		return;
+	}
+
+	UItemInstanceBase* ItemInstance = PlayerInventoryComponent->GetEquipmentItem(ActiveSlot);
+
+	if (!IsValid(ItemInstance))
+	{
+		return;
+	}
+
+	// 인벤토리 슬롯을 비우면 OnEquipmentSlotChanged가 발생하고 EquipmentManager가 이를 받아 실제 장비를 제거
+	if (!PlayerInventoryComponent->SetEquipmentItem(ActiveSlot, nullptr))
+	{
+		return;
+	}
+
+	FItemFactory::SpawnItemPickup(GetWorld(), ItemInstance, GetActorLocation() + 30.0f * GetActorForwardVector());
 }
 
 void ABOCharacter::ChangeMoveSpeed()
@@ -511,16 +539,55 @@ void ABOCharacter::ChangeMoveSpeed()
 	GetCharacterMovement()->MaxWalkSpeedCrouched = NewMoveSpeed * CrouchSpeedMultiplier;
 }
 
-void ABOCharacter::OnEquipmentSlotChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
+void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
 {
-	if (ItemInstanceBase)
+	if (!IsValid(EquipmentManagerComponent))
 	{
-		EquipmentManagerComponent->Assign(Slot, ItemInstanceBase);
+		return;
 	}
-	else
+
+	const bool bWasActiveSlot = EquipmentManagerComponent->GetActiveSlot() == Slot;
+
+	// 해당 슬롯의 기존 장비 제거
+	if (EquipmentManagerComponent->HasEquipment(Slot))
 	{
 		EquipmentManagerComponent->Unassign(Slot);
 	}
+
+	// 슬롯이 비워진 경우 제거만 하고 종료
+	if (!IsValid(ItemInstanceBase))
+	{
+		return;
+	}
+
+	// 새 장비를 핸들러에 등록
+	if (!EquipmentManagerComponent->Assign(Slot, ItemInstanceBase))
+	{
+		return;
+	}
+
+	// 변경 전 활성 슬롯이었다면 새 장비도 실제 장착
+	if (bWasActiveSlot)
+	{
+		EquipmentManagerComponent->Equip(Slot);
+	}
+
+}
+
+void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
+{
+	if (!IsValid(PlayerInventoryComponent) || !IsValid(EquipmentManagerComponent))
+	{
+		return;
+	}
+
+	// 인벤토리 장비 슬롯에 실제 아이템이 있을 때만 장착 요청
+	if (!IsValid(PlayerInventoryComponent->GetEquipmentItem(Slot)))
+	{
+		return;
+	}
+
+	EquipmentManagerComponent->Equip(Slot);
 }
 
 void ABOCharacter::BindingEquipmentManagerComponentDelegates()
