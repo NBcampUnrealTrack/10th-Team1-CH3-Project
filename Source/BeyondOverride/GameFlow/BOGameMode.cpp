@@ -82,6 +82,14 @@ void ABOGameMode::EnterBunker(EFarmingResult Result)
 	{
 		ProvideBasicEquipment();
 	}
+
+	if (Result != EFarmingResult::None)
+	{
+		if (UUIManager* UIManager = UUIManager::Get(this))
+		{
+			UIManager->ShowScreen(EUIScreen::Result, EUIInputMode::UIOnly);
+		}
+	}
 }
 
 void ABOGameMode::ProvideBasicEquipment()
@@ -133,6 +141,35 @@ void ABOGameMode::EndFarming(EFarmingResult Result)
 	{
 		StateMachine->SetFarmingResult(Result);
 		StateMachine->ChangeState(EFarmingState::End);
+	}
+}
+
+void ABOGameMode::ToEnding()
+{
+	if (GameInstance)
+	{
+		GameInstance->ToEnding();
+	}
+}
+
+void ABOGameMode::Explosion()
+{
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::FinalResult, EUIInputMode::UIOnly);
+	}
+}
+
+void ABOGameMode::End()
+{
+	if (GameInstance)
+	{
+		GameInstance->End();
+	}
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::Title, EUIInputMode::UIOnly);
 	}
 }
 

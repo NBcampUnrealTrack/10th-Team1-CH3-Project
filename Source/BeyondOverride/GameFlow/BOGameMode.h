@@ -27,6 +27,9 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void ProvideBasicEquipment();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
+	void ToEnding();
+	void Explosion();
+	void End();
 	void Exit();
 
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;

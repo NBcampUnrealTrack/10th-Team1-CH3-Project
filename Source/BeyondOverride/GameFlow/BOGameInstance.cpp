@@ -89,6 +89,11 @@ void UBOGameInstance::Restart()
 	InitSetting();
 }
 
+void UBOGameInstance::End()
+{
+	InitSetting();
+}
+
 void UBOGameInstance::Exit()
 {
 	if (GetWorld())
@@ -117,17 +122,30 @@ void UBOGameInstance::EndFarming(EFarmingResult Result)
 {
 	PlayingState = EPlayingState::Bunker;
 	FarmingResult = Result;
+	FarmingCount += 1;
+
+	if (Result == EFarmingResult::Fail)
+	{
+		DeathCount += 1;
+	}
 
 	SaveFarmingData();
 
 	OpenLevel(ELevel::Bunker);
 }
 
+void UBOGameInstance::ToEnding()
+{
+	SaveFarmingData();
+
+	OpenLevel(ELevel::ServerRoom);
+}
+
 void UBOGameInstance::OpenLevel(ELevel Level)
 {
 	SavePlayerData();
 
-	if (Level != ELevel::Bunker)
+	if (Level == ELevel::Main)
 	{
 		SaveStorageData();
 	}
@@ -263,14 +281,12 @@ void UBOGameInstance::CheckKeyCard()
 	{
 		if (IsValid(Item))
 		{
-			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
+			if (Item->GetItemID() == "KEY_CARD")
 			{
-				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KEY CARD"))))
-				{
-					IsKeyCardAcquired = true;
+				UE_LOG(LogTemp, Warning, TEXT("Key Card Acquired"));
+				IsKeyCardAcquired = true;
 
-					return;
-				}
+				return;
 			}
 		}
 	}
@@ -279,14 +295,11 @@ void UBOGameInstance::CheckKeyCard()
 	{
 		if (IsValid(Item))
 		{
-			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(Item->GetItemID()))
+			if (Item->GetItemID() == "KEY_CARD")
 			{
-				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KEY CARD"))))
-				{
-					IsKeyCardAcquired = true;
+				IsKeyCardAcquired = true;
 
-					return;
-				}
+				return;
 			}
 		}
 	}
@@ -340,6 +353,16 @@ float UBOGameInstance::GetTotalSurvivalTime() const
 float UBOGameInstance::GetSurvivalTime() const
 {
 	return SurvivalTime;
+}
+
+int32 UBOGameInstance::GetFarmingCount() const
+{
+	return FarmingCount;
+}
+
+int32 UBOGameInstance::GetDeathCount() const
+{
+	return DeathCount;
 }
 
 void UBOGameInstance::GetTotalKilledMonsters(TMap<FName, int32>& Data) const

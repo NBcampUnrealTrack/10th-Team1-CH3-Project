@@ -25,9 +25,11 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void InitSetting();
 	void Start();
 	void Restart();
+	void End();
 	void Exit();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
+	void ToEnding();
 	void OpenLevel(ELevel Level);
 
 	void SavePlayerData();
@@ -49,6 +51,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	float GetTotalSurvivalTime() const;
 	float GetSurvivalTime() const;
+	int32 GetFarmingCount() const;
+	int32 GetDeathCount() const;
 	void GetTotalKilledMonsters(TMap<FName, int32>& Data) const;
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
@@ -89,6 +93,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	float TotalSurvivalTime;
 	float SurvivalTime;
+	int32 FarmingCount;
+	int32 DeathCount;
 	TMap<FName, int32> TotalKilledMonsters;
 	TMap<FName, int32> KilledMonsters;
 	FName KillerMonster;
