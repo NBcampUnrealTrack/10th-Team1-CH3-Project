@@ -416,12 +416,25 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 
 void ABOCharacter::StartFire(const FInputActionValue& value)
 {
-	// TODO
+	if (bIsRolling)
+	{
+		return;
+}
+
+	// 장비 사용 시작
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->StartAction();
+	}
 }
 
 void ABOCharacter::CompleteFire(const FInputActionValue& value)
 {
-	// TODO
+	// 장비 사용 종료
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->EndAction();
+	}
 }
 
 void ABOCharacter::Hip(const FInputActionValue& value)
@@ -531,6 +544,12 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 void ABOCharacter::StartRoll()
 {
 	bIsRolling = true;
+
+	// 장비 사용 종료
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->EndAction();
+	}
 }
 
 void ABOCharacter::StopRoll()
