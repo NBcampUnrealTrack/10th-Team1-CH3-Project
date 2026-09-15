@@ -60,7 +60,17 @@ bool UThrowableItemHandlerComponent::Unequip()
 
 bool UThrowableItemHandlerComponent::Use()
 {
-	return false;
+	if (!CanThrow())
+	{
+		return false;
+	}
+
+	// TODO: 투척 로직 구현
+
+	// 투척 타이머 활성화
+	StartThrowTimer();
+
+	return true;
 }
 
 bool UThrowableItemHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
@@ -80,7 +90,18 @@ bool UThrowableItemHandlerComponent::CanEquip() const
 
 bool UThrowableItemHandlerComponent::CanUnequip() const
 {
-	return Super::CanUnequip();
+	if (!Super::CanUnequip())
+	{
+		return false;
+	}
+
+	// 투척 중
+	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(ThrowTimerHandle))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool UThrowableItemHandlerComponent::CanUse() const
@@ -98,4 +119,37 @@ bool UThrowableItemHandlerComponent::CanUse() const
 	}
 
 	return true;
+}
+
+bool UThrowableItemHandlerComponent::CanThrow() const
+{
+	if (!CanUse())
+	{
+		return false;
+	}
+
+	// 투척 딜레이
+	if (!GetWorld() || GetWorld()->GetTimerManager().IsTimerActive(ThrowTimerHandle))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void UThrowableItemHandlerComponent::StartThrowTimer()
+{
+	// 데이터 유효성 검증
+	const FThrowableItemDataRow* ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
+	if (!ThrowableItemData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[UThrowableItemHandlerComponent] 투척 타이머 활성화 실패 - 유효하지 않은 ThrowableItemData"));
+		return;
+	}
+
+	// 공격 타이머 활성화
+	GetWorld()->GetTimerManager().SetTimer(
+		ThrowTimerHandle,
+		ThrowableItemData->ThrowDuration,
+		false);
 }

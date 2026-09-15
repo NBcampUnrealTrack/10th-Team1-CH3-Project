@@ -44,4 +44,15 @@ class BEYONDOVERRIDE_API UThrowableItemHandlerComponent : public UEquipmentHandl
 	virtual bool CanUnequip() const override;
 	// 장비 사용 가능 여부
 	virtual bool CanUse() const override;
+
+  protected:
+	// 투척 타이머
+	FTimerHandle ThrowTimerHandle;
+
+  protected:
+	// 투척 가능 여부
+	bool CanThrow() const;
+
+	// 투척 타이머 시작
+	void StartThrowTimer();
 };
