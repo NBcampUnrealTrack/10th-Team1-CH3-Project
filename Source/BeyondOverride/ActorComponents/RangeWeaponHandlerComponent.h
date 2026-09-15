@@ -8,7 +8,6 @@
 #include "RangeWeaponHandlerComponent.generated.h"
 
 class URangeWeaponInstance;
-class ABulletProjectile;
 
 // 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
 DECLARE_DELEGATE_RetVal_OneParam(
@@ -128,7 +127,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FRotator GetSpreadRotation(const FRotator& AimRotation);
 
 	// 총알 소환
-	ABulletProjectile* SpawnBullet();
+	void SpawnBullets();
 
 	// 사격 타이머 활성화
 	void StartFireTimer();

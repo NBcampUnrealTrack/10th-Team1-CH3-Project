@@ -224,16 +224,8 @@ void URangeWeaponHandlerComponent::Fire()
 		return;
 	}
 
-	// 총구 위치 & 방향
-	const FVector MuzzleLocation = GetMuzzleLocation();
-	const FRotator AimRotation = GetAimRotation();
-
 	// 총알 소환
-	ABulletProjectile* Bullet = SpawnBullet();
-	if (!Bullet) // 소환 실패
-	{
-		return;
-	}
+	SpawnBullets();
 
 	// 재장전 중이면, 취소 후 사격
 	OnReloadInterrupted();
@@ -480,6 +472,15 @@ void URangeWeaponHandlerComponent::AddRecoil()
 
 FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRotation)
 {
+	// TEMP
+	if (true)
+	{
+		return FMath::VRandCone(
+				   AimRotation.Vector(),
+				   FMath::DegreesToRadians(3.f))
+			.Rotation();
+	}
+
 	// 데이터 유효성 검증
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 	if (!RangeWeaponData)
@@ -505,44 +506,47 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 		.Rotation();
 }
 
-ABulletProjectile* URangeWeaponHandlerComponent::SpawnBullet()
+void URangeWeaponHandlerComponent::SpawnBullets()
 {
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
 	{
-		return nullptr;
+		return;
 	}
 
 	// 데이터 유효성 검증
 	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 	if (!RangeWeaponData)
 	{
-		return nullptr;
+		return;
 	}
 
-	const FVector MuzzleLocation = GetMuzzleLocation();             // 총구 위치
-	const FRotator AimRotation = GetAimRotation();                  // 목표 방향
-	const FRotator SpreadRotation = GetSpreadRotation(AimRotation); // 탄 퍼짐 적용된 방향
+	const FVector MuzzleLocation = GetMuzzleLocation(); // 총구 위치
+	const FRotator AimRotation = GetAimRotation();      // 목표 방향
 
-	// 총알 액터 생성
-	ABulletProjectile* BulletActor = GetWorld()->SpawnActor<ABulletProjectile>(
-		RangeWeaponData->BulletClass,
-		MuzzleLocation,
-		SpreadRotation);
-	if (!BulletActor)
+	// 사격 당 소환할 개수만큼 반복
+	for (int32 i = 0; i < RangeWeaponData->ProjectilesPerShot; ++i)
 	{
-		return nullptr;
+		const FRotator SpreadRotation = GetSpreadRotation(AimRotation); // 랜덤 탄 퍼짐 적용된 방향
+
+		// 총알 액터 생성
+		ABulletProjectile* BulletActor = GetWorld()->SpawnActor<ABulletProjectile>(
+			RangeWeaponData->BulletClass,
+			MuzzleLocation,
+			SpreadRotation);
+		if (!BulletActor)
+		{
+			continue;
+		}
+
+		// 총알 초기 설정
+		BulletActor->Initialize(
+			Cast<APawn>(GetOwner()),
+			RangeWeaponData->Damage,
+			RangeWeaponData->ProjectileSpeed * SpreadRotation.Vector(),
+			RangeWeaponData->ProjectileGravityScale,
+			RangeWeaponData->ProjectileRange / RangeWeaponData->ProjectileSpeed);
 	}
-
-	// 총알 초기 설정
-	BulletActor->Initialize(
-		Cast<APawn>(GetOwner()),
-		RangeWeaponData->Damage,
-		RangeWeaponData->ProjectileSpeed * SpreadRotation.Vector(),
-		RangeWeaponData->ProjectileGravityScale,
-		RangeWeaponData->ProjectileRange / RangeWeaponData->ProjectileSpeed);
-
-	return BulletActor;
 }
 
 void URangeWeaponHandlerComponent::StartFireTimer()
