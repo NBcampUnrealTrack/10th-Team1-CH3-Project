@@ -175,6 +175,8 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->PrimaryAction)
 			{
 				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Fire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::StartFire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Completed, this, &ABOCharacter::CompleteFire);
 			}
 
 			if (PlayerController->SecondaryAction)
@@ -415,6 +417,13 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 void ABOCharacter::Hip(const FInputActionValue& value)
 {
 	bIsAiming = false;
+}
+
+void ABOCharacter::StartFire(const FInputActionValue& value)
+{
+}
+void ABOCharacter::CompleteFire(const FInputActionValue& value)
+{
 }
 
 void ABOCharacter::Reload(const FInputActionValue& value)

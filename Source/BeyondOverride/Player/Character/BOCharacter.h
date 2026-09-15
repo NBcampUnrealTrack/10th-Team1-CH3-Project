@@ -113,8 +113,14 @@ private:
 	void StopSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void ToggleCrouch(const FInputActionValue& value);
+
 	UFUNCTION()
 	void Fire(const FInputActionValue& value);
+	UFUNCTION()
+	void StartFire(const FInputActionValue& value);
+	UFUNCTION()
+	void CompleteFire(const FInputActionValue& value);
+
 	UFUNCTION()
 	void Aim(const FInputActionValue& value);
 	UFUNCTION()
