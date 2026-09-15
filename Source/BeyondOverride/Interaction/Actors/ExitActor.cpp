@@ -2,7 +2,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
-#include "GameFlow/BOGameInstance.h"
+#include "GameFlow/BOGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -40,5 +40,8 @@ void AExitActor::SetExtractAvailable(bool bAvailable)
 
 void AExitActor::PerformInteract(AActor* Interactor)
 {
-	OnExtractRequested.Broadcast(this, Interactor);
+	ABOGameMode* GM = Cast<ABOGameMode>(UGameplayStatics::GetGameMode(this));
+	if (!GM)
+		return;
+	GM->EndFarming(EFarmingResult::Success);
 }

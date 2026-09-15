@@ -16,7 +16,8 @@ AExitControllerActor::AExitControllerActor()
 	PromptData.ActionText = FText::FromString(TEXT("[E] 키를 눌러 개방시키세요."));
 	PromptData.HoldSeconds = 0.f;
 	PromptData.bMoveCancel = false;
-	PromptData.bEnabled = true;
+	PromptData.bEnabled = false;
+	PromptData.DisableReason = FText::FromString(TEXT("폐쇄된 탈출 구역 입니다. 다른 탈출 구역을 이용하세요."));
 }
 
 void AExitControllerActor::BeginPlay()
@@ -30,12 +31,22 @@ void AExitControllerActor::BeginPlay()
 	}
 }
 
+void AExitControllerActor::SetControllerAvailable(bool bNewEnabled, const FText& Reason)
+{
+	PromptData.bEnabled = bNewEnabled;
+	if (!bNewEnabled && !Reason.IsEmpty())
+	{
+		PromptData.DisableReason = Reason;
+	}
+}
+
 void AExitControllerActor::PerformInteract(AActor* Interactor)
 {
 	if (TargetExit)
 	{
-		PromptData.bEnabled = false;
+		// PromptData.bEnabled = false;
+		// TargetExit->SetExtractAvailable(true);
 		PromptData.DisableReason = FText::FromString(TEXT("탈출 개방 장치가 작동하였습니다."));
-		TargetExit->SetExtractAvailable(true);
+		OnExtractControlRequested.Broadcast(this, Interactor);
 	}
 }
