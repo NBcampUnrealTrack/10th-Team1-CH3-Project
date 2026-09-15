@@ -1,6 +1,5 @@
 ﻿#include "Player/PlayerController/BOPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "UI/Manager/UIManager.h"
 
 ABOPlayerController::ABOPlayerController()
 {
@@ -36,8 +35,4 @@ void ABOPlayerController::BeginPlay()
 
 void ABOPlayerController::ShowMainHUDWidget()
 {
-	if (UUIManager* UIManager = UUIManager::Get(this))
-	{
-		UIManager->ShowScreen(EUIScreen::HUD, EUIInputMode::GameOnly);
-	}
 }
