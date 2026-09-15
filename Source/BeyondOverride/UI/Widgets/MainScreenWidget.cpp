@@ -1,9 +1,11 @@
 #include "MainScreenWidget.h"
 
+#include "Blueprint/WidgetTree.h"
 #include "Components/PanelWidget.h"
 #include "Components/ProgressBar.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/Character/BOCharacter.h"
+#include "UI/Widgets/EquipmentSlotWidget.h"
 
 void UMainScreenWidget::NativeConstruct()
 {
@@ -22,6 +24,19 @@ void UMainScreenWidget::NativeConstruct()
 
 	HandleHealthChanged(StatComponent->GetCurHealth(), StatComponent->GetMaxHealth());
 	HandleShieldChanged(StatComponent->GetCurShield(), StatComponent->GetMaxShield());
+
+	if (WidgetTree)
+	{
+		WidgetTree->ForEachWidget([this](UWidget* Widget)
+								  {
+			if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget))
+			{
+				EquipmentSlot->SetupEquipmentSlot(
+					OwningCharacter->GetPlayerInventoryComponent(),
+					OwningCharacter->GetInventoryInteractionComponent(),
+					OwningCharacter->GetEquipmentComponent());
+			} });
+	}
 }
 
 void UMainScreenWidget::NativeDestruct()
