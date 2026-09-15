@@ -217,7 +217,10 @@ UItemInstanceBase* UEquipmentManagerComponent::Unassign(EEquipmentSlot Slot)
 	}
 
 	// 비무장 슬롯 전환
-	Equip(EEquipmentSlot::Unarmed);
+	if (ActiveSlot == Slot)
+	{
+		Equip(EEquipmentSlot::Unarmed);
+	}
 
 	// 제거한 장비 반환
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Unassign 성공 - 슬롯의 장비 제거 성공"), *UEnum::GetValueAsString(Slot));
