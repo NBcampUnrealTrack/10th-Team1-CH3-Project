@@ -1,0 +1,12 @@
+[
+    {
+        "Name": "BASIC_GRENADE",
+        "Damage": 50,
+        "Radius": 300.0,
+        "ThrowDuration": 1.2,
+        "ActivationDelay": 5,
+        "ThrowableClass": "/Script/Engine.Blueprint'/Game/Blueprints/Projectiles/Throwables/BP_ExplosiveThrowable_Grenade.BP_ExplosiveThrowable_Grenade_C'",
+        "ThrowSpeed": 1000.0,
+        "ThrowGravityScale": 1.0
+    }
+]
