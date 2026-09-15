@@ -47,12 +47,6 @@ UEquippableItemInstance* UEquipmentHandlerComponent::Unassign()
 		return nullptr;
 	}
 
-	// 장비 해제 실패
-	if (!Unequip())
-	{
-		return nullptr;
-	}
-
 	// 장비 메시 제거
 	if (EquipMeshComponent)
 	{
