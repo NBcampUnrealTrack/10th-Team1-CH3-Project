@@ -45,6 +45,12 @@ UUIManager::UUIManager()
 	{
 		InteractPromptWidgetClass = InteractPromptWBPClass.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> NoneWBPClass(TEXT("/Game/UI/WBP_None"));
+	if (NoneWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::None, NoneWBPClass.Class);
+	}
 }
 
 UUIManager* UUIManager::Get(const UObject* WorldContextObject)
@@ -66,18 +72,6 @@ UUserWidget* UUIManager::ShowScreen(EUIScreen Screen, EUIInputMode InputMode)
 		}
 	}
 	ScreenStack.Empty();
-
-	if (Screen == EUIScreen::None)
-	{
-		ScreenStack.Add({ nullptr, Screen, EUIInputMode::GameOnly });
-
-		if (APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr)
-		{
-			PC->SetInputMode(FInputModeGameOnly());
-			PC->bShowMouseCursor = false;
-		}
-		return nullptr;
-	}
 
 	const TSubclassOf<UUserWidget>* FoundClass = ScreenClasses.Find(Screen);
 	if (!FoundClass || !(*FoundClass))
