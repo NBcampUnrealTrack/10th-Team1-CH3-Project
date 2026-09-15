@@ -58,8 +58,9 @@ void ABOCharacter::BeginPlay()
 
 	ChangeMoveSpeed();
 
-	// EquipmentManagerComponent의 델리게이트 바인딩
-	BindingEquipmentManagerComponentDelegates();
+	// EquipmentManagerComponent 설정
+	BindingEquipmentManagerComponentDelegates(); // 델리게이트 바인딩
+	EquipmentManagerComponent->Initialize();     // 초기 설정
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
@@ -270,10 +271,10 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
-	// 현재 장비 사용
-	if (EquipmentManagerComponent)
+	// 현재 장비 사용 시도
+	if (!EquipmentManagerComponent || !EquipmentManagerComponent->Use())
 	{
-		EquipmentManagerComponent->Use();
+		return;
 	}
 
 	if (!GetMesh() || !GetMesh()->GetAnimInstance())
@@ -515,8 +516,8 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 	}
 
 	// 장비 애니메이션 데이터 확인
-	UEquipmentAnimationDataAsset* WeaponAnimationData = EquippableItemData->EquipmentAnimationData;
-	if (!WeaponAnimationData)
+	UEquipmentAnimationDataAsset* EquipmentAnimationData = EquippableItemData->EquipmentAnimationData;
+	if (!EquipmentAnimationData)
 	{
 		return;
 	}
@@ -526,7 +527,7 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 	{
 		if (UBOAnimInstance* BOAnimInstance = Cast<UBOAnimInstance>(AnimInstance))
 		{
-			BOAnimInstance->ApplyEquipmentAnimation(WeaponAnimationData);
+			BOAnimInstance->ApplyEquipmentAnimation(EquipmentAnimationData);
 		}
 	}
 }
