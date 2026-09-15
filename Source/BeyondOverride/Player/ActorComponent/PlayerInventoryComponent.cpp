@@ -15,7 +15,7 @@ void UPlayerInventoryComponent::BeginPlay()
 
 void UPlayerInventoryComponent::InitializeEquipmentSlot()
 {
-	EquipmentSlots.Init(nullptr, 5);
+	EquipmentSlots.Init(nullptr, 7);
 }
 
 bool UPlayerInventoryComponent::CanEquipItem(EEquipmentSlot Slot, const UItemInstanceBase* Item) const
@@ -46,6 +46,12 @@ bool UPlayerInventoryComponent::CanEquipItem(EEquipmentSlot Slot, const UItemIns
 
 	case EEquipmentSlot::Effect:
 		return ItemData->ItemType == EItemType::EffectItem;
+
+	case EEquipmentSlot::Bag:
+		return ItemData->ItemType == EItemType::BagItem;
+
+	case EEquipmentSlot::Shield:
+		return ItemData->ItemType == EItemType::ShieldItem;
 
 	default:
 		return false;

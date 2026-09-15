@@ -56,7 +56,7 @@ class BEYONDOVERRIDE_API UUIManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UUIManager();
 
 	UFUNCTION(BlueprintCallable, Category = "UI", meta = (WorldContext = "WorldContextObject"))
@@ -73,7 +73,10 @@ class BEYONDOVERRIDE_API UUIManager : public UGameInstanceSubsystem
 
 	void BindInteractPrompt(UInteractComponent* InteractComponent);
 
-  private:
+	bool IsAnyMenuOpen() const;
+
+
+private:
 	void ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget);
 	void CenterMouseCursor(APlayerController* PC);
 

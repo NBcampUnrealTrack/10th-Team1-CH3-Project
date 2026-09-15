@@ -69,7 +69,7 @@ UUserWidget* UUIManager::ShowScreen(EUIScreen Screen, EUIInputMode InputMode)
 
 	if (Screen == EUIScreen::None)
 	{
-		ScreenStack.Add({nullptr, Screen, EUIInputMode::GameOnly});
+		ScreenStack.Add({ nullptr, Screen, EUIInputMode::GameOnly });
 
 		if (APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr)
 		{
@@ -95,7 +95,7 @@ UUserWidget* UUIManager::ShowScreen(EUIScreen Screen, EUIInputMode InputMode)
 	if (NewWidget)
 	{
 		NewWidget->AddToViewport();
-		ScreenStack.Add({NewWidget, Screen, InputMode});
+		ScreenStack.Add({ NewWidget, Screen, InputMode });
 		ApplyInputMode(InputMode, NewWidget);
 	}
 
@@ -124,7 +124,7 @@ UUserWidget* UUIManager::PushScreen(EUIScreen Screen, EUIInputMode InputMode)
 	if (NewWidget)
 	{
 		NewWidget->AddToViewport(ScreenStack.Num() + 1);
-		ScreenStack.Add({NewWidget, Screen, InputMode});
+		ScreenStack.Add({ NewWidget, Screen, InputMode });
 		ApplyInputMode(InputMode, NewWidget);
 	}
 
@@ -231,4 +231,9 @@ void UUIManager::BindInteractPrompt(UInteractComponent* InteractComponent)
 		InteractComponent->OnPromptChanged.AddDynamic(InteractPromptWidget, &UInteractPromptWidget::HandleFocusChanged);
 		InteractComponent->OnHoldProgress.AddDynamic(InteractPromptWidget, &UInteractPromptWidget::HandleHoldProgress);
 	}
+}
+
+bool UUIManager::IsAnyMenuOpen() const
+{
+	return ScreenStack.Num() >= 2;
 }

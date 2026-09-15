@@ -66,6 +66,8 @@ void ABOCharacter::BeginPlay()
 	{
 		UIManager->BindInteractPrompt(InteractComponent);
 	}
+
+
 }
 
 void ABOCharacter::Tick(float DeltaTime)
@@ -213,6 +215,14 @@ void ABOCharacter::Move(const FInputActionValue& value)
 {
 	if (!Controller)
 		return;
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		if (UIManager->IsAnyMenuOpen())
+		{
+			return;
+		}
+	}
 
 	const FVector2D MoveInput = value.Get<FVector2D>();
 
@@ -371,10 +381,19 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 							ItemPickup->Destroy();
 						}
 					}
-					else
+					// Melee Weapon
+					else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
 					{
-						PlayerInventoryComponent->AddItem(ItemInstance);
-						ItemPickup->Destroy();
+						if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
+						{
+							ItemPickup->Destroy();
+						}
+
+						else
+						{
+							PlayerInventoryComponent->AddItem(ItemInstance);
+							ItemPickup->Destroy();
+						}
 					}
 				}
 			}

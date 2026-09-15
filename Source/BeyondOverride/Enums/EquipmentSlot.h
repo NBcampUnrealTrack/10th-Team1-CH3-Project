@@ -14,4 +14,6 @@ enum class EEquipmentSlot : uint8
 	Melee,     // Melee Weapon
 	Throwable, // Throwable Item
 	Effect,    // Effect Item
+	Bag,
+	Shield
 };

@@ -32,11 +32,3 @@ void ABOPlayerController::BeginPlay()
 	}
 	*/
 }
-
-void ABOPlayerController::ShowMainHUDWidget()
-{
-}
-
-void ABOPlayerController::ShowESCWidget()
-{
-}
