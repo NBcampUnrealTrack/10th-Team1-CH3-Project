@@ -509,14 +509,13 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 
 	RollDirection = GetRollDirection();
 	ConsumeMovementInputVector();
-	bIsRolling = true;
+	StartRoll();
 
 	const float Duration = AnimInstance->Montage_Play(RollMontage);
 
 	if (Duration <= 0.0f)
 	{
-		bIsRolling = false;
-		RollDirection = FVector::ZeroVector;
+		StopRoll();
 		return;
 	}
 
@@ -527,6 +526,17 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 	MontageEndedDelegate.BindUObject(this, &ABOCharacter::OnRollMontageEnded);
 
 	AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, RollMontage);
+}
+
+void ABOCharacter::StartRoll()
+{
+	bIsRolling = true;
+}
+
+void ABOCharacter::StopRoll()
+{
+	bIsRolling = false;
+	RollDirection = FVector::ZeroVector;
 }
 
 void ABOCharacter::Aim(const FInputActionValue& value)
@@ -699,7 +709,6 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 	{
 		EquipmentManagerComponent->Equip(Slot);
 	}
-
 }
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
@@ -950,8 +959,7 @@ void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 		return;
 	}
 
-	bIsRolling = false;
-	RollDirection = FVector::ZeroVector;
+	StopRoll();
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 

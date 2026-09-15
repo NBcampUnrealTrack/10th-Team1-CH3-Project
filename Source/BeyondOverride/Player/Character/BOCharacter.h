@@ -127,8 +127,14 @@ private:
 	void Hip(const FInputActionValue& value);
 	UFUNCTION()
 	void Reload(const FInputActionValue& value);
+
 	UFUNCTION()
 	void Roll(const FInputActionValue& Value);
+	UFUNCTION()
+	void StartRoll();
+	UFUNCTION()
+	void StopRoll();
+
 	UFUNCTION()
 	void InteractPress(const FInputActionValue& value);
 	UFUNCTION()
