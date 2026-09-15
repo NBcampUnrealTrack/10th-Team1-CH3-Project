@@ -110,34 +110,28 @@ void ABOCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!bIsRolling)
+	if (bIsRolling)
 	{
-		return;
+		UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+		if (!IsValid(MovementComponent))
+		{
+			return;
+		}
+
+		const FVector RollVelocity = RollDirection * RollSpeed;
+
+		MovementComponent->Velocity.X = RollVelocity.X;
+		MovementComponent->Velocity.Y = RollVelocity.Y;
 	}
 
-	UCharacterMovementComponent* MovementComponent =
-		GetCharacterMovement();
-
-	if (!IsValid(MovementComponent))
+	if (IsValid(Camera))
 	{
-		return;
+		const float TargetFOV = bIsAiming ? AimFOV : DefaultFOV;
+		const float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomSpeed);
+
+		Camera->SetFieldOfView(NewFOV);
 	}
-
-	const FVector RollVelocity =
-		RollDirection * RollSpeed;
-
-	MovementComponent->Velocity.X = RollVelocity.X;
-	MovementComponent->Velocity.Y = RollVelocity.Y;
-
-	if (!IsValid(Camera))
-	{
-		return;
-	}
-
-	const float TargetFOV = bIsAiming ? AimFOV : DefaultFOV;
-	const float NewFOV = FMath::FInterpTo(Camera->FieldOfView, TargetFOV, DeltaTime, ZoomSpeed);
-
-	Camera->SetFieldOfView(NewFOV);
 }
 
 void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
