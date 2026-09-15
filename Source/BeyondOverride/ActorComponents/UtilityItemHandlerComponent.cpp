@@ -2,6 +2,7 @@
 
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/UtilityItemDataRow.h"
+#include "Enums/UtilityType.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/UtilityItemInstance.h"
 
@@ -56,6 +57,9 @@ bool UUtilityItemHandlerComponent::Unequip()
 		return false;
 	}
 
+	// 사용 중이면 취소
+	OnUseInterrupted();
+
 	return true;
 }
 
@@ -65,6 +69,9 @@ bool UUtilityItemHandlerComponent::Use()
 	{
 		return false;
 	}
+
+	// 사용 시작
+	OnUseStarted();
 
 	return true;
 }
@@ -102,12 +109,6 @@ bool UUtilityItemHandlerComponent::CanUnequip() const
 		return false;
 	}
 
-	// 사용 중
-	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(UseTimerHandle))
-	{
-		return false;
-	}
-
 	return true;
 }
 
@@ -126,4 +127,57 @@ bool UUtilityItemHandlerComponent::CanUse() const
 	}
 
 	return true;
+}
+
+void UUtilityItemHandlerComponent::OnUseStarted()
+{
+	// 등록된 장비 없음
+	if (!UtilityItemInstance)
+	{
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FUtilityItemDataRow* UtilityItemData = UtilityItemInstance->GetUtilityItemData();
+	if (!UtilityItemData)
+	{
+		return;
+	}
+
+	// 사용 타이머 실행
+	GetWorld()->GetTimerManager().SetTimer(
+		UseTimerHandle,
+		this,
+		&UUtilityItemHandlerComponent::OnUseCompleted,
+		UtilityItemData->UseDuration,
+		false);
+}
+
+void UUtilityItemHandlerComponent::OnUseCompleted()
+{
+	// 등록된 장비 없음
+	if (!UtilityItemInstance)
+	{
+		return;
+	}
+
+	// 데이터 유효성 검증
+	const FUtilityItemDataRow* UtilityItemData = UtilityItemInstance->GetUtilityItemData();
+	if (!UtilityItemData)
+	{
+		return;
+	}
+
+	// 효과 적용
+	switch (UtilityItemData->EffectType)
+	{
+	case EUtilityType::HealHP:
+		break;
+	}
+}
+
+void UUtilityItemHandlerComponent::OnUseInterrupted()
+{
+	// 타이머 제거
+	GetWorld()->GetTimerManager().ClearTimer(UseTimerHandle);
 }

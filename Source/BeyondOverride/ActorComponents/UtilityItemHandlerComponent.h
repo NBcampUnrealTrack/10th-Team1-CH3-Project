@@ -46,5 +46,13 @@ class BEYONDOVERRIDE_API UUtilityItemHandlerComponent : public UEquipmentHandler
 	virtual bool CanUse() const override;
 
   protected:
+	// 사용 타이머
 	FTimerHandle UseTimerHandle;
+
+	// 사용 시작
+	void OnUseStarted();
+	// 사용 완료
+	void OnUseCompleted();
+	// 사용 중단
+	void OnUseInterrupted();
 };
