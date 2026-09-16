@@ -8,7 +8,9 @@
 #include "InteractPromptWidget.generated.h"
 
 class UTextBlock;
-class UProgressBar;
+class USizeBox;
+class UImage;
+class UMaterialInstanceDynamic;
 
 UCLASS()
 class BEYONDOVERRIDE_API UInteractPromptWidget : public UUserWidget
@@ -30,6 +32,14 @@ class BEYONDOVERRIDE_API UInteractPromptWidget : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ActionText;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UProgressBar> HoldBar;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	TObjectPtr<UImage> ProgressFill;
+
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	TObjectPtr<USizeBox> PressProgressBarBox;
+
+  private:
+	// ProgressFill의 M_SquareProgress를 런타임에 파라미터 바꿀수있게 복사해둔 인스턴스
+	UPROPERTY()
+	TObjectPtr<UMaterialInstanceDynamic> ProgressMat;
 };
