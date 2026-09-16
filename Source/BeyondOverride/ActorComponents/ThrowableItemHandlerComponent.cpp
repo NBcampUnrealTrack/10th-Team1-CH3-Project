@@ -231,13 +231,6 @@ FVector UThrowableItemHandlerComponent::GetThrowStartLocation() const
 		return SocketLocation;
 	}
 
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = ThrowableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		return SocketLocation;
-	}
-
 	// 소켓 위치 구하기
 	const FName EquipSocketName = EquippableItemData->EquipSocketName; // 장착 소켓 이름
 	if (EquipMeshComponent && EquipMeshComponent->DoesSocketExist(EquipSocketName))

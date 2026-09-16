@@ -9,6 +9,9 @@
 class USkeletalMeshComponent;
 class UEquippableItemInstance;
 
+struct FItemDataRow;
+struct FEquippableItemDataRow;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 {
@@ -22,6 +25,10 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	// 현재 등록된 장비
 	UPROPERTY()
 	TObjectPtr<UEquippableItemInstance> EquippableItemInstance;
+
+	// 현재 장비의 고유 데이터
+	const FItemDataRow* ItemData;
+	const FEquippableItemDataRow* EquippableItemData;
 
   public:
 	UEquipmentHandlerComponent();

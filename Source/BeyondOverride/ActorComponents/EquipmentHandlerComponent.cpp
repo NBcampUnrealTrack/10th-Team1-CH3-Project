@@ -42,6 +42,10 @@ bool UEquipmentHandlerComponent::Assign(UEquippableItemInstance* InEquippableIte
 	// 장비 인스턴스 저장
 	EquippableItemInstance = InEquippableItemInstance;
 
+	// 장비 데이터 저장
+	ItemData = InEquippableItemInstance->GetItemData();
+	EquippableItemData = InEquippableItemInstance->GetEquippableItemData();
+
 	return true;
 }
 
@@ -58,9 +62,13 @@ UEquippableItemInstance* UEquipmentHandlerComponent::Unassign()
 		EquipMeshComponent->SetSkeletalMesh(nullptr);
 	}
 
-	// 장비 데이터 제거
+	// 장비 제거
 	UEquippableItemInstance* OutEquippableItemInstance = EquippableItemInstance;
 	EquippableItemInstance = nullptr;
+
+	// 장비 데이터 제거
+	ItemData = nullptr;
+	EquippableItemData = nullptr;
 
 	// 제거한 장비 반환
 	return OutEquippableItemInstance;
@@ -74,8 +82,7 @@ bool UEquipmentHandlerComponent::Equip()
 	}
 
 	// 메시 설정
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData(); // 장비 데이터
-	EquipMeshComponent->SetSkeletalMesh(EquippableItemData->EquipMesh);                                 // 장비 메시 설정
+	EquipMeshComponent->SetSkeletalMesh(EquippableItemData->EquipMesh); // 장비 메시 설정
 
 	// 장착 소켓에 메시 부착
 	AttachToSocket(EquippableItemData->EquipSocketName);
@@ -112,13 +119,19 @@ void UEquipmentHandlerComponent::EndAction()
 bool UEquipmentHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
 	// 이미 등록된 장비 데이터 존재
-	if (EquippableItemInstance)
+	if (HasEquipment())
 	{
 		return false;
 	}
 
 	// 유효하지 않은 EquippableItemInstance
 	if (!InEquippableItemInstance)
+	{
+		return false;
+	}
+
+	// 유효하지 않은 ItemData
+	if (!InEquippableItemInstance->GetItemData())
 	{
 		return false;
 	}
@@ -135,7 +148,7 @@ bool UEquipmentHandlerComponent::CanAssign(const UEquippableItemInstance* InEqui
 bool UEquipmentHandlerComponent::CanUnassign() const
 {
 	// 등록된 장비 없음
-	if (!EquippableItemInstance)
+	if (!HasEquipment())
 	{
 		return false;
 	}
@@ -152,27 +165,7 @@ bool UEquipmentHandlerComponent::CanUnassign() const
 bool UEquipmentHandlerComponent::CanEquip() const
 {
 	// 등록된 장비 없음
-	if (!EquippableItemInstance)
-	{
-		return false;
-	}
-
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		return false;
-	}
-
-	// 캐릭터 메시 확인
-	ACharacter* Character = GetOwner<ACharacter>();
-	if (!Character)
-	{
-		return false;
-	}
-
-	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
-	if (!CharacterMeshComponent)
+	if (!HasEquipment())
 	{
 		return false;
 	}
@@ -183,27 +176,7 @@ bool UEquipmentHandlerComponent::CanEquip() const
 bool UEquipmentHandlerComponent::CanUnequip() const
 {
 	// 등록된 장비 없음
-	if (!EquippableItemInstance)
-	{
-		return false;
-	}
-
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		return false;
-	}
-
-	// 캐릭터 메시 확인
-	ACharacter* Character = GetOwner<ACharacter>();
-	if (!Character)
-	{
-		return false;
-	}
-
-	USkeletalMeshComponent* CharacterMeshComponent = Character->GetMesh();
-	if (!CharacterMeshComponent)
+	if (!HasEquipment())
 	{
 		return false;
 	}
@@ -214,7 +187,7 @@ bool UEquipmentHandlerComponent::CanUnequip() const
 bool UEquipmentHandlerComponent::CanUse() const
 {
 	// 등록된 장비 없음
-	if (!EquippableItemInstance)
+	if (!HasEquipment())
 	{
 		return false;
 	}
