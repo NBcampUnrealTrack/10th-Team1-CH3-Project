@@ -64,7 +64,7 @@ void UContinuousStateComponent::StateAutoControl()
 
 	if (NowState == EMonsterState::StandOff)
 	{
-		StateChange(EMonsterState::Chase, 10.0f);
+		StateChange(EMonsterState::Chase, 5.0f);
 		return;
 	}
 }

@@ -135,6 +135,10 @@ void AMonsterCharacter::DeathSequence()
 
 void AMonsterCharacter::SetUpMesh()
 {
+	UE_LOG(LogTemp, Warning,
+		   TEXT("Find Mesh Row : %s"),
+		   *GetMonsterID().ToString());
+
 	if (!MonsterData)
 	{
 		return;
@@ -149,7 +153,7 @@ void AMonsterCharacter::SetUpMesh()
 
 	if (!MonsterInfo)
 	{
-		SetMonsterID("Wraith");
+		SetMonsterID("Gunner");
 		MonsterInfo = MonsterData->MeshTable->FindRow<FMonsterInfo>(GetMonsterID(), TEXT("MonsterID Serching"));
 	}
 

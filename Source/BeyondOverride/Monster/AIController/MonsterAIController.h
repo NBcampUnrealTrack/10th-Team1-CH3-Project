@@ -55,6 +55,7 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterState")
 	EMonsterState GetState() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterState")
 	bool IsContinueState() const;
 
 	void SetTarget(ABOCharacter* Target);

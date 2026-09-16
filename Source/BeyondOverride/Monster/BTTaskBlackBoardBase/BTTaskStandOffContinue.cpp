@@ -45,10 +45,10 @@ EBTNodeResult::Type UBTTaskStandOffContinue::ExecuteTask(UBehaviorTreeComponent&
 		return EBTNodeResult::Failed;
 	}
 	if (AIController->GetState() == EMonsterState::StandOff &&
-		Movement->Velocity.IsNearlyZero())
+		Movement->Velocity.IsNearlyZero() &&
+		!AIController->IsContinueState())
 	{
 		AIController->StateChange(EMonsterState::StandOff, 5.0f);
-		BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
 		return EBTNodeResult::Succeeded;
 	}
 

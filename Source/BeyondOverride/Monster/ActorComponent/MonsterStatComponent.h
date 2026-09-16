@@ -70,14 +70,12 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 
 	float WalkSpeed = 600;
 
-	FHitResult RangeAttackResult;
-
 	FTimerHandle AttackLock;
 
 	// Monster key Info
 
-	UPROPERTY(VisibleAnywhere, Category = "Moster|ID")
-	FName MonsterID = "Wraith";
+	UPROPERTY(EditAnywhere, Category = "Moster|ID")
+	FName MonsterID = "Gunner";
 
 	EMonsterType MonsterType = EMonsterType::Range;
 };

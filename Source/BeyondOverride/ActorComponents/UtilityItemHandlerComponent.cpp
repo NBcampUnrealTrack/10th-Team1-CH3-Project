@@ -151,6 +151,7 @@ bool UUtilityItemHandlerComponent::CanUse() const
 		return false;
 	}
 
+<<<<<<< Updated upstream
 	// 사용 가능한지 델리게이트로 확인
 	if (!CanUseUtilityItemDelegate.IsBound() ||
 		!CanUseUtilityItemDelegate.Execute(UtilityItemData))
@@ -158,6 +159,8 @@ bool UUtilityItemHandlerComponent::CanUse() const
 		return false;
 	}
 
+=======
+>>>>>>> Stashed changes
 	return true;
 }
 
