@@ -67,5 +67,5 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	virtual bool CanUse() const;
 
 	// 소켓에 메시 부착
-	void AttachToSocket(FName SocketName);
+	void AttachToSocket(const FName& SocketName, bool bHideIfNoSocket = false);
 };
