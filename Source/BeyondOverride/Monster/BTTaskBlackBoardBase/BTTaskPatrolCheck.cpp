@@ -6,7 +6,6 @@
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
