@@ -118,6 +118,14 @@ bool UEquipmentHandlerComponent::Use()
 	return true;
 }
 
+void UEquipmentHandlerComponent::StartAction()
+{
+}
+
+void UEquipmentHandlerComponent::EndAction()
+{
+}
+
 bool UEquipmentHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
 	// 이미 등록된 장비 데이터 존재

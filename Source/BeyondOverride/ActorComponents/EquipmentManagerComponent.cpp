@@ -124,6 +124,22 @@ bool UEquipmentManagerComponent::Use()
 	return EquipmentHandlerComponents[ActiveSlot]->Use();
 }
 
+void UEquipmentManagerComponent::StartAction()
+{
+	if (EquipmentHandlerComponents.Contains(ActiveSlot) && EquipmentHandlerComponents[ActiveSlot])
+	{
+		EquipmentHandlerComponents[ActiveSlot]->StartAction();
+	}
+}
+
+void UEquipmentManagerComponent::EndAction()
+{
+	if (EquipmentHandlerComponents.Contains(ActiveSlot) && EquipmentHandlerComponents[ActiveSlot])
+	{
+		EquipmentHandlerComponents[ActiveSlot]->EndAction();
+	}
+}
+
 bool UEquipmentManagerComponent::Reload()
 {
 	// 슬롯 확인
@@ -236,8 +252,9 @@ void UEquipmentManagerComponent::BindDelegates()
 	{
 		if (URangeWeaponHandlerComponent* PrimaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Primary]))
 		{
-			PrimaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
-			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
+			PrimaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
+			PrimaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::CanReload);
+			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::RequestReloadAmmo);
 		}
 	}
 
@@ -246,8 +263,9 @@ void UEquipmentManagerComponent::BindDelegates()
 	{
 		if (URangeWeaponHandlerComponent* SecondaryRangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Secondary]))
 		{
-			SecondaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::OnCanReload);
-			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::OnRequestReloadAmmo);
+			SecondaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
+			SecondaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::CanReload);
+			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::RequestReloadAmmo);
 		}
 	}
 
@@ -271,7 +289,12 @@ void UEquipmentManagerComponent::BindDelegates()
 	}
 }
 
-bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
+void UEquipmentManagerComponent::OnFireExecuted() const
+{
+	OnFireExecutedDelegate.Broadcast();
+}
+
+bool UEquipmentManagerComponent::CanReload(const FName& AmmoItemID) const
 {
 	if (!CanReloadDelegate.IsBound())
 	{
@@ -280,10 +303,10 @@ bool UEquipmentManagerComponent::OnCanReload(URangeWeaponInstance* RangeWeaponIn
 	}
 
 	// 재장전 가능 여부 반환
-	return CanReloadDelegate.Execute(RangeWeaponInstance);
+	return CanReloadDelegate.Execute(AmmoItemID);
 }
 
-int32 UEquipmentManagerComponent::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance) const
+int32 UEquipmentManagerComponent::RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount)
 {
 	if (!RequestReloadAmmoDelegate.IsBound())
 	{
@@ -292,7 +315,7 @@ int32 UEquipmentManagerComponent::OnRequestReloadAmmo(URangeWeaponInstance* Rang
 	}
 
 	// 재장전에 사용할 탄약 개수 전달
-	return RequestReloadAmmoDelegate.Execute(RangeWeaponInstance);
+	return RequestReloadAmmoDelegate.Execute(AmmoItemID, RequestedAmmoCount);
 }
 
 void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance)

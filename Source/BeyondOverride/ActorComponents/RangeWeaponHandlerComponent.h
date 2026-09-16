@@ -8,18 +8,22 @@
 #include "RangeWeaponHandlerComponent.generated.h"
 
 class URangeWeaponInstance;
-class ABulletProjectile;
 
-// 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
+// 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 등 수행
+DECLARE_MULTICAST_DELEGATE(
+	FOnFireExecutedDelegate);
+
+// 재장전 가능한지 확인하는 델리게이트 - 재장전 가능 검증에 실행하여, 무기의 탄약 ID를 인자로 주고 해당 탄약의 여분이 있는지 여부를 반환함
 DECLARE_DELEGATE_RetVal_OneParam(
-	bool, // 재장전 여부 반환
+	bool, // 재장전 가능 여부 반환
 	FCanReloadDelegate,
-	URangeWeaponInstance*);
-// 재장전 탄약 요청하는 델리게이트 - 재장전에 사용할 탄약 소모 및 전달
-DECLARE_DELEGATE_RetVal_OneParam(
-	int32,
+	const FName&); // 탄약 ItemID
+// 재장전 탄약 요청하는 델리게이트 - 재장전 종료 시 실행하여, 재장전에 사용할 탄약 ID 및 필요한 개수를 주고 보충 가능한 개수를 반환함
+DECLARE_DELEGATE_RetVal_TwoParams(
+	int32, // 재장전에 사용할 탄약 개수 반환
 	FRequestReloadAmmoDelegate,
-	URangeWeaponInstance*);
+	const FName&, // 탄약 ItemID
+	const int32); // 필요한 탄약 개수
 
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
@@ -27,6 +31,8 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	GENERATED_BODY()
 
   public:
+	// 사격 수행 시 송출하는 델리게이트
+	FOnFireExecutedDelegate OnFireExecutedDelegate;
 	// 재장전 가능 여부 델리게이트
 	FCanReloadDelegate CanReloadDelegate;
 	// 재장전 탄약 요청 델리게이트
@@ -59,6 +65,11 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 장비 사용
 	virtual bool Use() override;
 
+	// 사용 시작
+	virtual void StartAction();
+	// 사용 종료
+	virtual void EndAction();
+
 	// 재장전
 	bool Reload();
 
@@ -75,6 +86,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual bool CanUse() const override;
 
   protected:
+	// 활성화 여부
+	bool bIsActive;
+
 	// 사격 타이머
 	FTimerHandle FireTimerHandle;
 	// 재장전 타이머
@@ -94,6 +108,9 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FTimeline SpreadDegreeTimeline;
 
   protected:
+	// 사격
+	void Fire();
+
 	// 사격 가능 여부 반환
 	bool CanFire() const;
 	// 재장전 가능 여부 반환
@@ -117,7 +134,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FRotator GetSpreadRotation(const FRotator& AimRotation);
 
 	// 총알 소환
-	ABulletProjectile* SpawnBullet();
+	void SpawnBullets();
 
 	// 사격 타이머 활성화
 	void StartFireTimer();
@@ -132,9 +149,12 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	void StopReloadAnimation();
 
   protected:
+	// 사격 종료 시 호출
+	void OnFireCompleted();
+
 	// 재장전 시작 시 호출
 	void OnReloadStarted();
-	// 재장전 완료 시 호출
+	// 재장전 종료 시 호출
 	void OnReloadCompleted();
 	// 재장전 중단 시 호출
 	void OnReloadInterrupted();
