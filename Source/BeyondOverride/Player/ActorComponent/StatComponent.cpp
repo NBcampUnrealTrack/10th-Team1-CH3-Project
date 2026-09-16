@@ -37,12 +37,14 @@ void UStatComponent::TakeDamage(int32 DamageAmount, AActor* DamageCauser)
 		CurShield = FMath::Clamp(CurShield - DamageAmount, 0, MaxShield);
 
 		OnShieldChanged.Broadcast(CurShield, MaxShield);
+		OnDamaged.Broadcast();
 	}
 	else // 쉴드가 없다면 체력 깎기
 	{
 		CurHealth = FMath::Clamp(CurHealth - DamageAmount, 0, MaxHealth);
 
 		OnHealthChanged.Broadcast(CurHealth, MaxHealth);
+		OnDamaged.Broadcast();
 
 		if (CurHealth <= 0)
 		{
