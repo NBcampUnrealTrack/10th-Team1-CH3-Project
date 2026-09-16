@@ -35,21 +35,21 @@ void AKeycardDoorController::BeginPlay()
 	}
 }
 
-// bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) const
-//{
-//	OutReason = PromptData.DisableReason;
-//
-//	// 키카드 보유하고있는지 로직추가
-//	if (GetWorld())
-//	{
-//		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
-//		{
-//			return GameInstance->GetIsKeyCardAcquired();
-//		}
-//	}
-//
-//	return false;
-// }
+bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) const
+{
+	OutReason = PromptData.DisableReason;
+
+	// 키카드 보유하고있는지 로직추가
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			return GameInstance->GetIsKeyCardAcquired();
+		}
+	}
+
+	return false;
+}
 
 void AKeycardDoorController::PerformInteract(AActor* Interactor)
 {

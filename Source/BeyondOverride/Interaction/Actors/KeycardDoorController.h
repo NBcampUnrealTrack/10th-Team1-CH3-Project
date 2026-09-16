@@ -16,7 +16,7 @@ class BEYONDOVERRIDE_API AKeycardDoorController : public AInteractableActorBase
 
   protected:
 	virtual void BeginPlay() override;
-	// virtual bool CanInteract(AActor* Interactor, FText& OutReason) const override;
+	virtual bool CanInteract(AActor* Interactor, FText& OutReason) const override;
 	virtual void PerformInteract(AActor* Interactor) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Component")
