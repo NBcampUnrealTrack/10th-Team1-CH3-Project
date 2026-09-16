@@ -349,7 +349,7 @@ void ABOCharacter::Look(const FInputActionValue& value)
 
 void ABOCharacter::StartJump(const FInputActionValue& value)
 {
-	if (!bMovementEnabled)
+	if (bIsRolling || !bMovementEnabled)
 	{
 		return;
 	}
