@@ -17,10 +17,10 @@ public:
 	void TakeDamage(int32 DamageAmount, AActor* DamageCauser);
 	void Heal(int32 HealAmount);
 
-	void SetCurHealth(int32 NewCurHealth) { CurHealth = NewCurHealth; }
-	void SetMaxHealth(int32 NewMaxHealth) { MaxHealth = NewMaxHealth; }
-	void SetCurShield(int32 NewCurShield) { CurShield = NewCurShield; }
-	void SetMaxShield(int32 NewMaxShield) { MaxShield = NewMaxShield; }
+	void SetCurHealth(int32 NewCurHealth);
+	void SetMaxHealth(int32 NewMaxHealth);
+	void SetCurShield(int32 NewCurShield);
+	void SetMaxShield(int32 NewMaxShield);
 
 	int32 GetCurHealth() const { return CurHealth; }
 	int32 GetMaxHealth() const { return MaxHealth; }
