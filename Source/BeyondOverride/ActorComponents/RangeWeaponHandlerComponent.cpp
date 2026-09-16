@@ -480,7 +480,7 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 	{
 		return FMath::VRandCone(
 				   AimRotation.Vector(),
-				   FMath::DegreesToRadians(3.f))
+				   FMath::DegreesToRadians(1.5f))
 			.Rotation();
 	}
 
