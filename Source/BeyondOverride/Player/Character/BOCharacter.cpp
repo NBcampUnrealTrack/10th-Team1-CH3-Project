@@ -533,9 +533,21 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 		return;
 	}
 
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+
+	if (!IsValid(Anim))
+	{
+		return;
+	}
+
+	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(Anim);
 
 	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	if (AnimInstance->IsReloadMontagePlaying())
 	{
 		return;
 	}
@@ -1070,6 +1082,24 @@ FVector ABOCharacter::GetRollDirection() const
 }
 
 void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage != RollMontage)
+	{
+		return;
+	}
+
+	StopRoll();
+
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+	if (IsValid(MovementComponent))
+	{
+		MovementComponent->Velocity.X = 0.0f;
+		MovementComponent->Velocity.Y = 0.0f;
+	}
+}
+
+void ABOCharacter::OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Montage != RollMontage)
 	{
