@@ -183,13 +183,35 @@ void UBOGameInstance::SavePlayerData()
 
 			for (UItemInstanceBase* InventorySlot : InventorySlots)
 			{
+				if (IsValid(InventorySlot))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Inventory Slot is Valid"));
+				}
+
 				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
+
+				if (IsValid(Item))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("New Inventory Slot is Valid"));
+				}
+
 				PlayerItemInventory.Add(Item);
 			}
 
 			for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
 			{
+				if (IsValid(EquipmentSlot))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Equipment Slot is Valid"));
+				}
+
 				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
+
+				if (IsValid(Item))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("New Equipment Slot is Valid"));
+				}
+
 				PlayerEquipmentInventory.Add(Item);
 			}
 		}
@@ -213,6 +235,11 @@ void UBOGameInstance::SaveStorageData()
 
 				for (UItemInstanceBase* Slot : Slots)
 				{
+					if (IsValid(Slot))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Storage Slot is Valid"));
+					}
+
 					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(Slot, this);
 					StorageInventory.Add(Item);
 				}
