@@ -22,6 +22,9 @@ bool UThrowableItemHandlerComponent::Assign(UEquippableItemInstance* InEquippabl
 	// Throwable Item 인스턴스 저장
 	ThrowableItemInstance = Cast<UThrowableItemInstance>(EquippableItemInstance);
 
+	// Throwable Item 데이터 저장
+	ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
+
 	// Assign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(4000, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
 
@@ -39,6 +42,9 @@ UEquippableItemInstance* UThrowableItemHandlerComponent::Unassign()
 
 	// Throwable Item 인스턴스 제거
 	ThrowableItemInstance = nullptr;
+
+	// Throwable Item 데이터 제거
+	ThrowableItemData = nullptr;
 
 	// Unassign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(4000, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
@@ -139,13 +145,6 @@ bool UThrowableItemHandlerComponent::CanUnequip() const
 bool UThrowableItemHandlerComponent::CanUse() const
 {
 	if (!Super::CanUse())
-	{
-		return false;
-	}
-
-	// 데이터 유효성 검증
-	const FThrowableItemDataRow* ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
-	if (!ThrowableItemData)
 	{
 		return false;
 	}
@@ -253,13 +252,6 @@ void UThrowableItemHandlerComponent::StartThrow()
 		return;
 	}
 
-	// 데이터 유효성 검증
-	const FThrowableItemDataRow* ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
-	if (!ThrowableItemData)
-	{
-		return;
-	}
-
 	// 투척 타이머 시작
 	GetWorld()->GetTimerManager().SetTimer(
 		ThrowTimerHandle,
@@ -300,13 +292,6 @@ AThrowableProjectile* UThrowableItemHandlerComponent::SpawnThrowable()
 {
 	// 등록된 장비 없음
 	if (!ThrowableItemInstance)
-	{
-		return nullptr;
-	}
-
-	// 데이터 유효성 검증
-	const FThrowableItemDataRow* ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
-	if (!ThrowableItemData)
 	{
 		return nullptr;
 	}
