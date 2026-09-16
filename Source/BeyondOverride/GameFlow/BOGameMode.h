@@ -22,6 +22,7 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
 	virtual void BeginPlay() override;
 
+	void InitSetting();
 	void Start();
 	void EnterBunker(EFarmingResult Result);
 	void ProvideBasicEquipment();

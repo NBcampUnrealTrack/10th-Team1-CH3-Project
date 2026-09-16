@@ -35,6 +35,11 @@ void ABOGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Warning, TEXT("Game Mode BeginPlay"));
+}
+
+void ABOGameMode::InitSetting()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Game Mode Initial Setting"));
 
 	if (GameInstance)
 	{

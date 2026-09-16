@@ -217,6 +217,7 @@ int32 UInventoryComponent::FindItemIndex(const FName& ItemID) const
 	{
 		if (IsValid(Slots[i]))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Item Id : "), *Slots[i]->GetItemID().ToString());
 			if (ItemID == Slots[i]->GetItemID())
 			{
 				return i;

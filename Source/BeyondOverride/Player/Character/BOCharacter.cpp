@@ -99,7 +99,7 @@ void ABOCharacter::BeginPlay()
 			{
 				if (StatComponent)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Load Stat Component"));
+					UE_LOG(LogTemp, Warning, TEXT("Load Player Stat"));
 					StatComponent->SetCurHealth(GameInstance->GetCurHealth());
 					StatComponent->SetMaxHealth(GameInstance->GetMaxHealth());
 					StatComponent->SetCurShield(GameInstance->GetCurShield());
@@ -108,10 +108,16 @@ void ABOCharacter::BeginPlay()
 
 				if (PlayerInventoryComponent)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Load Player Inventory"));
 					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());
 					PlayerInventoryComponent->SetEquipmentSlots(GameInstance->GetPlayerEquipmentInventory());
 				}
 			}
+		}
+
+		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+		{
+			GameMode->InitSetting();
 		}
 	}
 }
