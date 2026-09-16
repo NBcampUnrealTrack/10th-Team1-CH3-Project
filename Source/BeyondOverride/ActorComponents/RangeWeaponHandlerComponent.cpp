@@ -471,6 +471,10 @@ void URangeWeaponHandlerComponent::AddRecoil()
 	{
 		RecoilAccumulator.X += RecoilYawCurve->GetFloatValue(RecoilYawTimeline.GetPlaybackPosition());
 	}
+
+	// TEMP
+	RecoilAccumulator.Y += 0.3f;                           // 상하반동
+	RecoilAccumulator.X += FMath::FRandRange(-0.2f, 0.3f); // 좌우 반동
 }
 
 FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRotation)
