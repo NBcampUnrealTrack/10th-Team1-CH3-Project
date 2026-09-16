@@ -65,8 +65,9 @@ void UBOGameInstance::InitSetting()
 	KillerMonster = "None";
 
 	CurHealth = 0;
+	MaxHealth = 0;
 	CurShield = 0;
-	TotalMoney = 0;
+	MaxShield = 0;
 
 	IsKeyCardAcquired = false;
 
@@ -418,14 +419,19 @@ float UBOGameInstance::GetCurHealth() const
 	return CurHealth;
 }
 
+float UBOGameInstance::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
 float UBOGameInstance::GetCurShield() const
 {
 	return CurShield;
 }
 
-int32 UBOGameInstance::GetTotalMoney() const
+float UBOGameInstance::GetMaxShield() const
 {
-	return TotalMoney;
+	return MaxShield;
 }
 
 bool UBOGameInstance::GetIsKeyCardAcquired() const
@@ -433,9 +439,9 @@ bool UBOGameInstance::GetIsKeyCardAcquired() const
 	return IsKeyCardAcquired;
 }
 
-bool UBOGameInstance::IsPlayerInventorySaved() const
+bool UBOGameInstance::IsPlayerDataSaved() const
 {
-	if (!PlayerItemInventory.IsEmpty() || !PlayerEquipmentInventory.IsEmpty())
+	if (MaxHealth != 0)
 	{
 		return true;
 	}
