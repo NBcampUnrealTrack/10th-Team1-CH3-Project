@@ -68,6 +68,35 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsAiming = Character->GetIsAiming();
 }
 
+void UBOAnimInstance::PlayFireMontage(UAnimMontage* FireMontage)
+{
+	if (!IsValid(FireMontage))
+	{
+		return;
+	}
+
+	if (LastFireMontage != FireMontage)
+	{
+		LastFireMontage = FireMontage;
+		FireSectionIndex = 0;
+	}
+
+	const int32 SectionCount = FireMontage->GetNumSections();
+	const float Duration = Montage_Play(FireMontage);
+
+	if (Duration <= 0.0f)
+	{
+		return;
+	}
+
+	if (SectionCount > 1)
+	{
+		const FName SectionName = FireMontage->GetSectionName(FireSectionIndex);
+		Montage_JumpToSection(SectionName, FireMontage);
+		FireSectionIndex = (FireSectionIndex + 1) % SectionCount;
+	}
+}
+
 void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData)
 {
 	if (!IsValid(NewData))
@@ -108,7 +137,7 @@ void UBOAnimInstance::PlayFireHipMontage()
 		return;
 	}
 
-	Montage_Play(CurrentEquipmentData->FireHip);
+	PlayFireMontage(CurrentEquipmentData->FireHip);
 
 	if (!CurrentEquipmentData->WeaponFire)
 	{
@@ -130,7 +159,7 @@ void UBOAnimInstance::PlayFireAimMontage()
 		return;
 	}
 
-	Montage_Play(CurrentEquipmentData->FireAim);
+	PlayFireMontage(CurrentEquipmentData->FireAim);
 
 	if (!CurrentEquipmentData->WeaponFire)
 	{
@@ -182,4 +211,24 @@ void UBOAnimInstance::PlayReloadAimMontage()
 	}
 
 	Montage_Play(CurrentEquipmentData->WeaponReloadAim);
+}
+
+bool UBOAnimInstance::IsReloadMontagePlaying() const
+{
+	if (!IsValid(CurrentEquipmentData))
+	{
+		return false;
+	}
+
+	if (IsValid(CurrentEquipmentData->ReloadHip) && Montage_IsPlaying(CurrentEquipmentData->ReloadHip))
+	{
+		return true;
+	}
+
+	if (IsValid(CurrentEquipmentData->ReloadAim) && Montage_IsPlaying(CurrentEquipmentData->ReloadAim))
+	{
+		return true;
+	}
+
+	return false;
 }

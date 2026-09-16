@@ -10,6 +10,7 @@ class UEquipmentAnimationDataAsset;
 class ABOCharacter;
 class UAnimSequenceBase;
 class UBlendSpace;
+class UAnimMontage;
 
 UCLASS()
 class BEYONDOVERRIDE_API UBOAnimInstance : public UAnimInstance
@@ -23,6 +24,8 @@ public:
 	void PlayFireAimMontage();
 	void PlayReloadHipMontage();
 	void PlayReloadAimMontage();
+
+	bool IsReloadMontagePlaying() const;
 
 public:
 	virtual void NativeInitializeAnimation() override;
@@ -63,5 +66,13 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	const UEquipmentAnimationDataAsset* CurrentEquipmentData = nullptr;
+
+private:
+	void PlayFireMontage(UAnimMontage* FireMontage);
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimMontage> LastFireMontage;
+
+	int32 FireSectionIndex = 0;
 
 };
