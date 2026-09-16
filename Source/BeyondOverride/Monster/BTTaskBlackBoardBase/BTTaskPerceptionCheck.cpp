@@ -5,7 +5,6 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/MonsterCalling.h"
@@ -38,12 +37,6 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	NearestTarget = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (NearestTarget)
 	{
@@ -58,11 +51,8 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
-		AIController->StateChange(EMonsterState::Chase, 30.0f);
-		if (!AIState->IsStandOff() && !AIState->IsContinueStandOff())
-		{
-			AIState->SetStandOffTimer();
-		}
+		AIController->StateChange(EMonsterState::Chase, 10.0f);
+		AIController->SetTargetPoint(FVector::ZeroVector);
 	}
 
 	return EBTNodeResult::Succeeded;

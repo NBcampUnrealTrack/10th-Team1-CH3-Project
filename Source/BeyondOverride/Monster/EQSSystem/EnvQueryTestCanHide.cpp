@@ -6,8 +6,6 @@
 // Add include
 #include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
 #include "GameFramework/Actor.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
@@ -28,19 +26,13 @@ void UEnvQueryTestCanHide::RunTest(FEnvQueryInstance& QueryInstance) const
 		return;
 	}
 
-	UStateComponent* MonsterState = QuerierMonster->GetState();
-	if (!MonsterState)
+	AMonsterAIController* MonsterController = Cast<AMonsterAIController>(QuerierMonster->GetController());
+	if (!MonsterController)
 	{
 		return;
 	}
 
-	UAttackDataComponent* MonsterAttack = QuerierMonster->GetAttackData();
-	if (!MonsterAttack)
-	{
-		return;
-	}
-
-	ABOCharacter* TargetPlayer = MonsterState->GetTarget();
+	ABOCharacter* TargetPlayer = MonsterController->GetTarget();
 	if (!TargetPlayer)
 	{
 		return;

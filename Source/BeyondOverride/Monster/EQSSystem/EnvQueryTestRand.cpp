@@ -6,9 +6,6 @@
 // Add include
 #include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
 #include "GameFramework/Actor.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
-#include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
 UEnvQueryTestRand::UEnvQueryTestRand()
@@ -23,24 +20,6 @@ void UEnvQueryTestRand::RunTest(FEnvQueryInstance& QueryInstance) const
 
 	AMonsterCharacter* QuerierMonster = Cast<AMonsterCharacter>(QuerierObject);
 	if (!QuerierMonster)
-	{
-		return;
-	}
-
-	UStateComponent* MonsterState = QuerierMonster->GetState();
-	if (!MonsterState)
-	{
-		return;
-	}
-
-	UAttackDataComponent* MonsterAttack = QuerierMonster->GetAttackData();
-	if (!MonsterAttack)
-	{
-		return;
-	}
-
-	ABOCharacter* TargetPlayer = MonsterState->GetTarget();
-	if (!TargetPlayer)
 	{
 		return;
 	}

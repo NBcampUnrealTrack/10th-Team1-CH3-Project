@@ -36,7 +36,7 @@ void UShortTermStateComponent::PlantFlag(EFlag State, float Time, bool Type)
 	FFlagInfo Item;
 	Item.Flag = State;
 	Item.CallTime = Time;
-	Item.IsLocation = Type;
+	Item.FlagType = Type;
 
 	Flags.Add(Item);
 }
@@ -71,8 +71,7 @@ bool UShortTermStateComponent::FoldFlags(EFlag Target, bool& Type)
 		{
 			Flags[index].Complete = true;
 			IsFold = true;
-
-			if (Flags[index].IsLocation == true)
+			if (Flags[index].FlagType)
 			{
 				Type = true;
 			}

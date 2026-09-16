@@ -28,6 +28,7 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
 	FVector GetTargetPoint() const;
 
 	void SetSpawnPoint(FVector Point);
+	FVector GetSpawnPoint() const;
 
   protected:
 	virtual void BeginPlay() override;
@@ -39,7 +40,7 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
 	TObjectPtr<ABOCharacter> MonsterTarget;
 
 	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
-	FVector TargetPoint;
+	FVector TargetPoint = FVector::ZeroVector;
 
 	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
 	FVector SpawnPoint;
@@ -55,4 +56,7 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
 	float VisionAngleDegrees = 50.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	float Memorize = 5.0f;
 };

@@ -12,9 +12,6 @@
 #include "MonsterCharacter.generated.h"
 
 // 전방 선언
-class UStateComponent;
-class UAttackDataComponent;
-class UStatComponent;
 class UMonsterStatComponent;
 class UMonsterDataAsset;
 
@@ -23,6 +20,7 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	// Methtods
   public:
 	AMonsterCharacter();
 
@@ -35,15 +33,9 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	bool IsDelay();
 
-	void MonsterAttack();
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Monster")
-	UStateComponent* GetState() const;
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Monster")
-	UAttackDataComponent* GetAttackData() const;
-
 	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
+	void MonsterAttack();
 
 	void DeathSequence();
 
@@ -69,11 +61,4 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	FName SocketName;
 	TObjectPtr<UParticleSystem> Effect;
-
-	UPROPERTY(VisibleAnywhere, Category = "Moster|Stat")
-	TObjectPtr<UStatComponent> StatComponent;
-	UPROPERTY(VisibleAnywhere, Category = "Coponent|State")
-	TObjectPtr<UStateComponent> StateComponent;
-	UPROPERTY(VisibleAnywhere, Category = "Coponent|Stat")
-	TObjectPtr<UAttackDataComponent> AttackDataComponent;
 };

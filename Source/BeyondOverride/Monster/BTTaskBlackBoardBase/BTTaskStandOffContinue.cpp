@@ -8,9 +8,8 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
+#include "GameFrameWork/CharacterMovementComponent.h"
 #include "GameFramework/Actor.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
@@ -40,21 +39,18 @@ EBTNodeResult::Type UBTTaskStandOffContinue::ExecuteTask(UBehaviorTreeComponent&
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
+	UCharacterMovementComponent* Movement = AIMonster->GetCharacterMovement();
+	if (Movement)
 	{
 		return EBTNodeResult::Failed;
 	}
+	if (AIController->GetState() == EMonsterState::StandOff &&
+		Movement->Velocity.IsNearlyZero())
+	{
+		AIController->StateChange(EMonsterState::StandOff, 5.0f);
+		BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
+		return EBTNodeResult::Succeeded;
+	}
 
-	if (AIState->IsStandOff() && !AIState->IsContinueStandOff())
-	{
-		AIState->SetContinueStandOffTimer();
-		AIState->SetStandOffTimer();
-		return EBTNodeResult::Succeeded;
-	}
-	else
-	{
-		BlackboardComp->SetValueAsVector(TEXT("TargetPoint"), AIMonster->GetActorLocation());
-		return EBTNodeResult::Succeeded;
-	}
+	return EBTNodeResult::Failed;
 }

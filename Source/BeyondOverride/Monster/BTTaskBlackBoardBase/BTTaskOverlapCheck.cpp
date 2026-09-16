@@ -11,7 +11,6 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/MonsterCalling.h"
@@ -42,12 +41,6 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	NearestTarget = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (NearestTarget)
 	{
@@ -62,12 +55,8 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
-		AIState->TrueContinueTargeting();
-		AIState->CallContinueTimer();
-		if (!AIState->IsStandOff() && !AIState->IsContinueStandOff())
-		{
-			AIState->SetStandOffTimer();
-		}
+		AIController->SetTargetPoint(FVector::ZeroVector);
+		AIController->StateChange(EMonsterState::Chase, 10.0f);
 	}
 
 	return EBTNodeResult::Succeeded;
