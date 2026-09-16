@@ -198,6 +198,27 @@ void ABOGameMode::SetKillerMonster(FName MonsterId)
 	KillerMonster = MonsterId;
 }
 
+bool ABOGameMode::IsKeyCardAcquired()
+{
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
+	{
+		return false;
+	}
+
+	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
+	{
+		if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
+		{
+			if (InventoryComponent->FindItemIndex(FName(TEXT("KEY_CARD"))) != INDEX_NONE)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void ABOGameMode::GetKilledMonsters(TMap<FName, int32>& Data) const
 {
 	Data = KilledMonsters;

@@ -35,6 +35,8 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void AddKilledMonster(FName MonsterId);
 	void SetKillerMonster(FName MonsterId);
 
+	bool IsKeyCardAcquired();
+
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
 

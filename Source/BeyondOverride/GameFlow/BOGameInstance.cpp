@@ -282,7 +282,7 @@ void UBOGameInstance::CheckKeyCard()
 	{
 		if (IsValid(Item))
 		{
-			if (Item->GetItemID() == "KEY_CARD")
+			if (Item->GetItemID() == FName(TEXT("KEY_CARD")))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Key Card Acquired"));
 				IsKeyCardAcquired = true;
@@ -296,7 +296,7 @@ void UBOGameInstance::CheckKeyCard()
 	{
 		if (IsValid(Item))
 		{
-			if (Item->GetItemID() == "KEY_CARD")
+			if (Item->GetItemID() == FName(TEXT("KEY_CARD")))
 			{
 				IsKeyCardAcquired = true;
 

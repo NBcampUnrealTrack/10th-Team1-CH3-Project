@@ -1,6 +1,6 @@
 #include "Interaction/Actors/KeycardDoorController.h"
 
-#include "GameFlow/BOGameInstance.h"
+#include "GameFlow/BOGameMode.h"
 #include "UObject/ConstructorHelpers.h"
 
 AKeycardDoorController::AKeycardDoorController()
@@ -25,9 +25,9 @@ void AKeycardDoorController::BeginPlay()
 
 	if (GetWorld())
 	{
-		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 		{
-			if (GameInstance->GetIsKeyCardAcquired())
+			if (GameMode->IsKeyCardAcquired())
 			{
 				PromptData.bEnabled = true;
 			}
@@ -42,9 +42,9 @@ bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) c
 	// 키카드 보유하고있는지 로직추가
 	if (GetWorld())
 	{
-		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 		{
-			return GameInstance->GetIsKeyCardAcquired();
+			return GameMode->IsKeyCardAcquired();
 		}
 	}
 
@@ -55,9 +55,9 @@ void AKeycardDoorController::PerformInteract(AActor* Interactor)
 {
 	if (GetWorld())
 	{
-		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 		{
-			GameInstance->ToEnding();
+			GameMode->ToEnding();
 		}
 	}
 }
