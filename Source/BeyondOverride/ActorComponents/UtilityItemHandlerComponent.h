@@ -9,6 +9,8 @@
 class UEquippableItemInstance;
 class UUtilityItemInstance;
 
+struct FUtilityItemDataRow;
+
 // 사용하여 아이템 개수 변경 알림 델리게이트
 DECLARE_MULTICAST_DELEGATE_OneParam(
 	FOnCountUpdatedDelegate,
@@ -31,8 +33,12 @@ class BEYONDOVERRIDE_API UUtilityItemHandlerComponent : public UEquipmentHandler
 	FOnEffectAppliedDelegate OnEffectAppliedDelegate;
 
   protected:
+	// 등록된 Utility Item 인스턴스
 	UPROPERTY()
 	TObjectPtr<UUtilityItemInstance> UtilityItemInstance;
+
+	// Utility Item 데이터
+	const FUtilityItemDataRow* UtilityItemData;
 
   public:
 	UUtilityItemHandlerComponent();
