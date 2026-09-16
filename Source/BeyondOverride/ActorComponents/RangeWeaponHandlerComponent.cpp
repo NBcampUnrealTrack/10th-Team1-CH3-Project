@@ -306,7 +306,7 @@ bool URangeWeaponHandlerComponent::CanReload() const
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 불가 - CanReloadDelegate is not Bound"));
 		return false;
 	}
-	if (!CanReloadDelegate.Execute(RangeWeaponInstance))
+	if (!CanReloadDelegate.Execute(RangeWeaponData->AmmoItemID))
 	{
 		return false;
 	}
@@ -724,8 +724,15 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 		return;
 	}
 
+	// 데이터
+	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+
+	// 요청할 탄약 정보
+	const FName AmmoItemID = RangeWeaponData->AmmoItemID;
+	const int32 RequestedAmmoCount = RangeWeaponInstance->GetMagazineSize() - RangeWeaponInstance->GetCurrentAmmo();
+
 	// 추가할 탄약 개수
-	const int32 AddedAmmo = RequestReloadAmmoDelegate.Execute(RangeWeaponInstance);
+	const int32 AddedAmmo = RequestReloadAmmoDelegate.Execute(RangeWeaponData->AmmoItemID, RequestedAmmoCount);
 
 	// 탄약 추가
 	RangeWeaponInstance->AddAmmo(AddedAmmo);

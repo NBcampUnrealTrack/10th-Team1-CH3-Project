@@ -13,16 +13,17 @@ class URangeWeaponInstance;
 DECLARE_MULTICAST_DELEGATE(
 	FOnFireExecutedDelegate);
 
-// 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
+// 재장전 가능한지 확인하는 델리게이트 - 재장전 가능 검증에 실행하여, 무기의 탄약 ID를 인자로 주고 해당 탄약의 여분이 있는지 여부를 반환함
 DECLARE_DELEGATE_RetVal_OneParam(
-	bool, // 재장전 여부 반환
+	bool, // 재장전 가능 여부 반환
 	FCanReloadDelegate,
-	URangeWeaponInstance*);
-// 재장전 탄약 요청하는 델리게이트 - 재장전에 사용할 탄약 소모 및 전달
-DECLARE_DELEGATE_RetVal_OneParam(
-	int32,
+	const FName&); // 탄약 ItemID
+// 재장전 탄약 요청하는 델리게이트 - 재장전 종료 시 실행하여, 재장전에 사용할 탄약 ID 및 필요한 개수를 주고 보충 가능한 개수를 반환함
+DECLARE_DELEGATE_RetVal_TwoParams(
+	int32, // 재장전에 사용할 탄약 개수 반환
 	FRequestReloadAmmoDelegate,
-	URangeWeaponInstance*);
+	const FName&, // 탄약 ItemID
+	const int32); // 필요한 탄약 개수
 
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
