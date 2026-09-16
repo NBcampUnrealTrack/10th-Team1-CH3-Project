@@ -41,11 +41,11 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
   protected:
-	// 등록된 아이템 인스턴스
+	// 등록된 Range Weapon 인스턴스
 	UPROPERTY()
 	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;
 
-	// Range Weapon 고유 데이터
+	// Range Weapon 데이터
 	const FRangeWeaponDataRow* RangeWeaponData;
 
 	// 총구 소켓 이름
