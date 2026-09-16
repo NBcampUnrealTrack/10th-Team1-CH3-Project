@@ -911,7 +911,7 @@ void ABOCharacter::FinishPlayerDeath()
 
 	if (AMonsterCharacter* KillerMonster = Cast<AMonsterCharacter>(DeathDamageCauser.Get()))
 	{
-		// GameMode->SetKillerMonster(KillerMonster->GetId());
+		GameMode->SetKillerMonster(KillerMonster->GetMonsterID());
 	}
 
 	GameMode->EndFarming(EFarmingResult::Fail);
