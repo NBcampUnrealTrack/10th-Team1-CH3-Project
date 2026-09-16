@@ -351,6 +351,11 @@ void ABOCharacter::Move(const FInputActionValue& value)
 
 void ABOCharacter::Look(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	FVector2D LookInput = value.Get<FVector2D>();
 
 	AddControllerYawInput(LookInput.X);
@@ -408,7 +413,7 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
-	if (bIsRolling)
+	if (!CanUseGameplayInput() || bIsRolling)
 	{
 		return;
 	}
@@ -442,7 +447,7 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 
 void ABOCharacter::StartFire(const FInputActionValue& value)
 {
-	if (bIsRolling)
+	if (!CanUseGameplayInput() || bIsRolling)
 	{
 		return;
 	}
@@ -470,7 +475,7 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
-	if (bIsRolling)
+	if (!CanUseGameplayInput() || bIsRolling)
 	{
 		return;
 	}
@@ -531,6 +536,11 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 	}
 
 	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);*/
+
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 
@@ -600,6 +610,11 @@ void ABOCharacter::StopRoll()
 
 void ABOCharacter::Aim(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	bIsAiming = true;
 }
 
@@ -731,6 +746,11 @@ void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 
 void ABOCharacter::Unarm(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	if (EquipmentManagerComponent)
 	{
 		EquipmentManagerComponent->Unequip();
@@ -824,6 +844,13 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
 {
+	bGameplayInputEnabled = !bAnyMenuOpen;
+
+	if (bAnyMenuOpen)
+	{
+		StopGameplayActions();
+	}
+
 	UpdateMovementEnabled();
 }
 
@@ -920,6 +947,11 @@ void ABOCharacter::FinishPlayerDeath()
 
 void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	if (!IsValid(PlayerInventoryComponent) || !IsValid(EquipmentManagerComponent))
 	{
 		return;
@@ -1214,6 +1246,39 @@ void ABOCharacter::OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted
 	{
 		MovementComponent->Velocity.X = 0.0f;
 		MovementComponent->Velocity.Y = 0.0f;
+	}
+}
+
+bool ABOCharacter::CanUseGameplayInput() const
+{
+	if (!bGameplayInputEnabled)
+	{
+		return false;
+	}
+
+	if (IsValid(StatComponent) && StatComponent->GetIsDead())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ABOCharacter::StopGameplayActions()
+{
+	bIsAiming = false;
+
+	bIsSprint = false;
+	ChangeMoveSpeed();
+
+	if (IsValid(EquipmentManagerComponent))
+	{
+		EquipmentManagerComponent->EndAction();
+	}
+
+	if (IsValid(InteractComponent))
+	{
+		InteractComponent->ReleaseInteract();
 	}
 }
 
