@@ -9,8 +9,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
 #include "GameFramework/Actor.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
@@ -47,12 +45,6 @@ EBTNodeResult::Type UBTTaskMakeLocation::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	ABOCharacter* Target = AIController->GetTarget();
 	if (!Target)
 	{
@@ -63,7 +55,7 @@ EBTNodeResult::Type UBTTaskMakeLocation::ExecuteTask(UBehaviorTreeComponent& Own
 
 	float TargetDist = FVector::Distance(Target->GetActorLocation(), AIMonster->GetActorLocation());
 
-	if (TargetDist > CanNotFind)
+	if (TargetDist > CanNotFind || LocationPoint == FVector::ZeroVector)
 	{
 		TargetCenter = LocationPoint;
 	}

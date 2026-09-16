@@ -6,8 +6,6 @@
 // Add include
 
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/ShortTermStateComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
@@ -43,19 +41,20 @@ EBTNodeResult::Type UBTTaskCallingCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::Succeeded;
 	}
 
-	bool IsLocation;
+	bool FlagType;
+	bool FlagCheck = AIController->FoldFlags(EFlag::Calling, FlagType);
 
-	bool IsCall = AIController->FoldFlags(EFlag::Calling, IsLocation);
-
-	if (!IsLocation && IsCall)
+	if (!FlagType && FlagCheck)
 	{
+		AIController->StateChange(EMonsterState::Chase, 10.0f);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
 		return EBTNodeResult::Succeeded;
 	}
 
-	if (IsLocation && IsCall)
+	if (FlagType && FlagCheck)
 	{
 		AIController->StateChange(EMonsterState::LocationPatrol, 10.0f);
+		AIController->SetTargetPoint(Target->GetActorLocation());
 		return EBTNodeResult::Succeeded;
 	}
 

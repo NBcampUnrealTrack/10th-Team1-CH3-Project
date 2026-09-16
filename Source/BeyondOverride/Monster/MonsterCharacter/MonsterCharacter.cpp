@@ -7,16 +7,14 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
+#include "GameFlow/BOGameMode.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
 #include "Monster/ActorComponent/MonsterStatComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/DataAssets/MonsterDataAsset.h"
 #include "Monster/DataTable/MonsterInfo.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Player/ActorComponent/StatComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -24,12 +22,6 @@ AMonsterCharacter::AMonsterCharacter()
 {
 
 	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
-
-	StateComponent = CreateDefaultSubobject<UStateComponent>(TEXT("StateComponent"));
-
-	AttackDataComponent = CreateDefaultSubobject<UAttackDataComponent>(TEXT("AttackDataComponent"));
-
-	StatComponent = CreateDefaultSubobject<UStatComponent>(TEXT("HPStatComponent"));
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 
@@ -92,16 +84,6 @@ void AMonsterCharacter::MonsterAttack()
 	}
 }
 
-UStateComponent* AMonsterCharacter::GetState() const
-{
-	return StateComponent;
-}
-
-UAttackDataComponent* AMonsterCharacter::GetAttackData() const
-{
-	return AttackDataComponent;
-}
-
 float AMonsterCharacter::TakeDamage(float DamageAmount,
 									FDamageEvent const& DamageEvent,
 									AController* EventInstigator,
@@ -135,7 +117,7 @@ float AMonsterCharacter::TakeDamage(float DamageAmount,
 void AMonsterCharacter::DeathSequence()
 {
 
-	if (!StatComponent->GetIsDead())
+	if (!MonsterStat->GetIsDead())
 	{
 		return;
 	}

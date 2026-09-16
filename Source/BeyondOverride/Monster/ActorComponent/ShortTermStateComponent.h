@@ -34,7 +34,7 @@ struct FFlagInfo
 	float CallTime;
 
 	UPROPERTY(VisibleAnywhere)
-	bool IsLocation = false;
+	bool FlagType = false;
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))

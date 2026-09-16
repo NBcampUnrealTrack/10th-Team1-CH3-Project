@@ -132,7 +132,12 @@ bool UInventoryComponent::SetSlots(const TArray<UItemInstanceBase*>& NewSlots)
 
 	for (int32 i = 0; i < NewSlots.Num(); ++i)
 	{
-		Slots[i] = NewSlots[i];
+		Slots[i] = DuplicateObject<UItemInstanceBase>(NewSlots[i], this);
+
+		if (IsValid(NewSlots[i]))
+		{
+			Slots[i]->Initialize();
+		}
 	}
 
 	OnInventoryChanged.Broadcast(Slots);
@@ -204,4 +209,20 @@ bool UInventoryComponent::FindEmptySlotIndex(int32& EmptySlotIndex) const
 	}
 
 	return false;
+}
+
+int32 UInventoryComponent::FindItemIndex(const FName& ItemID) const
+{
+	for (int32 i = 0; i < Slots.Num(); i++)
+	{
+		if (IsValid(Slots[i]))
+		{
+			if (ItemID == Slots[i]->GetItemID())
+			{
+				return i;
+			}
+		}
+	}
+
+	return INDEX_NONE;
 }

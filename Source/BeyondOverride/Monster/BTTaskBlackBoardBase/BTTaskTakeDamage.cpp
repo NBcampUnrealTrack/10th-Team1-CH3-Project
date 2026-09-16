@@ -5,8 +5,6 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/MonsterCalling.h"
@@ -37,19 +35,13 @@ EBTNodeResult::Type UBTTaskTakeDamage::ExecuteTask(UBehaviorTreeComponent& Owner
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	bool bHitDamage = AIState->IsGetDamage();
+	bool bHitDamage = AIController->FoldFlags(EFlag::TakeDamage);
 	if (!bHitDamage)
 	{
 		return EBTNodeResult::Succeeded;
 	}
 
-	ABOCharacter* Target = AIState->GetTarget();
+	ABOCharacter* Target = AIController->GetTarget();
 	if (!Target)
 	{
 		return EBTNodeResult::Succeeded;
@@ -65,14 +57,8 @@ EBTNodeResult::Type UBTTaskTakeDamage::ExecuteTask(UBehaviorTreeComponent& Owner
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, Target, ECallType::Attack);
-		AIController->StateChange(EMonsterState::Chase, 30.0f);
-
-		/*
-		if (AIController->GetState() != EMonsterState::StandOff && !AIController->IsContinueState())
-		{
-			AIController->StateChange(EMonsterState::StandOff, 10.0f);
-		}
-		*/
+		AIController->StateChange(EMonsterState::Chase, 10.0f);
+		AIController->SetTargetPoint(FVector::ZeroVector);
 
 		return EBTNodeResult::Succeeded;
 	}

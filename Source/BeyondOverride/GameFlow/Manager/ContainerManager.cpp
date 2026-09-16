@@ -123,8 +123,6 @@ void UContainerManager::ActivateContainer()
 		int32 Size = Containers.Num();
 		int32 Count = FMath::RoundToInt(Size * Prob);
 
-		UE_LOG(LogTemp, Warning, TEXT("Region Id : %s, Prob : %f, Size : %d, Count : %d"), *RegionId.ToString(), Prob, Size, Count);
-
 		Algo::RandomShuffle(Containers);
 
 		for (int i = 0; i < Count; i++)
@@ -158,8 +156,6 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
 
-	UE_LOG(LogTemp, Warning, TEXT("Container Spawn Item Count : %d"), Count);
-
 	for (int i = 0; i < Count; i++)
 	{
 		FName ItemId = GetRandomSpawnItem(SpawnEntries);
@@ -180,7 +176,6 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	{
 		if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key, Item.Value))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Add Item In Storage"));
 			Items.Add(ItemInstanceBase);
 		}
 	}
@@ -190,14 +185,12 @@ FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntr
 {
 	if (!GetWorld() || !GetWorld()->GetGameInstance())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No World"));
 		return FName(TEXT("Default"));
 	}
 
 	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
 	if (!ItemDataSubsystem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No Data Subsystem"));
 		return FName(TEXT("Default"));
 	}
 
@@ -212,11 +205,9 @@ FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntr
 		{
 			FName ItemId = SpawnEntry.Id;
 
-			UE_LOG(LogTemp, Warning, TEXT("Spawn Entry Item Id : %s"), *ItemId.ToString());
-
 			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemId))
 			{
-				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KEY CARD"))))
+				if (ItemId == TEXT("KEY CARD"))
 				{
 					if (!bShouldSpawnKeyCard)
 					{
