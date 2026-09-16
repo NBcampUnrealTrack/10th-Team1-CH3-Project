@@ -358,7 +358,7 @@ void ABOCharacter::Look(const FInputActionValue& value)
 
 void ABOCharacter::StartJump(const FInputActionValue& value)
 {
-	if (!bMovementEnabled)
+	if (bIsRolling || !bMovementEnabled)
 	{
 		return;
 	}
@@ -911,7 +911,7 @@ void ABOCharacter::FinishPlayerDeath()
 
 	if (AMonsterCharacter* KillerMonster = Cast<AMonsterCharacter>(DeathDamageCauser.Get()))
 	{
-		// GameMode->SetKillerMonster(KillerMonster->GetId());
+		GameMode->SetKillerMonster(KillerMonster->GetMonsterID());
 	}
 
 	GameMode->EndFarming(EFarmingResult::Fail);

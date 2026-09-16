@@ -109,17 +109,28 @@ bool UMeleeWeaponHandlerComponent::Use()
 		QueryParams);
 
 	// 공격 범위 내 액터에 데미지 적용
+	TSet<AActor*> DamagedActors;
 	for (const FOverlapResult& Result : OverlapResults)
 	{
 		AActor* Actor = Result.GetActor();
 		if (Actor && Actor != GetOwner())
 		{
+			// 동일한 액터에 중복 데미지 적용 방지
+			if (DamagedActors.Contains(Actor))
+			{
+				continue;
+			}
+
+			// 데미지 적용
 			UGameplayStatics::ApplyDamage(
 				Actor,
 				MeleeWeaponData->Damage,
 				GetOwner()->GetInstigatorController(),
 				GetOwner(),
 				UDamageType::StaticClass());
+
+			// 데미지 적용한 액터 저장
+			DamagedActors.Add(Actor);
 		}
 	}
 
