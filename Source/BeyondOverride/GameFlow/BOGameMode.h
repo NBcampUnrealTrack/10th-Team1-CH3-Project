@@ -32,6 +32,9 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void End();
 	void Exit();
 
+	void AddKilledMonster(FName MonsterId);
+	void SetKillerMonster(FName MonsterId);
+
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
 
