@@ -51,7 +51,7 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	// Properties
   protected:
 	// Attack Info
-	int32 AttackDamage = 10;
+	int32 AttackDamage = 15;
 
 	int32 RapidCount = 3;
 

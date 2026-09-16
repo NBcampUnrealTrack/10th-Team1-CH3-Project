@@ -16,6 +16,7 @@
 #include "Monster/DataTable/MonsterInfo.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Player/Character/BOCharacter.h"
+#include "UObject/ConstructorHelpers.h"
 
 AMonsterCharacter::AMonsterCharacter()
 {
@@ -33,6 +34,13 @@ AMonsterCharacter::AMonsterCharacter()
 		Movement->MaxWalkSpeed = WalkSpeed * 1;
 		Movement->bOrientRotationToMovement = true;
 		Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UMonsterDataAsset> DataAssetFinder(TEXT("/Game/Blueprints/Monster/DataAssets/DA_MonstersInfo.DA_MonstersInfo"));
+
+	if (DataAssetFinder.Succeeded())
+	{
+		MonsterData = DataAssetFinder.Object;
 	}
 }
 

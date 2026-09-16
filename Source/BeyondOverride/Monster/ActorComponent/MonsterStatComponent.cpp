@@ -6,8 +6,10 @@
 // Add include
 #include "Kismet/GameplayStatics.h"
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
+#include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/BalisticTrace.h"
+#include "Player/Character/BOCharacter.h"
 
 UMonsterStatComponent::UMonsterStatComponent()
 {
@@ -54,11 +56,15 @@ void UMonsterStatComponent::Attack()
 
 	if (MonsterType == EMonsterType::Range)
 	{
-		const AActor* Owner = GetOwner();
+		AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
 		if (!Owner)
 		{
 			return;
 		}
+		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+
+		FVector BulletDirection = (AIController->GetTarget()->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
+
 		UBalisticTrace* NewBalisticTrace = NewObject<UBalisticTrace>(this);
 
 		NewBalisticTrace->OnBalisticHit.AddUObject(this, &UMonsterStatComponent::OnBalisticHit);
@@ -66,7 +72,7 @@ void UMonsterStatComponent::Attack()
 		NewBalisticTrace->BalisticStart(RangeAttackResult,
 										Owner,
 										GetAttackPoint(),
-										FVector::ZeroVector,
+										BulletDirection,
 										AttackDelay,
 										BulletSpeed);
 	}

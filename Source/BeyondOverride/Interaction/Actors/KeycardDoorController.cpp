@@ -1,5 +1,6 @@
 #include "Interaction/Actors/KeycardDoorController.h"
 
+#include "GameFlow/BOGameInstance.h"
 #include "UObject/ConstructorHelpers.h"
 
 AKeycardDoorController::AKeycardDoorController()
@@ -13,9 +14,25 @@ AKeycardDoorController::AKeycardDoorController()
 
 	PromptData.Title = FText::FromString(TEXT("문 개방 스위치"));
 	PromptData.ActionText = FText::FromString(TEXT("[E] 키를 눌러 문을 개방하세요"));
-	PromptData.HoldSeconds = 1.f;
+	PromptData.HoldSeconds = 3.f;
 	PromptData.bMoveCancel = true;
 	PromptData.DisableReason = FText::FromString(TEXT("카드키를 보유하고 있지 않습니다."));
+}
+
+void AKeycardDoorController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			if (GameInstance->GetIsKeyCardAcquired())
+			{
+				PromptData.bEnabled = true;
+			}
+		}
+	}
 }
 
 bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) const
@@ -23,7 +40,24 @@ bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) c
 	OutReason = PromptData.DisableReason;
 
 	// 키카드 보유하고있는지 로직추가
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			return GameInstance->GetIsKeyCardAcquired();
+		}
+	}
 
-	return true;
+	return false;
 }
 
+void AKeycardDoorController::PerformInteract(AActor* Interactor)
+{
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			GameInstance->ToEnding();
+		}
+	}
+}

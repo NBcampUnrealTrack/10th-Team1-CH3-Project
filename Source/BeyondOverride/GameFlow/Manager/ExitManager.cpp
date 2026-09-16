@@ -27,7 +27,6 @@ void UExitManager::Initialize(FSubsystemCollectionBase& Collection)
 
 void UExitManager::InitSetting()
 {
-	Exits.Empty();
 	ExitControllers.Empty();
 
 	if (!GetWorld())
@@ -35,18 +34,8 @@ void UExitManager::InitSetting()
 		return;
 	}
 
-	TArray<AActor*> AllExits{};
 	TArray<AActor*> AllExitControllers{};
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AExitActor::StaticClass(), AllExits);
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AExitControllerActor::StaticClass(), AllExitControllers);
-
-	for (AActor* Actor : AllExits)
-	{
-		if (AExitActor* Exit = Cast<AExitActor>(Actor))
-		{
-			Exits.Add(Exit);
-		}
-	}
 
 	for (AActor* Actor : AllExitControllers)
 	{
@@ -82,7 +71,7 @@ void UExitManager::SpawnCharacter()
 
 	if (AExitControllerActor* ExitController = SelectRandomExit())
 	{
-		if (AExitActor* Exit = ExitController->TargetExit)
+		if (AExitActor* Exit = ExitController->GetTargetExit())
 		{
 			ExitController->SetControllerAvailable(false);
 
@@ -137,10 +126,15 @@ void UExitManager::HandleExtract(AExitControllerActor* ExitPoint, AActor* Intera
 		return;
 	}
 
-	FName RegionId = ExitPoint->RegionId; // change to getter function
+	FName RegionId = ExitPoint->GetRegionId();
 
 	if (ASpawnVolume* SpawnVolume = SpawnVolumeManager->GetSpawnVolume(RegionId))
 	{
 		SpawnVolume->StartPhase();
 	}
+}
+
+void UExitManager::CleanSetting()
+{
+	ExitControllers.Empty();
 }

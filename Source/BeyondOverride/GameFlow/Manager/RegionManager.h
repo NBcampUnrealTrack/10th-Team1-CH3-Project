@@ -24,6 +24,7 @@ class BEYONDOVERRIDE_API URegionManager : public UGameInstanceSubsystem
 
   public:
 	void InitSetting();
+	void CleanSetting();
 	bool GetRegiondata(FName RegionId, FRegionData& Data) const;
 
   private:

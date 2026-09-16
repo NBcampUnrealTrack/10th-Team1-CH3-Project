@@ -16,6 +16,8 @@ class BEYONDOVERRIDE_API AStorageContainerActor : public AInteractableActorBase
   public:
 	AStorageContainerActor();
 
+	virtual void BeginPlay() override;
+
 	void SetOpened();
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")

@@ -1,9 +1,9 @@
 #include "UI/Widgets/TitleScreenWidget.h"
 
 #include "Components/Button.h"
-#include "GameFlow/BOGameInstance.h"
-#include "UI/Manager/UIManager.h"
+#include "GameFlow/BOGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/Manager/UIManager.h"
 
 void UTitleScreenWidget::NativeConstruct()
 {
@@ -24,10 +24,10 @@ void UTitleScreenWidget::OnStartButtonClicked()
 {
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
-		UBOGameInstance* GI = Cast<UBOGameInstance>(UGameplayStatics::GetGameInstance(this));
-		if (!GI)
+		ABOGameMode* GM = Cast<ABOGameMode>(UGameplayStatics::GetGameMode(this));
+		if (!GM)
 			return;
-		GI->Start();
+		GM->Start();
 	}
 }
 
@@ -35,9 +35,9 @@ void UTitleScreenWidget::OnExitButtonClicked()
 {
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
-		UBOGameInstance* GI = Cast<UBOGameInstance>(UGameplayStatics::GetGameInstance(this));
-		if (!GI)
+		ABOGameMode* GM = Cast<ABOGameMode>(UGameplayStatics::GetGameMode(this));
+		if (!GM)
 			return;
-		GI->Exit();
+		GM->Exit();
 	}
 }

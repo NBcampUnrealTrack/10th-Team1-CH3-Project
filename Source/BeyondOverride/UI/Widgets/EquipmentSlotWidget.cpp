@@ -106,16 +106,16 @@ void UEquipmentSlotWidget::RefreshItem()
 
 	if (WpnName)
 	{
-		WpnName->SetText(Item && Item->GetItemData() ? Item->GetItemData()->DisplayName : FText::GetEmpty());
+		WpnName->SetText(Item && Item->GetItemData() ? Item->GetItemData()->DisplayName : FText::FromString(*SlotEmptyNameMap.Find(static_cast<int32>(EquipmentSlot))));
 	}
 
 	URangeWeaponInstance* Weapon = Cast<URangeWeaponInstance>(Item);
 
-	if (CurrentAmmoCount )
+	if (CurrentAmmoCount)
 	{
 		CurrentAmmoCount->SetText(Weapon ? FText::AsNumber(Weapon->GetCurrentAmmo()) : FText::GetEmpty());
 	}
-	if (CurrentAmmoCountInBody )
+	if (CurrentAmmoCountInBody)
 	{
 		CurrentAmmoCountInBody->SetText(Weapon ? FText::AsNumber(Weapon->GetCurrentAmmo()) : FText::GetEmpty());
 	}

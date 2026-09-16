@@ -15,7 +15,7 @@
     {
         "Name": "CONTAINER_02",
         "Id": "CONTAINER_02",
-        "RegionId": "REGION_02",
+        "RegionId": "REGION_01",
         "SpawnEntries": [
             {
                 "Id": "ASSAULT_RIFLE_B",
@@ -28,7 +28,7 @@
     {
         "Name": "CONTAINER_03",
         "Id": "CONTAINER_03",
-        "RegionId": "REGION_03",
+        "RegionId": "REGION_01",
         "SpawnEntries": [
             {
                 "Id": "ASSAULT_RIFLE_A",
@@ -41,5 +41,136 @@
         ],
         "MinSpawnCount": 1,
         "MaxSpawnCount": 3
+    },
+    {
+        "Name": "CONTAINER_04",
+        "Id": "CONTAINER_04",
+        "RegionId": "REGION_02",
+        "SpawnEntries": [
+            {
+                "Id": "BASIC_BACKPACK",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BASIC_BULLET",
+                "Prob": 0.9
+            }
+        ],
+        "MinSpawnCount": 1,
+        "MaxSpawnCount": 3
+    },
+    {
+        "Name": "CONTAINER_05",
+        "Id": "CONTAINER_05",
+        "RegionId": "REGION_02",
+        "SpawnEntries": [
+            {
+                "Id": "BASIC_BULLET",
+                "Prob": 0.7
+            },
+            {
+                "Id": "BASIC_GRENADE",
+                "Prob": 0.3
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 5
+    },
+    {
+        "Name": "CONTAINER_06",
+        "Id": "CONTAINER_06",
+        "RegionId": "REGION_02",
+        "SpawnEntries": [
+            {
+                "Id": "BASIC_GRENADE",
+                "Prob": 0.8
+            },
+            {
+                "Id": "BASIC_RIFLE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 1,
+        "MaxSpawnCount": 3
+    },
+    {
+        "Name": "CONTAINER_07",
+        "Id": "CONTAINER_07",
+        "RegionId": "REGION_02",
+        "SpawnEntries": [
+            {
+                "Id": "BASIC_BACKPACK",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BASIC_BULLET",
+                "Prob": 0.5
+            },
+            {
+                "Id": "BASIC_GRENADE",
+                "Prob": 0.3
+            },
+            {
+                "Id": "BASIC_RIFLE",
+                "Prob": 0.1
+            }
+        ],
+        "MinSpawnCount": 5,
+        "MaxSpawnCount": 7
+    },
+    {
+        "Name": "CONTAINER_08",
+        "Id": "CONTAINER_08",
+        "RegionId": "REGION_03",
+        "SpawnEntries": [
+            {
+                "Id": "KEY_CARD",
+                "Prob": 1.0
+            },
+            {
+                "Id": "BASIC_FOOD",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 3,
+        "MaxSpawnCount": 9
+    },
+    {
+        "Name": "CONTAINER_09",
+        "Id": "CONTAINER_09",
+        "RegionId": "REGION_03",
+        "SpawnEntries": [
+            {
+                "Id": "KEY_CARD",
+                "Prob": 1.0
+            },
+            {
+                "Id": "BASIC_BANDAGE",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 1,
+        "MaxSpawnCount": 3
+    },
+    {
+        "Name": "CONTAINER_10",
+        "Id": "CONTAINER_10",
+        "RegionId": "REGION_03",
+        "SpawnEntries": [
+            {
+                "Id": "KEY_CARD",
+                "Prob": 1.0
+            },
+            {
+                "Id": "BASIC_FOOD",
+                "Prob": 0.5
+            },
+            {
+                "Id": "BASIC_BANDAGE",
+                "Prob": 0.5
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
     }
 ]

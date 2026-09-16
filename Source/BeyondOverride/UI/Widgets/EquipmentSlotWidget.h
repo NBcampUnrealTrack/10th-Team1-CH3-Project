@@ -61,6 +61,16 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 	TObjectPtr<UWidget> WBP_Equipped;
 
   private:
+	TMap<int32, FString> SlotEmptyNameMap = {
+		{1, TEXT("주무기")},
+		{2, TEXT("보조무기")},
+		{3, TEXT("근접무기")},
+		{4, TEXT("투척")},
+		{5, TEXT("회복")},
+		{6, TEXT("가방")},
+		{7, TEXT("쉴드")},
+	};
+
 	UPROPERTY()
 	TObjectPtr<UPlayerInventoryComponent> InventoryComponent;
 	UPROPERTY()

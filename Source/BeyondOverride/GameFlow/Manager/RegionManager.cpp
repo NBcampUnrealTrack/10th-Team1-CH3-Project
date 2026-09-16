@@ -84,6 +84,35 @@ void URegionManager::InitSetting()
 	}
 }
 
+void URegionManager::CleanSetting()
+{
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
+	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	if (USpawnVolumeManager* SpawnVolumeManger = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
+	{
+		SpawnVolumeManger->CleanSetting();
+	}
+
+	if (UContainerManager* ContainerManager = GetWorld()->GetGameInstance()->GetSubsystem<UContainerManager>())
+	{
+		ContainerManager->CleanSetting();
+	}
+
+	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
+	{
+		ExitManager->CleanSetting();
+	}
+}
+
 bool URegionManager::GetRegiondata(FName RegionId, FRegionData& Data) const
 {
 	if (RegionDatas.Contains(RegionId))

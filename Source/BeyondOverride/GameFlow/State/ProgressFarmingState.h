@@ -18,7 +18,4 @@ class BEYONDOVERRIDE_API UProgressFarmingState : public UBaseFarmingState
 
   public:
 	virtual void Enter() override;
-
-  private:
-	void ShowHUDWidget();
 };

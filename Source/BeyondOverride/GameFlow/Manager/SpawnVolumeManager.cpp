@@ -2,8 +2,8 @@
 
 #include "GameFlow/Manager/SpawnVolumeManager.h"
 
-#include "../BOGameInstance.h"
-#include "../Spawn/SpawnVolume.h"
+#include "GameFlow/BOGameInstance.h"
+#include "GameFlow/Spawn/SpawnVolume.h"
 #include "Kismet/GameplayStatics.h"
 
 void USpawnVolumeManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -11,6 +11,10 @@ void USpawnVolumeManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	SpawnVolumeDatas.Empty();
+	PhaseDatas.Empty();
+
+	ActivatedSpawnVolumes.Empty();
+	SpawnVolumeByRegion.Empty();
 
 	LoadSpawnVolumeData();
 	LoadPhaseData();
@@ -94,9 +98,6 @@ void USpawnVolumeManager::LoadPhaseData()
 
 void USpawnVolumeManager::InitSetting()
 {
-	ActivatedSpawnVolumes.Empty();
-	SpawnVolumeByRegion.Empty();
-
 	TArray<AActor*> AllActors{};
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnVolume::StaticClass(), AllActors);
 
@@ -117,6 +118,7 @@ void USpawnVolumeManager::ActivateSpawnVolume(ASpawnVolume* SpawnVolume)
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Activate Spawn Volume"));
 	ActivatedSpawnVolumes.Add(SpawnVolume);
 	SpawnVolume->SpawnMonsters();
 }
@@ -153,4 +155,18 @@ ASpawnVolume* USpawnVolumeManager::GetSpawnVolume(FName RegionId) const
 	}
 
 	return nullptr;
+}
+
+void USpawnVolumeManager::CleanSetting()
+{
+	for (TPair<FName, TObjectPtr<ASpawnVolume>> Pair : SpawnVolumeByRegion)
+	{
+		if (IsValid(Pair.Value))
+		{
+			Pair.Value->CleanSetting();
+		}
+	}
+
+	ActivatedSpawnVolumes.Empty();
+	SpawnVolumeByRegion.Empty();
 }

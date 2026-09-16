@@ -153,7 +153,6 @@ void AMonsterAIController::StateChange(EMonsterState Input, float HoldTime)
 
 EMonsterState AMonsterAIController::GetState() const
 {
-
 	return State->GetState();
 }
 

@@ -21,7 +21,7 @@ class BEYONDOVERRIDE_API UBalisticTrace : public UObject
 
 	// Methtods
   public:
-	void BalisticStart(FHitResult& Result, const AActor*& Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed);
+	void BalisticStart(FHitResult& Result, const AActor* Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed);
 
 	void BalisticContinue();
 

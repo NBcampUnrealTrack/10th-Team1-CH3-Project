@@ -55,4 +55,6 @@ class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
 	EMonsterState NowState;
 
 	FTimerHandle StateTimer;
+
+	FTimerHandle StandOffTimer;
 };

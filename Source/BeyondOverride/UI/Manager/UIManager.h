@@ -21,12 +21,13 @@ enum class EUIInputMode : uint8
 UENUM(BlueprintType)
 enum class EUIScreen : uint8
 {
-	None,      // 기본 (없는 화면도 화면)
-	Title,     // WBP_TitleScreen
-	HUD,       // WBP_MainScreen
-	PauseMenu, // WBP_PauseMenuScreen
-	Inventory, // WBP_InventoryScreen
-	Result     // WBP_ResultScreen
+	None,       // 기본 (없는 화면도 화면)
+	Title,      // WBP_TitleScreen
+	HUD,        // WBP_MainScreen
+	PauseMenu,  // WBP_PauseMenuScreen
+	Inventory,  // WBP_InventoryScreen
+	Result,     // WBP_ResultScreen
+	FinalResult // WBP_FinalResultScreen
 };
 
 USTRUCT()
@@ -58,7 +59,7 @@ class BEYONDOVERRIDE_API UUIManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-public:
+  public:
 	UUIManager();
 
 	UFUNCTION(BlueprintCallable, Category = "UI", meta = (WorldContext = "WorldContextObject"))
@@ -80,7 +81,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnMenuOpenStateChanged OnMenuOpenStateChanged;
 
-private:
+  private:
 	void ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget);
 	void CenterMouseCursor(APlayerController* PC);
 	void NotifyMenuOpenStateChanged();

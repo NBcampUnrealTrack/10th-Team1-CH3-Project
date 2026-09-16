@@ -26,7 +26,8 @@ UENUM(BlueprintType)
 enum class ELevel : uint8
 {
 	Bunker,
-	Main
+	Main,
+	ServerRoom
 };
 
 UENUM(BlueprintType)

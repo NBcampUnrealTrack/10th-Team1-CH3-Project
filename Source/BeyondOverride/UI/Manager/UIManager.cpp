@@ -4,9 +4,9 @@
 #include "Engine/World.h"
 #include "Interaction/InteractComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Widgets/InteractPromptWidget.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Player/PlayerController/BOPlayerController.h"
 
 UUIManager::UUIManager()
 {
@@ -38,6 +38,12 @@ UUIManager::UUIManager()
 	if (ResultWBPClass.Succeeded())
 	{
 		ScreenClasses.Add(EUIScreen::Result, ResultWBPClass.Class);
+	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> FinalResultWBPClass(TEXT("/Game/UI/WBP_FinalResultScreen"));
+	if (FinalResultWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::FinalResult, FinalResultWBPClass.Class);
 	}
 
 	static ConstructorHelpers::FClassFinder<UInteractPromptWidget> InteractPromptWBPClass(TEXT("/Game/UI/WBP_InteractPrompt"));
@@ -89,7 +95,7 @@ UUserWidget* UUIManager::ShowScreen(EUIScreen Screen, EUIInputMode InputMode)
 	if (NewWidget)
 	{
 		NewWidget->AddToViewport();
-		ScreenStack.Add({ NewWidget, Screen, InputMode });
+		ScreenStack.Add({NewWidget, Screen, InputMode});
 		ApplyInputMode(InputMode, NewWidget);
 	}
 
@@ -120,7 +126,7 @@ UUserWidget* UUIManager::PushScreen(EUIScreen Screen, EUIInputMode InputMode)
 	if (NewWidget)
 	{
 		NewWidget->AddToViewport(ScreenStack.Num() + 1);
-		ScreenStack.Add({ NewWidget, Screen, InputMode });
+		ScreenStack.Add({NewWidget, Screen, InputMode});
 		ApplyInputMode(InputMode, NewWidget);
 
 		NotifyMenuOpenStateChanged();

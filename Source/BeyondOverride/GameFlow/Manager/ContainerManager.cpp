@@ -17,6 +17,7 @@ void UContainerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	ContainerDatas.Empty();
+	bShouldSpawnKeyCard = false;
 
 	LoadContainerData();
 }
@@ -122,13 +123,15 @@ void UContainerManager::ActivateContainer()
 		int32 Size = Containers.Num();
 		int32 Count = FMath::RoundToInt(Size * Prob);
 
+		UE_LOG(LogTemp, Warning, TEXT("Region Id : %s, Prob : %f, Size : %d, Count : %d"), *RegionId.ToString(), Prob, Size, Count);
+
 		Algo::RandomShuffle(Containers);
 
 		for (int i = 0; i < Count; i++)
 		{
 			TObjectPtr<AStorageContainerActor> Container = Containers[i];
 
-			TArray<TObjectPtr<UItemInstanceBase>> Items;
+			TArray<TObjectPtr<UItemInstanceBase>> Items{};
 			GetSpawnItems(Container, Items);
 
 			Container->SetItems(Items);
@@ -147,22 +150,27 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	TMap<FName, int32> SpawnItems{};
 
 	FSpawnData ContainerData{};
-	GetContainerData(Container->StorageContainerId, ContainerData); // change to GetId()
+	if (!GetContainerData(Container->StorageContainerId, ContainerData)) // change to GetId()
+	{
+		return;
+	}
 
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
 
+	UE_LOG(LogTemp, Warning, TEXT("Container Spawn Item Count : %d"), Count);
+
 	for (int i = 0; i < Count; i++)
 	{
-		FName ItemId = AddRandomSpawnItem(SpawnEntries);
+		FName ItemId = GetRandomSpawnItem(SpawnEntries);
 
 		if (SpawnItems.Contains(ItemId))
 		{
-			SpawnItems.Add(ItemId, 1);
+			SpawnItems[ItemId] += 1;
 		}
 		else
 		{
-			SpawnItems[ItemId] += 1;
+			SpawnItems.Add(ItemId, 1);
 		}
 	}
 
@@ -172,25 +180,28 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	{
 		if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key, Item.Value))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Add Item In Storage"));
 			Items.Add(ItemInstanceBase);
 		}
 	}
 }
 
-FName UContainerManager::AddRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries)
+FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries)
 {
 	if (!GetWorld() || !GetWorld()->GetGameInstance())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("No World"));
 		return FName(TEXT("Default"));
 	}
 
 	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
 	if (!ItemDataSubsystem)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("No Data Subsystem"));
 		return FName(TEXT("Default"));
 	}
 
-	float Prob = FMath::RandRange(0.0f, 100.0f);
+	float Prob = FMath::RandRange(0.0f, 1.0f);
 	float Sum{};
 
 	for (const FSpawnEntry& SpawnEntry : SpawnEntries)
@@ -200,23 +211,27 @@ FName UContainerManager::AddRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntr
 		if (Sum >= Prob)
 		{
 			FName ItemId = SpawnEntry.Id;
-			const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemId);
 
-			if (ItemData && ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KeyCard"))))
+			UE_LOG(LogTemp, Warning, TEXT("Spawn Entry Item Id : %s"), *ItemId.ToString());
+
+			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemId))
 			{
-				if (!bShouldSpawnKeyCard)
+				if (ItemData->DisplayName.EqualTo(FText::FromString(TEXT("KEY CARD"))))
 				{
-					Sum -= SpawnEntry.Prob;
+					if (!bShouldSpawnKeyCard)
+					{
+						Sum -= SpawnEntry.Prob;
 
-					continue;
+						continue;
+					}
+					else
+					{
+						bShouldSpawnKeyCard = false;
+					}
 				}
-				else
-				{
-					bShouldSpawnKeyCard = false;
-				}
+
+				return ItemId;
 			}
-
-			return ItemId;
 		}
 	}
 
@@ -233,4 +248,10 @@ bool UContainerManager::GetContainerData(FName ContainerId, FSpawnData& Data) co
 	}
 
 	return false;
+}
+
+void UContainerManager::CleanSetting()
+{
+	ContainerDatas.Empty();
+	ContainerByRegion.Empty();
 }
