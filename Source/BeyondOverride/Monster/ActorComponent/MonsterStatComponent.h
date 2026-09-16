@@ -46,7 +46,7 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 
   protected:
 	virtual void BeginPlay() override;
-	void OnBalisticHit();
+	void OnBalisticHit(AActor* Target);
 
 	// Properties
   protected:
@@ -66,7 +66,9 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	// Another Info
 	int32 Protect = 5;
 
-	float WalkSpeed;
+	int32 Intelligence = FMath::RandRange(0, 3);
+
+	float WalkSpeed = 600;
 
 	FHitResult RangeAttackResult;
 
