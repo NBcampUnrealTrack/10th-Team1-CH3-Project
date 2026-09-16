@@ -91,7 +91,7 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 	// Range Weapon 인스턴스 제거
 	RangeWeaponInstance = nullptr;
 
-	// Range Weapon 데이터 저장
+	// Range Weapon 데이터 제거
 	RangeWeaponData = nullptr;
 
 	// Unassign 디버그 메시지 출력
