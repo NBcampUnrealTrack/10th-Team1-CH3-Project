@@ -232,7 +232,7 @@ FVector UThrowableItemHandlerComponent::GetThrowStartLocation() const
 	FVector SocketLocation = GetOwner()->GetActorLocation();
 
 	// 등록된 장비 없음
-	if (!ThrowableItemInstance)
+	if (!HasEquipment())
 	{
 		return SocketLocation;
 	}
@@ -254,7 +254,7 @@ FVector UThrowableItemHandlerComponent::GetThrowStartLocation() const
 void UThrowableItemHandlerComponent::StartThrow()
 {
 	// 등록된 장비 없음
-	if (!ThrowableItemInstance)
+	if (!HasEquipment())
 	{
 		return;
 	}
@@ -298,7 +298,7 @@ void UThrowableItemHandlerComponent::Throw()
 AThrowableProjectile* UThrowableItemHandlerComponent::SpawnThrowable()
 {
 	// 등록된 장비 없음
-	if (!ThrowableItemInstance)
+	if (!HasEquipment())
 	{
 		return nullptr;
 	}

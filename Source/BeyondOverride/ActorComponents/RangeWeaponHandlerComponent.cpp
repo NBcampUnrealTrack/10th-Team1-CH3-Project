@@ -282,7 +282,7 @@ bool URangeWeaponHandlerComponent::CanFire() const
 bool URangeWeaponHandlerComponent::CanReload() const
 {
 	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	if (!HasEquipment())
 	{
 		return false;
 	}
@@ -319,7 +319,7 @@ void URangeWeaponHandlerComponent::SetupTimeline()
 	ClearTimeline();
 
 	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	if (!HasEquipment())
 	{
 		return;
 	}
@@ -440,7 +440,7 @@ FRotator URangeWeaponHandlerComponent::GetAimRotation() const
 void URangeWeaponHandlerComponent::AddRecoil()
 {
 	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	if (!HasEquipment())
 	{
 		return;
 	}
@@ -494,7 +494,7 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 void URangeWeaponHandlerComponent::SpawnBullets()
 {
 	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	if (!HasEquipment())
 	{
 		return;
 	}
@@ -620,7 +620,7 @@ void URangeWeaponHandlerComponent::StopReloadAnimation()
 void URangeWeaponHandlerComponent::OnFireCompleted()
 {
 	// 등록된 장비 없음
-	if (!RangeWeaponInstance)
+	if (!HasEquipment())
 	{
 		return;
 	}

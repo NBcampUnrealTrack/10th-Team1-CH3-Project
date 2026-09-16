@@ -157,7 +157,7 @@ bool UUtilityItemHandlerComponent::CanUse() const
 void UUtilityItemHandlerComponent::OnUseStarted()
 {
 	// 등록된 장비 없음
-	if (!UtilityItemInstance)
+	if (!HasEquipment())
 	{
 		return;
 	}
@@ -177,7 +177,7 @@ void UUtilityItemHandlerComponent::OnUseStarted()
 void UUtilityItemHandlerComponent::OnUseCompleted()
 {
 	// 등록된 장비 없음
-	if (!UtilityItemInstance)
+	if (!HasEquipment())
 	{
 		return;
 	}
