@@ -3,11 +3,14 @@
 #include "EnhancedInputComponent.h"
 
 #include "ActorComponents/EquipmentManagerComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
 #include "GameFlow/BOGameInstance.h"
+#include "GameFlow/BOGameMode.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
@@ -16,6 +19,7 @@
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Items/Objects/ThrowableItemInstance.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
@@ -191,6 +195,8 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 			if (PlayerController->PrimaryAction)
 			{
 				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Fire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::StartFire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Completed, this, &ABOCharacter::CompleteFire);
 			}
 
 			if (PlayerController->SecondaryAction)
@@ -428,6 +434,29 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 	}
 }
 
+void ABOCharacter::StartFire(const FInputActionValue& value)
+{
+	if (bIsRolling)
+	{
+		return;
+	}
+
+	// 장비 사용 시작
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->StartAction();
+	}
+}
+
+void ABOCharacter::CompleteFire(const FInputActionValue& value)
+{
+	// 장비 사용 종료
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->EndAction();
+	}
+}
+
 void ABOCharacter::Hip(const FInputActionValue& value)
 {
 	bIsAiming = false;
@@ -513,14 +542,13 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 
 	RollDirection = GetRollDirection();
 	ConsumeMovementInputVector();
-	bIsRolling = true;
+	StartRoll();
 
 	const float Duration = AnimInstance->Montage_Play(RollMontage);
 
 	if (Duration <= 0.0f)
 	{
-		bIsRolling = false;
-		RollDirection = FVector::ZeroVector;
+		StopRoll();
 		return;
 	}
 
@@ -531,6 +559,23 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 	MontageEndedDelegate.BindUObject(this, &ABOCharacter::OnRollMontageEnded);
 
 	AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, RollMontage);
+}
+
+void ABOCharacter::StartRoll()
+{
+	bIsRolling = true;
+
+	// 장비 사용 종료
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->EndAction();
+	}
+}
+
+void ABOCharacter::StopRoll()
+{
+	bIsRolling = false;
+	RollDirection = FVector::ZeroVector;
 }
 
 void ABOCharacter::Aim(const FInputActionValue& value)
@@ -881,8 +926,9 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &ABOCharacter::OnActiveSlotChanged);
 
 	// Primary & Secondary (Range Weapon)
-	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
-	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
+	EquipmentManagerComponent->OnFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
+	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::CanReload);
+	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::RequestReloadAmmo);
 }
 
 void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)
@@ -916,13 +962,36 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 	}
 }
 
-bool ABOCharacter::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
+void ABOCharacter::OnFireExecuted() const
+{
+	if (!GetMesh() || !GetMesh()->GetAnimInstance())
+	{
+		return;
+	}
+
+	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	if (bIsAiming)
+	{
+		AnimInstance->PlayFireAimMontage();
+	}
+	else
+	{
+		AnimInstance->PlayFireHipMontage();
+	}
+}
+
+bool ABOCharacter::CanReload(const FName& AmmoItemID) const
 {
 	// TEMP: 재장전 항상 가능
 	return true;
 }
 
-int32 ABOCharacter::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance)
+int32 ABOCharacter::RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount)
 {
 	// TEMP: 재장전 탄약 충분
 	return 100;
@@ -1005,8 +1074,7 @@ void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 		return;
 	}
 
-	bIsRolling = false;
-	RollDirection = FVector::ZeroVector;
+	StopRoll();
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 

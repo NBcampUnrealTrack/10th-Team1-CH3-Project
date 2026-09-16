@@ -129,6 +129,14 @@ bool UMeleeWeaponHandlerComponent::Use()
 	return true;
 }
 
+void UMeleeWeaponHandlerComponent::StartAction()
+{
+}
+
+void UMeleeWeaponHandlerComponent::EndAction()
+{
+}
+
 bool UMeleeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
 	if (!Super::CanAssign(InEquippableItemInstance))

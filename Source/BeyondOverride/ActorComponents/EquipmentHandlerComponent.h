@@ -37,12 +37,19 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance);
 	// 장비 제거
 	virtual UEquippableItemInstance* Unassign();
+
 	// 장비 장착
 	virtual bool Equip();
 	// 장비 해제
 	virtual bool Unequip();
+
 	// 장비 사용
 	virtual bool Use();
+
+	// 사용 시작
+	virtual void StartAction();
+	// 사용 종료
+	virtual void EndAction();
 
   protected:
 	// 장비 등록 가능 여부
