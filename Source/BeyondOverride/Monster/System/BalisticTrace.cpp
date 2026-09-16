@@ -3,14 +3,14 @@
 // Base include
 #include "Monster/System/BalisticTrace.h"
 
-void UBalisticTrace::BalisticStart(FHitResult& Result, const AActor* Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed)
+void UBalisticTrace::BalisticStart(const AActor* Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed)
 {
 
 	TraceParams.AddObjectTypesToQuery(ECC_Pawn);
 	TraceParams.AddObjectTypesToQuery(ECC_WorldStatic);
 	QueryParams.AddIgnoredActor(Caller);
 
-	HitResult = &Result;
+	HitResult;
 	AttackDelay = Delay;
 	BulletSpeed = Speed;
 	BulletLocation = Location;
@@ -23,7 +23,7 @@ void UBalisticTrace::BalisticStart(FHitResult& Result, const AActor* Caller, con
 	EndLocation = StartLocation + InitialVelocity * FlyTime + 0.5f * Gravity * FlyTime * FlyTime;
 	EndCount = EndCount + 1;
 
-	bHit = GetWorld()->LineTraceSingleByObjectType(*HitResult,
+	bHit = GetWorld()->LineTraceSingleByObjectType(HitResult,
 												   StartLocation,
 												   EndLocation,
 												   TraceParams,
@@ -44,7 +44,12 @@ void UBalisticTrace::BalisticContinue()
 
 		if (bHit)
 		{
-			OnBalisticHit.Broadcast();
+			AActor* HitActor = HitResult.GetActor();
+
+			if (IsValid(HitActor))
+			{
+				OnBalisticHit.Broadcast(HitActor);
+			}
 		}
 
 		BulletLocation = FVector::ZeroVector;
@@ -62,7 +67,7 @@ void UBalisticTrace::BalisticContinue()
 	EndLocation = StartLocation + InitialVelocity * FlyTime + 0.5f * Gravity * FlyTime * FlyTime;
 	EndCount = EndCount + 1;
 
-	bHit = GetWorld()->LineTraceSingleByObjectType(*HitResult,
+	bHit = GetWorld()->LineTraceSingleByObjectType(HitResult,
 												   StartLocation,
 												   EndLocation,
 												   TraceParams,
