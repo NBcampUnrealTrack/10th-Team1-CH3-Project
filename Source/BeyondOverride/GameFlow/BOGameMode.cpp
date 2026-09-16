@@ -87,7 +87,7 @@ void ABOGameMode::EnterBunker(EFarmingResult Result)
 	{
 		if (UUIManager* UIManager = UUIManager::Get(this))
 		{
-			UIManager->ShowScreen(EUIScreen::Result, EUIInputMode::UIOnly);
+			UIManager->PushScreen(EUIScreen::Result, EUIInputMode::UIOnly);
 		}
 	}
 }
