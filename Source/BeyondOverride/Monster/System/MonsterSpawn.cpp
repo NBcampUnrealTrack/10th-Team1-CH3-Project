@@ -11,6 +11,18 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "UObject/ConstructorHelpers.h"
+
+UMonsterSpawn::UMonsterSpawn()
+{
+	static ConstructorHelpers::FClassFinder<AMonsterCharacter> MonsterBP(
+		TEXT("/Game/Blueprints/Monster/MonsterCharcter/BP_MonsterCharacter.BP_MonsterCharacter"));
+
+	if (MonsterBP.Succeeded())
+	{
+		MonsterClass = MonsterBP.Class;
+	}
+}
 
 void UMonsterSpawn::MonsterSpawn(TSubclassOf<AMonsterCharacter> MonsterClass, FVector Location, FName ID)
 {
