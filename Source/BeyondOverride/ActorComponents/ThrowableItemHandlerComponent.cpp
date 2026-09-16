@@ -25,6 +25,13 @@ bool UThrowableItemHandlerComponent::Assign(UEquippableItemInstance* InEquippabl
 	// Throwable Item 데이터 저장
 	ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
 
+	// 유효하지 않은 데이터
+	if (!ThrowableItemData)
+	{
+		ThrowableItemInstance = nullptr;
+		return false;
+	}
+
 	// Assign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(4000, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
 

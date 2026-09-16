@@ -28,6 +28,13 @@ bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Melee Weapon 데이터 저장
 	MeleeWeaponData = MeleeWeaponInstance->GetMeleeWeaponData();
 
+	// 유효하지 않은 데이터
+	if (!MeleeWeaponData)
+	{
+		MeleeWeaponInstance = nullptr;
+		return false;
+	}
+
 	// Assign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(3000, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
 

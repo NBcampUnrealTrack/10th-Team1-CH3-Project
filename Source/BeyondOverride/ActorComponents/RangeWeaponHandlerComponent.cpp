@@ -61,6 +61,13 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Range Weapon 데이터 저장
 	RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 
+	// 유효하지 않은 데이터
+	if (!RangeWeaponData)
+	{
+		RangeWeaponInstance = nullptr;
+		return false;
+	}
+
 	// 틱 활성화
 	SetComponentTickEnabled(true);
 

@@ -23,6 +23,13 @@ bool UUtilityItemHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Utility Item 데이터 저장
 	UtilityItemData = UtilityItemInstance->GetUtilityItemData();
 
+	// 유효하지 않은 데이터
+	if (!UtilityItemData)
+	{
+		UtilityItemInstance = nullptr;
+		return false;
+	}
+
 	// Assign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::Green, FString::Printf(TEXT("Utility Item Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
 
