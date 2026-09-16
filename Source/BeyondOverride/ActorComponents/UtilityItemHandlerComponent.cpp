@@ -151,6 +151,13 @@ bool UUtilityItemHandlerComponent::CanUse() const
 		return false;
 	}
 
+	// 사용 가능한지 델리게이트로 확인
+	if (!CanUseUtilityItemDelegate.IsBound() ||
+		!CanUseUtilityItemDelegate.Execute(UtilityItemData))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -190,7 +197,7 @@ void UUtilityItemHandlerComponent::OnUseCompleted()
 	OnCountUpdatedDelegate.Broadcast(UtilityItemInstance);
 
 	// 효과 적용 델리게이트 송출
-	OnEffectAppliedDelegate.Broadcast(UtilityItemInstance);
+	OnEffectAppliedDelegate.Broadcast(UtilityItemData);
 
 	// 사용 완료 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(5002, 5.0f, FColor::Green, FString::Printf(TEXT("Using Utility Completed")));

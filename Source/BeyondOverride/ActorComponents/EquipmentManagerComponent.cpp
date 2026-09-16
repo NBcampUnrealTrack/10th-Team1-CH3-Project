@@ -283,6 +283,7 @@ void UEquipmentManagerComponent::BindDelegates()
 	{
 		if (UUtilityItemHandlerComponent* UtilityItemHandler = Cast<UUtilityItemHandlerComponent>(EquipmentHandlerComponents[EEquipmentSlot::Effect]))
 		{
+			UtilityItemHandler->CanUseUtilityItemDelegate.BindUObject(this, &UEquipmentManagerComponent::CanUseUtilityItem);
 			UtilityItemHandler->OnCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnEquipmentCountUpdated);
 			UtilityItemHandler->OnEffectAppliedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnEffectApplied);
 		}
@@ -349,8 +350,17 @@ void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance
 	// TODO: 캐릭터에서 해당 델리게이트 바인딩. 개수가 0개면 제거 수행
 }
 
-void UEquipmentManagerComponent::OnEffectApplied(UUtilityItemInstance* UtilityItemInstance) const
+bool UEquipmentManagerComponent::CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData) const
 {
-	OnEffectAppliedDelegate.Broadcast(UtilityItemInstance);
-	// TODO: 캐릭터에서 전달받은 아이템에 따라 효과 적용
+	if (!CanUseUtilityItemDelegate.IsBound())
+	{
+		return false;
+	}
+
+	return CanUseUtilityItemDelegate.Execute(UtilityItemData);
+}
+
+void UEquipmentManagerComponent::OnEffectApplied(const FUtilityItemDataRow* UtilityItemData) const
+{
+	OnEffectAppliedDelegate.Broadcast(UtilityItemData);
 }
