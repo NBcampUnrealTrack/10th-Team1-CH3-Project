@@ -58,6 +58,9 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Range Weapon 인스턴스 저장
 	RangeWeaponInstance = Cast<URangeWeaponInstance>(EquippableItemInstance);
 
+	// Range Weapon 데이터 저장
+	RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
+
 	// 틱 활성화
 	SetComponentTickEnabled(true);
 
@@ -87,6 +90,9 @@ UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 
 	// Range Weapon 인스턴스 제거
 	RangeWeaponInstance = nullptr;
+
+	// Range Weapon 데이터 저장
+	RangeWeaponData = nullptr;
 
 	// Unassign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2000, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
@@ -206,13 +212,6 @@ bool URangeWeaponHandlerComponent::CanUse() const
 		return false;
 	}
 
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
-	{
-		return false;
-	}
-
 	return true;
 }
 
@@ -281,13 +280,6 @@ bool URangeWeaponHandlerComponent::CanReload() const
 		return false;
 	}
 
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
-	{
-		return false;
-	}
-
 	// 탄창 가득찬 경우
 	if (RangeWeaponInstance->GetCurrentAmmo() == RangeWeaponInstance->GetMagazineSize())
 	{
@@ -321,13 +313,6 @@ void URangeWeaponHandlerComponent::SetupTimeline()
 
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
-	{
-		return;
-	}
-
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
 	{
 		return;
 	}
@@ -453,13 +438,6 @@ void URangeWeaponHandlerComponent::AddRecoil()
 		return;
 	}
 
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
-	{
-		return;
-	}
-
 	// 반동 Pitch
 	if (UCurveFloat* RecoilPitchCurve = RangeWeaponData->RecoilPitchCurve)
 	{
@@ -488,13 +466,6 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 			.Rotation();
 	}
 
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
-	{
-		return AimRotation;
-	}
-
 	// SpreadCurve 유효성 검증
 	const UCurveFloat* SpreadCurve = RangeWeaponData->SpreadCurve;
 	if (!SpreadCurve)
@@ -517,13 +488,6 @@ void URangeWeaponHandlerComponent::SpawnBullets()
 {
 	// 등록된 장비 없음
 	if (!RangeWeaponInstance)
-	{
-		return;
-	}
-
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
 	{
 		return;
 	}
@@ -558,14 +522,6 @@ void URangeWeaponHandlerComponent::SpawnBullets()
 
 void URangeWeaponHandlerComponent::StartFireTimer()
 {
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 사격 타이머 활성화 실패 - 유효하지 않은 RangeWeaponData"));
-		return;
-	}
-
 	// 사격 타이머 활성화
 	GetWorld()->GetTimerManager().SetTimer(
 		FireTimerHandle,
@@ -577,14 +533,6 @@ void URangeWeaponHandlerComponent::StartFireTimer()
 
 void URangeWeaponHandlerComponent::StartReloadTimer()
 {
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 타이머 활성화 실패 - 유효하지 않은 RangeWeaponData"));
-		return;
-	}
-
 	// 재장전 타이머 활성화
 	GetWorld()->GetTimerManager().SetTimer(
 		ReloadTimerHandle,
@@ -670,13 +618,6 @@ void URangeWeaponHandlerComponent::OnFireCompleted()
 		return;
 	}
 
-	// 데이터 유효성 검증
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
-	if (!RangeWeaponData)
-	{
-		return;
-	}
-
 	// 타이머를 명시적으로 제거
 	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 
@@ -711,9 +652,6 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 		UE_LOG(LogTemp, Warning, TEXT("[URangeWeaponHandlerComponent] 재장전 실패 - RequestReloadAmmoDelegate is not Bound"));
 		return;
 	}
-
-	// 데이터
-	const FRangeWeaponDataRow* RangeWeaponData = RangeWeaponInstance->GetRangeWeaponData();
 
 	// 요청할 탄약 정보
 	const FName AmmoItemID = RangeWeaponData->AmmoItemID;
