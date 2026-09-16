@@ -95,7 +95,7 @@ void ABOCharacter::BeginPlay()
 	{
 		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
 		{
-			if (GameInstance->IsPlayerDataSaved())
+			if (GameInstance->GetGameState() == EGameState::Playing)
 			{
 				if (StatComponent)
 				{
