@@ -65,6 +65,32 @@
         "ItemIcon": ""
     },
     {
+        "Name": "SHOTGUN_A",
+        "DisplayName": "Shotgun A",
+        "Description": "Shotgun A Description",
+        "ItemType": "RangeWeapon",
+        "ItemRarity": "Rare",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/ShotgunA/BP_ItemInstance_ShotgunA.BP_ItemInstance_ShotgunA_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/ShotgunA/BP_ItemPickup_ShotgunA.BP_ItemPickup_ShotgunA_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Shotgun_A_StaticMesh.Shotgun_A_StaticMesh'",
+        "MaxStackCount": 1,
+        "Weight": 7.3,
+        "ItemIcon": ""
+    },
+    {
+        "Name": "SHOTGUN_B",
+        "DisplayName": "Shotgun B",
+        "Description": "Shotgun B Description",
+        "ItemType": "RangeWeapon",
+        "ItemRarity": "Rare",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/ShotgunB/BP_ItemInstance_ShotgunB.BP_ItemInstance_ShotgunB_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/ShotgunB/BP_ItemPickup_ShotgunB.BP_ItemPickup_ShotgunB_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Shotgun_B_StaticMesh.Shotgun_B_StaticMesh'",
+        "MaxStackCount": 1,
+        "Weight": 7.0,
+        "ItemIcon": ""
+    },
+    {
         "Name": "RIFLE_AMMO",
         "DisplayName": "Rifle Ammo",
         "Description": "Ammo for Rifle",

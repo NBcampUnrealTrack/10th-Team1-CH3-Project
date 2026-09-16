@@ -35,6 +35,20 @@
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolB/DA_EquipmentAnimation_PistolB.DA_EquipmentAnimation_PistolB'"
     },
     {
+        "Name": "SHOTGUN_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Shotgun_A.Shotgun_A'",
+        "EquipSocketName": "Shotgun_A",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunA/DA_EquipmentAnimation_ShotgunA.DA_EquipmentAnimation_ShotgunA'"
+    },
+    {
+        "Name": "SHOTGUN_B",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Shotgun_B.Shotgun_B'",
+        "EquipSocketName": "Shotgun_B",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunB/DA_EquipmentAnimation_ShotgunB.DA_EquipmentAnimation_ShotgunB'"
+    },
+    {
         "Name": "GONBONG",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/Gonbong/Meshs/SKM_Gonbang.SKM_Gonbang'",
         "EquipSocketName": "Gonbong",
