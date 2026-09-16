@@ -40,7 +40,7 @@ DECLARE_DELEGATE_RetVal_TwoParams(
 
 // [Throwable & Utility Item] 아이템 사용 시 개수 변경 알리는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
-	FOnEquipmentStackCountUpdatedDelegate,
+	FOnEquipmentCountUpdatedDelegate,
 	EEquipmentSlot,
 	UEquippableItemInstance*);
 
@@ -110,7 +110,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
 	// 사용 후 아이템 개수 변경 알림 델리게이트
-	FOnEquipmentStackCountUpdatedDelegate OnEquipmentStackCountUpdatedDelegate;
+	FOnEquipmentCountUpdatedDelegate OnEquipmentCountUpdatedDelegate;
 
 	// 아이템 사용 가능 반환 델리게이트
 	FCanUseUtilityItemDelegate CanUseUtilityItemDelegate;

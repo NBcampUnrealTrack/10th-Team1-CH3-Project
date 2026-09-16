@@ -321,7 +321,7 @@ int32 UEquipmentManagerComponent::RequestReloadAmmo(const FName& AmmoItemID, con
 
 void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance)
 {
-	if (!OnEquipmentStackCountUpdatedDelegate.IsBound())
+	if (!OnEquipmentCountUpdatedDelegate.IsBound())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장비 개수 변경 이벤트 송출 실패 - OnEquipmentCountUpdatedDelegate is not Bound"));
 	}
@@ -329,25 +329,24 @@ void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 장비 개수 변경 - %s: %d"), *GetNameSafe(EquippableItemInstance), EquippableItemInstance->GetStackCount());
 
 	// 슬롯과 장비 인스턴스 송출
-	if (EquippableItemInstance->IsA(UThrowableItemInstance::StaticClass()))
+	if (EquippableItemInstance->IsA(UThrowableItemInstance::StaticClass())) // Throwable 슬롯 아이템
 	{
-		OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Throwable, EquippableItemInstance);
+		OnEquipmentCountUpdatedDelegate.Broadcast(EEquipmentSlot::Throwable, EquippableItemInstance);
 		// 개수 0일면 자동 제거
 		if (EquippableItemInstance->GetStackCount() <= 0)
 		{
 			Unassign(EEquipmentSlot::Throwable);
 		}
 	}
-	else if (EquippableItemInstance->IsA(UUtilityItemInstance::StaticClass()))
+	else if (EquippableItemInstance->IsA(UUtilityItemInstance::StaticClass())) // Utility 슬롯 아이템
 	{
-		OnEquipmentStackCountUpdatedDelegate.Broadcast(EEquipmentSlot::Effect, EquippableItemInstance);
+		OnEquipmentCountUpdatedDelegate.Broadcast(EEquipmentSlot::Effect, EquippableItemInstance);
+		// 개수 0일면 자동 제거
 		if (EquippableItemInstance->GetStackCount() <= 0)
 		{
 			Unassign(EEquipmentSlot::Effect);
 		}
 	}
-
-	// TODO: 캐릭터에서 해당 델리게이트 바인딩. 개수가 0개면 제거 수행
 }
 
 bool UEquipmentManagerComponent::CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData) const
