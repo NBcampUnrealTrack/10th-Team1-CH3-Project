@@ -39,6 +39,32 @@
         "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB.T_RifleB'"
     },
     {
+        "Name": "PISTOL_A",
+        "DisplayName": "Pistol A",
+        "Description": "Pistol A Description",
+        "ItemType": "RangeWeapon",
+        "ItemRarity": "Uncommon",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/PistolA/BP_ItemInstance_PistolA.BP_ItemInstance_PistolA_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/PistolA/BP_ItemPickup_PistolA.BP_ItemPickup_PistolA_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Pistols_A_StaticMesh.Pistols_A_StaticMesh'",
+        "MaxStackCount": 1,
+        "Weight": 4.0,
+        "ItemIcon": ""
+    },
+    {
+        "Name": "PISTOL_B",
+        "DisplayName": "Pistol B",
+        "Description": "Pistol B Description",
+        "ItemType": "RangeWeapon",
+        "ItemRarity": "Uncommon",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/PistolB/BP_ItemInstance_PistolB.BP_ItemInstance_PistolB_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/PistolB/BP_ItemPickup_PistolB.BP_ItemPickup_PistolB_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Pistols_B_StaticMesh.Pistols_B_StaticMesh'",
+        "MaxStackCount": 1,
+        "Weight": 4.7,
+        "ItemIcon": ""
+    },
+    {
         "Name": "RIFLE_AMMO",
         "DisplayName": "Rifle Ammo",
         "Description": "Ammo for Rifle",
