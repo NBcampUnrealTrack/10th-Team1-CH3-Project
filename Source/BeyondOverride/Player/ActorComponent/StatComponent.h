@@ -6,6 +6,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, int32, CurHealth, int32, MaxHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShieldChanged, int32, CurShield, int32, MaxShield);
+DECLARE_MULTICAST_DELEGATE(FOnDamaged);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -17,10 +18,10 @@ public:
 	void TakeDamage(int32 DamageAmount, AActor* DamageCauser);
 	void Heal(int32 HealAmount);
 
-	void SetCurHealth(int32 NewCurHealth) { CurHealth = NewCurHealth; }
-	void SetMaxHealth(int32 NewMaxHealth) { MaxHealth = NewMaxHealth; }
-	void SetCurShield(int32 NewCurShield) { CurShield = NewCurShield; }
-	void SetMaxShield(int32 NewMaxShield) { MaxShield = NewMaxShield; }
+	void SetCurHealth(int32 NewCurHealth);
+	void SetMaxHealth(int32 NewMaxHealth);
+	void SetCurShield(int32 NewCurShield);
+	void SetMaxShield(int32 NewMaxShield);
 
 	int32 GetCurHealth() const { return CurHealth; }
 	int32 GetMaxHealth() const { return MaxHealth; }
@@ -31,6 +32,7 @@ public:
 public:
 	FOnHealthChanged OnHealthChanged; // 체력이 변경됐을 때 실행할 델리게이트
 	FOnShieldChanged OnShieldChanged; // 쉴드량이 변경됐을 때 실행할 델리게이트
+	FOnDamaged OnDamaged; // 피해를 받았을 때 실행할 델리게이트
 	FOnDeath OnDeath; // 사망했을 때 실행할 델리게이트
 
 public:

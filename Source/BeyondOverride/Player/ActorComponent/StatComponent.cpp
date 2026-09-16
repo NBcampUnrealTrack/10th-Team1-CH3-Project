@@ -1,7 +1,9 @@
 ﻿#include "Player/ActorComponent/StatComponent.h"
 
-#include "Engine/World.h"
 #include "TimerManager.h"
+
+#include "Engine/World.h"
+#include "GameFlow/BOGameInstance.h"
 
 UStatComponent::UStatComponent()
 {
@@ -35,12 +37,14 @@ void UStatComponent::TakeDamage(int32 DamageAmount, AActor* DamageCauser)
 		CurShield = FMath::Clamp(CurShield - DamageAmount, 0, MaxShield);
 
 		OnShieldChanged.Broadcast(CurShield, MaxShield);
+		OnDamaged.Broadcast();
 	}
 	else // 쉴드가 없다면 체력 깎기
 	{
 		CurHealth = FMath::Clamp(CurHealth - DamageAmount, 0, MaxHealth);
 
 		OnHealthChanged.Broadcast(CurHealth, MaxHealth);
+		OnDamaged.Broadcast();
 
 		if (CurHealth <= 0)
 		{
@@ -66,6 +70,34 @@ void UStatComponent::Heal(int32 HealAmount)
 	CurHealth = FMath::Clamp(CurHealth + HealAmount, 0, MaxHealth);
 
 	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
+}
+
+void UStatComponent::SetCurHealth(int32 NewCurHealth)
+{
+	CurHealth = NewCurHealth;
+
+	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
+}
+
+void UStatComponent::SetMaxHealth(int32 NewMaxHealth)
+{
+	MaxHealth = NewMaxHealth;
+
+	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
+}
+
+void UStatComponent::SetCurShield(int32 NewCurShield)
+{
+	CurShield = NewCurShield;
+
+	OnShieldChanged.Broadcast(CurShield, MaxShield);
+}
+
+void UStatComponent::SetMaxShield(int32 NewMaxShield)
+{
+	MaxShield = NewMaxShield;
+
+	OnShieldChanged.Broadcast(CurShield, MaxShield);
 }
 
 void UStatComponent::ResetShieldRegenTimer()
@@ -127,4 +159,3 @@ void UStatComponent::Die(AActor* DamageCauser)
 
 	OnDeath.Broadcast(DamageCauser);
 }
-

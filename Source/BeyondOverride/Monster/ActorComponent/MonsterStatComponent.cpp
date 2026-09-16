@@ -62,15 +62,23 @@ void UMonsterStatComponent::Attack()
 			return;
 		}
 		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+		if (!AIController)
+		{
+			return;
+		}
+		ABOCharacter* Target = AIController->GetTarget();
+		if (!Target)
+		{
+			return;
+		}
 
-		FVector BulletDirection = (AIController->GetTarget()->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
+		FVector BulletDirection = (Target->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
 
 		UBalisticTrace* NewBalisticTrace = NewObject<UBalisticTrace>(this);
 
 		NewBalisticTrace->OnBalisticHit.AddUObject(this, &UMonsterStatComponent::OnBalisticHit);
 
-		NewBalisticTrace->BalisticStart(RangeAttackResult,
-										Owner,
+		NewBalisticTrace->BalisticStart(Owner,
 										GetAttackPoint(),
 										BulletDirection,
 										AttackDelay,
@@ -110,7 +118,7 @@ void UMonsterStatComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UMonsterStatComponent::OnBalisticHit()
+void UMonsterStatComponent::OnBalisticHit(AActor* Target)
 {
 	AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
 	if (!Owner)
@@ -118,7 +126,7 @@ void UMonsterStatComponent::OnBalisticHit()
 		return;
 	}
 
-	UGameplayStatics::ApplyDamage(RangeAttackResult.GetActor(),
+	UGameplayStatics::ApplyDamage(Target,
 								  AttackDamage,
 								  Owner->GetController(),
 								  Owner,

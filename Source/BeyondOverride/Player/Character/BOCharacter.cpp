@@ -95,8 +95,17 @@ void ABOCharacter::BeginPlay()
 	{
 		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
 		{
-			if (GameInstance->IsPlayerInventorySaved())
+			if (GameInstance->GetGameState() == EGameState::Playing)
 			{
+				if (StatComponent)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Load Stat Component"));
+					StatComponent->SetCurHealth(GameInstance->GetCurHealth());
+					StatComponent->SetMaxHealth(GameInstance->GetMaxHealth());
+					StatComponent->SetCurShield(GameInstance->GetCurShield());
+					StatComponent->SetMaxShield(GameInstance->GetMaxShield());
+				}
+
 				if (PlayerInventoryComponent)
 				{
 					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());
@@ -349,7 +358,7 @@ void ABOCharacter::Look(const FInputActionValue& value)
 
 void ABOCharacter::StartJump(const FInputActionValue& value)
 {
-	if (!bMovementEnabled)
+	if (bIsRolling || !bMovementEnabled)
 	{
 		return;
 	}
@@ -902,7 +911,7 @@ void ABOCharacter::FinishPlayerDeath()
 
 	if (AMonsterCharacter* KillerMonster = Cast<AMonsterCharacter>(DeathDamageCauser.Get()))
 	{
-		// GameMode->SetKillerMonster(KillerMonster->GetId());
+		GameMode->SetKillerMonster(KillerMonster->GetMonsterID());
 	}
 
 	GameMode->EndFarming(EFarmingResult::Fail);

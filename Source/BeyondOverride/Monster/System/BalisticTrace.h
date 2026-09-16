@@ -12,7 +12,7 @@
 #include "BalisticTrace.generated.h"
 
 // DELEGATE
-DECLARE_MULTICAST_DELEGATE(FOnBalisticHit);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBalisticHit, AActor*);
 
 UCLASS()
 class BEYONDOVERRIDE_API UBalisticTrace : public UObject
@@ -21,7 +21,7 @@ class BEYONDOVERRIDE_API UBalisticTrace : public UObject
 
 	// Methtods
   public:
-	void BalisticStart(FHitResult& Result, const AActor* Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed);
+	void BalisticStart(const AActor* Caller, const FVector& Location, const FVector& Direction, float Delay, float Speed);
 
 	void BalisticContinue();
 
@@ -46,7 +46,7 @@ class BEYONDOVERRIDE_API UBalisticTrace : public UObject
 
 	const FVector Gravity = FVector(0.0f, 0.0f, -980.0f);
 
-	FHitResult* HitResult;
+	FHitResult HitResult;
 
 	FTimerHandle Update;
 

@@ -10,12 +10,17 @@ ABulletProjectile::ABulletProjectile()
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	Collision->SetupAttachment(GetRootComponent());
 
+	Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Collision->SetNotifyRigidBodyCollision(true);
+	Collision->SetCollisionResponseToAllChannels(ECR_Block);
+
 	// 충돌 이벤트 바인딩
 	Collision->OnComponentHit.AddDynamic(
 		this,
 		&ABulletProjectile::OnHit);
 
 	ProjectileMovement->UpdatedComponent = Collision;
+	ProjectileMovement->bSweepCollision = true;
 }
 
 void ABulletProjectile::Initialize(

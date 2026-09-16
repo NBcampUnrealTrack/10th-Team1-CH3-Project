@@ -65,8 +65,9 @@ void UBOGameInstance::InitSetting()
 	KillerMonster = "None";
 
 	CurHealth = 0;
+	MaxHealth = 0;
 	CurShield = 0;
-	TotalMoney = 0;
+	MaxShield = 0;
 
 	IsKeyCardAcquired = false;
 
@@ -172,7 +173,9 @@ void UBOGameInstance::SavePlayerData()
 		if (UStatComponent* StatComponent = Character->GetStatComponent())
 		{
 			CurHealth = StatComponent->GetCurHealth();
+			MaxHealth = StatComponent->GetMaxHealth();
 			CurShield = StatComponent->GetCurShield();
+			MaxShield = StatComponent->GetMaxShield();
 		}
 
 		// inventory
@@ -183,35 +186,13 @@ void UBOGameInstance::SavePlayerData()
 
 			for (UItemInstanceBase* InventorySlot : InventorySlots)
 			{
-				if (IsValid(InventorySlot))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Inventory Slot is Valid"));
-				}
-
 				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
-
-				if (IsValid(Item))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("New Inventory Slot is Valid"));
-				}
-
 				PlayerItemInventory.Add(Item);
 			}
 
 			for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
 			{
-				if (IsValid(EquipmentSlot))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Equipment Slot is Valid"));
-				}
-
 				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
-
-				if (IsValid(Item))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("New Equipment Slot is Valid"));
-				}
-
 				PlayerEquipmentInventory.Add(Item);
 			}
 		}
@@ -235,11 +216,6 @@ void UBOGameInstance::SaveStorageData()
 
 				for (UItemInstanceBase* Slot : Slots)
 				{
-					if (IsValid(Slot))
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Storage Slot is Valid"));
-					}
-
 					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(Slot, this);
 					StorageInventory.Add(Item);
 				}
@@ -418,14 +394,19 @@ float UBOGameInstance::GetCurHealth() const
 	return CurHealth;
 }
 
+float UBOGameInstance::GetMaxHealth() const
+{
+	return MaxHealth;
+}
+
 float UBOGameInstance::GetCurShield() const
 {
 	return CurShield;
 }
 
-int32 UBOGameInstance::GetTotalMoney() const
+float UBOGameInstance::GetMaxShield() const
 {
-	return TotalMoney;
+	return MaxShield;
 }
 
 bool UBOGameInstance::GetIsKeyCardAcquired() const
@@ -433,9 +414,9 @@ bool UBOGameInstance::GetIsKeyCardAcquired() const
 	return IsKeyCardAcquired;
 }
 
-bool UBOGameInstance::IsPlayerInventorySaved() const
+bool UBOGameInstance::IsPlayerDataSaved() const
 {
-	if (!PlayerItemInventory.IsEmpty() || !PlayerEquipmentInventory.IsEmpty())
+	if (MaxHealth != 0)
 	{
 		return true;
 	}
