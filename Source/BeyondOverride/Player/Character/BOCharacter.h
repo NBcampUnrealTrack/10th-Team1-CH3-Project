@@ -17,7 +17,6 @@ class UNearbyItemComponent;
 
 class UItemInstanceBase;
 class UEquippableItemInstance;
-class URangeWeaponInstance;
 
 class UAnimMontage;
 
@@ -28,25 +27,50 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	UEquipmentManagerComponent* GetEquipmentComponent() const { return EquipmentManagerComponent; }
-	UStatComponent* GetStatComponent() const { return StatComponent; }
-	UPlayerInventoryComponent* GetPlayerInventoryComponent() const { return PlayerInventoryComponent; }
-	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
-	UInventoryInteractionComponent* GetInventoryInteractionComponent() const { return InventoryInteractionComponent; }
-	UNearbyItemComponent* GetNearbyItemComponent() const { return NearbyItemComponent; }
+  public:
+	UEquipmentManagerComponent* GetEquipmentComponent() const
+	{
+		return EquipmentManagerComponent;
+	}
+	UStatComponent* GetStatComponent() const
+	{
+		return StatComponent;
+	}
+	UPlayerInventoryComponent* GetPlayerInventoryComponent() const
+	{
+		return PlayerInventoryComponent;
+	}
+	UInteractComponent* GetInteractComponent() const
+	{
+		return InteractComponent;
+	}
+	UInventoryInteractionComponent* GetInventoryInteractionComponent() const
+	{
+		return InventoryInteractionComponent;
+	}
+	UNearbyItemComponent* GetNearbyItemComponent() const
+	{
+		return NearbyItemComponent;
+	}
 
-	bool GetIsAiming() const { return bIsAiming; }
+	bool GetIsAiming() const
+	{
+		return bIsAiming;
+	}
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementEnabled(bool bEnabled);
 
 	UFUNCTION(BlueprintPure)
-	bool IsMovementEnabled() const { return bMovementEnabled; }
-public:
+	bool IsMovementEnabled() const
+	{
+		return bMovementEnabled;
+	}
+
+  public:
 	ABOCharacter();
 
-protected:
+  protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
@@ -55,7 +79,7 @@ protected:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-protected:
+  protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -98,7 +122,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UEquipmentManagerComponent* EquipmentManagerComponent; // 장비 관리 컴포넌트
 
-private:
+  private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
@@ -113,16 +137,28 @@ private:
 	void StopSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void ToggleCrouch(const FInputActionValue& value);
+
 	UFUNCTION()
 	void Fire(const FInputActionValue& value);
+	UFUNCTION()
+	void StartFire(const FInputActionValue& value);
+	UFUNCTION()
+	void CompleteFire(const FInputActionValue& value);
+
 	UFUNCTION()
 	void Aim(const FInputActionValue& value);
 	UFUNCTION()
 	void Hip(const FInputActionValue& value);
 	UFUNCTION()
 	void Reload(const FInputActionValue& value);
+
 	UFUNCTION()
 	void Roll(const FInputActionValue& Value);
+	UFUNCTION()
+	void StartRoll();
+	UFUNCTION()
+	void StopRoll();
+
 	UFUNCTION()
 	void InteractPress(const FInputActionValue& value);
 	UFUNCTION()
@@ -168,23 +204,27 @@ private:
 	TWeakObjectPtr<AActor> DeathDamageCauser;
 	bool bDeathSequenceFinished = false;
 
-
-public:
+  public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	UFUNCTION()
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 
 	void TryEquipSlot(EEquipmentSlot Slot);
 
+  private:
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
-	// EquipmentManagerComponent - 장비 애니메이션 설정
-	void OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
-	// EquipmentManagerComponent - Range Weapon 델리게이트 연결 이벤트
-	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
-	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);
 
-private:
+	// EquipmentManagerComponent::OnActiveSlotChangedDelegate 바인딩 - 활성화 슬롯 변경 시 호출
+	void OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
+	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출
+	void OnFireExecuted() const;
+	// EquipmentManagerComponent::CanReloadDelegate 바인딩 - 재장전 시도 시 호출, 가능 여부 반환
+	bool CanReload(const FName& AmmoItemID) const;
+	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 - 재장전 완료 시 호출, 보충할 개수 반환
+	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
+
+  private:
 	FTimerHandle DeathTimerHandle;
 
 	FVector2D MoveInput = FVector2D::ZeroVector;

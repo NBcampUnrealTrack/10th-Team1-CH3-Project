@@ -87,6 +87,14 @@ bool UUtilityItemHandlerComponent::Use()
 	return true;
 }
 
+void UUtilityItemHandlerComponent::StartAction()
+{
+}
+
+void UUtilityItemHandlerComponent::EndAction()
+{
+}
+
 bool UUtilityItemHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
 	if (!Super::CanAssign(InEquippableItemInstance))

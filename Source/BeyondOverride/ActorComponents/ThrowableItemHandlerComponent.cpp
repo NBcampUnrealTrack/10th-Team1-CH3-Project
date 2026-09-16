@@ -86,6 +86,14 @@ bool UThrowableItemHandlerComponent::Use()
 	return true;
 }
 
+void UThrowableItemHandlerComponent::StartAction()
+{
+}
+
+void UThrowableItemHandlerComponent::EndAction()
+{
+}
+
 bool UThrowableItemHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
 	if (!Super::CanAssign(InEquippableItemInstance))
