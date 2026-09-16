@@ -855,8 +855,8 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 
 	// Primary & Secondary (Range Weapon)
 	EquipmentManagerComponent->OnFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
-	// EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::OnCanReload);
-	// EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::OnRequestReloadAmmo);
+	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::CanReload);
+	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::RequestReloadAmmo);
 }
 
 void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)
@@ -913,13 +913,13 @@ void ABOCharacter::OnFireExecuted() const
 	}
 }
 
-bool ABOCharacter::OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const
+bool ABOCharacter::CanReload(const FName& AmmoItemID) const
 {
 	// TEMP: 재장전 항상 가능
 	return true;
 }
 
-int32 ABOCharacter::OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance)
+int32 ABOCharacter::RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount)
 {
 	// TEMP: 재장전 탄약 충분
 	return 100;

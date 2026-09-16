@@ -17,7 +17,6 @@ class UNearbyItemComponent;
 
 class UItemInstanceBase;
 class UEquippableItemInstance;
-class URangeWeaponInstance;
 
 class UAnimMontage;
 
@@ -216,15 +215,14 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
 
-	// EquipmentManagerComponent - 장비 애니메이션 설정
+	// EquipmentManagerComponent::OnActiveSlotChangedDelegate 바인딩 - 활성화 슬롯 변경 시 호출
 	void OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
-
-	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 이벤트
+	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출
 	void OnFireExecuted() const;
-	// EquipmentManagerComponent::CanReloadDelegate 바인딩 이벤트
-	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
-	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 이벤트
-	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance);
+	// EquipmentManagerComponent::CanReloadDelegate 바인딩 - 재장전 시도 시 호출, 가능 여부 반환
+	bool CanReload(const FName& AmmoItemID) const;
+	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 - 재장전 완료 시 호출, 보충할 개수 반환
+	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
 
   private:
 	FTimerHandle DeathTimerHandle;
