@@ -1,5 +1,6 @@
 ﻿#include "UI/Widgets/ResultScreenWidget.h"
 
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "GameFlow/BOGameInstance.h"
@@ -9,10 +10,26 @@
 #include "UI/Manager/UIManager.h"
 #include "UI/Widgets/ItemSlotPanelWidget.h"
 #include "UI/Widgets/KillCountEntryWidget.h"
+#include "UObject/ConstructorHelpers.h"
+
+UResultScreenWidget::UResultScreenWidget(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	static ConstructorHelpers::FClassFinder<UKillCountEntryWidget> KillCountEntryWBP(TEXT("/Game/UI/Widgets/WBP_KillCountEntry"));
+	if (KillCountEntryWBP.Succeeded())
+	{
+		KillCountEntryClass = KillCountEntryWBP.Class;
+	}
+}
 
 void UResultScreenWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	if (OKBtn)
+	{
+		OKBtn->OnClicked.AddDynamic(this, &UResultScreenWidget::OnOKBtnClicked);
+	}
 
 	UBOGameInstance* GI = Cast<UBOGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (!GI)
@@ -42,9 +59,15 @@ void UResultScreenWidget::NativeConstruct()
 	int32 Minutes = FMath::FloorToInt(FMath::Fmod(SurvivalTime, 3600.0f) / 60.0f);
 	int32 Seconds = FMath::FloorToInt(FMath::Fmod(SurvivalTime, 60.0f));
 
-	FString TimeString = FString::Printf(TEXT("%02d:%02d:%02d"), Hours, Minutes, Seconds);
+	FString TimeString = FString::Printf(TEXT("%d:%02d:%02d"), Hours, Minutes, Seconds);
 
 	SurvivalTimeText->SetText(FText::FromString(TimeString));
+
+	UE_LOG(LogTemp, Warning, TEXT("KillCountList is %s"),
+		   KillCountList ? TEXT("VALID") : TEXT("NULL"));
+
+	UE_LOG(LogTemp, Warning, TEXT("KillCountEntryClass is %s"),
+		   KillCountEntryClass ? TEXT("VALID") : TEXT("NULL"));
 
 	if (KillCountList && KillCountEntryClass)
 	{
@@ -70,6 +93,14 @@ void UResultScreenWidget::NativeConstruct()
 	{
 		BackpackSlotPanel->SetInventory(OwnerCharacter->GetPlayerInventoryComponent(), nullptr);
 		BackpackSlotPanel->SetContainerName(FText::FromString(TEXT("가방")));
+	}
+}
+
+void UResultScreenWidget::NativeDestruct()
+{
+	if (OKBtn)
+	{
+		OKBtn->OnClicked.RemoveDynamic(this, &UResultScreenWidget::OnOKBtnClicked);
 	}
 }
 

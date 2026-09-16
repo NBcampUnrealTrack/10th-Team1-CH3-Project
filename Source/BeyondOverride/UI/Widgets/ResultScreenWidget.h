@@ -18,11 +18,14 @@ class BEYONDOVERRIDE_API UResultScreenWidget : public UUserWidget
 	GENERATED_BODY()
 
   public:
+	UResultScreenWidget(const FObjectInitializer& ObjectInitializer);
+
 	UPROPERTY(BlueprintReadOnly, Category = "Result")
 	bool bIsSurvived;
 
   protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
   private:
 	UPROPERTY(meta = (BindWidget))
