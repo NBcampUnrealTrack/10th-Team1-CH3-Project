@@ -20,5 +20,6 @@ class BEYONDOVERRIDE_API UMonsterSpawn : public UObject
 	GENERATED_BODY()
 
   public:
+	UFUNCTION(BlueprintCallable)
 	void MonsterSpawn(TSubclassOf<AMonsterCharacter> MonsterClass, FVector Location, FName ID);
 };

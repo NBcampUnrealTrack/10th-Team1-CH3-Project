@@ -30,6 +30,7 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 {
 	GENERATED_BODY()
 
+	// Methtods
   public:
 	// »ý¼ºÀÚ
 	AMonsterAIController();
@@ -41,7 +42,11 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 
 	void PlantFlag(EFlag State, float Time);
 
+	void PlantFlag(EFlag State, float Time, bool Type);
+
 	bool FoldFlags(EFlag Target);
+
+	bool FoldFlags(EFlag Target, bool& Type);
 
 	void StateChange(EMonsterState Input);
 
@@ -58,16 +63,9 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	void SetTargetPoint(FVector Point);
 	FVector GetTargetPoint() const;
 
+	FVector GetSpawnPoint() const;
+
   protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moster|AI")
-	TObjectPtr<UAIPerceptionComponent> AIPerception;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moster|AI")
-	TObjectPtr<UAISenseConfig_Sight> SightConfig;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moster|AI")
-	TObjectPtr<UAISenseConfig_Hearing> HearingConfig;
-
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -90,4 +88,13 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|State")
 	TObjectPtr<USenseComponent> SenseValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moster|AI")
+	TObjectPtr<UAIPerceptionComponent> AIPerception;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moster|AI")
+	TObjectPtr<UAISenseConfig_Sight> SightConfig;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moster|AI")
+	TObjectPtr<UAISenseConfig_Hearing> HearingConfig;
 };

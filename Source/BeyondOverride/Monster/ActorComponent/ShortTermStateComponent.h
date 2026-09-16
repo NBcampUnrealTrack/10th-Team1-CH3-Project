@@ -32,6 +32,9 @@ struct FFlagInfo
 
 	UPROPERTY(VisibleAnywhere)
 	float CallTime;
+
+	UPROPERTY(VisibleAnywhere)
+	bool FlagType = false;
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -47,7 +50,11 @@ class BEYONDOVERRIDE_API UShortTermStateComponent : public UActorComponent
 
 	void PlantFlag(EFlag State, float Time);
 
+	void PlantFlag(EFlag State, float Time, bool Type);
+
 	bool FoldFlags(EFlag Target);
+
+	bool FoldFlags(EFlag Target, bool& Type);
 
   protected:
 	virtual void BeginPlay() override;

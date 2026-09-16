@@ -10,7 +10,6 @@
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/ActorComponent/SenseComponent.h"
 #include "Monster/ActorComponent/ShortTermStateComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Hearing.h"
@@ -70,7 +69,10 @@ void AMonsterAIController::EnableBehaviorTree()
 void AMonsterAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	SenseValue->SetSpawnPoint(GetPawn()->GetActorLocation());
+	if (GetPawn())
+	{
+		SenseValue->SetSpawnPoint(GetPawn()->GetActorLocation());
+	}
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetHearUpdated);
 	EnableBehaviorTree();
 }
@@ -124,9 +126,19 @@ void AMonsterAIController::PlantFlag(EFlag PFlag, float Time)
 	Flag->PlantFlag(PFlag, Time);
 }
 
+void AMonsterAIController::PlantFlag(EFlag SFlag, float Time, bool Type)
+{
+	Flag->PlantFlag(SFlag, Time, Type);
+}
+
 bool AMonsterAIController::FoldFlags(EFlag Target)
 {
 	return Flag->FoldFlags(Target);
+}
+
+bool AMonsterAIController::FoldFlags(EFlag Target, bool& Type)
+{
+	return Flag->FoldFlags(Target, Type);
 }
 
 void AMonsterAIController::StateChange(EMonsterState Input)
@@ -155,17 +167,22 @@ void AMonsterAIController::SetTarget(ABOCharacter* Target)
 	SenseValue->SetTarget(Target);
 }
 
-void AMonsterAIController::SetTargetPoint(FVector Point)
-{
-	SenseValue->SetTargetPoint(Point);
-}
-
 ABOCharacter* AMonsterAIController::GetTarget() const
 {
 	return SenseValue->GetTarget();
 }
 
+void AMonsterAIController::SetTargetPoint(FVector Point)
+{
+	SenseValue->SetTargetPoint(Point);
+}
+
 FVector AMonsterAIController::GetTargetPoint() const
 {
 	return SenseValue->GetTargetPoint();
+}
+
+FVector AMonsterAIController::GetSpawnPoint() const
+{
+	return SenseValue->GetSpawnPoint();
 }
