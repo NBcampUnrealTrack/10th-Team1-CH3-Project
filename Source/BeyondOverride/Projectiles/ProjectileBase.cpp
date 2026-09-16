@@ -6,13 +6,8 @@ AProjectileBase::AProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	// SceneRoot 생성
-	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Scene Root"));
-	SetRootComponent(SceneRoot);
-
 	// ProjectileMovement 생성
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
-	ProjectileMovement->UpdatedComponent = SceneRoot;
 	ProjectileMovement->bSweepCollision = true;
 }
 

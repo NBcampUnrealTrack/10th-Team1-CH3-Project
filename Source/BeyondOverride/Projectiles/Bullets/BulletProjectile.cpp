@@ -8,7 +8,7 @@ ABulletProjectile::ABulletProjectile()
 {
 	// Collision 생성
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
-	Collision->SetupAttachment(GetRootComponent());
+	SetRootComponent(Collision);
 
 	Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Collision->SetNotifyRigidBodyCollision(true);
@@ -19,8 +19,8 @@ ABulletProjectile::ABulletProjectile()
 		this,
 		&ABulletProjectile::OnHit);
 
+	// ProjectileMovement 설정
 	ProjectileMovement->UpdatedComponent = Collision;
-	ProjectileMovement->bSweepCollision = true;
 }
 
 void ABulletProjectile::Initialize(
@@ -43,19 +43,17 @@ void ABulletProjectile::Initialize(
 
 void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (!OtherActor)
+	if (OtherActor && OtherActor != GetInstigator())
 	{
-		return;
+		UGameplayStatics::ApplyDamage(
+			OtherActor,
+			Damage,
+			GetInstigatorController(),
+			this,
+			UDamageType::StaticClass());
+
+		// TODO: 피격 이펙트 및 사운드
 	}
-
-	UGameplayStatics::ApplyDamage(
-		OtherActor,
-		Damage,
-		GetInstigatorController(),
-		this,
-		UDamageType::StaticClass());
-
-	// TODO: 피격 이펙트 및 사운드
 
 	Destroy();
 }
