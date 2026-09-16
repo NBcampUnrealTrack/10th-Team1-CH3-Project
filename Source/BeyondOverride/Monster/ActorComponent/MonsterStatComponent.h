@@ -77,5 +77,5 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	UPROPERTY(VisibleAnywhere, Category = "Moster|ID")
 	FName MonsterID = "Wraith";
 
-	EMonsterType MonsterType;
+	EMonsterType MonsterType = EMonsterType::Range;
 };

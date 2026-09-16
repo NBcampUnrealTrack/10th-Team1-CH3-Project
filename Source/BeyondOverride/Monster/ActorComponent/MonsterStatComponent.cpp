@@ -62,8 +62,17 @@ void UMonsterStatComponent::Attack()
 			return;
 		}
 		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+		if (!AIController)
+		{
+			return;
+		}
+		ABOCharacter* Target = AIController->GetTarget();
+		if (!AIController)
+		{
+			return;
+		}
 
-		FVector BulletDirection = (AIController->GetTarget()->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
+		FVector BulletDirection = (Target->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
 
 		UBalisticTrace* NewBalisticTrace = NewObject<UBalisticTrace>(this);
 

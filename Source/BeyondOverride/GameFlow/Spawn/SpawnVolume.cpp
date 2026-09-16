@@ -151,7 +151,7 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 			GameInstance->GetMonsterData(MonsterId, MonsterData);
 
 			// Spawn AI
-			MonsterSpawnSystem->MonsterSpawn(AMonsterCharacter::StaticClass(), SpawnLocation, MonsterId);
+			MonsterSpawnSystem->MonsterSpawn(SpawnLocation, MonsterId);
 
 			if (IsChase)
 			{
