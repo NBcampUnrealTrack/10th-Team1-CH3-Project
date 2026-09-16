@@ -4,7 +4,7 @@
         "Damage": 25,
         "FireRate": 0.08,
         "FireMode": "FullAuto",
-        "BulletClass": "/Script/Engine.Blueprint'/Game/Blueprints/Projectiles/Bullets/BP_Bullet_AR_2.BP_Bullet_AR_2_C'",
+        "BulletClass": "/Script/Engine.Blueprint'/Game/Blueprints/Projectiles/Bullets/BP_Bullet_AR_3.BP_Bullet_AR_3_C'",
         "ProjectileSpeed": 20000.0,
         "ProjectileGravityScale": 0.5,
         "ProjectileRange": 50000.0,
