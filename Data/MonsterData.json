@@ -1,4 +1,12 @@
 [
+     {
+        "Name": "Wraith",
+        "MonsterID": "Wraith",
+        "MonsterAttackSocket": "Muzzle_01",
+        "MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonWraith/Characters/Heroes/Wraith/Skins/ODGreen/Meshes/Wraith_ODGreen.Wraith_ODGreen'",
+        "MonsterAnimInstance": "/Script/Engine.AnimBlueprint'/Game/Blueprints/Monster/Animation/ABP_Monster.ABP_Monster_C'",
+        "MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'"
+    },
     {
         "Name": "MONSTER_01",
         "MonsterID": "MONSTER_01",

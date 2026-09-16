@@ -1,4 +1,5 @@
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
+
 #include "Enums/EquipmentSlot.h"
 
 UPlayerInventoryComponent::UPlayerInventoryComponent()
@@ -126,7 +127,12 @@ bool UPlayerInventoryComponent::SetEquipmentSlots(const TArray<UItemInstanceBase
 
 	for (int32 i = 0; i < NewSlots.Num(); ++i)
 	{
-		EquipmentSlots[i] = NewSlots[i];
+		EquipmentSlots[i] = DuplicateObject<UItemInstanceBase>(NewSlots[i], this);
+
+		if (IsValid(NewSlots[i]))
+		{
+			EquipmentSlots[i]->Initialize();
+		}
 	}
 
 	for (int32 i = 0; i < EquipmentSlots.Num(); ++i)
@@ -176,4 +182,3 @@ bool UPlayerInventoryComponent::SetEquipmentItem(EEquipmentSlot Slot, UItemInsta
 
 	return true;
 }
-

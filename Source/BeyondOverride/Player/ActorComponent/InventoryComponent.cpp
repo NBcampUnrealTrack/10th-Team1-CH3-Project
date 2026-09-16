@@ -132,7 +132,12 @@ bool UInventoryComponent::SetSlots(const TArray<UItemInstanceBase*>& NewSlots)
 
 	for (int32 i = 0; i < NewSlots.Num(); ++i)
 	{
-		Slots[i] = NewSlots[i];
+		Slots[i] = DuplicateObject<UItemInstanceBase>(NewSlots[i], this);
+
+		if (IsValid(NewSlots[i]))
+		{
+			Slots[i]->Initialize();
+		}
 	}
 
 	OnInventoryChanged.Broadcast(Slots);
