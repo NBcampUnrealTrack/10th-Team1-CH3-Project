@@ -30,6 +30,9 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	virtual void OnRegister() override;
 
   public:
+	// 현재 등록된 장비가 있는지 여부
+	bool HasEquipment() const;
+
 	// 등록된 장비 반환
 	UEquippableItemInstance* GetEquippableItemInstance() const;
 

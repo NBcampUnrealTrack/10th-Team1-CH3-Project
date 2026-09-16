@@ -22,6 +22,11 @@ void UEquipmentHandlerComponent::OnRegister()
 	}
 }
 
+bool UEquipmentHandlerComponent::HasEquipment() const
+{
+	return EquippableItemInstance != nullptr;
+}
+
 UEquippableItemInstance* UEquipmentHandlerComponent::GetEquippableItemInstance() const
 {
 	return EquippableItemInstance;
