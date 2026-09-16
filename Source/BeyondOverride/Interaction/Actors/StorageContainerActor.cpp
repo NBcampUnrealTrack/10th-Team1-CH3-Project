@@ -29,7 +29,27 @@ void AStorageContainerActor::BeginPlay()
 		{
 			if (GameInstance->IsStorageInventorySaved() && InventoryComponent)
 			{
-				InventoryComponent->SetSlots(GameInstance->GetStorageInventory());
+				TArray<UItemInstanceBase*> Slots = GameInstance->GetStorageInventory();
+				TArray<UItemInstanceBase*> NewSlots{};
+
+				for (UItemInstanceBase* Slot : Slots)
+				{
+					if (IsValid(Slot))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Storage Slot is Valid"));
+					}
+
+					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(Slot, this);
+
+					if (IsValid(Item))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("New Storage Slot is Valid"));
+					}
+
+					NewSlots.Add(Item);
+				}
+
+				InventoryComponent->SetSlots(NewSlots);
 			}
 		}
 	}

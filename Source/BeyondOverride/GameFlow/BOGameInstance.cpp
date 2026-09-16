@@ -8,6 +8,7 @@
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Monster/DataTable/MonsterInfo.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
@@ -35,20 +36,20 @@ void UBOGameInstance::LoadMonsterData()
 		return;
 	}
 
-	/*if (UDataTable* AIData = BODataAsset->GetMonsterDataTable())
+	if (UDataTable* MonsterData = BODataAsset->GetMonsterDataTable())
 	{
-		TArray<FAIData*> AllRows{};
-		AIData->GetAllRows<FAIData>(TEXT("Get All AI Datas"), AllRows);
+		TArray<FMonsterInfo*> AllRows{};
+		MonsterData->GetAllRows<FMonsterInfo>(TEXT("Get All Monster Datas"), AllRows);
 
-		for (FAIData* Row : AllRows)
+		for (FMonsterInfo* Row : AllRows)
 		{
 			if (Row)
 			{
-				FName Id = Row->Id;
-				AIDatas.Add(Id, *Row);
+				FName Id = Row->MonsterID;
+				MonsterDatas.Add(Id, *Row);
 			}
 		}
-	}*/
+	}
 }
 
 void UBOGameInstance::InitSetting()
@@ -67,13 +68,12 @@ void UBOGameInstance::InitSetting()
 	CurShield = 0;
 	TotalMoney = 0;
 
+	IsKeyCardAcquired = false;
+
 	PlayerItemInventory.Empty();
 	PlayerEquipmentInventory.Empty();
 	StorageInventory.Empty();
-
-	IsKeyCardAcquired = false;
-
-	// MonsterDatas.Empty();
+	MonsterDatas.Empty();
 }
 
 void UBOGameInstance::Start()
@@ -158,8 +158,6 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 
 void UBOGameInstance::SavePlayerData()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Save Player Data"));
-
 	PlayerItemInventory.Empty();
 	PlayerEquipmentInventory.Empty();
 
@@ -185,13 +183,35 @@ void UBOGameInstance::SavePlayerData()
 
 			for (UItemInstanceBase* InventorySlot : InventorySlots)
 			{
+				if (IsValid(InventorySlot))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Inventory Slot is Valid"));
+				}
+
 				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
+
+				if (IsValid(Item))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("New Inventory Slot is Valid"));
+				}
+
 				PlayerItemInventory.Add(Item);
 			}
 
 			for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
 			{
+				if (IsValid(EquipmentSlot))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Equipment Slot is Valid"));
+				}
+
 				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
+
+				if (IsValid(Item))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("New Equipment Slot is Valid"));
+				}
+
 				PlayerEquipmentInventory.Add(Item);
 			}
 		}
@@ -215,6 +235,11 @@ void UBOGameInstance::SaveStorageData()
 
 				for (UItemInstanceBase* Slot : Slots)
 				{
+					if (IsValid(Slot))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Storage Slot is Valid"));
+					}
+
 					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(Slot, this);
 					StorageInventory.Add(Item);
 				}
@@ -330,6 +355,14 @@ float UBOGameInstance::GetExitActivateProb() const
 	return ExitActivateProb;
 }
 
+void UBOGameInstance::GetMonsterData(FName Id, FMonsterInfo& Data) const
+{
+	if (MonsterDatas.Contains(Id))
+	{
+		Data = MonsterDatas[Id];
+	}
+}
+
 EGameState UBOGameInstance::GetGameState() const
 {
 	return GameState;
@@ -395,6 +428,11 @@ int32 UBOGameInstance::GetTotalMoney() const
 	return TotalMoney;
 }
 
+bool UBOGameInstance::GetIsKeyCardAcquired() const
+{
+	return IsKeyCardAcquired;
+}
+
 bool UBOGameInstance::IsPlayerInventorySaved() const
 {
 	if (!PlayerItemInventory.IsEmpty() || !PlayerEquipmentInventory.IsEmpty())
@@ -430,7 +468,7 @@ TArray<UItemInstanceBase*> UBOGameInstance::GetStorageInventory() const
 	return StorageInventory;
 }
 
-bool UBOGameInstance::GetIsKeyCardAcquired() const
+TMap<FName, FMonsterInfo> UBOGameInstance::GetMonsterDatas() const
 {
-	return IsKeyCardAcquired;
+	return MonsterDatas;
 }
