@@ -16,7 +16,13 @@ AItemPickupBase::AItemPickupBase()
 	StaticMeshComp->SetSimulatePhysics(true);
 	StaticMeshComp->SetEnableGravity(true);
 
-	// 콜리전 설정
+	// CCD - 빠른 이동 시 관통 방지
+	StaticMeshComp->SetUseCCD(true);
+
+	// 오브젝트 타입 설정
+	StaticMeshComp->SetCollisionObjectType(ECC_PhysicsBody);
+
+	// 콜리전 채널 설정
 	StaticMeshComp->SetCollisionResponseToAllChannels(ECR_Block);              // 나머지 Block
 	StaticMeshComp->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore); // Visibility -> Ignore
 	StaticMeshComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);     // Camera -> Ignore
