@@ -20,6 +20,16 @@ bool UUtilityItemHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Utility Item 인스턴스 저장
 	UtilityItemInstance = Cast<UUtilityItemInstance>(EquippableItemInstance);
 
+	// Utility Item 데이터 저장
+	UtilityItemData = UtilityItemInstance->GetUtilityItemData();
+
+	// 유효하지 않은 데이터
+	if (!UtilityItemData)
+	{
+		UtilityItemInstance = nullptr;
+		return false;
+	}
+
 	// Assign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::Green, FString::Printf(TEXT("Utility Item Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
 
@@ -37,6 +47,9 @@ UEquippableItemInstance* UUtilityItemHandlerComponent::Unassign()
 
 	// Utility Item 인스턴스 제거
 	UtilityItemInstance = nullptr;
+
+	// Utility Item 데이터 제거
+	UtilityItemData = nullptr;
 
 	// Unassign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::Green, FString::Printf(TEXT("Utility Item Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
@@ -138,27 +151,13 @@ bool UUtilityItemHandlerComponent::CanUse() const
 		return false;
 	}
 
-	// 데이터 유효성 검증
-	const FUtilityItemDataRow* UtilityItemData = UtilityItemInstance->GetUtilityItemData();
-	if (!UtilityItemData)
-	{
-		return false;
-	}
-
 	return true;
 }
 
 void UUtilityItemHandlerComponent::OnUseStarted()
 {
 	// 등록된 장비 없음
-	if (!UtilityItemInstance)
-	{
-		return;
-	}
-
-	// 데이터 유효성 검증
-	const FUtilityItemDataRow* UtilityItemData = UtilityItemInstance->GetUtilityItemData();
-	if (!UtilityItemData)
+	if (!HasEquipment())
 	{
 		return;
 	}
@@ -178,14 +177,7 @@ void UUtilityItemHandlerComponent::OnUseStarted()
 void UUtilityItemHandlerComponent::OnUseCompleted()
 {
 	// 등록된 장비 없음
-	if (!UtilityItemInstance)
-	{
-		return;
-	}
-
-	// 데이터 유효성 검증
-	const FUtilityItemDataRow* UtilityItemData = UtilityItemInstance->GetUtilityItemData();
-	if (!UtilityItemData)
+	if (!HasEquipment())
 	{
 		return;
 	}

@@ -8,14 +8,20 @@
 
 class UMeleeWeaponInstance;
 
+struct FMeleeWeaponDataRow;
+
 UCLASS()
 class BEYONDOVERRIDE_API UMeleeWeaponHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
 
   protected:
+	// 등록된 Melee Weapon 인스턴스
 	UPROPERTY()
 	TObjectPtr<UMeleeWeaponInstance> MeleeWeaponInstance;
+
+	// Melee Weapon 데이터
+	const FMeleeWeaponDataRow* MeleeWeaponData;
 
   public:
 	UMeleeWeaponHandlerComponent();

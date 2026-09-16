@@ -16,13 +16,21 @@ AItemPickupBase::AItemPickupBase()
 	StaticMeshComp->SetSimulatePhysics(true);
 	StaticMeshComp->SetEnableGravity(true);
 
-	// 콜리전 설정
-	StaticMeshComp->SetCollisionResponseToAllChannels(ECR_Block);               // 나머지 Block
-	StaticMeshComp->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);  // Visibility -> Ignore
-	StaticMeshComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);      // Camera -> Ignore
-	StaticMeshComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);       // Pawn -> Overlap
+	// CCD - 빠른 이동 시 관통 방지
+	StaticMeshComp->SetUseCCD(true);
+
+	// 오브젝트 타입 설정
+	StaticMeshComp->SetCollisionObjectType(ECC_PhysicsBody);
+
+	// 콜리전 채널 설정
+	StaticMeshComp->SetCollisionResponseToAllChannels(ECR_Block);              // 나머지 Block
+	StaticMeshComp->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore); // Visibility -> Ignore
+	StaticMeshComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);     // Camera -> Ignore
+	StaticMeshComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);      // Pawn -> Overlap
 
 	ItemInstance = nullptr;
+
+	StackCount = 1;
 }
 
 void AItemPickupBase::Initialize(UItemInstanceBase* InItemInstance)
@@ -33,14 +41,16 @@ void AItemPickupBase::Initialize(UItemInstanceBase* InItemInstance)
 		return;
 	}
 
-	ItemInstance = InItemInstance;
-
 	// ItemData 확인
 	const FItemDataRow* ItemData = ItemInstance->GetItemData();
 	if (!ItemData)
 	{
 		return;
 	}
+
+	// 인스턴스 저장
+	ItemInstance = InItemInstance;
+	StackCount = InItemInstance->GetStackCount();
 
 	// 메시 설정
 	if (UStaticMesh* Mesh = ItemData->ItemPickupMesh)
@@ -62,12 +72,7 @@ void AItemPickupBase::BeginPlay()
 	if (!ItemInstance)
 	{
 		ItemInstance = FItemFactory::CreateItemInstance(this, ItemID);
+		ItemInstance->SetStackCount(StackCount); // 개수 설정
 		Initialize(ItemInstance);
-
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("CreateItemInstance Result: %s"),
-			ItemInstance ? TEXT("Success") : TEXT("Failed"));
 	}
 }

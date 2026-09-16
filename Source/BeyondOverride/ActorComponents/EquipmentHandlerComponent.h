@@ -9,6 +9,9 @@
 class USkeletalMeshComponent;
 class UEquippableItemInstance;
 
+struct FItemDataRow;
+struct FEquippableItemDataRow;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 {
@@ -23,6 +26,10 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	UPROPERTY()
 	TObjectPtr<UEquippableItemInstance> EquippableItemInstance;
 
+	// 현재 장비의 고유 데이터
+	const FItemDataRow* ItemData;
+	const FEquippableItemDataRow* EquippableItemData;
+
   public:
 	UEquipmentHandlerComponent();
 
@@ -30,6 +37,9 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	virtual void OnRegister() override;
 
   public:
+	// 현재 등록된 장비가 있는지 여부
+	bool HasEquipment() const;
+
 	// 등록된 장비 반환
 	UEquippableItemInstance* GetEquippableItemInstance() const;
 
@@ -64,5 +74,5 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	virtual bool CanUse() const;
 
 	// 소켓에 메시 부착
-	void AttachToSocket(FName SocketName);
+	void AttachToSocket(const FName& SocketName, bool bHideIfNoSocket = false);
 };

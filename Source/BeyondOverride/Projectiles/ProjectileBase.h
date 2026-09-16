@@ -16,8 +16,6 @@ class AProjectileBase : public AActor
 
   protected:
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USceneComponent> SceneRoot; // 루트 컴포넌트
-	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement; // 탄도학 적용 컴포넌트
 
 	int32 Damage; // 데미지
