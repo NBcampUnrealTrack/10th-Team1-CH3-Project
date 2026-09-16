@@ -7,6 +7,7 @@
 #include "DataAssets/BODataAsset.h"
 #include "Engine/GameInstance.h"
 #include "Enums/BOEnums.h"
+#include "Monster/DataTable/MonsterInfo.h"
 
 #include "BOGameInstance.generated.h"
 
@@ -43,7 +44,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void GetRegions(TArray<FName>& Data) const;
 	void GetBasicEquipments(TArray<FName>& Data) const;
 	float GetExitActivateProb() const;
-	// void GetAIData(FName Id, FAIData& Data) const;
+	void GetMonsterData(FName Id, FMonsterInfo& Data) const;
 
 	EGameState GetGameState() const;
 	EPlayingState GetPlayingState() const;
@@ -60,6 +61,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	float GetCurHealth() const;
 	float GetCurShield() const;
 	int32 GetTotalMoney() const;
+	bool GetIsKeyCardAcquired() const;
 
 	bool IsPlayerInventorySaved() const;
 	bool IsStorageInventorySaved() const;
@@ -67,8 +69,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
 	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
 	TArray<UItemInstanceBase*> GetStorageInventory() const;
-
-	bool GetIsKeyCardAcquired() const;
+	TMap<FName, FMonsterInfo> GetMonsterDatas() const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
@@ -102,6 +103,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 CurHealth;
 	int32 CurShield;
 	int32 TotalMoney;
+	bool IsKeyCardAcquired;
 
 	UPROPERTY()
 	TArray<UItemInstanceBase*> PlayerItemInventory;
@@ -112,7 +114,6 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	UPROPERTY()
 	TArray<UItemInstanceBase*> StorageInventory;
 
-	bool IsKeyCardAcquired;
-
-	// TMap<FName, FMonsterData> MonsterDatas;
+	UPROPERTY()
+	TMap<FName, FMonsterInfo> MonsterDatas;
 };

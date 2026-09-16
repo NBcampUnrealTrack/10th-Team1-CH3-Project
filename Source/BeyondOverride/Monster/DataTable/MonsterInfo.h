@@ -8,6 +8,8 @@
 // UHT Header
 #include "MonsterInfo.generated.h"
 
+class AMonsterCharacter;
+
 USTRUCT(BlueprintType)
 struct FMonsterInfo : public FTableRowBase
 {
