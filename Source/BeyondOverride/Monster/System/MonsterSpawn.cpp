@@ -11,8 +11,19 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "UObject/ConstructorHelpers.h"
 
-void UMonsterSpawn::MonsterSpawn(TSubclassOf<AMonsterCharacter> MonsterClass, FVector Location, FName ID)
+UMonsterSpawn::UMonsterSpawn()
+{
+	static ConstructorHelpers::FClassFinder<AMonsterCharacter> MonsterBP(TEXT("/Game/Blueprints/Monster/MonsterCharcter/BP_MonsterCharacter.BP_MonsterCharacter.BP_MonsterCharacter_C"));
+
+	if (MonsterBP.Succeeded())
+	{
+		MonsterClass = MonsterBP.Class;
+	}
+}
+
+void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 {
 
 	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
@@ -59,6 +70,9 @@ void UMonsterSpawn::MonsterSpawn(TSubclassOf<AMonsterCharacter> MonsterClass, FV
 			Monster->SetMonsterID(ID);
 		}
 	};
+
+	SpawnParams.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	AMonsterCharacter* SpawnedActor = GetWorld()->SpawnActor<AMonsterCharacter>(MonsterClass,
 																				MoveLocation,
