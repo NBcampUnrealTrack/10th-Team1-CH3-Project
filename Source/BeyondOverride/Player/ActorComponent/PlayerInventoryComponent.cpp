@@ -1,6 +1,7 @@
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 
 #include "Enums/EquipmentSlot.h"
+#include "Items/Objects/ItemInstanceBase.h"
 
 UPlayerInventoryComponent::UPlayerInventoryComponent()
 {

@@ -466,9 +466,9 @@ void ABOCharacter::Reload(const FInputActionValue& value)
 	}
 
 	// 장비 재장전
-	if (EquipmentManagerComponent)
+	if (!IsValid(EquipmentManagerComponent) || !EquipmentManagerComponent->Reload())
 	{
-		EquipmentManagerComponent->Reload();
+		return;
 	}
 
 	if (!GetMesh() || !GetMesh()->GetAnimInstance())
@@ -529,9 +529,21 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 		return;
 	}
 
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+
+	if (!IsValid(Anim))
+	{
+		return;
+	}
+
+	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(Anim);
 
 	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
+
+	if (AnimInstance->IsReloadMontagePlaying())
 	{
 		return;
 	}
@@ -985,14 +997,83 @@ void ABOCharacter::OnFireExecuted() const
 
 bool ABOCharacter::CanReload(const FName& AmmoItemID) const
 {
-	// TEMP: 재장전 항상 가능
-	return true;
+	if (!IsValid(PlayerInventoryComponent))
+	{
+		return false;
+	}
+
+	if (AmmoItemID.IsNone())
+	{
+		return false;
+	}
+
+	if (bIsRolling || !bMovementEnabled)
+	{
+		return false;
+	}
+
+	const int32 ItemIndex = PlayerInventoryComponent->FindItemIndex(AmmoItemID);
+
+	if (ItemIndex == INDEX_NONE)
+	{
+		return false;
+	}
+
+	const UItemInstanceBase* AmmoItem = PlayerInventoryComponent->GetItem(ItemIndex);
+
+	return IsValid(AmmoItem) && AmmoItem->GetStackCount() > 0;
 }
 
 int32 ABOCharacter::RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount)
 {
-	// TEMP: 재장전 탄약 충분
-	return 100;
+	if (!IsValid(PlayerInventoryComponent))
+	{
+		return 0;
+	}
+
+	if (AmmoItemID.IsNone() || RequestedAmmoCount <= 0)
+	{
+		return 0;
+	}
+
+	int32 SuppliedAmmoCount = 0;
+
+	while (SuppliedAmmoCount < RequestedAmmoCount)
+	{
+		const int32 ItemIndex = PlayerInventoryComponent->FindItemIndex(AmmoItemID);
+
+		if (ItemIndex == INDEX_NONE)
+		{
+			break;
+		}
+
+		UItemInstanceBase* AmmoItem = PlayerInventoryComponent->GetItem(ItemIndex);
+
+		if (!IsValid(AmmoItem))
+		{
+			break;
+		}
+
+		const int32 StackCount = AmmoItem->GetStackCount();
+
+		if (StackCount <= 0)
+		{
+			break;
+		}
+
+		const int32 RemainingRequest = RequestedAmmoCount - SuppliedAmmoCount;
+
+		const int32 ConsumeCount = FMath::Min(StackCount, RemainingRequest);
+
+		if (!PlayerInventoryComponent->RemoveItem(ItemIndex, ConsumeCount))
+		{
+			break;
+		}
+
+		SuppliedAmmoCount += ConsumeCount;
+	}
+
+	return SuppliedAmmoCount;
 }
 
 FName ABOCharacter::GetRollSectionName() const
@@ -1066,6 +1147,24 @@ FVector ABOCharacter::GetRollDirection() const
 }
 
 void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage != RollMontage)
+	{
+		return;
+	}
+
+	StopRoll();
+
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+	if (IsValid(MovementComponent))
+	{
+		MovementComponent->Velocity.X = 0.0f;
+		MovementComponent->Velocity.Y = 0.0f;
+	}
+}
+
+void ABOCharacter::OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Montage != RollMontage)
 	{
