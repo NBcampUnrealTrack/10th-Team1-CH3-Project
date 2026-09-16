@@ -20,16 +20,21 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(
 	EEquipmentSlot,
 	UEquippableItemInstance*);
 
+// [RangeWeapon] 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 재생 등 수행
+DECLARE_MULTICAST_DELEGATE(
+	FOnFireExecutedDelegate);
+
 // [RangeWeapon] 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
 DECLARE_DELEGATE_RetVal_OneParam(
-	bool, // 재장전 여부 반환
+	bool, // 재장전 가능 여부 반환
 	FCanReloadDelegate,
-	URangeWeaponInstance*);
+	const FName&); // 탄약 ItemID
 // [RangeWeapon] 재장전 탄약 요청하는 델리게이트 - 재장전에 사용할 탄약 소모 및 전달
-DECLARE_DELEGATE_RetVal_OneParam(
-	int32,
+DECLARE_DELEGATE_RetVal_TwoParams(
+	int32, // 재장전에 사용할 탄약 개수 반환
 	FRequestReloadAmmoDelegate,
-	URangeWeaponInstance*);
+	const FName&, // 탄약 ItemID
+	const int32); // 필요한 탄약 개수
 
 // [Throwable & Utility Item] 아이템 사용 시 개수 변경 알리는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
@@ -71,6 +76,11 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 현재 장비 사용
 	bool Use();
 
+	// 사용 시작
+	virtual void StartAction();
+	// 사용 종료
+	virtual void EndAction();
+
 	// 현재 장비 재장전 - RangeWeapon 전용
 	bool Reload();
 
@@ -82,6 +92,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
   public:
 	// 장비 인스턴스 전달 델리게이트
 	FOnActiveSlotChangedDelegate OnActiveSlotChangedDelegate;
+
+	// 사격 실행 델리게이트
+	FOnFireExecutedDelegate OnFireExecutedDelegate;
 
 	// 재장전 가능 여부 델리게이트
 	FCanReloadDelegate CanReloadDelegate;
@@ -99,8 +112,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	void BindDelegates();
 
 	// [Range Weapon] 델리게이트 바인딩 이벤트
-	bool OnCanReload(URangeWeaponInstance* RangeWeaponInstance) const;
-	int32 OnRequestReloadAmmo(URangeWeaponInstance* RangeWeaponInstance) const;
+	void OnFireExecuted() const;
+	bool CanReload(const FName& AmmoItemID) const;
+	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
 
 	// [Throwable & Utility Item] 델리게이트 바인딩 이벤트
 	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance);
