@@ -181,6 +181,23 @@ void ABOGameMode::Exit()
 	}
 }
 
+void ABOGameMode::AddKilledMonster(FName MonsterId)
+{
+	if (KilledMonsters.Contains(MonsterId))
+	{
+		KilledMonsters[MonsterId] += 1;
+	}
+	else
+	{
+		KilledMonsters.Add(MonsterId, 1);
+	}
+}
+
+void ABOGameMode::SetKillerMonster(FName MonsterId)
+{
+	KillerMonster = MonsterId;
+}
+
 void ABOGameMode::GetKilledMonsters(TMap<FName, int32>& Data) const
 {
 	Data = KilledMonsters;

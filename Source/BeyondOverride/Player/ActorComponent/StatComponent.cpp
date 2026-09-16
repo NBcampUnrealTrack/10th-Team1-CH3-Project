@@ -1,7 +1,9 @@
 ﻿#include "Player/ActorComponent/StatComponent.h"
 
-#include "Engine/World.h"
 #include "TimerManager.h"
+
+#include "Engine/World.h"
+#include "GameFlow/BOGameInstance.h"
 
 UStatComponent::UStatComponent()
 {
@@ -127,4 +129,3 @@ void UStatComponent::Die(AActor* DamageCauser)
 
 	OnDeath.Broadcast(DamageCauser);
 }
-
