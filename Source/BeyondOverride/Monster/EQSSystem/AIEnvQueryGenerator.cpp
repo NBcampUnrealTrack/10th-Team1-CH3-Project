@@ -6,8 +6,6 @@
 // Add include
 #include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
 #include "GameFramework/Actor.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
@@ -29,26 +27,20 @@ void UAIEnvQueryGenerator::GenerateItems(FEnvQueryInstance& QueryInstance) const
 		return;
 	}
 
-	UStateComponent* MonsterState = QuerierMonster->GetState();
-	if (!MonsterState)
+	AMonsterAIController* MonsterController = Cast<AMonsterAIController>(QuerierMonster->GetController());
+	if (!MonsterController)
 	{
 		return;
 	}
 
-	UAttackDataComponent* MonsterAttack = QuerierMonster->GetAttackData();
-	if (!MonsterAttack)
-	{
-		return;
-	}
-
-	ABOCharacter* TargetPlayer = MonsterState->GetTarget();
+	ABOCharacter* TargetPlayer = MonsterController->GetTarget();
 	if (!TargetPlayer)
 	{
 		return;
 	}
 
 	FVector BaseLocation = TargetPlayer->GetActorLocation();
-	const float AttackRange = MonsterAttack->GetAttackRange();
+	const float AttackRange = QuerierMonster->GetAttackRange();
 	const float PointRange = AttackRange - (AttackRange / 10);
 
 	for (int32 i = 0; i < 144; ++i)

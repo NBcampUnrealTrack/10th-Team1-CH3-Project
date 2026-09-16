@@ -8,7 +8,6 @@
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
@@ -44,12 +43,7 @@ void UMonsterCalling::CallMonsters(const FVector& CallCenter, float Radius, ABOC
 		}
 
 		AMonsterCharacter* CallTarget = Cast<AMonsterCharacter>(Actor);
-
 		if (!CallTarget)
-		{
-			continue;
-		}
-		if (!CallTarget->GetState()->GetContinueTargeting())
 		{
 			continue;
 		}
@@ -59,6 +53,14 @@ void UMonsterCalling::CallMonsters(const FVector& CallCenter, float Radius, ABOC
 		{
 			continue;
 		}
+
+		if (Controller->GetState() != EMonsterState::Chase ||
+			Controller->GetState() != EMonsterState::Attack ||
+			Controller->GetState() != EMonsterState::StandOff)
+		{
+			continue;
+		}
+
 		Controller->PlantFlag(EFlag::Calling, CurrentTime);
 		Controller->SetTarget(Target);
 

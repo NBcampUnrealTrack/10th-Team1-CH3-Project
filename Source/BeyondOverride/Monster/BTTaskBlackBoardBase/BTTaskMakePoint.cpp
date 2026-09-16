@@ -7,7 +7,6 @@
 #include "NavigationSystem.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
@@ -41,13 +40,7 @@ EBTNodeResult::Type UBTTaskMakePoint::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* MonsterState = Monster->GetState();
-	if (!MonsterState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	TargetCenter = MonsterState->GetSpawnPoint();
+	TargetCenter = AIController->GetSpawnPoint();
 	TargetCenter.X += FMath::RandRange(-RangeRand, RangeRand);
 	TargetCenter.Y += FMath::RandRange(-RangeRand, RangeRand);
 

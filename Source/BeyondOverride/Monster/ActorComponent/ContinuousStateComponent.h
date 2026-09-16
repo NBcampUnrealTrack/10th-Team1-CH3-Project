@@ -51,8 +51,6 @@ class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
 	FOnStateCast OnStateCast;
 
   protected:
-	int32 StandOffPhase;
-
 	UPROPERTY(VisibleAnywhere, Category = "State|Viewer")
 	EMonsterState NowState;
 

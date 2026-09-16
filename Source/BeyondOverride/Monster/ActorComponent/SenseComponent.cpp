@@ -33,6 +33,11 @@ void USenseComponent::SetSpawnPoint(FVector Point)
 	SpawnPoint = Point;
 }
 
+FVector USenseComponent::GetSpawnPoint() const
+{
+	return SpawnPoint;
+}
+
 void USenseComponent::BeginPlay()
 {
 	Super::BeginPlay();

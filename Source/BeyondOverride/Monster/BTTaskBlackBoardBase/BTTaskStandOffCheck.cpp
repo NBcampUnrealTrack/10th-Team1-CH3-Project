@@ -9,8 +9,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_Point.h"
 #include "GameFramework/Actor.h"
-#include "Monster/ActorComponent/AttackDataComponent.h"
-#include "Monster/ActorComponent/StateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/Character/BOCharacter.h"
@@ -40,13 +38,7 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	UStateComponent* AIState = AIMonster->GetState();
-	if (!AIState)
-	{
-		return EBTNodeResult::Failed;
-	}
-
-	ABOCharacter* Target = AIState->GetTarget();
+	ABOCharacter* Target = AIController->GetTarget();
 	if (!Target)
 	{
 		return EBTNodeResult::Failed;
@@ -58,19 +50,8 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	if (AIState->CheckStandOff() && !AIState->IsContinueStandOff() && !AIState->IsStandOff())
+	if (AIController->GetState() == EMonsterState::StandOff)
 	{
-		AIState->SetContinueStandOffTimer();
-		return EBTNodeResult::Succeeded;
-	}
-	else if (!AIState->CheckStandOff() && !AIState->IsContinueStandOff() && !AIState->IsStandOff())
-	{
-		AIState->SetStandOffTimer();
-		return EBTNodeResult::Succeeded;
-	}
-	else if (AIState->CheckStandOff() && AIState->IsContinueStandOff() && !AIState->IsStandOff())
-	{
-		BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
 		return EBTNodeResult::Succeeded;
 	}
 

@@ -526,7 +526,9 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 
 	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);*/
 
-	if (bIsRolling || !IsValid(RollMontage) || !IsValid(GetMesh()))
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+	if (bIsRolling || !IsValid(MovementComponent) || MovementComponent->IsFalling() || !IsValid(RollMontage) || !IsValid(GetMesh()))
 	{
 		return;
 	}

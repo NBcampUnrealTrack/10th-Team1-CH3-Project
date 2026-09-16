@@ -52,14 +52,19 @@ void UContinuousStateComponent::StateAutoControl()
 
 	if (NowState == EMonsterState::Attack)
 	{
-		StateChange(EMonsterState::Chase);
+		StateChange(EMonsterState::Chase, 10.0f);
+		return;
+	}
+
+	if (NowState == EMonsterState::Chase)
+	{
+		StateChange(EMonsterState::StandOff);
 		return;
 	}
 
 	if (NowState == EMonsterState::StandOff)
 	{
-		StateChange(EMonsterState::StandOff, 5.0f);
-		StandOffPhase = 1;
+		StateChange(EMonsterState::Chase, 10.0f);
 		return;
 	}
 }
