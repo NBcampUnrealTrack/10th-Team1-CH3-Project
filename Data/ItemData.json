@@ -70,11 +70,24 @@
         "Description": "Ammo for Rifle",
         "ItemType": "Misc",
         "ItemRarity": "Common",
-        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/BP_ItemInstance_RifleAmmo.BP_ItemInstance_RifleAmmo_C'",
-        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/BP_ItemPickup_RifleAmmo.BP_ItemPickup_RifleAmmo_C'",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/RifleAmmo/BP_ItemInstance_RifleAmmo.BP_ItemInstance_RifleAmmo_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/RifleAmmo/BP_ItemPickup_RifleAmmo.BP_ItemPickup_RifleAmmo_C'",
         "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Pickups/AssaultRifle_Pickup.AssaultRifle_Pickup'",
         "MaxStackCount": 60,
-        "Weight": 1.0,
+        "Weight": 0.05,
+        "ItemIcon": ""
+    },
+    {
+        "Name": "PISTOL_AMMO",
+        "DisplayName": "Pistol Ammo",
+        "Description": "Ammo for Pistol",
+        "ItemType": "Misc",
+        "ItemRarity": "Common",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/PistolAmmo/BP_ItemInstance_PistolAmmo.BP_ItemInstance_PistolAmmo_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/PistolAmmo/BP_ItemPickup_PistolAmmo.BP_ItemPickup_PistolAmmo_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Pickups/Pistol_Pickup.Pistol_Pickup'",
+        "MaxStackCount": 90,
+        "Weight": 0.03,
         "ItemIcon": ""
     },
     {
