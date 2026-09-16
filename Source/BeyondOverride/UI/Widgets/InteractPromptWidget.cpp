@@ -1,7 +1,9 @@
 #include "UI/Widgets/InteractPromptWidget.h"
 
-#include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Components/SizeBox.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Components/Image.h"
 
 void UInteractPromptWidget::NativeConstruct()
 {
@@ -9,10 +11,12 @@ void UInteractPromptWidget::NativeConstruct()
 
 	SetVisibility(ESlateVisibility::Collapsed);
 
-	if (HoldBar)
+	if (ProgressFill)
 	{
-		HoldBar->SetPercent(0.f);
-		HoldBar->SetVisibility(ESlateVisibility::Collapsed);
+		// ProgressFill 의 브러시에 M_SqaureProgress 가 지정되어있어야함
+		// GetDynamicMaterial()이 머티리얼의 복제본을 만들어 브러시에 자동으로 적용해줌
+		ProgressMat = ProgressFill->GetDynamicMaterial();
+		ProgressFill->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
@@ -28,6 +32,11 @@ void UInteractPromptWidget::HandleFocusChanged(bool bHasTarget,
 	}
 
 	SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	if (PressProgressBarBox)
+	{
+		PressProgressBarBox->SetVisibility(Data.bEnabled ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	}
 
 	if (TitleText)
 	{
@@ -46,10 +55,9 @@ void UInteractPromptWidget::HandleFocusChanged(bool bHasTarget,
 
 void UInteractPromptWidget::HandleHoldProgress(float Progress)
 {
-	if (!HoldBar)
+	if (!ProgressMat || !ProgressFill)
 		return;
 
-	HoldBar->SetPercent(Progress);
-	HoldBar->SetVisibility(Progress > 0.f ? ESlateVisibility::HitTestInvisible
-										  : ESlateVisibility::Collapsed);
+	ProgressMat->SetScalarParameterValue(TEXT("Progress"), Progress);
+	ProgressFill->SetVisibility(Progress > 0.f ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 }
