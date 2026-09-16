@@ -2,8 +2,13 @@
 
 #include "GameFlow/Spawn/SpawnVolume.h"
 
-#include "../Manager/SpawnVolumeManager.h"
+#include "GameFlow/BOGameInstance.h"
+#include "GameFlow/Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Monster/DataTable/MonsterInfo.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/MonsterCalling.h"
+#include "Monster/System/MonsterSpawn.h"
 #include "Player/Character/BOCharacter.h"
 
 ASpawnVolume::ASpawnVolume()
@@ -33,10 +38,6 @@ void ASpawnVolume::BeginPlay()
 	{
 		BoxComp->OnComponentBeginOverlap.AddUniqueDynamic(this, &ASpawnVolume::OnOverlapped);
 		BoxComp->SetGenerateOverlapEvents(true);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Box Component"));
 	}
 }
 
@@ -71,7 +72,31 @@ void ASpawnVolume::SpawnMonsters()
 
 void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float MinDist, float MaxDist, bool IsChase)
 {
-	if (!GetWorld() || !BoxComp)
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController() || !BoxComp)
+	{
+		return;
+	}
+
+	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	UMonsterSpawn* MonsterSpawnSystem = NewObject<UMonsterSpawn>(this);
+	if (!MonsterSpawnSystem)
+	{
+		return;
+	}
+
+	UMonsterCalling* MonsterCallingSystem = NewObject<UMonsterCalling>(this);
+	if (!MonsterCallingSystem)
+	{
+		return;
+	}
+
+	ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>();
+	if (!Character)
 	{
 		return;
 	}
@@ -90,7 +115,7 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 
 	FVector SVLocation = GetActorLocation();
 	FVector BoxExtent = BoxComp->GetScaledBoxExtent();
-	FVector PlayerLocation = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation();
+	FVector PlayerLocation = Character->GetActorLocation();
 
 	FVector SpawnLocation{};
 	float X = FMath::RandRange(SVLocation.X - BoxExtent.X, SVLocation.X + BoxExtent.X);
@@ -107,9 +132,9 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 
 	SpawnLocation.X = X;
 	SpawnLocation.Y = Y;
-	SpawnLocation.Z = SVLocation.Z;
+	SpawnLocation.Z = SVLocation.Z + 100.0f;
 
-	float Prob = FMath::RandRange(0.0f, 100.0f);
+	float Prob = FMath::RandRange(0.0f, 1.0f);
 	float Sum{};
 
 	for (FSpawnEntry SpawnEntry : SpawnEntries)
@@ -121,12 +146,17 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 			FName MonsterId = SpawnEntry.Id;
 			UE_LOG(LogTemp, Warning, TEXT("Spawned Monster : %s"), *MonsterId.ToString());
 
-			// Get AI Data
+			// Get Monster Data
+			FMonsterInfo MonsterData{};
+			GameInstance->GetMonsterData(MonsterId, MonsterData);
+
 			// Spawn AI
+			MonsterSpawnSystem->MonsterSpawn(AMonsterCharacter::StaticClass(), SpawnLocation, MonsterId);
 
 			if (IsChase)
 			{
 				// Chase Player
+				MonsterCallingSystem->CallMonsters(SVLocation, SpawnMaxRadius, Character, ECallType::Attack);
 			}
 		}
 	}
