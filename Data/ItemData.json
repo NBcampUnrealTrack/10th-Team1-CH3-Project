@@ -117,6 +117,19 @@
         "ItemIcon": ""
     },
     {
+        "Name": "SHOTGUN_AMMO",
+        "DisplayName": "Shotgun Ammo",
+        "Description": "Ammo for Shotgun",
+        "ItemType": "Misc",
+        "ItemRarity": "Common",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/ShotgunAmmo/BP_ItemInstance_ShotgunAmmo.BP_ItemInstance_ShotgunAmmo_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Ammo/ShotgunAmmo/BP_ItemPickup_ShotgunAmmo.BP_ItemPickup_ShotgunAmmo_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Pickups/Shotgun_Pickup.Shotgun_Pickup'",
+        "MaxStackCount": 30,
+        "Weight": 0.09,
+        "ItemIcon": ""
+    },
+    {
         "Name": "GONBONG",
         "DisplayName": "Gonbong",
         "Description": "Gonbong Description",
