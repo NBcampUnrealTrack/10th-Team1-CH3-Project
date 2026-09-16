@@ -70,6 +70,34 @@ void UStatComponent::Heal(int32 HealAmount)
 	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
 }
 
+void UStatComponent::SetCurHealth(int32 NewCurHealth)
+{
+	CurHealth = NewCurHealth;
+
+	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
+}
+
+void UStatComponent::SetMaxHealth(int32 NewMaxHealth)
+{
+	MaxHealth = NewMaxHealth;
+
+	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
+}
+
+void UStatComponent::SetCurShield(int32 NewCurShield)
+{
+	CurShield = NewCurShield;
+
+	OnShieldChanged.Broadcast(CurShield, MaxShield);
+}
+
+void UStatComponent::SetMaxShield(int32 NewMaxShield)
+{
+	MaxShield = NewMaxShield;
+
+	OnShieldChanged.Broadcast(CurShield, MaxShield);
+}
+
 void UStatComponent::ResetShieldRegenTimer()
 {
 	if (!GetWorld())
