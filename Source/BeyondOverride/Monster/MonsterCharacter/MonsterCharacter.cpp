@@ -121,7 +121,14 @@ void AMonsterCharacter::DeathSequence()
 	{
 		return;
 	}
-	// ABOGameMode::AddKilledMonster(GetMonsterID());
+
+	if (GetWorld())
+	{
+		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+		{
+			GameMode->AddKilledMonster(GetMonsterID());
+		}
+	}
 
 	Destroy();
 }
