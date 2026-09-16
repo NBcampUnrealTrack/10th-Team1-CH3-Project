@@ -7,6 +7,7 @@
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
+#include "DataTables/Items/UtilityItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Factory/ItemFactory.h"
 #include "GameFlow/BOGameInstance.h"
@@ -356,6 +357,11 @@ void ABOCharacter::Move(const FInputActionValue& value)
 
 void ABOCharacter::Look(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	FVector2D LookInput = value.Get<FVector2D>();
 
 	AddControllerYawInput(LookInput.X);
@@ -413,7 +419,7 @@ void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 
 void ABOCharacter::Fire(const FInputActionValue& value)
 {
-	if (bIsRolling)
+	if (!CanUseGameplayInput() || bIsRolling)
 	{
 		return;
 	}
@@ -447,7 +453,7 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 
 void ABOCharacter::StartFire(const FInputActionValue& value)
 {
-	if (bIsRolling)
+	if (!CanUseGameplayInput() || bIsRolling)
 	{
 		return;
 	}
@@ -475,7 +481,7 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
-	if (bIsRolling)
+	if (!CanUseGameplayInput() || bIsRolling)
 	{
 		return;
 	}
@@ -536,6 +542,11 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 	}
 
 	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);*/
+
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 
@@ -605,6 +616,11 @@ void ABOCharacter::StopRoll()
 
 void ABOCharacter::Aim(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	bIsAiming = true;
 }
 
@@ -736,6 +752,11 @@ void ABOCharacter::EquipSlot5(const FInputActionValue& value)
 
 void ABOCharacter::Unarm(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	if (EquipmentManagerComponent)
 	{
 		EquipmentManagerComponent->Unequip();
@@ -829,6 +850,13 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
 {
+	bGameplayInputEnabled = !bAnyMenuOpen;
+
+	if (bAnyMenuOpen)
+	{
+		StopGameplayActions();
+	}
+
 	UpdateMovementEnabled();
 }
 
@@ -925,6 +953,11 @@ void ABOCharacter::FinishPlayerDeath()
 
 void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	if (!IsValid(PlayerInventoryComponent) || !IsValid(EquipmentManagerComponent))
 	{
 		return;
@@ -954,6 +987,13 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	EquipmentManagerComponent->OnFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::CanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::RequestReloadAmmo);
+
+	// Throwable & Utility
+	EquipmentManagerComponent->OnEquipmentCountUpdatedDelegate.AddUObject(this, &ABOCharacter::OnEquipmentCountUpdated);
+
+	// Utility
+	EquipmentManagerComponent->CanUseUtilityItemDelegate.BindUObject(this, &ABOCharacter::CanUseUtilityItem);
+	EquipmentManagerComponent->OnEffectAppliedDelegate.AddUObject(this, &ABOCharacter::OnEffectApplied);
 }
 
 void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)
@@ -1091,6 +1131,24 @@ int32 ABOCharacter::RequestReloadAmmo(const FName& AmmoItemID, const int32 Reque
 	return SuppliedAmmoCount;
 }
 
+void ABOCharacter::OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)
+{
+	// Slot의 EquippableItemInstance 아이템이 사용되어 개수가 변경될 때 호출됨
+	// 0개가 되면 장비 매니저 컴포넌트에서 자동으로 Unassign함
+	// UI 등에 개수 변경 또는 제거를 반영
+}
+
+bool ABOCharacter::CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData) const
+{
+	// TODO: 아이템 사용 가능 여부 반환 (Ex. 회복 아이템인데 체력이 가득 차 있으면 false 반환)
+	return true;
+}
+
+void ABOCharacter::OnEffectApplied(const FUtilityItemDataRow* UtilityItemData)
+{
+	// TODO: 효과 적용 (Ex. 회복 아이템이면 효과량만큼 회복)
+}
+
 FName ABOCharacter::GetRollSectionName() const
 {
 	if (MoveInput.IsNearlyZero())
@@ -1194,6 +1252,39 @@ void ABOCharacter::OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted
 	{
 		MovementComponent->Velocity.X = 0.0f;
 		MovementComponent->Velocity.Y = 0.0f;
+	}
+}
+
+bool ABOCharacter::CanUseGameplayInput() const
+{
+	if (!bGameplayInputEnabled)
+	{
+		return false;
+	}
+
+	if (IsValid(StatComponent) && StatComponent->GetIsDead())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ABOCharacter::StopGameplayActions()
+{
+	bIsAiming = false;
+
+	bIsSprint = false;
+	ChangeMoveSpeed();
+
+	if (IsValid(EquipmentManagerComponent))
+	{
+		EquipmentManagerComponent->EndAction();
+	}
+
+	if (IsValid(InteractComponent))
+	{
+		InteractComponent->ReleaseInteract();
 	}
 }
 

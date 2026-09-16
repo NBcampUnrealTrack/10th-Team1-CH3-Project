@@ -9,15 +9,23 @@
 class UEquippableItemInstance;
 class UUtilityItemInstance;
 
-// 사용하여 아이템 개수 변경 알림 델리게이트
+struct FUtilityItemDataRow;
+
+// 사용 가능 여부 반환 델리게이트 - 사용 전 실행하여, 사용 가능한지 여부를 확인
+DECLARE_DELEGATE_RetVal_OneParam(
+	bool,
+	FCanUseUtilityItemDelegate,
+	const FUtilityItemDataRow*);
+
+// 사용하여 아이템 개수 변경 알림 델리게이트 - 사용 완료 후 송출하여, 아이템 개수가 변경됨을 알림
 DECLARE_MULTICAST_DELEGATE_OneParam(
 	FOnCountUpdatedDelegate,
 	UEquippableItemInstance*);
 
-// 효과 적용 알림 델리게이트
+// 효과 적용 알림 델리게이트 - 사용 완료 후 송출하여, 아이템 효과가 적용되야 함을 알림
 DECLARE_MULTICAST_DELEGATE_OneParam(
 	FOnEffectAppliedDelegate,
-	UUtilityItemInstance*);
+	const FUtilityItemDataRow*);
 
 UCLASS()
 class BEYONDOVERRIDE_API UUtilityItemHandlerComponent : public UEquipmentHandlerComponent
@@ -25,14 +33,20 @@ class BEYONDOVERRIDE_API UUtilityItemHandlerComponent : public UEquipmentHandler
 	GENERATED_BODY()
 
   public:
+	// 아이템 사용 가능 여부 반환 델리게이트
+	FCanUseUtilityItemDelegate CanUseUtilityItemDelegate;
 	// 아이템 사용 후 개수 변경 알림 델리게이트
 	FOnCountUpdatedDelegate OnCountUpdatedDelegate;
 	// 아이템 사용 후 효과 적용 알림 델리게이트
 	FOnEffectAppliedDelegate OnEffectAppliedDelegate;
 
   protected:
+	// 등록된 Utility Item 인스턴스
 	UPROPERTY()
 	TObjectPtr<UUtilityItemInstance> UtilityItemInstance;
+
+	// Utility Item 데이터
+	const FUtilityItemDataRow* UtilityItemData;
 
   public:
 	UUtilityItemHandlerComponent();

@@ -14,6 +14,8 @@ class UEquippableItemInstance;
 class URangeWeaponInstance;
 class UUtilityItemInstance;
 
+struct FUtilityItemDataRow;
+
 // [UEquipmentManagerComponent] 활성화 슬롯 전환 시 송출하는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
 	FOnActiveSlotChangedDelegate,
@@ -38,14 +40,20 @@ DECLARE_DELEGATE_RetVal_TwoParams(
 
 // [Throwable & Utility Item] 아이템 사용 시 개수 변경 알리는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
-	FOnEquipmentStackCountUpdatedDelegate,
+	FOnEquipmentCountUpdatedDelegate,
 	EEquipmentSlot,
 	UEquippableItemInstance*);
+
+// [Utility Item] 아이템 사용 전 사용 가능한지 여부 반환하는 델리게이트
+DECLARE_DELEGATE_RetVal_OneParam(
+	bool, // 사용 가능 여부 반환
+	FCanUseUtilityItemDelegate,
+	const FUtilityItemDataRow*); // 아이템 효과 정보
 
 // [Utility Item] 아이템 사용 완료 후 적용할 효과 알리는 델리게이트
 DECLARE_MULTICAST_DELEGATE_OneParam(
 	FOnEffectAppliedDelegate,
-	UUtilityItemInstance*);
+	const FUtilityItemDataRow*); // 아이템 효과 정보
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
@@ -102,8 +110,10 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
 	// 사용 후 아이템 개수 변경 알림 델리게이트
-	FOnEquipmentStackCountUpdatedDelegate OnEquipmentStackCountUpdatedDelegate;
+	FOnEquipmentCountUpdatedDelegate OnEquipmentCountUpdatedDelegate;
 
+	// 아이템 사용 가능 반환 델리게이트
+	FCanUseUtilityItemDelegate CanUseUtilityItemDelegate;
 	// 아이템 효과 적용 델리게이트
 	FOnEffectAppliedDelegate OnEffectAppliedDelegate;
 
@@ -120,5 +130,6 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance);
 
 	// [Utility Item] 델리게이트 바인딩
-	void OnEffectApplied(UUtilityItemInstance* UtilityItemInstance) const;
+	bool CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData) const;
+	void OnEffectApplied(const FUtilityItemDataRow* UtilityItemData) const;
 };

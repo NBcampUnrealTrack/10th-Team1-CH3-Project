@@ -9,6 +9,8 @@
 
 class URangeWeaponInstance;
 
+struct FRangeWeaponDataRow;
+
 // 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 등 수행
 DECLARE_MULTICAST_DELEGATE(
 	FOnFireExecutedDelegate);
@@ -39,8 +41,12 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
   protected:
+	// 등록된 Range Weapon 인스턴스
 	UPROPERTY()
 	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;
+
+	// Range Weapon 데이터
+	const FRangeWeaponDataRow* RangeWeaponData;
 
 	// 총구 소켓 이름
 	FName MuzzleSocketName;

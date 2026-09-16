@@ -22,6 +22,16 @@ bool UThrowableItemHandlerComponent::Assign(UEquippableItemInstance* InEquippabl
 	// Throwable Item 인스턴스 저장
 	ThrowableItemInstance = Cast<UThrowableItemInstance>(EquippableItemInstance);
 
+	// Throwable Item 데이터 저장
+	ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
+
+	// 유효하지 않은 데이터
+	if (!ThrowableItemData)
+	{
+		ThrowableItemInstance = nullptr;
+		return false;
+	}
+
 	// Assign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(4000, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
 
@@ -39,6 +49,9 @@ UEquippableItemInstance* UThrowableItemHandlerComponent::Unassign()
 
 	// Throwable Item 인스턴스 제거
 	ThrowableItemInstance = nullptr;
+
+	// Throwable Item 데이터 제거
+	ThrowableItemData = nullptr;
 
 	// Unassign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(4000, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
@@ -143,13 +156,6 @@ bool UThrowableItemHandlerComponent::CanUse() const
 		return false;
 	}
 
-	// 데이터 유효성 검증
-	const FThrowableItemDataRow* ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
-	if (!ThrowableItemData)
-	{
-		return false;
-	}
-
 	return true;
 }
 
@@ -226,14 +232,7 @@ FVector UThrowableItemHandlerComponent::GetThrowStartLocation() const
 	FVector SocketLocation = GetOwner()->GetActorLocation();
 
 	// 등록된 장비 없음
-	if (!ThrowableItemInstance)
-	{
-		return SocketLocation;
-	}
-
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = ThrowableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
+	if (!HasEquipment())
 	{
 		return SocketLocation;
 	}
@@ -255,14 +254,7 @@ FVector UThrowableItemHandlerComponent::GetThrowStartLocation() const
 void UThrowableItemHandlerComponent::StartThrow()
 {
 	// 등록된 장비 없음
-	if (!ThrowableItemInstance)
-	{
-		return;
-	}
-
-	// 데이터 유효성 검증
-	const FThrowableItemDataRow* ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
-	if (!ThrowableItemData)
+	if (!HasEquipment())
 	{
 		return;
 	}
@@ -306,14 +298,7 @@ void UThrowableItemHandlerComponent::Throw()
 AThrowableProjectile* UThrowableItemHandlerComponent::SpawnThrowable()
 {
 	// 등록된 장비 없음
-	if (!ThrowableItemInstance)
-	{
-		return nullptr;
-	}
-
-	// 데이터 유효성 검증
-	const FThrowableItemDataRow* ThrowableItemData = ThrowableItemInstance->GetThrowableItemData();
-	if (!ThrowableItemData)
+	if (!HasEquipment())
 	{
 		return nullptr;
 	}

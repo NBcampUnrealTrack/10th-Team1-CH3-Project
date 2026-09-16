@@ -31,30 +31,113 @@ bool UInventoryComponent::AddItem(UItemInstanceBase* Item, const int32 SlotIndex
 		return false;
 	}
 
-	int32 TargetIndex = SlotIndex;
+	const FItemDataRow* ItemData = Item->GetItemData();
 
-	if (TargetIndex == -1)
+	if (!ItemData)
 	{
-		if (!FindEmptySlotIndex(TargetIndex))
+		return false;
+	}
+
+	if (SlotIndex != INDEX_NONE)
+	{
+		if (!Slots.IsValidIndex(SlotIndex))
 		{
 			return false;
 		}
+
+		if (IsValid(Slots[SlotIndex]))
+		{
+			return false;
+		}
+
+		Slots[SlotIndex] = Item;
+
+		OnInventoryChanged.Broadcast(Slots);
+
+		return true;
 	}
-	else if (!Slots.IsValidIndex(TargetIndex))
+
+	const FName ItemID = Item->GetItemID();
+	const int32 MaxStackCount = ItemData->MaxStackCount;
+	int32 RemainingCount = Item->GetStackCount();
+
+	int32 AvailableCount = 0;
+	bool bHasEmptySlot = false;
+
+	for (UItemInstanceBase* SlotItem : Slots)
+	{
+		if (!IsValid(SlotItem))
+		{
+			bHasEmptySlot = true;
+			continue;
+		}
+
+		if (SlotItem->GetItemID() == ItemID)
+		{
+			AvailableCount += MaxStackCount - SlotItem->GetStackCount();
+		}
+	}
+
+	if (bHasEmptySlot)
+	{
+		AvailableCount += MaxStackCount;
+	}
+
+	if (AvailableCount < RemainingCount)
 	{
 		return false;
 	}
 
-	if (IsValid(Slots[TargetIndex]))
+	// 같은 아이템이 들어 있는 슬롯들을 먼저 채우기
+	for (UItemInstanceBase* SlotItem : Slots)
 	{
-		return false;
+		if (!IsValid(SlotItem))
+		{
+			continue;
+		}
+
+		if (SlotItem->GetItemID() != ItemID)
+		{
+			continue;
+		}
+
+		const int32 AddableCount = MaxStackCount - SlotItem->GetStackCount();
+
+		if (AddableCount <= 0)
+		{
+			continue;
+		}
+
+		const int32 AddCount = FMath::Min(RemainingCount, AddableCount);
+
+		SlotItem->SetStackCount(SlotItem->GetStackCount() + AddCount);
+
+		RemainingCount -= AddCount;
+
+		if (RemainingCount <= 0)
+		{
+			break;
+		}
 	}
 
-	Slots[TargetIndex] = Item;
+	// 합치고도 남았다면 빈 슬롯에 넣기
+	if (RemainingCount > 0)
+	{
+		int32 EmptySlotIndex = INDEX_NONE;
+
+		if (!FindEmptySlotIndex(EmptySlotIndex))
+		{
+			return false;
+		}
+
+		Item->SetStackCount(RemainingCount);
+		Slots[EmptySlotIndex] = Item;
+	}
 
 	OnInventoryChanged.Broadcast(Slots);
 
 	return true;
+
 }
 
 bool UInventoryComponent::RemoveItem(const int32 SlotIndex, const int32 Count)

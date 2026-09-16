@@ -1,0 +1,8 @@
+[
+    {
+        "Name": "BANDAGE",
+        "EffectType": "HealHP",
+        "EffectAmount": "20.0",
+        "UseDuration": "2.0"
+    }
+]
