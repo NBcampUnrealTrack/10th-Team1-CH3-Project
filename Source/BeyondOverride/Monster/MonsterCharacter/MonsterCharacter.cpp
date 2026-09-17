@@ -6,14 +6,16 @@
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/ActorComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "DataTables/Monster/MonsterInfo.h"
 #include "Engine/DataTable.h"
 #include "GameFlow/BOGameMode.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monster/ActorComponent/MonsterStatComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/DataAssets/MonsterDataAsset.h"
-#include "Monster/DataTable/MonsterInfo.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "UObject/ConstructorHelpers.h"
@@ -31,8 +33,7 @@ AMonsterCharacter::AMonsterCharacter()
 
 	if (Movement)
 	{
-		Movement->MaxWalkSpeed = WalkSpeed * 1;
-		Movement->bOrientRotationToMovement = true;
+		Movement->MaxWalkSpeed = MonsterStat->GetWalkSpeed() * 1;
 		Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	}
 
@@ -41,6 +42,17 @@ AMonsterCharacter::AMonsterCharacter()
 	if (DataAssetFinder.Succeeded())
 	{
 		MonsterData = DataAssetFinder.Object;
+	}
+}
+
+void AMonsterCharacter::FocusSetUp(bool data)
+{
+	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
+	{
+		bUseControllerRotationYaw = data;
+		bUseControllerRotationPitch = data;
+		bUseControllerRotationRoll = data;
+		Movement->bOrientRotationToMovement = data;
 	}
 }
 
@@ -135,9 +147,6 @@ void AMonsterCharacter::DeathSequence()
 
 void AMonsterCharacter::SetUpMesh()
 {
-	UE_LOG(LogTemp, Warning,
-		   TEXT("Find Mesh Row : %s"),
-		   *GetMonsterID().ToString());
 
 	if (!MonsterData)
 	{
@@ -154,7 +163,7 @@ void AMonsterCharacter::SetUpMesh()
 	if (!MonsterInfo)
 	{
 		SetMonsterID("Gunner");
-		MonsterInfo = MonsterData->MeshTable->FindRow<FMonsterInfo>(GetMonsterID(), TEXT("MonsterID Serching"));
+		MonsterInfo = MonsterData->MeshTable->FindRow<FMonsterInfo>(GetMonsterID(), TEXT("GunnerID Serching"));
 	}
 
 	Effect = MonsterInfo->MonsterAttackEffect;
@@ -162,7 +171,12 @@ void AMonsterCharacter::SetUpMesh()
 
 	if (MonsterInfo->MonsterSkeletal)
 	{
+		GetCapsuleComponent()->SetCapsuleSize(MonsterInfo->CapsuleRadius,
+											  MonsterInfo->CapsuleHalfHeight);
 		GetMesh()->SetSkeletalMesh(MonsterInfo->MonsterSkeletal);
+		GetMesh()->SetRelativeScale3D(MonsterInfo->SkeletalScale);
+		GetMesh()->SetRelativeLocation(MonsterInfo->SkeletalLocation);
+		GetMesh()->SetRelativeRotation(MonsterInfo->SkeletalRotation);
 	}
 
 	if (MonsterInfo->MonsterAnimInstance)
@@ -181,6 +195,7 @@ void AMonsterCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	SetUpMesh();
+	MonsterStat->StatSetup();
 }
 
 void AMonsterCharacter::SetMonsterID(FName ID)

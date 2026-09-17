@@ -20,6 +20,7 @@ AMonsterAIController::AMonsterAIController()
 {
 	// 상태 데이터 컴포넌트
 	State = CreateDefaultSubobject<UContinuousStateComponent>(TEXT("State"));
+	State->OnStateCast.AddUObject(this, &AMonsterAIController::FocusSetUp);
 
 	// 플래그 컴포넌트
 	Flag = CreateDefaultSubobject<UShortTermStateComponent>(TEXT("Flag"));
@@ -69,10 +70,6 @@ void AMonsterAIController::EnableBehaviorTree()
 void AMonsterAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (GetPawn())
-	{
-		SenseValue->SetSpawnPoint(GetPawn()->GetActorLocation());
-	}
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetHearUpdated);
 	EnableBehaviorTree();
 }
@@ -109,8 +106,27 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 	// 부모 클래스의 로직 상속
 	Super::OnPossess(InPawn);
 
-	if (!InPawn)
+	if (InPawn)
 	{
+		SenseValue->SetSpawnPoint(InPawn->GetActorLocation());
+	}
+}
+
+// 델리게이트를 통한 시야 제어
+void AMonsterAIController::FocusSetUp(const EMonsterState& Input)
+{
+	bool Focus = true;
+
+	if (Input == EMonsterState::Chase ||
+		Input == EMonsterState::Attack)
+	{
+		Focus = false;
+	}
+
+	if (AMonsterCharacter* AICharacter = Cast<AMonsterCharacter>(GetPawn()))
+	{
+		bAllowStrafe = !Focus;
+		AICharacter->FocusSetUp(Focus);
 	}
 }
 

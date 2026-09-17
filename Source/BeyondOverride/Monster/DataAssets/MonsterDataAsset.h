@@ -6,8 +6,8 @@
 #include "CoreMinimal.h"
 
 // Base include
+#include "DataTables/Monster/MonsterInfo.h"
 #include "Engine/DataAsset.h"
-#include "Monster/DataTable/MonsterInfo.h"
 
 // UHT Header
 #include "MonsterDataAsset.generated.h"

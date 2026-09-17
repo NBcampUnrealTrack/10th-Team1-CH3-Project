@@ -11,6 +11,8 @@
 // UHT Header
 #include "MonsterStatComponent.generated.h"
 
+class UMonsterDataAsset;
+
 UENUM(BlueprintType)
 enum class EMonsterType : uint8
 {
@@ -28,6 +30,10 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
   public:
 	UMonsterStatComponent();
 
+	float GetWalkSpeed() const;
+
+	float GetSprintSpeed() const;
+
 	void SetAttackRange(float Range);
 	float GetAttackRange() const;
 
@@ -40,6 +46,7 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	void CallAttackLock();
 	bool IsDelay() const;
 	void Attack();
+	void StatSetup();
 
 	// Protect System
 	void ApplyProtect(int32 getdamage, AActor* DamageCauser);
@@ -48,28 +55,44 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	virtual void BeginPlay() override;
 	void OnBalisticHit(AActor* Target);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
+	TObjectPtr<UMonsterDataAsset> MonsterData;
+
 	// Properties
   protected:
 	// Attack Info
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 AttackDamage = 15;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 RapidCount = 3;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RapidDelay = 0.05f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackDelay = 7.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackRange = 600.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float BulletSpeed = 2500.0f;
 
 	// Another Info
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Protect = 5;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Intelligence = FMath::RandRange(0, 3);
 
-	float WalkSpeed = 600;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float WalkSpeed = 600.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SprintSpeed = 1.2f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTimerHandle AttackLock;
 
 	// Monster key Info
@@ -77,5 +100,6 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	UPROPERTY(EditAnywhere, Category = "Moster|ID")
 	FName MonsterID = "Gunner";
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EMonsterType MonsterType = EMonsterType::Range;
 };

@@ -44,7 +44,6 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 	NearestTarget = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (NearestTarget)
 	{
-
 		return EBTNodeResult::Succeeded;
 	}
 

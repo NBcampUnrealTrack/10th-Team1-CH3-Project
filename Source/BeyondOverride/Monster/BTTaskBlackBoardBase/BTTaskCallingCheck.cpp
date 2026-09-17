@@ -48,6 +48,8 @@ EBTNodeResult::Type UBTTaskCallingCheck::ExecuteTask(UBehaviorTreeComponent& Own
 	{
 		AIController->StateChange(EMonsterState::Chase, 10.0f);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
+		AIMonster->FocusSetUp(true);
+		AIController->bAllowStrafe = true;
 		return EBTNodeResult::Succeeded;
 	}
 
@@ -55,8 +57,12 @@ EBTNodeResult::Type UBTTaskCallingCheck::ExecuteTask(UBehaviorTreeComponent& Own
 	{
 		AIController->StateChange(EMonsterState::LocationPatrol, 10.0f);
 		AIController->SetTargetPoint(Target->GetActorLocation());
+		AIMonster->FocusSetUp(false);
+		AIController->bAllowStrafe = false;
 		return EBTNodeResult::Succeeded;
 	}
 
+	AIMonster->FocusSetUp(false);
+	AIController->bAllowStrafe = false;
 	return EBTNodeResult::Succeeded;
 }

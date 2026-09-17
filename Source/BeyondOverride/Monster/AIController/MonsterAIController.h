@@ -66,6 +66,8 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 
 	FVector GetSpawnPoint() const;
 
+	void FocusSetUp(const EMonsterState& input);
+
   protected:
 	virtual void BeginPlay() override;
 

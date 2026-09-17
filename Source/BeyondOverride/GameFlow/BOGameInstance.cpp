@@ -5,10 +5,10 @@
 #include "BOGameMode.h"
 #include "BOWorldSubsystem.h"
 
+#include "DataTables/Monster/MonsterInfo.h"
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Monster/DataTable/MonsterInfo.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"

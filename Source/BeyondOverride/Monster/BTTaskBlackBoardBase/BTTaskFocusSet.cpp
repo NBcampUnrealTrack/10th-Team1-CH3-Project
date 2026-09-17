@@ -42,13 +42,33 @@ EBTNodeResult::Type UBTTaskFocusSet::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	float RotationSpeed = 20.0f;
 
-	FRotator TargetRotation = (Target->GetActorLocation() - AIMonster->GetActorLocation()).Rotation();
+	FRotator TargetRotation;
 
-	FRotator NewRotation = FMath::RInterpTo(AIMonster->GetActorRotation(),
-											TargetRotation,
-											GetWorld()->GetDeltaSeconds(),
-											RotationSpeed);
+	FRotator NewRotation;
 
+	if (AIController->GetState() == EMonsterState::Chase ||
+		AIController->GetState() == EMonsterState::Attack)
+	{
+		TargetRotation = (Target->GetActorLocation() - AIMonster->GetActorLocation()).Rotation();
+		NewRotation = FMath::RInterpTo(AIMonster->GetActorRotation(),
+									   TargetRotation,
+									   GetWorld()->GetDeltaSeconds(),
+									   RotationSpeed);
+	}
+	else
+	{
+		FVector Velocity = AIMonster->GetVelocity();
+
+		if (!Velocity.IsNearlyZero())
+		{
+			TargetRotation = Velocity.GetSafeNormal().Rotation();
+
+			NewRotation = FMath::RInterpTo(AIMonster->GetActorRotation(),
+										   TargetRotation,
+										   GetWorld()->GetDeltaSeconds(),
+										   RotationSpeed);
+		}
+	}
 	AIMonster->SetActorRotation(NewRotation);
 
 	return EBTNodeResult::Succeeded;

@@ -24,7 +24,10 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
   public:
 	AMonsterCharacter();
 
+	void FocusSetUp(bool data);
+
 	void SetMonsterID(FName ID);
+
 	FName GetMonsterID() const;
 
 	FVector GetAttackPoint() const;
@@ -39,12 +42,6 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	void DeathSequence();
 
-	UPROPERTY(EditAnywhere, Category = "Monster|Stat")
-	float WalkSpeed = 600.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Monster|Stat")
-	float SprintSpeed = 800.0f;
-
   protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -56,6 +53,7 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
   protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
 	TObjectPtr<UMonsterDataAsset> MonsterData;
+
 	UPROPERTY(VisibleAnywhere, Category = "Monster|Stat")
 	TObjectPtr<UMonsterStatComponent> MonsterStat;
 

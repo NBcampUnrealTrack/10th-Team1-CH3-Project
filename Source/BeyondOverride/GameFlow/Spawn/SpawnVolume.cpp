@@ -2,10 +2,10 @@
 
 #include "GameFlow/Spawn/SpawnVolume.h"
 
+#include "DataTables/Monster/MonsterInfo.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
-#include "Monster/DataTable/MonsterInfo.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/MonsterCalling.h"
 #include "Monster/System/MonsterSpawn.h"

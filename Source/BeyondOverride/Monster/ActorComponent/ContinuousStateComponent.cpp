@@ -58,12 +58,20 @@ void UContinuousStateComponent::StateAutoControl()
 
 	if (NowState == EMonsterState::Chase)
 	{
-		StateChange(EMonsterState::StandOff);
+		if (BeforeState != EMonsterState::StandOff)
+		{
+			StateChange(EMonsterState::StandOff);
+		}
+		else
+		{
+			BeforeState = EMonsterState::Chase;
+		}
 		return;
 	}
 
 	if (NowState == EMonsterState::StandOff)
 	{
+		BeforeState = EMonsterState::StandOff;
 		StateChange(EMonsterState::Chase, 5.0f);
 		return;
 	}

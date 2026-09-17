@@ -11,7 +11,6 @@ class UUtilityItemInstance;
 
 struct FUtilityItemDataRow;
 
-<<<<<<< Updated upstream
 // 사용 가능 여부 반환 델리게이트 - 사용 전 실행하여, 사용 가능한지 여부를 확인
 DECLARE_DELEGATE_RetVal_OneParam(
 	bool,
@@ -19,9 +18,6 @@ DECLARE_DELEGATE_RetVal_OneParam(
 	const FUtilityItemDataRow*);
 
 // 사용하여 아이템 개수 변경 알림 델리게이트 - 사용 완료 후 송출하여, 아이템 개수가 변경됨을 알림
-=======
-// 사용하여 아이템 개수 변경 알림 델리게이트
->>>>>>> Stashed changes
 DECLARE_MULTICAST_DELEGATE_OneParam(
 	FOnCountUpdatedDelegate,
 	UEquippableItemInstance*);
