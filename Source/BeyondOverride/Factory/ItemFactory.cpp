@@ -38,7 +38,7 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 	}
 
 	// ItemInstance 생성 및 확인
-	UItemInstanceBase* ItemInstance = NewObject<UItemInstanceBase>(Outer, ItemData->ItemInstanceClass);
+	UItemInstanceBase* ItemInstance = NewObject<UItemInstanceBase>(Outer->GetWorld(), ItemData->ItemInstanceClass);
 	if (!ItemInstance)
 	{
 		return nullptr;
