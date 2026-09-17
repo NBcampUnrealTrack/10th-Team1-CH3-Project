@@ -66,9 +66,9 @@
         "AmmoItemID": "PISTOL_AMMO",
         "MagazineSize": 15,
         "ReloadTime": 1.4,
-        "RecoilPitchCurve": "",
-        "RecoilYawCurve": "",
-        "SpreadCurve": "",
+        "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolB/CF_RecoilPitch_PistolB.CF_RecoilPitch_PistolB'",
+        "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolB/CF_RecoilYaw_PistolB.CF_RecoilYaw_PistolB'",
+        "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolB/CF_Spread_PistolB.CF_Spread_PistolB'",
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolB_V.T_PistolB_V'"
     },
     {
