@@ -41,10 +41,10 @@ void UNearbyItemComponent::BeginPlay()
 	DetectionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	DetectionSphere->SetGenerateOverlapEvents(true);
 	DetectionSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	DetectionSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	DetectionSphere->RegisterComponent();
+	DetectionSphere->SetCollisionResponseToChannel(ECC_PhysicsBody, ECR_Overlap);
 	DetectionSphere->OnComponentBeginOverlap.AddDynamic(this, &UNearbyItemComponent::OnDetectionBeginOverlap);
 	DetectionSphere->OnComponentEndOverlap.AddDynamic(this, &UNearbyItemComponent::OnDetectionEndOverlap);
+	DetectionSphere->RegisterComponent();
 }
 
 void UNearbyItemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
