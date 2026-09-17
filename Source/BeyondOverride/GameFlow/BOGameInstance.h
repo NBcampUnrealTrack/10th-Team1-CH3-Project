@@ -29,6 +29,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void Exit();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
+	void Die();
 	void ToEnding();
 	void OpenLevel(ELevel Level);
 
@@ -46,6 +47,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	EGameState GetGameState() const;
 	EPlayingState GetPlayingState() const;
+	EDeathLocation GetDeathLocation() const;
 	EFarmingResult GetFarmingResult() const;
 
 	float GetTotalSurvivalTime() const;
@@ -85,6 +87,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
   private:
 	EGameState GameState;
 	EPlayingState PlayingState;
+	EDeathLocation DeathLocation;
 	EFarmingResult FarmingResult;
 
 	float TotalSurvivalTime;

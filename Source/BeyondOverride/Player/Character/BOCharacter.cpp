@@ -104,10 +104,19 @@ void ABOCharacter::BeginPlay()
 				if (StatComponent)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Load Player Stat"));
-					StatComponent->SetCurHealth(GameInstance->GetCurHealth());
 					StatComponent->SetMaxHealth(GameInstance->GetMaxHealth());
-					StatComponent->SetCurShield(GameInstance->GetCurShield());
 					StatComponent->SetMaxShield(GameInstance->GetMaxShield());
+
+					if (GameInstance->GetPlayingState() == EPlayingState::Bunker)
+					{
+						StatComponent->SetCurHealth(StatComponent->GetMaxHealth());
+						StatComponent->SetCurShield(StatComponent->GetMaxShield());
+					}
+					else
+					{
+						StatComponent->SetCurHealth(GameInstance->GetCurHealth());
+						StatComponent->SetCurShield(GameInstance->GetCurShield());
+					}
 				}
 
 				if (PlayerInventoryComponent)
@@ -965,7 +974,7 @@ void ABOCharacter::FinishPlayerDeath()
 		GameMode->SetKillerMonster(KillerMonster->GetMonsterID());
 	}
 
-	GameMode->EndFarming(EFarmingResult::Fail);
+	GameMode->Die();
 }
 
 void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
@@ -1010,8 +1019,7 @@ void ABOCharacter::OnWeightChanged(float CurCarryWeight, float MaxCarryWeight)
 		WeightSpeedMultiplier = FMath::GetMappedRangeValueClamped(
 			FVector2D(MaxCarryWeight, MaxCarryWeight * 2.0f),
 			FVector2D(1.0f, MinWeightSpeedMultiplier),
-			CurCarryWeight
-		);
+			CurCarryWeight);
 	}
 
 	ChangeMoveSpeed();

@@ -56,6 +56,7 @@ void UBOGameInstance::InitSetting()
 {
 	GameState = EGameState::Begin;
 	PlayingState = EPlayingState::None;
+	DeathLocation = EDeathLocation::None;
 	FarmingResult = EFarmingResult::None;
 
 	TotalSurvivalTime = 0.0f;
@@ -118,12 +119,27 @@ void UBOGameInstance::EndFarming(EFarmingResult Result)
 
 	if (Result == EFarmingResult::Fail)
 	{
+		DeathLocation = EDeathLocation::Main;
 		DeathCount += 1;
 	}
 
 	SaveFarmingData();
 
 	OpenLevel(ELevel::Bunker);
+}
+
+void UBOGameInstance::Die()
+{
+	if (PlayingState == EPlayingState::Bunker)
+	{
+		DeathLocation = EDeathLocation::Bunker;
+
+		OpenLevel(ELevel::Bunker);
+	}
+	else if (PlayingState == EPlayingState::Farming)
+	{
+		DeathLocation = EDeathLocation::Main;
+	}
 }
 
 void UBOGameInstance::ToEnding()
@@ -137,7 +153,7 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 {
 	SavePlayerData();
 
-	if (Level == ELevel::Main)
+	if (PlayingState == EPlayingState::Bunker)
 	{
 		SaveStorageData();
 	}
@@ -300,6 +316,11 @@ EGameState UBOGameInstance::GetGameState() const
 EPlayingState UBOGameInstance::GetPlayingState() const
 {
 	return PlayingState;
+}
+
+EDeathLocation UBOGameInstance::GetDeathLocation() const
+{
+	return DeathLocation;
 }
 
 EFarmingResult UBOGameInstance::GetFarmingResult() const

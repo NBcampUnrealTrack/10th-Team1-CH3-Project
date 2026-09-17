@@ -23,6 +23,14 @@ enum class EPlayingState : uint8
 };
 
 UENUM(BlueprintType)
+enum class EDeathLocation : uint8
+{
+	None,
+	Bunker,
+	Main
+};
+
+UENUM(BlueprintType)
 enum class ELevel : uint8
 {
 	Bunker,
