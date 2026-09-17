@@ -52,7 +52,7 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 
 	UPROPERTY(BlueprintAssignable, Category = "Extraction")
 	FOnExtractControlRequested OnExtractControlRequested;
-	float ControlTime = 3.f;
+	float ControlTime = 5.f;
 
   private:
 	void SetExitActorOpenTimer();

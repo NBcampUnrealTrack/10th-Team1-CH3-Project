@@ -7,6 +7,7 @@
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Widgets/InteractPromptWidget.h"
 #include "UObject/ConstructorHelpers.h"
+#include "UI/Widgets/NotificationWidget.h"
 
 UUIManager::UUIManager()
 {
@@ -46,17 +47,24 @@ UUIManager::UUIManager()
 		ScreenClasses.Add(EUIScreen::FinalResult, FinalResultWBPClass.Class);
 	}
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> NoneWBPClass(TEXT("/Game/UI/WBP_None"));
+	if (NoneWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::None, NoneWBPClass.Class);
+	}
+
 	static ConstructorHelpers::FClassFinder<UInteractPromptWidget> InteractPromptWBPClass(TEXT("/Game/UI/WBP_InteractPrompt"));
 	if (InteractPromptWBPClass.Succeeded())
 	{
 		InteractPromptWidgetClass = InteractPromptWBPClass.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> NoneWBPClass(TEXT("/Game/UI/WBP_None"));
-	if (NoneWBPClass.Succeeded())
+	static ConstructorHelpers::FClassFinder<UNotificationWidget> NotificationWidgetWBPClass(TEXT("/Game/UI/WBP_Notification"));
+	if (NotificationWidgetWBPClass.Succeeded())
 	{
-		ScreenClasses.Add(EUIScreen::None, NoneWBPClass.Class);
+		NotificationWidgetClass = NotificationWidgetWBPClass.Class;
 	}
+
 }
 
 UUIManager* UUIManager::Get(const UObject* WorldContextObject)
@@ -265,4 +273,22 @@ bool UUIManager::IsAnyMenuOpen() const
 	}
 
 	return false;
+}
+
+
+void UUIManager::ShowNotification(const FText& Main, const FText& Sub, float Duration)
+{
+	if (!IsValid(NotificationWidget) && NotificationWidgetClass)
+	{
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (!PC)
+			return;
+
+		NotificationWidget = CreateWidget<UNotificationWidget>(PC, NotificationWidgetClass);
+	}
+
+	if (NotificationWidget)
+	{
+		NotificationWidget->ShowNotification(Main, Sub, Duration);
+	}
 }

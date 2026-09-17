@@ -1,8 +1,10 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
 #include "Blueprint/WidgetTree.h"
+#include "Components/Image.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Items/Actors/ItemPickupBase.h"
-#include "Player/Character/BOCharacter.h"
+#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
@@ -19,6 +21,14 @@ void UInventoryScreenWidget::NativeConstruct()
 
 	if (!OwnerCharacter)
 		return;
+
+	if (CharacterPreviewImage)
+	{
+		if (UCharacterPreviewComponent* Preview = OwnerCharacter->GetCharacterPreviewComponent())
+		{
+			Preview->SetPreviewActive(true);
+		}
+	}
 
 	if (BackpackSlotPanel)
 	{
@@ -45,7 +55,7 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (WidgetTree)
 	{
 		WidgetTree->ForEachWidget([OwnerCharacter](UWidget* Widget)
-			{
+								  {
 				if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget))
 				{
 					EquipmentSlot->SetupEquipmentSlot(
@@ -95,6 +105,11 @@ void UInventoryScreenWidget::NativeDestruct()
 	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
 	if (OwnerCharacter)
 	{
+		if (UCharacterPreviewComponent* Preview = OwnerCharacter->GetCharacterPreviewComponent())
+		{
+			Preview->SetPreviewActive(false);
+		}
+
 		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
 		{
 			PlayerNearbyItemComponent->OnNearbyItemsChanged.RemoveDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);

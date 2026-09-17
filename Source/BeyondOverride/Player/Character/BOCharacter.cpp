@@ -23,6 +23,7 @@
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
@@ -54,6 +55,9 @@ ABOCharacter::ABOCharacter()
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 	NearbyItemComponent = CreateDefaultSubobject<UNearbyItemComponent>(TEXT("NearbyItemComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
+
+	// 프리뷰 추가
+	CharacterPreviewComponent = CreateDefaultSubobject<UCharacterPreviewComponent>(TEXT("CharacterPreviewComponent"));
 }
 
 void ABOCharacter::BeginPlay()
@@ -62,6 +66,7 @@ void ABOCharacter::BeginPlay()
 
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.AddUObject(this, &ABOCharacter::HandleDamaged);
 		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
 	}
 
@@ -139,6 +144,7 @@ void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.RemoveAll(this);
 		StatComponent->OnDeath.RemoveAll(this);
 	}
 
@@ -647,7 +653,6 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->PressInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("111111")));
 
 		// TEMP: 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
@@ -723,7 +728,6 @@ void ABOCharacter::InteractRelease(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->ReleaseInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("222222")));
 	}
 }
 
@@ -895,6 +899,23 @@ void ABOCharacter::UpdateMovementEnabled()
 	const bool bAnyMenuOpen = IsValid(UIManager) && UIManager->IsAnyMenuOpen();
 
 	SetMovementEnabled(!bIsDead && !bAnyMenuOpen);
+}
+
+void ABOCharacter::HandleDamaged()
+{
+	if (!DamageCameraShakeClass)
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (!IsValid(PlayerController))
+	{
+		return;
+	}
+
+	PlayerController->ClientStartCameraShake(DamageCameraShakeClass);
 }
 
 void ABOCharacter::HandleDeath(AActor* DamageCauser)
@@ -1358,3 +1379,4 @@ void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
 		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: 인벤토리에 빈 슬롯이 없습니다."));
 	}
 }
+

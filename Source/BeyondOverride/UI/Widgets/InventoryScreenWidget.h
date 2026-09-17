@@ -11,6 +11,7 @@ class UInventoryComponent;
 class UHeldItemWidget;
 class AItemPickupBase;
 class UNearbyItemComponent;
+class UImage;
 
 UCLASS()
 class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
@@ -35,6 +36,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UHeldItemWidget* HeldItem;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* CharacterPreviewImage;
 
 	UFUNCTION()
 	void OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems);
