@@ -6,6 +6,7 @@
 
 #include "BOCharacter.generated.h"
 
+class UCameraShakeBase;
 class USpringArmComponent;
 class UCameraComponent;
 class UEquipmentManagerComponent;
@@ -77,7 +78,10 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 		return CharacterPreviewComponent;
 	}
 
-  public:
+	UFUNCTION(BlueprintPure)
+	bool IsOverweight() const { return bIsOverweight; }
+
+public:
 	ABOCharacter();
 
   protected:
@@ -94,17 +98,25 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> RollMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera|Shake", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> DamageCameraShakeClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Roll")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float RollSpeed = 600.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SpeedMultiplier = 1.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Weight")
+	float WeightSpeedMultiplier = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Weight")
+	float MinWeightSpeedMultiplier = 0.1f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Weight")
+	bool bIsOverweight = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Zoom")
 	float DefaultFOV = 90.0f;
@@ -211,6 +223,8 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	void OnMenuOpenStateChanged(bool bAnyMenuOpen);
 	void UpdateMovementEnabled();
 
+	void HandleDamaged();
+
 	// 사망 관련
 	UFUNCTION()
 	void HandleDeath(AActor* DamageCauser);
@@ -226,7 +240,10 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 
 	void TryEquipSlot(EEquipmentSlot Slot);
 
-  private:
+	UFUNCTION()
+	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
+
+private:
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
 

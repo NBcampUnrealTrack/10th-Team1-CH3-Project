@@ -66,6 +66,7 @@ void ABOCharacter::BeginPlay()
 
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.AddUObject(this, &ABOCharacter::HandleDamaged);
 		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
 	}
 
@@ -89,6 +90,9 @@ void ABOCharacter::BeginPlay()
 	if (IsValid(PlayerInventoryComponent))
 	{
 		PlayerInventoryComponent->OnEquipmentItemChanged.AddDynamic(this, &ABOCharacter::OnEquipmentItemChanged);
+		PlayerInventoryComponent->OnWeightChanged.AddDynamic(this, &ABOCharacter::OnWeightChanged);
+
+		OnWeightChanged(PlayerInventoryComponent->GetCurCarryWeight(), PlayerInventoryComponent->GetMaxCarryWeight());
 	}
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
@@ -131,7 +135,14 @@ void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.RemoveAll(this);
 		StatComponent->OnDeath.RemoveAll(this);
+	}
+
+	if (IsValid(PlayerInventoryComponent))
+	{
+		PlayerInventoryComponent->OnWeightChanged.RemoveDynamic(this, &ABOCharacter::OnWeightChanged);
+		PlayerInventoryComponent->OnEquipmentItemChanged.RemoveDynamic(this, &ABOCharacter::OnEquipmentItemChanged);
 	}
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
@@ -374,7 +385,7 @@ void ABOCharacter::Look(const FInputActionValue& value)
 
 void ABOCharacter::StartJump(const FInputActionValue& value)
 {
-	if (bIsRolling || !bMovementEnabled)
+	if (bIsRolling || !bMovementEnabled || bIsOverweight)
 	{
 		return;
 	}
@@ -547,7 +558,7 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 
 	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);*/
 
-	if (!CanUseGameplayInput())
+	if (!CanUseGameplayInput() || bIsOverweight)
 	{
 		return;
 	}
@@ -633,7 +644,6 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->PressInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("111111")));
 
 		// TEMP: 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
@@ -709,7 +719,6 @@ void ABOCharacter::InteractRelease(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->ReleaseInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("222222")));
 	}
 }
 
@@ -812,10 +821,18 @@ void ABOCharacter::DropEquipment(const FInputActionValue& value)
 
 void ABOCharacter::ChangeMoveSpeed()
 {
-	float NewMoveSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 
-	GetCharacterMovement()->MaxWalkSpeed = NewMoveSpeed;
-	GetCharacterMovement()->MaxWalkSpeedCrouched = NewMoveSpeed * CrouchSpeedMultiplier;
+	if (!IsValid(MovementComponent))
+	{
+		return;
+	}
+
+	const float BaseMoveSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
+	const float NewMoveSpeed = BaseMoveSpeed * SpeedMultiplier * WeightSpeedMultiplier;
+
+	MovementComponent->MaxWalkSpeed = NewMoveSpeed;
+	MovementComponent->MaxWalkSpeedCrouched = NewMoveSpeed * CrouchSpeedMultiplier;
 }
 
 void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
@@ -873,6 +890,23 @@ void ABOCharacter::UpdateMovementEnabled()
 	const bool bAnyMenuOpen = IsValid(UIManager) && UIManager->IsAnyMenuOpen();
 
 	SetMovementEnabled(!bIsDead && !bAnyMenuOpen);
+}
+
+void ABOCharacter::HandleDamaged()
+{
+	if (!DamageCameraShakeClass)
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (!IsValid(PlayerController))
+	{
+		return;
+	}
+
+	PlayerController->ClientStartCameraShake(DamageCameraShakeClass);
 }
 
 void ABOCharacter::HandleDeath(AActor* DamageCauser)
@@ -974,6 +1008,34 @@ void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
 	}
 
 	EquipmentManagerComponent->Equip(Slot);
+}
+
+void ABOCharacter::OnWeightChanged(float CurCarryWeight, float MaxCarryWeight)
+{
+	bIsOverweight = CurCarryWeight > MaxCarryWeight;
+
+	if (MaxCarryWeight <= 0.0f)
+	{
+		WeightSpeedMultiplier = CurCarryWeight > 0.0f ? MinWeightSpeedMultiplier : 1.0f;
+
+		ChangeMoveSpeed();
+		return;
+	}
+
+	if (!bIsOverweight)
+	{
+		WeightSpeedMultiplier = 1.0f;
+	}
+	else
+	{
+		WeightSpeedMultiplier = FMath::GetMappedRangeValueClamped(
+			FVector2D(MaxCarryWeight, MaxCarryWeight * 2.0f),
+			FVector2D(1.0f, MinWeightSpeedMultiplier),
+			CurCarryWeight
+		);
+	}
+
+	ChangeMoveSpeed();
 }
 
 void ABOCharacter::BindingEquipmentManagerComponentDelegates()

@@ -22,6 +22,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	UItemInstanceBase*, ItemInstanceBase
 );
 
+// 무게 변경
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnWeightChanged,
+	float, CurCarryWeight,
+	float, MaxCarryWeight
+);
+
 UCLASS()
 class BEYONDOVERRIDE_API UPlayerInventoryComponent : public UInventoryComponent
 {
@@ -52,16 +59,29 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetEquipmentItemStackCount(EEquipmentSlot Slot, int32 StackCount);
 
+	UFUNCTION(BlueprintPure)
+	float GetCurCarryWeight() const { return CurCarryWeight; }
+
+	UFUNCTION(BlueprintPure)
+	float GetMaxCarryWeight() const { return MaxCarryWeight; }
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnEquipmentSlotChanged OnEquipmentSlotChanged;
+	UPROPERTY(BlueprintAssignable)
 	FOnEquipmentItemChanged OnEquipmentItemChanged;
+	UPROPERTY(BlueprintAssignable)
+	FOnWeightChanged OnWeightChanged;
 
 public:
 	UPlayerInventoryComponent();
 
 protected:
 	virtual void BeginPlay() override;
+
+protected:
+	virtual void NotifyInventoryChanged() override;
+	void RecalculateCarryWeight();
 
 private:
 	void InitializeEquipmentSlot();
@@ -71,9 +91,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Equipment", meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UItemInstanceBase>> EquipmentSlots;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	float CurCarryWeight = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	float MaxCarryWeight = 500.0f;
+	float MaxCarryWeight = 50.0f;
 };
