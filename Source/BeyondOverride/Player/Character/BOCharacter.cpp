@@ -62,6 +62,7 @@ void ABOCharacter::BeginPlay()
 
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.AddUObject(this, &ABOCharacter::HandleDamaged);
 		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
 	}
 
@@ -130,6 +131,7 @@ void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.RemoveAll(this);
 		StatComponent->OnDeath.RemoveAll(this);
 	}
 
@@ -638,7 +640,6 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->PressInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("111111")));
 
 		// TEMP: 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
@@ -714,7 +715,6 @@ void ABOCharacter::InteractRelease(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->ReleaseInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("222222")));
 	}
 }
 
@@ -886,6 +886,23 @@ void ABOCharacter::UpdateMovementEnabled()
 	const bool bAnyMenuOpen = IsValid(UIManager) && UIManager->IsAnyMenuOpen();
 
 	SetMovementEnabled(!bIsDead && !bAnyMenuOpen);
+}
+
+void ABOCharacter::HandleDamaged()
+{
+	if (!DamageCameraShakeClass)
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (!IsValid(PlayerController))
+	{
+		return;
+	}
+
+	PlayerController->ClientStartCameraShake(DamageCameraShakeClass);
 }
 
 void ABOCharacter::HandleDeath(AActor* DamageCauser)
