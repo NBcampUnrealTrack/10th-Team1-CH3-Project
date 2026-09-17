@@ -31,6 +31,11 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	// 타임라인 진행
+	RecoilPitchTimeline.TickTimeline(DeltaTime);
+	RecoilYawTimeline.TickTimeline(DeltaTime);
+	SpreadDegreeTimeline.TickTimeline(DeltaTime);
+
 	// 적용할 반동 값 계산
 	FVector2D RecoilDelta = FMath::Vector2DInterpConstantTo(FVector2D::ZeroVector, RecoilAccumulator, DeltaTime, RecoilApplySpeed);
 
@@ -248,6 +253,9 @@ void URangeWeaponHandlerComponent::Fire()
 	// 사격 쿨다운 설정
 	StartFireTimer();
 
+	// 반동 & 탄 퍼짐 타임라인 재생
+	PlayTimeline();
+
 	// 사격 실행 델리게이트 송출
 	OnFireExecutedDelegate.Broadcast();
 
@@ -355,6 +363,22 @@ void URangeWeaponHandlerComponent::ClearTimeline()
 	SpreadDegreeTimeline = FTimeline();
 }
 
+void URangeWeaponHandlerComponent::PlayTimeline(bool bReverse)
+{
+	if (!bReverse)
+	{
+		RecoilPitchTimeline.Play();
+		RecoilYawTimeline.Play();
+		SpreadDegreeTimeline.Play();
+	}
+	else
+	{
+		RecoilPitchTimeline.Reverse();
+		RecoilYawTimeline.Reverse();
+		SpreadDegreeTimeline.Reverse();
+	}
+}
+
 FVector URangeWeaponHandlerComponent::GetMuzzleLocation() const
 {
 	FVector MuzzleLocation = GetOwner()->GetActorLocation();
@@ -456,23 +480,10 @@ void URangeWeaponHandlerComponent::AddRecoil()
 	{
 		RecoilAccumulator.X += RecoilYawCurve->GetFloatValue(RecoilYawTimeline.GetPlaybackPosition());
 	}
-
-	// TEMP
-	RecoilAccumulator.Y += 0.3f;                           // 상하반동
-	RecoilAccumulator.X += FMath::FRandRange(-0.2f, 0.3f); // 좌우 반동
 }
 
 FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRotation)
 {
-	// TEMP
-	if (true)
-	{
-		return FMath::VRandCone(
-				   AimRotation.Vector(),
-				   FMath::DegreesToRadians(1.5f))
-			.Rotation();
-	}
-
 	// SpreadCurve 유효성 검증
 	const UCurveFloat* SpreadCurve = RangeWeaponData->SpreadCurve;
 	if (!SpreadCurve)
@@ -636,6 +647,11 @@ void URangeWeaponHandlerComponent::OnFireCompleted()
 	{
 		// 사격
 		Fire();
+	}
+	else // 사격 종료
+	{
+		// 반동 & 탄 퍼짐 타임라인 역재생 - 회복
+		PlayTimeline(true);
 	}
 }
 
