@@ -3,6 +3,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "Interaction/Internal/InteractHighlightComponent.h"
 #include "Interaction/Internal/InteractionChannels.h"
+#include "Kismet/GameplayStatics.h"
 
 AInteractableActorBase::AInteractableActorBase()
 {
@@ -21,6 +22,33 @@ AInteractableActorBase::AInteractableActorBase()
 		TEXT("HighlightComp"));
 }
 
+void AInteractableActorBase::PlayInteractionSound(int32 RepeatCount, float DelaySeconds)
+{
+	if (!InteractionSound || !GetWorld())
+		return;
+
+	for (int32 i = 0; i < RepeatCount; i++)
+	{
+		const float PlayDelay = i * DelaySeconds;
+
+		if (PlayDelay <= 0.f)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), InteractionSound, GetActorLocation());
+			continue;
+		}
+
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(
+			TimerHandle,
+			[this]()
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), InteractionSound, GetActorLocation());
+			},
+			PlayDelay,
+			false);
+	}
+}
+
 void AInteractableActorBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -35,16 +63,16 @@ void AInteractableActorBase::PostInitializeComponents()
 	// 언젠가 하나를 잊는다. 그러면 "광선이 액터를 통과하는데
 	// 코드는 멀쩡한" 버그가 되고, 원인을 찾는 데 시간이 든다.
 	// 잊을 수 있는 일은 잊을 수 없게 만드는 게 낫다.
-	TArray<UPrimitiveComponent *> Prims;
+	TArray<UPrimitiveComponent*> Prims;
 	GetComponents<UPrimitiveComponent>(Prims);
 
-	for (UPrimitiveComponent *P : Prims)
+	for (UPrimitiveComponent* P : Prims)
 	{
 		if (P && P->IsCollisionEnabled())
 		{
 			P->SetCollisionResponseToChannel(ECC_Interaction, ECR_Block);
 
-			//P->SetCollisionResponseToChannel(ECC_InteractionDetector, ECR_Overlap);
+			// P->SetCollisionResponseToChannel(ECC_InteractionDetector, ECR_Overlap);
 
 			// 상호작용 탐지용 겹침 이벤트는 무조건 켠다.
 			P->SetGenerateOverlapEvents(true);
@@ -54,7 +82,7 @@ void AInteractableActorBase::PostInitializeComponents()
 
 // 프롬프트 조립
 FInteractPrompt
-AInteractableActorBase::GetInteractPrompt(AActor *Interactor) const
+AInteractableActorBase::GetInteractPrompt(AActor* Interactor) const
 {
 	// 에디터에서 설정한 값으로 시작한다.
 	// HoldSeconds 와 bMoveCancel 은 그대로 쓰인다.
@@ -77,26 +105,26 @@ AInteractableActorBase::GetInteractPrompt(AActor *Interactor) const
 	return Prompt;
 }
 
-bool AInteractableActorBase::CanInteract(AActor *Interactor,
-										 FText &OutReason) const
+bool AInteractableActorBase::CanInteract(AActor* Interactor,
+										 FText& OutReason) const
 {
 	// 기본 동작, 에디터에서 정한 값을 그대로 따른다.
 	OutReason = PromptData.DisableReason;
 	return PromptData.bEnabled;
 }
 
-FText AInteractableActorBase::GetDisplayTitle(AActor *Interactor) const
+FText AInteractableActorBase::GetDisplayTitle(AActor* Interactor) const
 {
 	return PromptData.Title;
 }
 
-FText AInteractableActorBase::GetDisplayAction(AActor *Interactor) const
+FText AInteractableActorBase::GetDisplayAction(AActor* Interactor) const
 {
 	return PromptData.ActionText;
 }
 
 // 포커스
-void AInteractableActorBase::OnFocusBegin(AActor *Interactor)
+void AInteractableActorBase::OnFocusBegin(AActor* Interactor)
 {
 	if (Highlight)
 	{
@@ -104,7 +132,7 @@ void AInteractableActorBase::OnFocusBegin(AActor *Interactor)
 	}
 }
 
-void AInteractableActorBase::OnFocusEnd(AActor *Interactor)
+void AInteractableActorBase::OnFocusEnd(AActor* Interactor)
 {
 	if (Highlight)
 	{
@@ -113,7 +141,7 @@ void AInteractableActorBase::OnFocusEnd(AActor *Interactor)
 }
 
 // 실행
-void AInteractableActorBase::OnInteractComplete(AActor *Interactor)
+void AInteractableActorBase::OnInteractComplete(AActor* Interactor)
 {
 	// 여기서 한 번 더 검사하는 이유:
 	// 누르기 시작할 때는 가능했는데 3초 홀드가 끝나는 사이에
@@ -127,6 +155,6 @@ void AInteractableActorBase::OnInteractComplete(AActor *Interactor)
 	// 공통 처리 자리
 	// 효과음이나 이펙트가 생기면 여기 한 곳에 넣으면
 	// 모든 상호작용 물건에 한꺼번에 적용된다.
-	PerformInteract(Interactor);      // C++ 하위 클래스
-	OnInteractPerformed(Interactor);  // BP 하위 클래스
+	PerformInteract(Interactor);     // C++ 하위 클래스
+	OnInteractPerformed(Interactor); // BP 하위 클래스
 }

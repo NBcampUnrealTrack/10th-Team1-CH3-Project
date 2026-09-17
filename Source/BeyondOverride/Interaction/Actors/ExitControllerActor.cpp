@@ -3,6 +3,7 @@
 #include "Interaction/Actors/ExitActor.h"
 #include "UI/Manager/UIManager.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 AExitControllerActor::AExitControllerActor()
 {
@@ -64,6 +65,8 @@ void AExitControllerActor::PerformInteract(AActor* Interactor)
 			FText::FromString(TEXT("탈출 개방 장치 작동")),
 			FText::FromString(TEXT("탈출구가 열릴 때 까지 살아남으세요")),
 			3.0f);
+
+		PlayInteractionSound(3, 2);
 	}
 }
 
