@@ -11,9 +11,9 @@ struct BEYONDOVERRIDE_API FMeleeWeaponDataRow : public FTableRowBase
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	int32 Damage; // 데미지
+	int32 Damage = 0; // 데미지
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	float AttackInterval; // 공격 간격
+	float AttackInterval = 0.f; // 공격 간격
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	float AttackRadius; // 공격 범위
+	float AttackRadius = 0.f; // 공격 범위
 };

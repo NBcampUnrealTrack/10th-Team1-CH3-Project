@@ -14,18 +14,18 @@ struct BEYONDOVERRIDE_API FThrowableItemDataRow : public FTableRowBase
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	int32 Damage; // 데미지
+	int32 Damage = 0; // 데미지
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	float Radius; // 범위
+	float Radius = 0.f; // 범위
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	float ThrowDuration; // 투척에 걸리는 시간
+	float ThrowDuration = 0.f; // 투척에 걸리는 시간
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	float ActivationDelay; // 투척 후 활성화까지 시간
+	float ActivationDelay = 0.f; // 투척 후 활성화까지 시간
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
 	TSubclassOf<AThrowableProjectile> ThrowableClass; // 투사체 클래스
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
-	float ThrowSpeed; // 던지는 속도
+	float ThrowSpeed = 0.f; // 던지는 속도
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
-	float ThrowGravityScale; // 중력 스케일
+	float ThrowGravityScale = 1.f; // 중력 스케일
 };
