@@ -49,8 +49,15 @@ void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 			if (NavSystem->ProjectPointToNavigation(Point, NavLocation, FVector(200, 200, 2000.0f)))
 			{
 
+				AMonsterCharacter* TestMonster;
+				/*
 				MoveLocation = NavLocation.Location;
-				break;
+				UNavigationPath* Path =
+					UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(),
+																		 GetWorld()->GetPla,
+																		 MoveLocation,
+																		 TestMonster);
+																		 */
 			}
 		}
 	}

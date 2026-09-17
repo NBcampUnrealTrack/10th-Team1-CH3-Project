@@ -171,6 +171,15 @@ void UMonsterStatComponent::StatSetup()
 		MonsterStastInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("GunnerID Serching"));
 	}
 
+	// Health Info
+	MaxHealth = MonsterStastInfo->MaxHealth;
+	CurHealth = MonsterStastInfo->CurHealth;
+	MaxShield = MonsterStastInfo->MaxShield;
+	CurShield = MonsterStastInfo->CurShield;
+	ShieldDelayTime = MonsterStastInfo->ShieldDelayTime;
+	ShieldRegenTime = MonsterStastInfo->ShieldRegenTime;
+	ShieldRegenAmount = MonsterStastInfo->ShieldRegenAmount;
+
 	// Attack Info
 	AttackDamage = MonsterStastInfo->AttackDamage;
 	RapidCount = MonsterStastInfo->RapidCount;
