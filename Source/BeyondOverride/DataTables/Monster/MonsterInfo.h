@@ -38,7 +38,7 @@ struct FMonsterInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UParticleSystem> MonsterAttackEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UParticleSystem> MonsterImage;
+	TObjectPtr<UTexture2D> MonsterImage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName MonsterName;
 };
