@@ -27,25 +27,14 @@ void AStorageContainerActor::BeginPlay()
 	{
 		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
 		{
-			if (GameInstance->IsStorageInventorySaved() && InventoryComponent)
+			if (GameInstance->GetGameState() == EGameState::Playing && GameInstance->GetPlayingState() == EPlayingState::Bunker)
 			{
 				TArray<UItemInstanceBase*> Slots = GameInstance->GetStorageInventory();
 				TArray<UItemInstanceBase*> NewSlots{};
 
 				for (UItemInstanceBase* Slot : Slots)
 				{
-					if (IsValid(Slot))
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Storage Slot is Valid"));
-					}
-
 					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(Slot, this);
-
-					if (IsValid(Item))
-					{
-						UE_LOG(LogTemp, Warning, TEXT("New Storage Slot is Valid"));
-					}
-
 					NewSlots.Add(Item);
 				}
 
@@ -92,10 +81,6 @@ void AStorageContainerActor::SetItems(const TArray<UItemInstanceBase*>& Items)
 		if (!InventoryComponent->AddItem(Item))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("StorageContainerActor: 슬롯이 부족해서 아이템(%s)을 넣지 못했습니다."), *Item->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Item Added"));
 		}
 	}
 }

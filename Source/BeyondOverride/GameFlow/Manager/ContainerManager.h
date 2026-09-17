@@ -33,8 +33,10 @@ class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 	void CleanSetting();
 
   private:
+	UPROPERTY()
 	bool bShouldSpawnKeyCard;
 
+	UPROPERTY()
 	TMap<FName, FSpawnData> ContainerDatas;
 	TMap<FName, TArray<TObjectPtr<AStorageContainerActor>>> ContainerByRegion;
 };

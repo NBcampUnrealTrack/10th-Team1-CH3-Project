@@ -43,7 +43,7 @@ void AExplosiveProjectile::Activate()
 		{
 			// 거리에 따라 데미지 조정
 			float Distance = FVector::Distance(ExplosionLocation, Actor->GetActorLocation()); // 폭발 중심과의 거리
-			float DamageMultiplier = 1.f - (10000 / Radius) * 0.5;                            // 적용되는 데미지 배율 (0.5 ~ 1)
+			float DamageMultiplier = 1.f - (Distance / Radius) * 0.5;                         // 적용되는 데미지 배율 (0.5 ~ 1)
 
 			UGameplayStatics::ApplyDamage(
 				Actor,

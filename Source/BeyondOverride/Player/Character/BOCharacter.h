@@ -167,6 +167,7 @@ private:
 	bool bIsSprint = false;
 	bool bIsAiming = false;
 	bool bMovementEnabled = true;
+	bool bGameplayInputEnabled = true;
 
 	UFUNCTION(Exec)
 	void AddTestItem(FName ItemID, int32 Count = 1);
@@ -222,4 +223,7 @@ private:
 	FVector GetRollDirection() const;
 	void OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	void OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	bool CanUseGameplayInput() const;
+	void StopGameplayActions();
 };

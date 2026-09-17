@@ -35,6 +35,11 @@ void ABOGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Warning, TEXT("Game Mode BeginPlay"));
+}
+
+void ABOGameMode::InitSetting()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Game Mode Initial Setting"));
 
 	if (GameInstance)
 	{
@@ -196,6 +201,27 @@ void ABOGameMode::AddKilledMonster(FName MonsterId)
 void ABOGameMode::SetKillerMonster(FName MonsterId)
 {
 	KillerMonster = MonsterId;
+}
+
+bool ABOGameMode::IsKeyCardAcquired()
+{
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
+	{
+		return false;
+	}
+
+	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
+	{
+		if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
+		{
+			if (InventoryComponent->FindItemIndex(FName(TEXT("KEY_CARD"))) != INDEX_NONE)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void ABOGameMode::GetKilledMonsters(TMap<FName, int32>& Data) const

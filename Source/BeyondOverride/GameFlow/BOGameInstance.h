@@ -36,7 +36,6 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void SavePlayerData();
 	void SaveStorageData();
 	void SaveFarmingData();
-	void CheckKeyCard();
 
   public:
 	UBODataAsset* GetBODataAsset() const;
@@ -62,10 +61,6 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	float GetMaxHealth() const;
 	float GetCurShield() const;
 	float GetMaxShield() const;
-	bool GetIsKeyCardAcquired() const;
-
-	bool IsPlayerDataSaved() const;
-	bool IsStorageInventorySaved() const;
 
 	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
 	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
@@ -105,17 +100,13 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 MaxHealth;
 	int32 CurShield;
 	int32 MaxShield;
-	bool IsKeyCardAcquired;
 
 	UPROPERTY()
 	TArray<UItemInstanceBase*> PlayerItemInventory;
-
 	UPROPERTY()
 	TArray<UItemInstanceBase*> PlayerEquipmentInventory;
-
 	UPROPERTY()
 	TArray<UItemInstanceBase*> StorageInventory;
-
 	UPROPERTY()
 	TMap<FName, FMonsterInfo> MonsterDatas;
 };
