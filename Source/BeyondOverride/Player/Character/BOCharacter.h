@@ -6,6 +6,7 @@
 
 #include "BOCharacter.generated.h"
 
+class UCameraShakeBase;
 class USpringArmComponent;
 class UCameraComponent;
 class UEquipmentManagerComponent;
@@ -65,12 +66,14 @@ protected:
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> RollMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera|Shake", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> DamageCameraShakeClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Roll")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float RollSpeed = 600.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedMultiplier = 0.5f;
@@ -183,6 +186,8 @@ private:
 	UFUNCTION()
 	void OnMenuOpenStateChanged(bool bAnyMenuOpen);
 	void UpdateMovementEnabled();
+
+	void HandleDamaged();
 
 	// 사망 관련
 	UFUNCTION()
