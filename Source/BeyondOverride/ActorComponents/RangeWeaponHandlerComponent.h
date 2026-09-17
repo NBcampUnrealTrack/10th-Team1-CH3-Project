@@ -126,6 +126,8 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	void SetupTimeline();
 	// 타임라인 제거
 	void ClearTimeline();
+	// 타임라인 재생
+	void PlayTimeline(bool bReverse = false);
 
 	// 총구 위치 반환
 	FVector GetMuzzleLocation() const;
