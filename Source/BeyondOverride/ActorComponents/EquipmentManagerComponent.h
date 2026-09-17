@@ -64,7 +64,8 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 활성화된 장비 슬롯
 	EEquipmentSlot ActiveSlot;
 	// 각 장비 슬롯 별 컴포넌트
-	TMap<EEquipmentSlot, UEquipmentHandlerComponent*> EquipmentHandlerComponents;
+	UPROPERTY()
+	TMap<EEquipmentSlot, TObjectPtr<UEquipmentHandlerComponent>> EquipmentHandlerComponents;
 
   public:
 	UEquipmentManagerComponent();
