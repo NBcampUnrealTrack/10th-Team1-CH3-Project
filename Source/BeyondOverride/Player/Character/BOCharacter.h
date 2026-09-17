@@ -45,6 +45,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsMovementEnabled() const { return bMovementEnabled; }
 
+	UFUNCTION(BlueprintPure)
+	bool IsOverweight() const { return bIsOverweight; }
+
 public:
 	ABOCharacter();
 
@@ -73,6 +76,12 @@ protected:
 	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SpeedMultiplier = 1.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Weight")
+	float WeightSpeedMultiplier = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Weight")
+	float MinWeightSpeedMultiplier = 0.1f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Weight")
+	bool bIsOverweight = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Zoom")
 	float DefaultFOV = 90.0f;
@@ -189,6 +198,9 @@ public:
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 
 	void TryEquipSlot(EEquipmentSlot Slot);
+
+	UFUNCTION()
+	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
 
 private:
 	// EquipmentManagerComponent의 델리게이트 바인딩

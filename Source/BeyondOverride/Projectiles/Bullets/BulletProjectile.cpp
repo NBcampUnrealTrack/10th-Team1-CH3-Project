@@ -21,6 +21,9 @@ ABulletProjectile::ABulletProjectile()
 
 	// ProjectileMovement 설정
 	ProjectileMovement->UpdatedComponent = Collision;
+
+	// 콜리전 채널 설정 (총알 간 충돌 방지)
+	Collision->SetCollisionProfileName(TEXT("Bullet"));
 }
 
 void ABulletProjectile::Initialize(
@@ -43,6 +46,9 @@ void ABulletProjectile::Initialize(
 
 void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	// 충돌 지점 디버그
+	DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.0f, FColor::Red, false, 2.0f);
+
 	if (OtherActor && OtherActor != GetInstigator())
 	{
 		UGameplayStatics::ApplyDamage(
