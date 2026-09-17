@@ -9,6 +9,7 @@
 class UInteractPromptWidget;
 class UInteractComponent;
 class APlayerController;
+class UNotificationWidget;
 
 UENUM(BlueprintType)
 enum class EUIInputMode : uint8
@@ -76,6 +77,9 @@ class BEYONDOVERRIDE_API UUIManager : public UGameInstanceSubsystem
 
 	void BindInteractPrompt(UInteractComponent* InteractComponent);
 
+	UFUNCTION(BlueprintCallable, Category = "UI|Notification")
+	void ShowNotification(const FText& Main, const FText& Sub, float Duration = 3.f);
+
 	bool IsAnyMenuOpen() const;
 
 	UPROPERTY(BlueprintAssignable)
@@ -99,4 +103,9 @@ class BEYONDOVERRIDE_API UUIManager : public UGameInstanceSubsystem
 
 	UPROPERTY()
 	UInteractPromptWidget* InteractPromptWidget;
+
+	UPROPERTY()
+	TSubclassOf<UNotificationWidget> NotificationWidgetClass;
+	UPROPERTY()
+	TObjectPtr<UNotificationWidget> NotificationWidget;
 };

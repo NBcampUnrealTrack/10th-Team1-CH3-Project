@@ -1,6 +1,7 @@
 #include "Interaction/Actors/ExitControllerActor.h"
 
 #include "Interaction/Actors/ExitActor.h"
+#include "UI/Manager/UIManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 AExitControllerActor::AExitControllerActor()
@@ -58,6 +59,11 @@ void AExitControllerActor::PerformInteract(AActor* Interactor)
 		{
 			OnExtractControlRequested.Broadcast(this, Interactor);
 		}
+
+		UUIManager::Get(this)->ShowNotification(
+			FText::FromString(TEXT("탈출 개방 장치 작동")),
+			FText::FromString(TEXT("탈출구가 열릴 때 까지 살아남으세요")),
+			3.0f);
 	}
 }
 
@@ -65,4 +71,9 @@ void AExitControllerActor::SetExitActorOpenTimer()
 {
 	TargetExit->SetExtractAvailable(true);
 	PromptData.DisableReason = FText::FromString(TEXT("탈출 개방 장치 작동 완료"));
+
+	UUIManager::Get(this)->ShowNotification(
+		FText::FromString(TEXT("탈출 개방 장치 작동 완료")),
+		FText::FromString(TEXT("탈출구가 열렸습니다.")),
+		3.0f);
 }
