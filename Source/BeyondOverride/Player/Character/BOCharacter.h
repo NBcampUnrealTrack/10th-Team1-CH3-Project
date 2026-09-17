@@ -14,6 +14,7 @@ class UPlayerInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
 class UNearbyItemComponent;
+class UCharacterPreviewComponent;
 
 class UItemInstanceBase;
 class UEquippableItemInstance;
@@ -27,26 +28,57 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	UEquipmentManagerComponent* GetEquipmentComponent() const { return EquipmentManagerComponent; }
-	UStatComponent* GetStatComponent() const { return StatComponent; }
-	UPlayerInventoryComponent* GetPlayerInventoryComponent() const { return PlayerInventoryComponent; }
-	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
-	UInventoryInteractionComponent* GetInventoryInteractionComponent() const { return InventoryInteractionComponent; }
-	UNearbyItemComponent* GetNearbyItemComponent() const { return NearbyItemComponent; }
+  public:
+	UEquipmentManagerComponent* GetEquipmentComponent() const
+	{
+		return EquipmentManagerComponent;
+	}
+	UStatComponent* GetStatComponent() const
+	{
+		return StatComponent;
+	}
+	UPlayerInventoryComponent* GetPlayerInventoryComponent() const
+	{
+		return PlayerInventoryComponent;
+	}
+	UInteractComponent* GetInteractComponent() const
+	{
+		return InteractComponent;
+	}
+	UInventoryInteractionComponent* GetInventoryInteractionComponent() const
+	{
+		return InventoryInteractionComponent;
+	}
+	UNearbyItemComponent* GetNearbyItemComponent() const
+	{
+		return NearbyItemComponent;
+	}
 
-	bool GetIsAiming() const { return bIsAiming; }
+	bool GetIsAiming() const
+	{
+		return bIsAiming;
+	}
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementEnabled(bool bEnabled);
 
 	UFUNCTION(BlueprintPure)
-	bool IsMovementEnabled() const { return bMovementEnabled; }
+	bool IsMovementEnabled() const
+	{
+		return bMovementEnabled;
+	}
 
-public:
+	// 프리뷰 코드
+	UFUNCTION(BlueprintCallable, Category = "UI|Preview")
+	UCharacterPreviewComponent* GetCharacterPreviewComponent() const
+	{
+		return CharacterPreviewComponent;
+	}
+
+  public:
 	ABOCharacter();
 
-protected:
+  protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
@@ -55,7 +87,7 @@ protected:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-protected:
+  protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -98,7 +130,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UEquipmentManagerComponent* EquipmentManagerComponent; // 장비 관리 컴포넌트
 
-private:
+	// 프리뷰 코드
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<UCharacterPreviewComponent> CharacterPreviewComponent;
+
+  private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
@@ -180,14 +216,14 @@ private:
 	TWeakObjectPtr<AActor> DeathDamageCauser;
 	bool bDeathSequenceFinished = false;
 
-public:
+  public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	UFUNCTION()
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 
 	void TryEquipSlot(EEquipmentSlot Slot);
 
-private:
+  private:
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
 
@@ -200,7 +236,7 @@ private:
 	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 - 재장전 완료 시 호출, 보충할 개수 반환
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
 
-private:
+  private:
 	FTimerHandle DeathTimerHandle;
 
 	FVector2D MoveInput = FVector2D::ZeroVector;

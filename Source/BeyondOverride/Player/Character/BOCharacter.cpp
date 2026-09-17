@@ -22,6 +22,7 @@
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
@@ -53,6 +54,9 @@ ABOCharacter::ABOCharacter()
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 	NearbyItemComponent = CreateDefaultSubobject<UNearbyItemComponent>(TEXT("NearbyItemComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
+
+	// 프리뷰 추가
+	CharacterPreviewComponent = CreateDefaultSubobject<UCharacterPreviewComponent>(TEXT("CharacterPreviewComponent"));
 }
 
 void ABOCharacter::BeginPlay()
@@ -1208,3 +1212,4 @@ void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
 		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: 인벤토리에 빈 슬롯이 없습니다."));
 	}
 }
+
