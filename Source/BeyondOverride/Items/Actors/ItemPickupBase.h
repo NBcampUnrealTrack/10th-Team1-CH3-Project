@@ -14,7 +14,7 @@ class AItemPickupBase : public AInteractableActorBase
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
 
@@ -26,7 +26,7 @@ class AItemPickupBase : public AInteractableActorBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (ClampMin = "1", UIMin = "1"))
 	int32 StackCount; // 스택 개수
 
-  public:
+public:
 	AItemPickupBase();
 
 	void Initialize(UItemInstanceBase* InItemInstance);
@@ -34,6 +34,6 @@ class AItemPickupBase : public AInteractableActorBase
 	// Getters
 	UItemInstanceBase* GetItemInstance() const;
 
-  protected:
+protected:
 	virtual void BeginPlay() override;
 };

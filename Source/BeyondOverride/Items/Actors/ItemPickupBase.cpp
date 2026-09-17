@@ -42,7 +42,7 @@ void AItemPickupBase::Initialize(UItemInstanceBase* InItemInstance)
 	}
 
 	// ItemData 확인
-	const FItemDataRow* ItemData = ItemInstance->GetItemData();
+	const FItemDataRow* ItemData = InItemInstance->GetItemData();
 	if (!ItemData)
 	{
 		return;
@@ -68,11 +68,15 @@ void AItemPickupBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 아이템 인스턴스 생성 - 저장된 인스턴스 없는 경우
 	if (!ItemInstance)
 	{
-		ItemInstance = FItemFactory::CreateItemInstance(this, ItemID);
-		ItemInstance->SetStackCount(StackCount); // 개수 설정
-		Initialize(ItemInstance);
+		//ItemInstance = FItemFactory::CreateItemInstance(this, ItemID);
+		//ItemInstance->SetStackCount(StackCount); // 개수 설정
+		UItemInstanceBase* NewItemInstance = FItemFactory::CreateItemInstance(this, ItemID, StackCount);
+		if (!IsValid(NewItemInstance))
+		{
+			return;
+		}
+		Initialize(NewItemInstance);
 	}
 }

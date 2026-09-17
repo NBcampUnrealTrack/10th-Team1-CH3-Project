@@ -21,6 +21,7 @@ class BEYONDOVERRIDE_API UItemDataSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
   protected:
+	UPROPERTY()
 	TObjectPtr<UItemDataRegistry> ItemDataRegistry;
 
   public:
