@@ -70,7 +70,13 @@ void AItemPickupBase::BeginPlay()
 
 	if (!ItemInstance)
 	{
-		ItemInstance = FItemFactory::CreateItemInstance(this, ItemID, StackCount);
-		Initialize(ItemInstance);
+		//ItemInstance = FItemFactory::CreateItemInstance(this, ItemID);
+		//ItemInstance->SetStackCount(StackCount); // 개수 설정
+		UItemInstanceBase* NewItemInstance = FItemFactory::CreateItemInstance(this, ItemID, StackCount);
+		if (!IsValid(NewItemInstance))
+		{
+			return;
+		}
+		Initialize(NewItemInstance);
 	}
 }
