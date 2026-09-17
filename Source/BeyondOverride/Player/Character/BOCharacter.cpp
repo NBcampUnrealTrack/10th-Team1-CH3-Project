@@ -30,6 +30,7 @@
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
+#include "Enums/UtilityType.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -1202,17 +1203,97 @@ void ABOCharacter::OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemI
 	// Slot의 EquippableItemInstance 아이템이 사용되어 개수가 변경될 때 호출됨
 	// 0개가 되면 장비 매니저 컴포넌트에서 자동으로 Unassign함
 	// UI 등에 개수 변경 또는 제거를 반영
+	if (!IsValid(PlayerInventoryComponent))
+	{
+		return;
+	}
+
+	if (!IsValid(EquippableItemInstance))
+	{
+		return;
+	}
+
+	UItemInstanceBase* InventoryItem = PlayerInventoryComponent->GetEquipmentItem(Slot);
+
+	if (InventoryItem != EquippableItemInstance)
+	{
+		return;
+	}
+
+	PlayerInventoryComponent->SetEquipmentItemStackCount(Slot, EquippableItemInstance->GetStackCount());
 }
 
 bool ABOCharacter::CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData) const
 {
 	// TODO: 아이템 사용 가능 여부 반환 (Ex. 회복 아이템인데 체력이 가득 차 있으면 false 반환)
-	return true;
+	if (UtilityItemData == nullptr)
+	{
+		return false;
+	}
+
+	if (!IsValid(StatComponent))
+	{
+		return false;
+	}
+
+	if (StatComponent->GetIsDead())
+	{
+		return false;
+	}
+
+	if (UtilityItemData->EffectAmount <= 0.0f)
+	{
+		return false;
+	}
+
+	switch (UtilityItemData->EffectType)
+	{
+	case EUtilityType::HealHP:
+		return StatComponent->GetCurHealth() < StatComponent->GetMaxHealth();
+		/*case EUtilityType::HealShield:
+			return StatComponent->GetCurShield() < StatComponent->GetMaxShield();*/
+	default:
+		return false;
+	}
 }
 
 void ABOCharacter::OnEffectApplied(const FUtilityItemDataRow* UtilityItemData)
 {
 	// TODO: 효과 적용 (Ex. 회복 아이템이면 효과량만큼 회복)
+	if (UtilityItemData == nullptr)
+	{
+		return;
+	}
+
+	if (!IsValid(StatComponent))
+	{
+		return;
+	}
+
+	if (StatComponent->GetIsDead())
+	{
+		return;
+	}
+
+	switch (UtilityItemData->EffectType)
+	{
+	case EUtilityType::HealHP:
+	{
+		const int32 HealAmount = FMath::RoundToInt(UtilityItemData->EffectAmount);
+
+		if (HealAmount <= 0)
+		{
+			return;
+		}
+
+		StatComponent->Heal(HealAmount);
+		break;
+	}
+
+	default:
+		break;
+	}
+
 }
 
 FName ABOCharacter::GetRollSectionName() const
