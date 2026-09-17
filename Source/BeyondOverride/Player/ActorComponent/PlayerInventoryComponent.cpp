@@ -15,6 +15,61 @@ void UPlayerInventoryComponent::BeginPlay()
 	InitializeEquipmentSlot();
 }
 
+void UPlayerInventoryComponent::NotifyInventoryChanged()
+{
+	Super::NotifyInventoryChanged();
+
+	RecalculateCarryWeight();
+}
+
+void UPlayerInventoryComponent::RecalculateCarryWeight()
+{
+	float NewCarryWeight = 0.0f;
+
+	for (const UItemInstanceBase* Item : Slots)
+	{
+		if (!IsValid(Item))
+		{
+			continue;
+		}
+
+		const FItemDataRow* ItemData = Item->GetItemData();
+
+		if (ItemData == nullptr)
+		{
+			continue;
+		}
+
+		NewCarryWeight += ItemData->Weight * Item->GetStackCount();
+	}
+
+	for (const UItemInstanceBase* Item : EquipmentSlots)
+	{
+		if (!IsValid(Item))
+		{
+			continue;
+		}
+
+		const FItemDataRow* ItemData = Item->GetItemData();
+
+		if (ItemData == nullptr)
+		{
+			continue;
+		}
+
+		NewCarryWeight += ItemData->Weight * Item->GetStackCount();
+	}
+
+	if (FMath::IsNearlyEqual(CurCarryWeight, NewCarryWeight))
+	{
+		return;
+	}
+
+	CurCarryWeight = NewCarryWeight;
+
+	OnWeightChanged.Broadcast(CurCarryWeight, MaxCarryWeight);
+}
+
 void UPlayerInventoryComponent::InitializeEquipmentSlot()
 {
 	EquipmentSlots.Init(nullptr, 7);
@@ -82,13 +137,15 @@ bool UPlayerInventoryComponent::SetEquipmentItemStackCount(EEquipmentSlot Slot, 
 
 		OnEquipmentItemChanged.Broadcast(Slot, nullptr);
 		OnEquipmentSlotChanged.Broadcast(Slot, nullptr);
+	}
+	else
+	{
+		Item->SetStackCount(StackCount);
 
-		return true;
+		OnEquipmentSlotChanged.Broadcast(Slot, Item);
 	}
 
-	Item->SetStackCount(StackCount);
-
-	OnEquipmentSlotChanged.Broadcast(Slot, Item);
+	RecalculateCarryWeight();
 
 	return true;
 }
@@ -151,6 +208,8 @@ bool UPlayerInventoryComponent::SetEquipmentSlots(const TArray<UItemInstanceBase
 		OnEquipmentSlotChanged.Broadcast(Slot, NewItem);
 	}
 
+	RecalculateCarryWeight();
+
 	return true;
 }
 
@@ -180,6 +239,8 @@ bool UPlayerInventoryComponent::SetEquipmentItem(EEquipmentSlot Slot, UItemInsta
 
 	// UI는 항상 갱신
 	OnEquipmentSlotChanged.Broadcast(Slot, Item);
+
+	RecalculateCarryWeight();
 
 	return true;
 }

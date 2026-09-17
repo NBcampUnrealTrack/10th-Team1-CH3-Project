@@ -6,7 +6,6 @@
 #include "InventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const TArray<UItemInstanceBase*>&, Slots);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnWeightChanged, float, CurCarryWeight, float, MaxCarryWeight);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UInventoryComponent : public UActorComponent
@@ -49,8 +48,6 @@ public:
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnInventoryChanged OnInventoryChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnWeightChanged OnWeightChanged;
 
 public:
 	UInventoryComponent();
@@ -58,10 +55,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+protected:
+	virtual void NotifyInventoryChanged();
+
 private:
 	void InitializeSlot();
 
-private:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UItemInstanceBase>> Slots;
 
