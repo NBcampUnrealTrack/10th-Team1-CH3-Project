@@ -102,9 +102,9 @@
         "AmmoItemID": "SHOTGUN_AMMO",
         "MagazineSize": 5,
         "ReloadTime": 1.5,
-        "RecoilPitchCurve": "",
-        "RecoilYawCurve": "",
-        "SpreadCurve": "",
+        "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_RecoilPitch_ShotgunB.CF_RecoilPitch_ShotgunB'",
+        "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_RecoilYaw_ShotgunB.CF_RecoilYaw_ShotgunB'",
+        "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_Spread_ShotgunB.CF_Spread_ShotgunB'",
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunB.T_ShotgunB'"
     },
     {
