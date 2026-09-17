@@ -2,6 +2,7 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Components/Image.h"
+#include "Components/VerticalBox.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Items/Actors/ItemPickupBase.h"
 #include "Player/ActorComponent/CharacterPreviewComponent.h"
@@ -12,6 +13,7 @@
 #include "UI/Widgets/EquipmentSlotWidget.h"
 #include "UI/Widgets/HeldItemWidget.h"
 #include "UI/Widgets/ItemSlotPanelWidget.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 
 void UInventoryScreenWidget::NativeConstruct()
 {
@@ -68,6 +70,16 @@ void UInventoryScreenWidget::NativeConstruct()
 
 FReply UInventoryScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	if (EquipmentSlotArea)
+	{
+		const FGeometry& AreaGeometry = EquipmentSlotArea->GetCachedGeometry();
+
+		if (USlateBlueprintLibrary::IsUnderLocation(AreaGeometry, InMouseEvent.GetScreenSpacePosition()))
+		{
+			return FReply::Handled();
+		}
+	}
+
 	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
 	if (OwnerCharacter)
 	{
@@ -151,3 +163,4 @@ void UInventoryScreenWidget::OnNearbyItemsChanged(const TArray<AItemPickupBase*>
 
 	ContainerSlotPanel->SetWorldItems(NearbyItems, OwnerCharacter->GetNearbyItemComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 }
+

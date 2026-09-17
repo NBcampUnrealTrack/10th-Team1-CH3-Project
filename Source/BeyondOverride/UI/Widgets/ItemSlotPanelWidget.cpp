@@ -29,6 +29,16 @@ void UItemSlotPanelWidget::NativeDestruct()
 
 FReply UItemSlotPanelWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	if (Mode == EItemSlotPanelMode::WorldItems && InteractionComponent && InteractionComponent->IsHoldingItem())
+	{
+		const FKey EffectingButton = InMouseEvent.GetEffectingButton();
+
+		if (EffectingButton == EKeys::LeftMouseButton || EffectingButton == EKeys::RightMouseButton)
+		{
+			InteractionComponent->DropItem(EffectingButton == EKeys::LeftMouseButton);
+		}
+	}
+
 	return FReply::Handled();
 }
 
