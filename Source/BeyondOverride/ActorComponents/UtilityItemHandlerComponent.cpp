@@ -189,15 +189,15 @@ void UUtilityItemHandlerComponent::OnUseCompleted()
 		return;
 	}
 
+	// 효과 적용 델리게이트 송출
+	OnEffectAppliedDelegate.Broadcast(UtilityItemData);
+
 	// 사용 후 개수 차감
 	const int Count = UtilityItemInstance->GetStackCount();
 	UtilityItemInstance->SetStackCount(Count - 1);
 
 	// 사용 후 개수 변경 델리게이트 송출
 	OnCountUpdatedDelegate.Broadcast(UtilityItemInstance);
-
-	// 효과 적용 델리게이트 송출
-	OnEffectAppliedDelegate.Broadcast(UtilityItemData);
 
 	// 사용 완료 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(5002, 5.0f, FColor::Green, FString::Printf(TEXT("Using Utility Completed")));
