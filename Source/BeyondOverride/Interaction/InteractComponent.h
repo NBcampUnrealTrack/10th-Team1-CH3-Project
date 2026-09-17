@@ -117,6 +117,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (ClampMin = "0.0", UIMax = "50.0"))
 	float TraceRadius = 15.f;
 
+	// 캐릭터 정면 기준 허용 각도, 0.0 = 좌우 90도까지, 값 올릴수록 각도는 좁아짐
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (ClampMin = "-1.0", ClampMax = "1.0"))
+	float MinFacingDot = 0.0f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction", meta = (ClampMin = "50.0"))
 	float DetectionRadius = 300.0f;
 
