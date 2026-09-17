@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 
 #include "DataAssets/BODataAsset.h"
+#include "DataTables/Monster/MonsterInfo.h"
 #include "Engine/GameInstance.h"
 #include "Enums/BOEnums.h"
-#include "Monster/DataTable/MonsterInfo.h"
 
 #include "BOGameInstance.generated.h"
 

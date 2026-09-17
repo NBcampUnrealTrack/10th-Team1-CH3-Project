@@ -44,7 +44,6 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 	NearestTarget = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (NearestTarget)
 	{
-
 		return EBTNodeResult::Succeeded;
 	}
 
@@ -57,7 +56,13 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
 		AIController->SetTargetPoint(FVector::ZeroVector);
-		AIController->StateChange(EMonsterState::Chase, 10.0f);
+
+		if (AIController->GetState() == EMonsterState::Patrol ||
+			AIController->GetState() == EMonsterState::Atmosphere ||
+			AIController->GetState() == EMonsterState::LocationPatrol)
+		{
+			AIController->StateChange(EMonsterState::Chase, 10.0f);
+		}
 	}
 
 	return EBTNodeResult::Succeeded;

@@ -33,9 +33,7 @@ EBTNodeResult::Type UBTTaskClearTarget::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 	if (!AIController->IsContinueState() &&
-		(AIController->GetState() == EMonsterState::Chase ||
-		 AIController->GetState() == EMonsterState::Attack ||
-		 AIController->GetState() == EMonsterState::StandOff))
+		AIController->GetState() == EMonsterState::Chase)
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), nullptr);
 		return EBTNodeResult::Failed;

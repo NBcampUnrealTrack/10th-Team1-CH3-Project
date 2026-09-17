@@ -4,9 +4,11 @@
 #include "Monster/ActorComponent/MonsterStatComponent.h"
 
 // Add include
+#include "DataTables/Monster/MonsterStatInfo.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
+#include "Monster/DataAssets/MonsterDataAsset.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/BalisticTrace.h"
 #include "Player/Character/BOCharacter.h"
@@ -14,6 +16,23 @@
 UMonsterStatComponent::UMonsterStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	static ConstructorHelpers::FObjectFinder<UMonsterDataAsset> DataAssetFinder(TEXT("/Game/Blueprints/Monster/DataAssets/DA_MonstersInfo.DA_MonstersInfo"));
+
+	if (DataAssetFinder.Succeeded())
+	{
+		MonsterData = DataAssetFinder.Object;
+	}
+}
+
+float UMonsterStatComponent::GetWalkSpeed() const
+{
+	return WalkSpeed;
+}
+
+float UMonsterStatComponent::GetSprintSpeed() const
+{
+	return SprintSpeed;
 }
 
 void UMonsterStatComponent::SetAttackRange(float Range)
@@ -133,5 +152,39 @@ void UMonsterStatComponent::OnBalisticHit(AActor* Target)
 								  UDamageType::StaticClass());
 }
 
-/*
- */
+void UMonsterStatComponent::StatSetup()
+{
+	if (!MonsterData)
+	{
+		return;
+	}
+	AMonsterCharacter* Monster = Cast<AMonsterCharacter>(GetOwner());
+	if (!Monster)
+	{
+		return;
+	}
+
+	FMonsterStatInfo* MonsterStastInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("MonsterID Serching"));
+	if (!MonsterStastInfo)
+	{
+		SetMonsterID("Gunner");
+		MonsterStastInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("GunnerID Serching"));
+	}
+
+	// Attack Info
+	AttackDamage = MonsterStastInfo->AttackDamage;
+	RapidCount = MonsterStastInfo->RapidCount;
+	RapidDelay = MonsterStastInfo->RapidDelay;
+	AttackDelay = MonsterStastInfo->AttackDelay;
+	AttackRange = MonsterStastInfo->AttackRange;
+	BulletSpeed = MonsterStastInfo->BulletSpeed;
+
+	// Another Info
+	Protect = MonsterStastInfo->Protect;
+	Intelligence = MonsterStastInfo->Intelligence;
+	WalkSpeed = MonsterStastInfo->WalkSpeed;
+	SprintSpeed = MonsterStastInfo->SprintSpeed;
+
+	// Monster key Info
+	MonsterType = MonsterStastInfo->MonsterType;
+}
