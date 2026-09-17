@@ -40,7 +40,6 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 	NearestTarget = Cast<ABOCharacter>(BlackboardComp->GetValueAsObject(TEXT("TargetPlayer")));
 	if (NearestTarget)
 	{
-
 		return EBTNodeResult::Succeeded;
 	}
 
@@ -52,8 +51,14 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
-		AIController->StateChange(EMonsterState::Chase, 10.0f);
 		AIController->SetTargetPoint(FVector::ZeroVector);
+
+		if (AIController->GetState() == EMonsterState::Patrol ||
+			AIController->GetState() == EMonsterState::Atmosphere ||
+			AIController->GetState() == EMonsterState::LocationPatrol)
+		{
+			AIController->StateChange(EMonsterState::Chase, 10.0f);
+		}
 	}
 
 	return EBTNodeResult::Succeeded;

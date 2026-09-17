@@ -40,15 +40,19 @@ EBTNodeResult::Type UBTTaskStandOffContinue::ExecuteTask(UBehaviorTreeComponent&
 	}
 
 	UCharacterMovementComponent* Movement = AIMonster->GetCharacterMovement();
-	if (Movement)
+	if (!Movement)
 	{
 		return EBTNodeResult::Failed;
 	}
+
+	FVector NowEQSPoint = BlackboardComp->GetValueAsVector(TEXT("EQSPoint"));
+
 	if (AIController->GetState() == EMonsterState::StandOff &&
-		Movement->Velocity.IsNearlyZero())
+		Movement->Velocity.IsNearlyZero() &&
+		!AIController->IsContinueState() &&
+		FVector::PointsAreNear(NowEQSPoint, AIMonster->GetActorLocation(), 0))
 	{
 		AIController->StateChange(EMonsterState::StandOff, 5.0f);
-		BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
 		return EBTNodeResult::Succeeded;
 	}
 

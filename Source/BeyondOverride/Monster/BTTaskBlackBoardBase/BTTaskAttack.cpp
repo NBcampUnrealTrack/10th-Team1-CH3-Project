@@ -41,7 +41,7 @@ EBTNodeResult::Type UBTTaskAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 
 	AIController->SetTargetPoint(Target->GetActorLocation());
 	AIMonster->MonsterAttack();
-	AIController->StateChange(EMonsterState::Chase, 10.0f);
+	AIController->StateChange(EMonsterState::Attack, 0.3f);
 
 	return EBTNodeResult::Succeeded;
 }

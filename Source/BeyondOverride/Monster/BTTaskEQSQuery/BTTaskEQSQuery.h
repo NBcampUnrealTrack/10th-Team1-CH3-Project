@@ -18,4 +18,8 @@ class BEYONDOVERRIDE_API UBTTaskEQSQuery : public UBTTask_RunEQSQuery
 
   public:
 	UBTTaskEQSQuery();
+
+  protected:
+	// Task 실행 시 호출되는 함수
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

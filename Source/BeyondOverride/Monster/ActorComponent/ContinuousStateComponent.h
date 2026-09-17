@@ -54,7 +54,8 @@ class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
 	UPROPERTY(VisibleAnywhere, Category = "State|Viewer")
 	EMonsterState NowState;
 
-	FTimerHandle StateTimer;
+	UPROPERTY(VisibleAnywhere, Category = "State|Viewer")
+	EMonsterState BeforeState;
 
-	FTimerHandle StandOffTimer;
+	FTimerHandle StateTimer;
 };

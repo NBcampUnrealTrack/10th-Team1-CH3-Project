@@ -55,6 +55,7 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterState")
 	EMonsterState GetState() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterState")
 	bool IsContinueState() const;
 
 	void SetTarget(ABOCharacter* Target);
@@ -64,6 +65,8 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	FVector GetTargetPoint() const;
 
 	FVector GetSpawnPoint() const;
+
+	void FocusSetUp(const EMonsterState& input);
 
   protected:
 	virtual void BeginPlay() override;

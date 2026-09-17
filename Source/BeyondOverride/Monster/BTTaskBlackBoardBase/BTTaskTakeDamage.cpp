@@ -57,9 +57,8 @@ EBTNodeResult::Type UBTTaskTakeDamage::ExecuteTask(UBehaviorTreeComponent& Owner
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
 		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, Target, ECallType::Attack);
-		AIController->StateChange(EMonsterState::Chase, 10.0f);
 		AIController->SetTargetPoint(FVector::ZeroVector);
-
+		AIController->StateChange(EMonsterState::Chase, 10.0f);
 		return EBTNodeResult::Succeeded;
 	}
 

@@ -52,6 +52,10 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	if (AIController->GetState() == EMonsterState::StandOff)
 	{
+		if (AIController->IsContinueState())
+		{
+			BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
+		}
 		return EBTNodeResult::Succeeded;
 	}
 
