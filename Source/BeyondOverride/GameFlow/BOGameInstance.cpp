@@ -83,14 +83,11 @@ void UBOGameInstance::Start()
 	OpenLevel(ELevel::Bunker);
 }
 
-void UBOGameInstance::Restart()
-{
-	InitSetting();
-}
-
 void UBOGameInstance::End()
 {
 	InitSetting();
+
+	OpenLevel(ELevel::Bunker);
 }
 
 void UBOGameInstance::Exit()
@@ -104,6 +101,7 @@ void UBOGameInstance::Exit()
 void UBOGameInstance::StartFarming()
 {
 	PlayingState = EPlayingState::Farming;
+	FarmingResult = EFarmingResult::None;
 
 	SurvivalTime = 0.0f;
 	KilledMonsters.Empty();

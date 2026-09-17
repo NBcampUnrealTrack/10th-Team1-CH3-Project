@@ -25,7 +25,6 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
   public:
 	void InitSetting();
 	void Start();
-	void Restart();
 	void End();
 	void Exit();
 	void StartFarming();

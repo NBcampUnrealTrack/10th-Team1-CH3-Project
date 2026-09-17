@@ -171,11 +171,6 @@ void ABOGameMode::End()
 	{
 		GameInstance->End();
 	}
-
-	if (UUIManager* UIManager = UUIManager::Get(this))
-	{
-		UIManager->ShowScreen(EUIScreen::Title, EUIInputMode::UIOnly);
-	}
 }
 
 void ABOGameMode::Exit()
