@@ -6,6 +6,7 @@
 
 #include "BOCharacter.generated.h"
 
+class UCameraShakeBase;
 class USpringArmComponent;
 class UCameraComponent;
 class UEquipmentManagerComponent;
@@ -14,6 +15,7 @@ class UPlayerInventoryComponent;
 class UInventoryInteractionComponent;
 class UInteractComponent;
 class UNearbyItemComponent;
+class UCharacterPreviewComponent;
 
 class UItemInstanceBase;
 class UEquippableItemInstance;
@@ -29,26 +31,60 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	UEquipmentManagerComponent* GetEquipmentComponent() const { return EquipmentManagerComponent; }
-	UStatComponent* GetStatComponent() const { return StatComponent; }
-	UPlayerInventoryComponent* GetPlayerInventoryComponent() const { return PlayerInventoryComponent; }
-	UInteractComponent* GetInteractComponent() const { return InteractComponent; }
-	UInventoryInteractionComponent* GetInventoryInteractionComponent() const { return InventoryInteractionComponent; }
-	UNearbyItemComponent* GetNearbyItemComponent() const { return NearbyItemComponent; }
+  public:
+	UEquipmentManagerComponent* GetEquipmentComponent() const
+	{
+		return EquipmentManagerComponent;
+	}
+	UStatComponent* GetStatComponent() const
+	{
+		return StatComponent;
+	}
+	UPlayerInventoryComponent* GetPlayerInventoryComponent() const
+	{
+		return PlayerInventoryComponent;
+	}
+	UInteractComponent* GetInteractComponent() const
+	{
+		return InteractComponent;
+	}
+	UInventoryInteractionComponent* GetInventoryInteractionComponent() const
+	{
+		return InventoryInteractionComponent;
+	}
+	UNearbyItemComponent* GetNearbyItemComponent() const
+	{
+		return NearbyItemComponent;
+	}
 
-	bool GetIsAiming() const { return bIsAiming; }
+	bool GetIsAiming() const
+	{
+		return bIsAiming;
+	}
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementEnabled(bool bEnabled);
 
 	UFUNCTION(BlueprintPure)
-	bool IsMovementEnabled() const { return bMovementEnabled; }
+	bool IsMovementEnabled() const
+	{
+		return bMovementEnabled;
+	}
+
+	// 프리뷰 코드
+	UFUNCTION(BlueprintCallable, Category = "UI|Preview")
+	UCharacterPreviewComponent* GetCharacterPreviewComponent() const
+	{
+		return CharacterPreviewComponent;
+	}
+
+	UFUNCTION(BlueprintPure)
+	bool IsOverweight() const { return bIsOverweight; }
 
 public:
 	ABOCharacter();
 
-protected:
+  protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
@@ -57,22 +93,30 @@ protected:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-protected:
+  protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> RollMontage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera|Shake", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> DamageCameraShakeClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float WalkSpeed = 200.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Roll")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float RollSpeed = 600.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SpeedMultiplier = 1.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Weight")
+	float WeightSpeedMultiplier = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement|Weight")
+	float MinWeightSpeedMultiplier = 0.1f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement|Weight")
+	bool bIsOverweight = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Zoom")
 	float DefaultFOV = 90.0f;
@@ -100,7 +144,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UEquipmentManagerComponent* EquipmentManagerComponent; // 장비 관리 컴포넌트
 
-private:
+	// 프리뷰 코드
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<UCharacterPreviewComponent> CharacterPreviewComponent;
+
+  private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
@@ -175,6 +223,8 @@ private:
 	void OnMenuOpenStateChanged(bool bAnyMenuOpen);
 	void UpdateMovementEnabled();
 
+	void HandleDamaged();
+
 	// 사망 관련
 	UFUNCTION()
 	void HandleDeath(AActor* DamageCauser);
@@ -183,12 +233,15 @@ private:
 	TWeakObjectPtr<AActor> DeathDamageCauser;
 	bool bDeathSequenceFinished = false;
 
-public:
+  public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	UFUNCTION()
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 
 	void TryEquipSlot(EEquipmentSlot Slot);
+
+	UFUNCTION()
+	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
 
 private:
 	// EquipmentManagerComponent의 델리게이트 바인딩

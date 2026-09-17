@@ -48,6 +48,12 @@ class BEYONDOVERRIDE_API AInteractableActorBase : public AActor,
 	virtual void OnFocusEnd(AActor *Interactor) override;
 	virtual void OnInteractComplete(AActor *Interactor) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	TObjectPtr<USoundBase> InteractionSound;
+
+	UFUNCTION(BlueprintCallable, Category = "Audio")
+	void PlayInteractionSound(int32 RepeatCount = 1, float DelaySeconds = 0.0f);
+
   protected:
 	virtual void PostInitializeComponents() override;
 

@@ -7,6 +7,7 @@
 #include "DataTables/Items/ItemDataRow.h"
 #include "Engine/TargetPoint.h"
 #include "Factory/ItemFactory.h"
+#include "GameFramework/PlayerStart.h"
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ActorComponent/InventoryComponent.h"
@@ -45,7 +46,6 @@ void ABOGameMode::InitSetting()
 	{
 		EGameState BOGameState = GameInstance->GetGameState();
 		EPlayingState BOPlayingState = GameInstance->GetPlayingState();
-		EFarmingResult BOFarmingResult = GameInstance->GetFarmingResult();
 
 		if (BOGameState == EGameState::Begin)
 		{
@@ -63,7 +63,7 @@ void ABOGameMode::InitSetting()
 
 			if (BOPlayingState == EPlayingState::Bunker)
 			{
-				EnterBunker(BOFarmingResult);
+				EnterBunker();
 			}
 			else if (BOPlayingState == EPlayingState::Farming)
 			{
@@ -81,14 +81,22 @@ void ABOGameMode::Start()
 	}
 }
 
-void ABOGameMode::EnterBunker(EFarmingResult Result)
+void ABOGameMode::EnterBunker()
 {
-	if (Result != EFarmingResult::Success)
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	EFarmingResult FarmingResult = GameInstance->GetFarmingResult();
+	EDeathLocation DeathLocation = GameInstance->GetDeathLocation();
+
+	if (DeathLocation != EDeathLocation::Bunker && FarmingResult != EFarmingResult::Success)
 	{
 		ProvideBasicEquipment();
 	}
 
-	if (Result != EFarmingResult::None)
+	if (FarmingResult != EFarmingResult::None)
 	{
 		if (UUIManager* UIManager = UUIManager::Get(this))
 		{
@@ -149,6 +157,23 @@ void ABOGameMode::EndFarming(EFarmingResult Result)
 	}
 }
 
+void ABOGameMode::Die()
+{
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	GameInstance->Die();
+
+	EPlayingState PlayingState = GameInstance->GetPlayingState();
+
+	if (PlayingState == EPlayingState::Farming)
+	{
+		EndFarming(EFarmingResult::Fail);
+	}
+}
+
 void ABOGameMode::ToEnding()
 {
 	if (GameInstance)
@@ -170,11 +195,6 @@ void ABOGameMode::End()
 	if (GameInstance)
 	{
 		GameInstance->End();
-	}
-
-	if (UUIManager* UIManager = UUIManager::Get(this))
-	{
-		UIManager->ShowScreen(EUIScreen::Title, EUIInputMode::UIOnly);
 	}
 }
 

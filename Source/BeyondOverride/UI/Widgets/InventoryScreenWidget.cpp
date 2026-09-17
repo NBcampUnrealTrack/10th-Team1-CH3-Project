@@ -1,8 +1,11 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
 #include "Blueprint/WidgetTree.h"
+#include "Components/Image.h"
+#include "Components/VerticalBox.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Items/Actors/ItemPickupBase.h"
-#include "Player/Character/BOCharacter.h"
+#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
@@ -10,6 +13,7 @@
 #include "UI/Widgets/EquipmentSlotWidget.h"
 #include "UI/Widgets/HeldItemWidget.h"
 #include "UI/Widgets/ItemSlotPanelWidget.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 
 void UInventoryScreenWidget::NativeConstruct()
 {
@@ -19,6 +23,14 @@ void UInventoryScreenWidget::NativeConstruct()
 
 	if (!OwnerCharacter)
 		return;
+
+	if (CharacterPreviewImage)
+	{
+		if (UCharacterPreviewComponent* Preview = OwnerCharacter->GetCharacterPreviewComponent())
+		{
+			Preview->SetPreviewActive(true);
+		}
+	}
 
 	if (BackpackSlotPanel)
 	{
@@ -45,7 +57,7 @@ void UInventoryScreenWidget::NativeConstruct()
 	if (WidgetTree)
 	{
 		WidgetTree->ForEachWidget([OwnerCharacter](UWidget* Widget)
-			{
+								  {
 				if (UEquipmentSlotWidget* EquipmentSlot = Cast<UEquipmentSlotWidget>(Widget))
 				{
 					EquipmentSlot->SetupEquipmentSlot(
@@ -58,6 +70,16 @@ void UInventoryScreenWidget::NativeConstruct()
 
 FReply UInventoryScreenWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	if (EquipmentSlotArea)
+	{
+		const FGeometry& AreaGeometry = EquipmentSlotArea->GetCachedGeometry();
+
+		if (USlateBlueprintLibrary::IsUnderLocation(AreaGeometry, InMouseEvent.GetScreenSpacePosition()))
+		{
+			return FReply::Handled();
+		}
+	}
+
 	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
 	if (OwnerCharacter)
 	{
@@ -95,6 +117,11 @@ void UInventoryScreenWidget::NativeDestruct()
 	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
 	if (OwnerCharacter)
 	{
+		if (UCharacterPreviewComponent* Preview = OwnerCharacter->GetCharacterPreviewComponent())
+		{
+			Preview->SetPreviewActive(false);
+		}
+
 		if (UNearbyItemComponent* PlayerNearbyItemComponent = OwnerCharacter->GetNearbyItemComponent())
 		{
 			PlayerNearbyItemComponent->OnNearbyItemsChanged.RemoveDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
@@ -136,3 +163,4 @@ void UInventoryScreenWidget::OnNearbyItemsChanged(const TArray<AItemPickupBase*>
 
 	ContainerSlotPanel->SetWorldItems(NearbyItems, OwnerCharacter->GetNearbyItemComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 }
+

@@ -23,12 +23,14 @@
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
+#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
+#include "Enums/UtilityType.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -54,6 +56,9 @@ ABOCharacter::ABOCharacter()
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 	NearbyItemComponent = CreateDefaultSubobject<UNearbyItemComponent>(TEXT("NearbyItemComponent"));
 	EquipmentManagerComponent = CreateDefaultSubobject<UEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
+
+	// 프리뷰 추가
+	CharacterPreviewComponent = CreateDefaultSubobject<UCharacterPreviewComponent>(TEXT("CharacterPreviewComponent"));
 }
 
 void ABOCharacter::BeginPlay()
@@ -62,6 +67,7 @@ void ABOCharacter::BeginPlay()
 
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.AddUObject(this, &ABOCharacter::HandleDamaged);
 		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
 	}
 
@@ -85,6 +91,9 @@ void ABOCharacter::BeginPlay()
 	if (IsValid(PlayerInventoryComponent))
 	{
 		PlayerInventoryComponent->OnEquipmentItemChanged.AddDynamic(this, &ABOCharacter::OnEquipmentItemChanged);
+		PlayerInventoryComponent->OnWeightChanged.AddDynamic(this, &ABOCharacter::OnWeightChanged);
+
+		OnWeightChanged(PlayerInventoryComponent->GetCurCarryWeight(), PlayerInventoryComponent->GetMaxCarryWeight());
 	}
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
@@ -101,10 +110,19 @@ void ABOCharacter::BeginPlay()
 				if (StatComponent)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Load Player Stat"));
-					StatComponent->SetCurHealth(GameInstance->GetCurHealth());
 					StatComponent->SetMaxHealth(GameInstance->GetMaxHealth());
-					StatComponent->SetCurShield(GameInstance->GetCurShield());
 					StatComponent->SetMaxShield(GameInstance->GetMaxShield());
+
+					if (GameInstance->GetPlayingState() == EPlayingState::Bunker)
+					{
+						StatComponent->SetCurHealth(StatComponent->GetMaxHealth());
+						StatComponent->SetCurShield(StatComponent->GetMaxShield());
+					}
+					else
+					{
+						StatComponent->SetCurHealth(GameInstance->GetCurHealth());
+						StatComponent->SetCurShield(GameInstance->GetCurShield());
+					}
 				}
 
 				if (PlayerInventoryComponent)
@@ -127,7 +145,14 @@ void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (IsValid(StatComponent))
 	{
+		StatComponent->OnDamaged.RemoveAll(this);
 		StatComponent->OnDeath.RemoveAll(this);
+	}
+
+	if (IsValid(PlayerInventoryComponent))
+	{
+		PlayerInventoryComponent->OnWeightChanged.RemoveDynamic(this, &ABOCharacter::OnWeightChanged);
+		PlayerInventoryComponent->OnEquipmentItemChanged.RemoveDynamic(this, &ABOCharacter::OnEquipmentItemChanged);
 	}
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
@@ -370,7 +395,7 @@ void ABOCharacter::Look(const FInputActionValue& value)
 
 void ABOCharacter::StartJump(const FInputActionValue& value)
 {
-	if (bIsRolling || !bMovementEnabled)
+	if (bIsRolling || !bMovementEnabled || bIsOverweight)
 	{
 		return;
 	}
@@ -543,7 +568,7 @@ void ABOCharacter::Roll(const FInputActionValue& Value)
 
 	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);*/
 
-	if (!CanUseGameplayInput())
+	if (!CanUseGameplayInput() || bIsOverweight)
 	{
 		return;
 	}
@@ -629,7 +654,6 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->PressInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("111111")));
 
 		// TEMP: 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
@@ -705,7 +729,6 @@ void ABOCharacter::InteractRelease(const FInputActionValue& value)
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->ReleaseInteract();
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("222222")));
 	}
 }
 
@@ -808,10 +831,18 @@ void ABOCharacter::DropEquipment(const FInputActionValue& value)
 
 void ABOCharacter::ChangeMoveSpeed()
 {
-	float NewMoveSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 
-	GetCharacterMovement()->MaxWalkSpeed = NewMoveSpeed;
-	GetCharacterMovement()->MaxWalkSpeedCrouched = NewMoveSpeed * CrouchSpeedMultiplier;
+	if (!IsValid(MovementComponent))
+	{
+		return;
+	}
+
+	const float BaseMoveSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
+	const float NewMoveSpeed = BaseMoveSpeed * SpeedMultiplier * WeightSpeedMultiplier;
+
+	MovementComponent->MaxWalkSpeed = NewMoveSpeed;
+	MovementComponent->MaxWalkSpeedCrouched = NewMoveSpeed * CrouchSpeedMultiplier;
 }
 
 void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
@@ -869,6 +900,23 @@ void ABOCharacter::UpdateMovementEnabled()
 	const bool bAnyMenuOpen = IsValid(UIManager) && UIManager->IsAnyMenuOpen();
 
 	SetMovementEnabled(!bIsDead && !bAnyMenuOpen);
+}
+
+void ABOCharacter::HandleDamaged()
+{
+	if (!DamageCameraShakeClass)
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (!IsValid(PlayerController))
+	{
+		return;
+	}
+
+	PlayerController->ClientStartCameraShake(DamageCameraShakeClass);
 }
 
 void ABOCharacter::HandleDeath(AActor* DamageCauser)
@@ -948,7 +996,7 @@ void ABOCharacter::FinishPlayerDeath()
 		GameMode->SetKillerMonster(KillerMonster->GetMonsterID());
 	}
 
-	GameMode->EndFarming(EFarmingResult::Fail);
+	GameMode->Die();
 }
 
 void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
@@ -970,6 +1018,33 @@ void ABOCharacter::TryEquipSlot(EEquipmentSlot Slot)
 	}
 
 	EquipmentManagerComponent->Equip(Slot);
+}
+
+void ABOCharacter::OnWeightChanged(float CurCarryWeight, float MaxCarryWeight)
+{
+	bIsOverweight = CurCarryWeight > MaxCarryWeight;
+
+	if (MaxCarryWeight <= 0.0f)
+	{
+		WeightSpeedMultiplier = CurCarryWeight > 0.0f ? MinWeightSpeedMultiplier : 1.0f;
+
+		ChangeMoveSpeed();
+		return;
+	}
+
+	if (!bIsOverweight)
+	{
+		WeightSpeedMultiplier = 1.0f;
+	}
+	else
+	{
+		WeightSpeedMultiplier = FMath::GetMappedRangeValueClamped(
+			FVector2D(MaxCarryWeight, MaxCarryWeight * 2.0f),
+			FVector2D(1.0f, MinWeightSpeedMultiplier),
+			CurCarryWeight);
+	}
+
+	ChangeMoveSpeed();
 }
 
 void ABOCharacter::BindingEquipmentManagerComponentDelegates()
@@ -1136,17 +1211,97 @@ void ABOCharacter::OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemI
 	// Slot의 EquippableItemInstance 아이템이 사용되어 개수가 변경될 때 호출됨
 	// 0개가 되면 장비 매니저 컴포넌트에서 자동으로 Unassign함
 	// UI 등에 개수 변경 또는 제거를 반영
+	if (!IsValid(PlayerInventoryComponent))
+	{
+		return;
+	}
+
+	if (!IsValid(EquippableItemInstance))
+	{
+		return;
+	}
+
+	UItemInstanceBase* InventoryItem = PlayerInventoryComponent->GetEquipmentItem(Slot);
+
+	if (InventoryItem != EquippableItemInstance)
+	{
+		return;
+	}
+
+	PlayerInventoryComponent->SetEquipmentItemStackCount(Slot, EquippableItemInstance->GetStackCount());
 }
 
 bool ABOCharacter::CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData) const
 {
 	// TODO: 아이템 사용 가능 여부 반환 (Ex. 회복 아이템인데 체력이 가득 차 있으면 false 반환)
-	return true;
+	if (UtilityItemData == nullptr)
+	{
+		return false;
+	}
+
+	if (!IsValid(StatComponent))
+	{
+		return false;
+	}
+
+	if (StatComponent->GetIsDead())
+	{
+		return false;
+	}
+
+	if (UtilityItemData->EffectAmount <= 0.0f)
+	{
+		return false;
+	}
+
+	switch (UtilityItemData->EffectType)
+	{
+	case EUtilityType::HealHP:
+		return StatComponent->GetCurHealth() < StatComponent->GetMaxHealth();
+		/*case EUtilityType::HealShield:
+			return StatComponent->GetCurShield() < StatComponent->GetMaxShield();*/
+	default:
+		return false;
+	}
 }
 
 void ABOCharacter::OnEffectApplied(const FUtilityItemDataRow* UtilityItemData)
 {
 	// TODO: 효과 적용 (Ex. 회복 아이템이면 효과량만큼 회복)
+	if (UtilityItemData == nullptr)
+	{
+		return;
+	}
+
+	if (!IsValid(StatComponent))
+	{
+		return;
+	}
+
+	if (StatComponent->GetIsDead())
+	{
+		return;
+	}
+
+	switch (UtilityItemData->EffectType)
+	{
+	case EUtilityType::HealHP:
+	{
+		const int32 HealAmount = FMath::RoundToInt(UtilityItemData->EffectAmount);
+
+		if (HealAmount <= 0)
+		{
+			return;
+		}
+
+		StatComponent->Heal(HealAmount);
+		break;
+	}
+
+	default:
+		break;
+	}
+
 }
 
 FName ABOCharacter::GetRollSectionName() const
@@ -1305,3 +1460,4 @@ void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
 		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: 인벤토리에 빈 슬롯이 없습니다."));
 	}
 }
+

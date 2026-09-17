@@ -24,10 +24,11 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
 	void InitSetting();
 	void Start();
-	void EnterBunker(EFarmingResult Result);
+	void EnterBunker();
 	void ProvideBasicEquipment();
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
+	void Die();
 	void ToEnding();
 	void Explosion();
 	void End();

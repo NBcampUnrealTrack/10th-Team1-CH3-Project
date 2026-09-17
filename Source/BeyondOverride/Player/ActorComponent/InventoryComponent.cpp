@@ -12,6 +12,11 @@ void UInventoryComponent::BeginPlay()
 	InitializeSlot();
 }
 
+void UInventoryComponent::NotifyInventoryChanged()
+{
+	OnInventoryChanged.Broadcast(Slots);
+}
+
 void UInventoryComponent::InitializeSlot()
 {
 	if (MaxSlotCount <= 0)
@@ -21,7 +26,7 @@ void UInventoryComponent::InitializeSlot()
 
 	Slots.Init(nullptr, MaxSlotCount);
 
-	OnInventoryChanged.Broadcast(Slots);
+	NotifyInventoryChanged();
 }
 
 bool UInventoryComponent::AddItem(UItemInstanceBase* Item, const int32 SlotIndex)
@@ -52,7 +57,7 @@ bool UInventoryComponent::AddItem(UItemInstanceBase* Item, const int32 SlotIndex
 
 		Slots[SlotIndex] = Item;
 
-		OnInventoryChanged.Broadcast(Slots);
+		NotifyInventoryChanged();
 
 		return true;
 	}
@@ -134,7 +139,7 @@ bool UInventoryComponent::AddItem(UItemInstanceBase* Item, const int32 SlotIndex
 		Slots[EmptySlotIndex] = Item;
 	}
 
-	OnInventoryChanged.Broadcast(Slots);
+	NotifyInventoryChanged();
 
 	return true;
 
@@ -170,7 +175,7 @@ bool UInventoryComponent::RemoveItem(const int32 SlotIndex, const int32 Count)
 		Item->SetStackCount(NewCount);
 	}
 
-	OnInventoryChanged.Broadcast(Slots);
+	NotifyInventoryChanged();
 
 	return true;
 }
@@ -184,7 +189,7 @@ bool UInventoryComponent::SwapSlots(const int32 FirstIndex, const int32 SecondIn
 
 	Swap(Slots[FirstIndex], Slots[SecondIndex]);
 
-	OnInventoryChanged.Broadcast(Slots);
+	NotifyInventoryChanged();
 
 	return true;
 }
@@ -223,7 +228,7 @@ bool UInventoryComponent::SetSlots(const TArray<UItemInstanceBase*>& NewSlots)
 		}
 	}
 
-	OnInventoryChanged.Broadcast(Slots);
+	NotifyInventoryChanged();
 
 	return true;
 }
@@ -237,7 +242,7 @@ bool UInventoryComponent::SetItem(const int32 SlotIndex, UItemInstanceBase* Item
 
 	Slots[SlotIndex] = Item;
 
-	OnInventoryChanged.Broadcast(Slots);
+	NotifyInventoryChanged();
 
 	return true;
 }
@@ -265,7 +270,7 @@ bool UInventoryComponent::SetItemStackCount(int32 SlotIndex, int32 StackCount)
 		Item->SetStackCount(StackCount);
 	}
 
-	OnInventoryChanged.Broadcast(Slots);
+	NotifyInventoryChanged();
 
 	return true;
 }

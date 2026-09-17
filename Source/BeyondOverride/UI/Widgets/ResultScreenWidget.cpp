@@ -76,7 +76,7 @@ void UResultScreenWidget::NativeConstruct()
 		TMap<FName, int32> KilledMonsters;
 		GI->GetKilledMonsters(KilledMonsters);
 
-		KilledMonsterText->SetText(FText::AsNumber(KilledMonsters.Num()));
+		KilledMonsterText->SetText(FText::FromName(GI->GetKillerMonster()));
 
 		for (const TPair<FName, int32>& Pair : KilledMonsters)
 		{
