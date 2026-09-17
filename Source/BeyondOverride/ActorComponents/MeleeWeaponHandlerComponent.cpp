@@ -25,6 +25,16 @@ bool UMeleeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 	// Melee Weapon 인스턴스 저장
 	MeleeWeaponInstance = Cast<UMeleeWeaponInstance>(EquippableItemInstance);
 
+	// Melee Weapon 데이터 저장
+	MeleeWeaponData = MeleeWeaponInstance->GetMeleeWeaponData();
+
+	// 유효하지 않은 데이터
+	if (!MeleeWeaponData)
+	{
+		MeleeWeaponInstance = nullptr;
+		return false;
+	}
+
 	// Assign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(3000, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Assigned - %s"), *GetNameSafe(EquippableItemInstance)));
 
@@ -42,6 +52,9 @@ UEquippableItemInstance* UMeleeWeaponHandlerComponent::Unassign()
 
 	// Melee Weapon 인스턴스 제거
 	MeleeWeaponInstance = nullptr;
+
+	// Melee Weapon 데이터 제거
+	MeleeWeaponData = nullptr;
 
 	// Unassign 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(3000, 5.0f, FColor::Orange, FString::Printf(TEXT("Melee Weapon Unassigned - %s"), *GetNameSafe(EquippableItemInstance)));
@@ -82,9 +95,6 @@ bool UMeleeWeaponHandlerComponent::Use()
 	{
 		return false;
 	}
-
-	// 근접무기 데이터
-	const FMeleeWeaponDataRow* MeleeWeaponData = MeleeWeaponInstance->GetMeleeWeaponData();
 
 	// 결과 값 저장 배열
 	TArray<FOverlapResult> OverlapResults;
@@ -243,14 +253,6 @@ void UMeleeWeaponHandlerComponent::OnAttackCompleted()
 
 void UMeleeWeaponHandlerComponent::StartAttackTimer()
 {
-	// 데이터 유효성 검증
-	const FMeleeWeaponDataRow* MeleeWeaponData = MeleeWeaponInstance->GetMeleeWeaponData();
-	if (!MeleeWeaponData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 타이머 활성화 실패 - 유효하지 않은 MeleeWeaponData"));
-		return;
-	}
-
 	// 공격 타이머 활성화
 	GetWorld()->GetTimerManager().SetTimer(
 		AttackTimerHandle,
@@ -266,14 +268,6 @@ void UMeleeWeaponHandlerComponent::PlayAttackAnimation()
 	if (!EquipMeshComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 애니메이션 재생 실패 - 유효하지 않은 EquipMeshComponent"));
-		return;
-	}
-
-	// 데이터 유효성 검증
-	const FEquippableItemDataRow* EquippableItemData = EquippableItemInstance->GetEquippableItemData();
-	if (!EquippableItemData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UMeleeWeaponHandlerComponent] 공격 애니메이션 재생 실패 - 유효하지 않은 EquippableItemData"));
 		return;
 	}
 

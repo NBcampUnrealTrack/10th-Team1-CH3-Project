@@ -29,35 +29,28 @@ void UStatComponent::TakeDamage(int32 DamageAmount, AActor* DamageCauser)
 		return;
 	}
 
-	// 쉴드 재생 대기 시간 초기화
-	ResetShieldRegenTimer();
-
-	if (CurShield > 0) // 쉴드가 있다면 쉴드 깎기
+	if (CurShield > 0)
 	{
 		CurShield = FMath::Clamp(CurShield - DamageAmount, 0, MaxShield);
 
 		OnShieldChanged.Broadcast(CurShield, MaxShield);
-		OnDamaged.Broadcast();
 	}
-	else // 쉴드가 없다면 체력 깎기
+	else
 	{
 		CurHealth = FMath::Clamp(CurHealth - DamageAmount, 0, MaxHealth);
 
 		OnHealthChanged.Broadcast(CurHealth, MaxHealth);
-		OnDamaged.Broadcast();
-
-		if (CurHealth <= 0)
-		{
-			Die(DamageCauser);
-			return;
-		}
 	}
 
-	// 쉴드 재생 대기
-	if (CurShield < MaxShield)
+	OnDamaged.Broadcast();
+
+	if (CurHealth <= 0)
 	{
-		GetWorld()->GetTimerManager().SetTimer(ShieldDelayTimerHandle, this, &UStatComponent::StartShieldRegen, ShieldDelayTime, false);
+		Die(DamageCauser);
+		return;
 	}
+
+	RestartShieldRegenTimer();
 }
 
 void UStatComponent::Heal(int32 HealAmount)
@@ -74,30 +67,37 @@ void UStatComponent::Heal(int32 HealAmount)
 
 void UStatComponent::SetCurHealth(int32 NewCurHealth)
 {
-	CurHealth = NewCurHealth;
+	CurHealth = FMath::Clamp(NewCurHealth, 0, MaxHealth);
 
 	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
 }
 
 void UStatComponent::SetMaxHealth(int32 NewMaxHealth)
 {
-	MaxHealth = NewMaxHealth;
+	MaxHealth = FMath::Max(NewMaxHealth, 0);
+	CurHealth = FMath::Clamp(CurHealth, 0, MaxHealth);
 
 	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
 }
 
 void UStatComponent::SetCurShield(int32 NewCurShield)
 {
-	CurShield = NewCurShield;
+	CurShield = FMath::Clamp(NewCurShield, 0, MaxShield);
 
 	OnShieldChanged.Broadcast(CurShield, MaxShield);
+
+	RestartShieldRegenTimer();
 }
 
 void UStatComponent::SetMaxShield(int32 NewMaxShield)
 {
-	MaxShield = NewMaxShield;
+	MaxShield = FMath::Max(NewMaxShield, 0);
+
+	CurShield = FMath::Clamp(CurShield, 0, MaxShield);
 
 	OnShieldChanged.Broadcast(CurShield, MaxShield);
+
+	RestartShieldRegenTimer();
 }
 
 void UStatComponent::ResetShieldRegenTimer()
@@ -158,4 +158,21 @@ void UStatComponent::Die(AActor* DamageCauser)
 	ResetShieldRegenTimer();
 
 	OnDeath.Broadcast(DamageCauser);
+}
+
+void UStatComponent::RestartShieldRegenTimer()
+{
+	if (bIsDead || !GetWorld())
+	{
+		return;
+	}
+
+	ResetShieldRegenTimer();
+
+	if (CurShield >= MaxShield || MaxShield <= 0)
+	{
+		return;
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(ShieldDelayTimerHandle, this, &UStatComponent::StartShieldRegen, ShieldDelayTime, false);
 }

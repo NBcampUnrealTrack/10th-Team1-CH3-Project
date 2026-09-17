@@ -21,6 +21,8 @@ class UEquippableItemInstance;
 
 class UAnimMontage;
 
+struct FUtilityItemDataRow;
+
 enum class EEquipmentSlot : uint8;
 
 UCLASS()
@@ -201,6 +203,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	bool bIsSprint = false;
 	bool bIsAiming = false;
 	bool bMovementEnabled = true;
+	bool bGameplayInputEnabled = true;
 
 	UFUNCTION(Exec)
 	void AddTestItem(FName ItemID, int32 Count = 1);
@@ -229,14 +232,23 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 
 	// EquipmentManagerComponent::OnActiveSlotChangedDelegate 바인딩 - 활성화 슬롯 변경 시 호출
 	void OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
-	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출
+
+	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출, 사격 애니메이션 재생
 	void OnFireExecuted() const;
 	// EquipmentManagerComponent::CanReloadDelegate 바인딩 - 재장전 시도 시 호출, 가능 여부 반환
 	bool CanReload(const FName& AmmoItemID) const;
 	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 - 재장전 완료 시 호출, 보충할 개수 반환
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
 
-  private:
+	// EquipmentManagerComponent::OnEquipmentCountUpdatedDelegate 바인딩 - Throwable & Utility 아이템 사용 후 호출, 해당 슬롯 아이템의 스택 개수 변경됨을 알림
+	void OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
+
+	// EquipmentManagerComponent::CanUseUtilityItemDelegate 바인딩 - 유틸리티 아이템 사용 전 호출, 해당 아이템 사용 가능한지 여부 반환
+	bool CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData) const;
+	// EquipmentManagerComponent::OnEffectAppliedDelegate 바인딩 - 유틸리티 아이템 사용 후 호출, 해당 아이템 효과 적용
+	void OnEffectApplied(const FUtilityItemDataRow* UtilityItemData);
+
+private:
 	FTimerHandle DeathTimerHandle;
 
 	FVector2D MoveInput = FVector2D::ZeroVector;
@@ -247,4 +259,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	FVector GetRollDirection() const;
 	void OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	void OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	bool CanUseGameplayInput() const;
+	void StopGameplayActions();
 };

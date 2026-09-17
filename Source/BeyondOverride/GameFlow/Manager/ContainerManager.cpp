@@ -156,6 +156,8 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
 
+	UE_LOG(LogTemp, Warning, TEXT("Spawn Count : %d"), Count);
+
 	for (int i = 0; i < Count; i++)
 	{
 		FName ItemId = GetRandomSpawnItem(SpawnEntries);
@@ -207,7 +209,7 @@ FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntr
 
 			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemId))
 			{
-				if (ItemId == TEXT("KEY CARD"))
+				if (ItemId == FName(TEXT("KEY_CARD")))
 				{
 					if (!bShouldSpawnKeyCard)
 					{

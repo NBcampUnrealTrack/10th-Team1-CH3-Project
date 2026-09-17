@@ -18,10 +18,13 @@ class AItemPickupBase : public AInteractableActorBase
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
-	FName ItemID; // 아이템 ID
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Data")
+	UPROPERTY()
 	TObjectPtr<UItemInstanceBase> ItemInstance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+	FName ItemID; // 아이템 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (ClampMin = "1", UIMin = "1"))
+	int32 StackCount; // 스택 개수
 
   public:
 	AItemPickupBase();

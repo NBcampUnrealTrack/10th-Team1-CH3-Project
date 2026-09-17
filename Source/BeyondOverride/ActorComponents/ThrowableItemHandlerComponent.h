@@ -10,6 +10,8 @@ class UThrowableItemInstance;
 class UEquippableItemInstance;
 class AThrowableProjectile;
 
+struct FThrowableItemDataRow;
+
 // 사용하여 아이템 개수 변경 알림 델리게이트
 DECLARE_MULTICAST_DELEGATE_OneParam(
 	FOnCountUpdatedDelegate,
@@ -25,8 +27,12 @@ class BEYONDOVERRIDE_API UThrowableItemHandlerComponent : public UEquipmentHandl
 	FOnCountUpdatedDelegate OnCountUpdatedDelegate;
 
   protected:
+	// 등록된 Throwable Item 인스턴스
 	UPROPERTY()
 	TObjectPtr<UThrowableItemInstance> ThrowableItemInstance;
+
+	// Throwable Item 데이터
+	const FThrowableItemDataRow* ThrowableItemData;
 
   public:
 	UThrowableItemHandlerComponent();

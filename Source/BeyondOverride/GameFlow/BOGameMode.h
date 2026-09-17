@@ -22,6 +22,7 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
 	virtual void BeginPlay() override;
 
+	void InitSetting();
 	void Start();
 	void EnterBunker(EFarmingResult Result);
 	void ProvideBasicEquipment();
@@ -34,6 +35,8 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
 	void AddKilledMonster(FName MonsterId);
 	void SetKillerMonster(FName MonsterId);
+
+	bool IsKeyCardAcquired();
 
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;

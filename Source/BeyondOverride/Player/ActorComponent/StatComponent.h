@@ -68,4 +68,6 @@ private:
 private:
 	FTimerHandle ShieldDelayTimerHandle; // 피격 이후 첫 쉴드가 차기까지의 대기시간 관리 타이머
 	FTimerHandle ShieldRegenTimerHandle; // 쉴드가 차는 주기 관리 타이머
+
+	void RestartShieldRegenTimer();
 };
