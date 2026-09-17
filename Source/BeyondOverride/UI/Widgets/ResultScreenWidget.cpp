@@ -47,9 +47,7 @@ void UResultScreenWidget::NativeConstruct()
 		if (KillerText)
 		{
 			const FName Killer = GI->GetKillerMonster();
-			KillerText->SetText(FText::Format(
-				FTextFormat::FromString("{0}에게 사망"),
-				FText::FromName(Killer)));
+			KillerText->SetText(FText::FromString(Killer.ToString() + TEXT("에게")));
 		}
 	}
 
@@ -59,7 +57,16 @@ void UResultScreenWidget::NativeConstruct()
 	int32 Minutes = FMath::FloorToInt(FMath::Fmod(SurvivalTime, 3600.0f) / 60.0f);
 	int32 Seconds = FMath::FloorToInt(FMath::Fmod(SurvivalTime, 60.0f));
 
-	FString TimeString = FString::Printf(TEXT("%d:%02d:%02d"), Hours, Minutes, Seconds);
+	FString TimeString;
+
+	if (Hours)
+	{
+		TimeString = FString::Printf(TEXT("%d:%02d:%02d"), Hours, Minutes, Seconds);
+	}
+	else
+	{
+		TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+	}
 
 	SurvivalTimeText->SetText(FText::FromString(TimeString));
 
@@ -76,7 +83,7 @@ void UResultScreenWidget::NativeConstruct()
 		TMap<FName, int32> KilledMonsters;
 		GI->GetKilledMonsters(KilledMonsters);
 
-		KilledMonsterText->SetText(FText::FromName(GI->GetKillerMonster()));
+		KilledMonsterText->SetText(FText::AsNumber(KilledMonsters.Num()));
 
 		for (const TPair<FName, int32>& Pair : KilledMonsters)
 		{
