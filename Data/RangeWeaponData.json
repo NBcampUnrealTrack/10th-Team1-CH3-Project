@@ -30,9 +30,9 @@
         "AmmoItemID": "RIFLE_AMMO",
         "MagazineSize": 30,
         "ReloadTime": 2.2,
-        "RecoilPitchCurve": "",
-        "RecoilYawCurve": "",
-        "SpreadCurve": "",
+        "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilPitch_AssaultRifleB.CF_RecoilPitch_AssaultRifleB'",
+        "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilYaw_AssaultRifleB.CF_RecoilYaw_AssaultRifleB'",
+        "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_Spread_AssaultRifleB.CF_Spread_AssaultRifleB'",
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB_V.T_RifleB_V'"
     },
     {
