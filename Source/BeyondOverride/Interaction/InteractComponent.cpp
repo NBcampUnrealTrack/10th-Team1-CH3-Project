@@ -177,6 +177,20 @@ AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
 	if (Reach > TraceDistance)
 		return nullptr;
 
+	FVector ToHit = (Hit.ImpactPoint - Owner->GetActorLocation());
+	ToHit.Z = 0.f; // 높이차는 무시하고 수평 방향만 비교
+	if (!ToHit.IsNearlyZero())
+	{
+		ToHit.Normalize();
+		FVector Forward2D = Owner->GetActorForwardVector();
+		Forward2D.Z = 0.f;
+		Forward2D.Normalize();
+
+		const float FacingDot = FVector::DotProduct(Forward2D, ToHit);
+		if (FacingDot < MinFacingDot)
+			return nullptr;
+	}
+
 	// 약속을 지킨 물건인지. 안 지켰으면 nullptr 이 나온다.
 	if (!Cast<IInteractableInterface>(Hit.GetActor()))
 	{
