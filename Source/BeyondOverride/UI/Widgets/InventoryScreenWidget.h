@@ -47,4 +47,6 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 	UFUNCTION()
 	void OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems);
 
+  private:
+	bool bIsContainerOpen = false;
 };
