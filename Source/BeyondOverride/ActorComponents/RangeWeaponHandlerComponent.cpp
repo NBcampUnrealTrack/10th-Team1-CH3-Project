@@ -20,8 +20,10 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	// 총구 소켓 이름
 	MuzzleSocketName = FName("Muzzle");
 
-	// 활성화 여부
+	// 사격 활성화 여부
 	bIsActive = false;
+	// 조준 여부
+	bIsAiming = false;
 }
 
 void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

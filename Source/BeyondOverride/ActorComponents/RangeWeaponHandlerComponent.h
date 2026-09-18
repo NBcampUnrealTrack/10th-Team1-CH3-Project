@@ -92,8 +92,10 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual bool CanUse() const override;
 
   protected:
-	// 활성화 여부
+	// 사격 활성화 여부
 	bool bIsActive;
+	// 조준 여부
+	bool bIsAiming;
 
 	// 사격 타이머
 	FTimerHandle FireTimerHandle;
