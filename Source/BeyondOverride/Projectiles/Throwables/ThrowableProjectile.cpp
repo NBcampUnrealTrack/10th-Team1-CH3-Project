@@ -21,6 +21,12 @@ AThrowableProjectile::AThrowableProjectile()
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	Collision->SetupAttachment(StaticMesh);
 
+	Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Collision->SetCollisionObjectType(ECC_WorldDynamic);
+	Collision->SetCollisionResponseToAllChannels(ECR_Ignore);
+	Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	Collision->SetGenerateOverlapEvents(true);
+
 	// ProjectileMovement 설정
 	ProjectileMovement->UpdatedComponent = StaticMesh;
 	ProjectileMovement->bShouldBounce = true;
