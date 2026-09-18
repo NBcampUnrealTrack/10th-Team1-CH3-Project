@@ -20,6 +20,10 @@ class BEYONDOVERRIDE_API UDamageDisplayWidgetComponent : public UWidgetComponent
   public:
 	UDamageDisplayWidgetComponent();
 
+  protected:
+	virtual void BeginPlay() override;
+
+  public:
 	UFUNCTION(BlueprintCallable)
 	void TakeDamage(int32 Damage);
 

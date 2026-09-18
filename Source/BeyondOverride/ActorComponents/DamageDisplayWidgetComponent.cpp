@@ -4,11 +4,18 @@
 
 UDamageDisplayWidgetComponent::UDamageDisplayWidgetComponent()
 {
-	SetWidget(DamageDisplayWidget);
 	SetWidgetSpace(EWidgetSpace::Screen);
 
 	TotalDamage = 0;
 	DamageAccumulationDuration = 1;
+}
+
+void UDamageDisplayWidgetComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetWidget(DamageDisplayWidget);
+	DamageDisplayWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UDamageDisplayWidgetComponent::TakeDamage(int32 Damage)
