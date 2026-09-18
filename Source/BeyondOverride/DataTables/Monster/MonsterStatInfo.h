@@ -19,6 +19,24 @@ struct FMonsterStatInfo : public FTableRowBase
   public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName MonsterID;
+
+	// Health Info
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxHealth = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CurHealth = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxShield = 50;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CurShield = 50;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ShieldDelayTime = 10.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ShieldRegenTime = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ShieldRegenAmount = 2;
+
+	// Attack Info
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 AttackDamage = 15;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -149,11 +149,7 @@ void UMonsterStatComponent::OnBalisticHit(AActor* Target)
 	{
 		return;
 	}
-	ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
-	if (!PlayerCharacter)
-	{
-		return;
-	}
+
 	UGameplayStatics::ApplyDamage(Target,
 								  AttackDamage,
 								  Owner->GetController(),
@@ -173,36 +169,36 @@ void UMonsterStatComponent::StatSetup()
 		return;
 	}
 
-	FMonsterStatInfo* MonsterStatInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("MonsterID Serching"));
-	if (!MonsterStatInfo)
+	FMonsterStatInfo* MonsterStastInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("MonsterID Serching"));
+	if (!MonsterStastInfo)
 	{
 		SetMonsterID("Gunner");
-		MonsterStatInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("GunnerID Serching"));
+		MonsterStastInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("GunnerID Serching"));
 	}
 
 	// Health Info
-	MaxHealth = MonsterStatInfo->MaxHealth;
-	CurHealth = MonsterStatInfo->CurHealth;
-	MaxShield = MonsterStatInfo->MaxShield;
-	CurShield = MonsterStatInfo->CurShield;
-	ShieldDelayTime = MonsterStatInfo->ShieldDelayTime;
-	ShieldRegenTime = MonsterStatInfo->ShieldRegenTime;
-	ShieldRegenAmount = MonsterStatInfo->ShieldRegenAmount;
+	MaxHealth = MonsterStastInfo->MaxHealth;
+	CurHealth = MonsterStastInfo->CurHealth;
+	MaxShield = MonsterStastInfo->MaxShield;
+	CurShield = MonsterStastInfo->CurShield;
+	ShieldDelayTime = MonsterStastInfo->ShieldDelayTime;
+	ShieldRegenTime = MonsterStastInfo->ShieldRegenTime;
+	ShieldRegenAmount = MonsterStastInfo->ShieldRegenAmount;
 
 	// Attack Info
-	AttackDamage = MonsterStatInfo->AttackDamage;
-	RapidCount = MonsterStatInfo->RapidCount;
-	RapidDelay = MonsterStatInfo->RapidDelay;
-	AttackDelay = MonsterStatInfo->AttackDelay;
-	AttackRange = MonsterStatInfo->AttackRange;
-	BulletSpeed = MonsterStatInfo->BulletSpeed;
+	AttackDamage = MonsterStastInfo->AttackDamage;
+	RapidCount = MonsterStastInfo->RapidCount;
+	RapidDelay = MonsterStastInfo->RapidDelay;
+	AttackDelay = MonsterStastInfo->AttackDelay;
+	AttackRange = MonsterStastInfo->AttackRange;
+	BulletSpeed = MonsterStastInfo->BulletSpeed;
 
 	// Another Info
-	Protect = MonsterStatInfo->Protect;
-	Intelligence = MonsterStatInfo->Intelligence;
-	WalkSpeed = MonsterStatInfo->WalkSpeed;
-	SprintSpeed = MonsterStatInfo->SprintSpeed;
+	Protect = MonsterStastInfo->Protect;
+	Intelligence = MonsterStastInfo->Intelligence;
+	WalkSpeed = MonsterStastInfo->WalkSpeed;
+	SprintSpeed = MonsterStastInfo->SprintSpeed;
 
 	// Monster key Info
-	MonsterType = MonsterStatInfo->MonsterType;
+	MonsterType = MonsterStastInfo->MonsterType;
 }

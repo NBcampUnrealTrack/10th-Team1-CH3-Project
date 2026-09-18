@@ -53,7 +53,7 @@ EBTNodeResult::Type UBTTaskOverlapCheck::ExecuteTask(UBehaviorTreeComponent& Own
 	{
 		AIController->SetTarget(NearestTarget);
 		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
-		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
+		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
 		AIController->SetTargetPoint(FVector::ZeroVector);
 
@@ -87,7 +87,7 @@ void UBTTaskOverlapCheck::OverlapAndTraceCheck(UBehaviorTreeComponent& OwnerComp
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
 
 	FCollisionShape CollisionShape =
-		FCollisionShape::MakeSphere(800.0f);
+		FCollisionShape::MakeSphere(3000.0f);
 
 	bool bHit = GetWorld()->OverlapMultiByObjectType(OverlapResults,
 													 AIController->GetPawn()->GetActorLocation(),

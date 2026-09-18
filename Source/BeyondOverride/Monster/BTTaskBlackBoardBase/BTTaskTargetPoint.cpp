@@ -51,7 +51,6 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	float AttackRange = AIMonster->GetAttackRange() * AIMonster->GetAttackRange();
 	float TargetDistance = FVector::DistSquared(Target->GetActorLocation(), AIMonster->GetActorLocation());
-
 	float BaseAngle = (AIMonster->GetActorLocation() - TargetLocation).Rotation().Yaw;
 
 	if (NavSystem && (!NavSystem->ProjectPointToNavigation(TargetLocation, NavLocation) || TargetDistance < AttackRange))

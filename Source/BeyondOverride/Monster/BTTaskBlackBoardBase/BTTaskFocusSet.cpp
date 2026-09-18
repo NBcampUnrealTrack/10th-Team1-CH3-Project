@@ -63,10 +63,12 @@ EBTNodeResult::Type UBTTaskFocusSet::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 		{
 			TargetRotation = Velocity.GetSafeNormal().Rotation();
 
-			NewRotation = FMath::RInterpTo(AIMonster->GetActorRotation(),
-										   TargetRotation,
-										   GetWorld()->GetDeltaSeconds(),
-										   RotationSpeed);
+			if (AIMonster)
+
+				NewRotation = FMath::RInterpTo(AIMonster->GetActorRotation(),
+											   TargetRotation,
+											   GetWorld()->GetDeltaSeconds(),
+											   RotationSpeed);
 		}
 	}
 	AIMonster->SetActorRotation(NewRotation);

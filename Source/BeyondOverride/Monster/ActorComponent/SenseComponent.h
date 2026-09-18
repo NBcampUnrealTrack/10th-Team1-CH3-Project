@@ -21,6 +21,8 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
   public:
 	USenseComponent();
 
+	void SenseSetup();
+
 	void SetTarget(ABOCharacter* Target);
 	ABOCharacter* GetTarget() const;
 
@@ -30,11 +32,20 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
 	void SetSpawnPoint(FVector Point);
 	FVector GetSpawnPoint() const;
 
+	float GetMemorize() const;
+	float GetHearSenseSize() const;
+	float GetLoseSightSize() const;
+	float GetSightSenseSize() const;
+	float GetVisionAngleDegrees() const;
+
   protected:
 	virtual void BeginPlay() override;
 
 	// Properties
   public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
+	TObjectPtr<UMonsterDataAsset> MonsterData;
+
   protected:
 	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
 	TObjectPtr<ABOCharacter> MonsterTarget;
