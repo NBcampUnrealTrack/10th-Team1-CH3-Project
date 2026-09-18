@@ -31,6 +31,8 @@ AItemPickupBase::AItemPickupBase()
 	ItemInstance = nullptr;
 
 	StackCount = 1;
+
+	PromptData.ActionText = FText::FromString(TEXT("획득"));
 }
 
 void AItemPickupBase::Initialize(UItemInstanceBase* InItemInstance)
@@ -79,4 +81,17 @@ void AItemPickupBase::BeginPlay()
 		}
 		Initialize(NewItemInstance);
 	}
+}
+
+FText AItemPickupBase::GetDisplayTitle(AActor* Interactor) const
+{
+	if (ItemInstance)
+	{
+		if (const FItemDataRow* ItemData = ItemInstance->GetItemData())
+		{
+			return ItemData->DisplayName;
+		}
+	}
+
+	return Super::GetDisplayTitle(Interactor);
 }
