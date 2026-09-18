@@ -176,6 +176,16 @@ bool URangeWeaponHandlerComponent::Reload()
 	return true;
 }
 
+void URangeWeaponHandlerComponent::StartAiming()
+{
+	bIsAiming = true;
+}
+
+void URangeWeaponHandlerComponent::StopAiming()
+{
+	bIsAiming = true;
+}
+
 bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
 {
 	if (!Super::CanAssign(InEquippableItemInstance))
@@ -493,7 +503,11 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 	}
 
 	// 탄 퍼짐 각도
-	const float SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	float SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	if (bIsAiming) // 조준 상태면 정확도 증가
+	{
+		SpreadDegree *= RangeWeaponData->AimSpreadMultiplier;
+	}
 	const float SpreadRadians = FMath::DegreesToRadians(SpreadDegree);
 
 	// 원뿔 내 균일 분포
