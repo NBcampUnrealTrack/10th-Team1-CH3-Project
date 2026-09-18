@@ -83,7 +83,11 @@ void UResultScreenWidget::NativeConstruct()
 		TMap<FName, int32> KilledMonsters;
 		GI->GetKilledMonsters(KilledMonsters);
 
-		KilledMonsterText->SetText(FText::AsNumber(KilledMonsters.Num()));
+		int32 TotalKilled = 0;
+		for (auto& Elem : KilledMonsters)
+			TotalKilled += Elem.Value;
+
+		KilledMonsterText->SetText(FText::AsNumber(TotalKilled));
 
 		for (const TPair<FName, int32>& Pair : KilledMonsters)
 		{
