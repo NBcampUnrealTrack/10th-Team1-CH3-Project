@@ -39,16 +39,26 @@ void UBalisticTrace::BalisticStart(const AActor* Caller, const FVector& Location
 void UBalisticTrace::BalisticContinue()
 {
 
+	bool EndTrace = true;
+
 	if (bHit || EndCount * FlyTime >= AttackDelay)
 	{
 
 		if (bHit)
 		{
 			AActor* HitActor = HitResult.GetActor();
-
 			if (IsValid(HitActor))
 			{
-				OnBalisticHit.Broadcast(HitActor);
+				if (!HitActor->IsA(IgnoredTarget))
+				{
+					OnBalisticHit.Broadcast(HitActor);
+				}
+				else
+				{
+					QueryParams.AddIgnoredActor(HitActor);
+					EndLocation = HitResult.Location;
+					EndTrace = false;
+				}
 			}
 		}
 
