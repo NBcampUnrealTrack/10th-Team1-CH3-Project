@@ -31,6 +31,8 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
   public:
 	UMonsterStatComponent();
 
+	EMonsterType GetMonsterType() const;
+
 	float GetWalkSpeed() const;
 
 	float GetSprintSpeed() const;
@@ -56,10 +58,11 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	virtual void BeginPlay() override;
 	void OnBalisticHit(AActor* Target);
 
+	// Properties
+  public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
 	TObjectPtr<UMonsterDataAsset> MonsterData;
 
-	// Properties
   protected:
 	// Attack Info
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

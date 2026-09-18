@@ -56,7 +56,8 @@ void UMonsterCalling::CallMonsters(const FVector& CallCenter, float Radius, ABOC
 
 		if (Controller->GetState() == EMonsterState::Chase ||
 			Controller->GetState() == EMonsterState::Attack ||
-			Controller->GetState() == EMonsterState::StandOff)
+			Controller->GetState() == EMonsterState::StandOffMove ||
+			Controller->GetState() == EMonsterState::StandOffWait)
 		{
 			continue;
 		}

@@ -100,9 +100,6 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 재장전 타이머
 	FTimerHandle ReloadTimerHandle;
 
-	// 반동 적용 속도
-	float RecoilApplySpeed;
-
 	// 반동 누적 값
 	FVector2D RecoilAccumulator;
 

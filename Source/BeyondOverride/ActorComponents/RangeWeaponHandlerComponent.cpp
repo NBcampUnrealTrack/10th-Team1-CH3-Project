@@ -20,9 +20,6 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	// 총구 소켓 이름
 	MuzzleSocketName = FName("Muzzle");
 
-	// 반동 적용 속도
-	RecoilApplySpeed = 10;
-
 	// 활성화 여부
 	bIsActive = false;
 }
@@ -36,8 +33,10 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 	RecoilYawTimeline.TickTimeline(DeltaTime);
 	SpreadDegreeTimeline.TickTimeline(DeltaTime);
 
-	// 적용할 반동 값 계산
-	FVector2D RecoilDelta = FMath::Vector2DInterpConstantTo(FVector2D::ZeroVector, RecoilAccumulator, DeltaTime, RecoilApplySpeed);
+	// 적용할 반동 값 계산 (누적값이 클수록 큰 변화량)
+	FVector2D RecoilDelta(
+		FMath::FInterpConstantTo(0, RecoilAccumulator.X, DeltaTime, FMath::Max(20 * FMath::Abs(RecoilAccumulator.X), 5)),
+		FMath::FInterpConstantTo(0, RecoilAccumulator.Y, DeltaTime, FMath::Max(20 * FMath::Abs(RecoilAccumulator.Y), 5)));
 
 	// 반동 적용
 	APawn* Pawn = Cast<APawn>(GetOwner());
@@ -513,6 +512,12 @@ void URangeWeaponHandlerComponent::SpawnBullets()
 	const FVector MuzzleLocation = GetMuzzleLocation(); // 총구 위치
 	const FRotator AimRotation = GetAimRotation();      // 목표 방향
 
+	// 소환 인자 설정
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = GetOwner();
+	SpawnParams.Instigator = Cast<APawn>(GetOwner());
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 	// 사격 당 소환할 개수만큼 반복
 	for (int32 i = 0; i < RangeWeaponData->ProjectilesPerShot; ++i)
 	{
@@ -522,7 +527,8 @@ void URangeWeaponHandlerComponent::SpawnBullets()
 		ABulletProjectile* BulletActor = GetWorld()->SpawnActor<ABulletProjectile>(
 			RangeWeaponData->BulletClass,
 			MuzzleLocation,
-			SpreadRotation);
+			SpreadRotation,
+			SpawnParams); // 소환 인자 지정
 		if (!BulletActor)
 		{
 			continue;

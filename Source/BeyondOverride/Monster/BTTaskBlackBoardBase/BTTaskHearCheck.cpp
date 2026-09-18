@@ -36,8 +36,9 @@ EBTNodeResult::Type UBTTaskHearCheck::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	{
 		if ((AIController->GetState() == EMonsterState::Chase ||
 			 AIController->GetState() == EMonsterState::Attack ||
-			 AIController->GetState() == EMonsterState::StandOff ||
-			 AIController->GetState() == EMonsterState::Atmosphere) &&
+			 AIController->GetState() == EMonsterState::Atmosphere ||
+			 AIController->GetState() == EMonsterState::StandOffMove ||
+			 AIController->GetState() == EMonsterState::StandOffWait) &&
 			AIController->IsContinueState())
 		{
 			return EBTNodeResult::Failed;

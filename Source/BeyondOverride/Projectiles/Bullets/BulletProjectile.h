@@ -20,14 +20,9 @@ class ABulletProjectile : public AProjectileBase
   public:
 	ABulletProjectile();
 
-	virtual void Initialize(
-		APawn* InInstigator,
-		const int32 InDamage,
-		const FVector& Velocity,
-		const float GravityScale = 1.f,
-		const float LifeSpan = 0.f) override;
-
   protected:
+	virtual void BeginPlay() override;
+
 	UFUNCTION()
 	virtual void OnHit(
 		UPrimitiveComponent* HitComponent,
