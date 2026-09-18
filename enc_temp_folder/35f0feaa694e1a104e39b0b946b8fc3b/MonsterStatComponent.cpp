@@ -149,11 +149,7 @@ void UMonsterStatComponent::OnBalisticHit(AActor* Target)
 	{
 		return;
 	}
-	ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
-	if (!PlayerCharacter)
-	{
-		return;
-	}
+
 	UGameplayStatics::ApplyDamage(Target,
 								  AttackDamage,
 								  Owner->GetController(),

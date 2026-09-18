@@ -31,6 +31,8 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
   public:
 	UMonsterStatComponent();
 
+	EMonsterType GetMonsterType() const;
+
 	float GetWalkSpeed() const;
 
 	float GetSprintSpeed() const;
