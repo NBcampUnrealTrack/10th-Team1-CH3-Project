@@ -344,14 +344,12 @@ void ABOCharacter::SetMovementEnabled(bool bEnabled)
 
 	if (!bEnabled)
 	{
-		bIsSprint = false;
-
 		if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
 		{
 			MovementComponent->StopMovementImmediately();
 		}
 
-		ChangeMoveSpeed();
+		StopSprinting();
 	}
 }
 
@@ -415,11 +413,21 @@ void ABOCharacter::StartSprint(const FInputActionValue& value)
 		return;
 	}
 
+	StartSprinting();
+}
+
+void ABOCharacter::StopSprint(const FInputActionValue& value)
+{
+	StopSprinting();
+}
+
+void ABOCharacter::StartSprinting()
+{
 	bIsSprint = true;
 	ChangeMoveSpeed();
 }
 
-void ABOCharacter::StopSprint(const FInputActionValue& value)
+void ABOCharacter::StopSprinting()
 {
 	bIsSprint = false;
 	ChangeMoveSpeed();
@@ -955,10 +963,8 @@ void ABOCharacter::HandleDeath(AActor* DamageCauser)
 	}
 
 	// 달리기와 조준 해제
-	bIsSprint = false;
+	StopSprinting();
 	StopAiming();
-
-	ChangeMoveSpeed();
 
 	if (IsValid(EquipmentManagerComponent))
 	{
@@ -1449,9 +1455,8 @@ bool ABOCharacter::CanUseGameplayInput() const
 void ABOCharacter::StopGameplayActions()
 {
 	// 달리기 & 조준 비활성화
+	StopSprinting();
 	StopAiming();
-	bIsSprint = false;
-	ChangeMoveSpeed();
 
 	if (IsValid(EquipmentManagerComponent))
 	{
