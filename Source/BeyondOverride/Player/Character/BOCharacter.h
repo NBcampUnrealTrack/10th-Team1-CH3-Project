@@ -156,14 +156,21 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
 	void Look(const FInputActionValue& value);
+
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
 	UFUNCTION()
 	void StopJump(const FInputActionValue& value);
+
 	UFUNCTION()
 	void StartSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
+	UFUNCTION()
+	void StartSprinting();
+	UFUNCTION()
+	void StopSprinting();
+
 	UFUNCTION()
 	void ToggleCrouch(const FInputActionValue& value);
 
