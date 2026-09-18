@@ -36,4 +36,5 @@ class AItemPickupBase : public AInteractableActorBase
 
   protected:
 	virtual void BeginPlay() override;
+	virtual FText GetDisplayTitle(AActor* Interactor) const override;
 };
