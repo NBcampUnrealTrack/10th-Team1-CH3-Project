@@ -649,12 +649,12 @@ void ABOCharacter::Aim(const FInputActionValue& value)
 		return;
 	}
 
-	StartAiming()
+	StartAiming();
 }
 
 void ABOCharacter::Hip(const FInputActionValue& value)
 {
-	StopAiming()
+	StopAiming();
 }
 
 void ABOCharacter::StartAiming()
