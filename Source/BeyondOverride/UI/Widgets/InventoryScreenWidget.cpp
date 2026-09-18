@@ -140,6 +140,8 @@ void UInventoryScreenWidget::OpenContainer(UInventoryComponent* ContainerInvento
 	if (!OwnerCharacter)
 		return;
 
+	bIsContainerOpen = true;
+
 	ContainerSlotPanel->SetInventory(ContainerInventory, OwnerCharacter->GetInventoryInteractionComponent());
 	ContainerSlotPanel->SetContainerName(ContainerName);
 }
@@ -149,12 +151,14 @@ void UInventoryScreenWidget::CloseContainer()
 	if (!ContainerSlotPanel)
 		return;
 
+	bIsContainerOpen = false;
+
 	ContainerSlotPanel->SetInventory(nullptr, nullptr);
 }
 
 void UInventoryScreenWidget::OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems)
 {
-	if (!ContainerSlotPanel)
+	if (!ContainerSlotPanel || bIsContainerOpen)
 		return;
 
 	ABOCharacter* OwnerCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
