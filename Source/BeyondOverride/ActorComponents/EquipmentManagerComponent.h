@@ -93,6 +93,11 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 현재 장비 재장전 - RangeWeapon 전용
 	bool Reload();
 
+	// 현재 장비 조준 시작 - RangeWeapon 전용
+	void StartAiming();
+	// 현재 장비 조준 종료 - RangeWeapon 전용
+	void StopAiming();
+
 	// 슬롯에 장비 등록
 	bool Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
 	// 슬롯에서 장비 해제
