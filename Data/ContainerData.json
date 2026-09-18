@@ -6,11 +6,23 @@
         "SpawnEntries": [
             {
                 "Id": "ASSAULT_RIFLE_A",
-                "Prob": 1.0
+                "Prob": 0.1
+            },
+            {
+                "Id": "ASSAULT_RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.4
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.4
             }
         ],
-        "MinSpawnCount": 1,
-        "MaxSpawnCount": 5
+        "MinSpawnCount": 3,
+        "MaxSpawnCount": 6
     },
     {
         "Name": "CONTAINER_02",
@@ -18,12 +30,16 @@
         "RegionId": "REGION_01",
         "SpawnEntries": [
             {
-                "Id": "ASSAULT_RIFLE_B",
-                "Prob": 1.0
+                "Id": "GRENADE",
+                "Prob": 0.6
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.4
             }
         ],
         "MinSpawnCount": 2,
-        "MaxSpawnCount": 5
+        "MaxSpawnCount": 4
     },
     {
         "Name": "CONTAINER_03",
@@ -31,16 +47,20 @@
         "RegionId": "REGION_01",
         "SpawnEntries": [
             {
-                "Id": "ASSAULT_RIFLE_A",
-                "Prob": 0.5
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.4
             },
             {
-                "Id": "ASSAULT_RIFLE_B",
-                "Prob": 0.5
+                "Id": "GRENADE",
+                "Prob": 0.3
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.3
             }
         ],
-        "MinSpawnCount": 1,
-        "MaxSpawnCount": 3
+        "MinSpawnCount": 6,
+        "MaxSpawnCount": 10
     },
     {
         "Name": "CONTAINER_04",
@@ -48,16 +68,20 @@
         "RegionId": "REGION_02",
         "SpawnEntries": [
             {
-                "Id": "BASIC_BACKPACK",
+                "Id": "GONBONG",
                 "Prob": 0.1
             },
             {
-                "Id": "BASIC_BULLET",
-                "Prob": 0.9
+                "Id": "GRENADE",
+                "Prob": 0.3
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.6
             }
         ],
-        "MinSpawnCount": 1,
-        "MaxSpawnCount": 3
+        "MinSpawnCount": 3,
+        "MaxSpawnCount": 6
     },
     {
         "Name": "CONTAINER_05",
@@ -65,16 +89,24 @@
         "RegionId": "REGION_02",
         "SpawnEntries": [
             {
-                "Id": "BASIC_BULLET",
-                "Prob": 0.7
+                "Id": "PISTOL_A",
+                "Prob": 0.1
             },
             {
-                "Id": "BASIC_GRENADE",
-                "Prob": 0.3
+                "Id": "PISTOL_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.4
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.4
             }
         ],
-        "MinSpawnCount": 2,
-        "MaxSpawnCount": 5
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 8
     },
     {
         "Name": "CONTAINER_06",
@@ -82,16 +114,16 @@
         "RegionId": "REGION_02",
         "SpawnEntries": [
             {
-                "Id": "BASIC_GRENADE",
-                "Prob": 0.8
+                "Id": "GRENADE",
+                "Prob": 0.4
             },
             {
-                "Id": "BASIC_RIFLE",
-                "Prob": 0.2
+                "Id": "BANDAGE",
+                "Prob": 0.6
             }
         ],
-        "MinSpawnCount": 1,
-        "MaxSpawnCount": 3
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 5
     },
     {
         "Name": "CONTAINER_07",
@@ -99,24 +131,28 @@
         "RegionId": "REGION_02",
         "SpawnEntries": [
             {
-                "Id": "BASIC_BACKPACK",
+                "Id": "PISTOL_A",
                 "Prob": 0.1
             },
             {
-                "Id": "BASIC_BULLET",
-                "Prob": 0.5
-            },
-            {
-                "Id": "BASIC_GRENADE",
-                "Prob": 0.3
-            },
-            {
-                "Id": "BASIC_RIFLE",
+                "Id": "PISTOL_B",
                 "Prob": 0.1
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.4
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.2
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
             }
         ],
         "MinSpawnCount": 5,
-        "MaxSpawnCount": 7
+        "MaxSpawnCount": 10
     },
     {
         "Name": "CONTAINER_08",
@@ -128,11 +164,23 @@
                 "Prob": 1.0
             },
             {
-                "Id": "BASIC_FOOD",
-                "Prob": 1.0
+                "Id": "SHOTGUN_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHOTGUN_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.4
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.4
             }
         ],
-        "MinSpawnCount": 3,
+        "MinSpawnCount": 5,
         "MaxSpawnCount": 9
     },
     {
@@ -145,12 +193,16 @@
                 "Prob": 1.0
             },
             {
-                "Id": "BASIC_BANDAGE",
-                "Prob": 1.0
+                "Id": "GONBONG",
+                "Prob": 0.2
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.8
             }
         ],
-        "MinSpawnCount": 1,
-        "MaxSpawnCount": 3
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 4
     },
     {
         "Name": "CONTAINER_10",
@@ -162,15 +214,27 @@
                 "Prob": 1.0
             },
             {
-                "Id": "BASIC_FOOD",
-                "Prob": 0.5
+                "Id": "SHOTGUN_A",
+                "Prob": 0.1
             },
             {
-                "Id": "BASIC_BANDAGE",
-                "Prob": 0.5
+                "Id": "SHOTGUN_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.3
+            },
+            {
+                "Id": "GONBONG",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.4
             }
         ],
-        "MinSpawnCount": 4,
-        "MaxSpawnCount": 6
+        "MinSpawnCount": 6,
+        "MaxSpawnCount": 10
     }
 ]

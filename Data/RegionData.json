@@ -3,21 +3,18 @@
         "Name": "REGION_01",
         "Id": "REGION_01",
         "SpawnVolumeId": "SPAWN_VOLUME_01",
-        "ExitId": "EXIT_01",
         "ContainerActivateProb": 0.7
     },
     {
         "Name": "REGION_02",
         "Id": "REGION_02",
         "SpawnVolumeId": "SPAWN_VOLUME_02",
-        "ExitId": "EXIT_02",
         "ContainerActivateProb": 0.5
     },
     {
         "Name": "REGION_03",
         "Id": "REGION_03",
         "SpawnVolumeId": "SPAWN_VOLUME_03",
-        "ExitId": "EXIT_03",
         "ContainerActivateProb": 0.3
     }
 ]

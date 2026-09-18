@@ -143,6 +143,19 @@
         "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Melee/T_Gonbong.T_Gonbong'"
     },
     {
+        "Name": "GRENADE",
+        "DisplayName": "Grenade",
+        "Description": "Grenade",
+        "ItemType": "ThrowableItem",
+        "ItemRarity": "Common",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Grenade/BP_ItemInstance_Grenade.BP_ItemInstance_Grenade_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Grenade/BP_ItemPickup_Grenade.BP_ItemPickup_Grenade_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/ThrowingWeapon/Grenade/SM_Grenade.SM_Grenade'",
+        "MaxStackCount": 3,
+        "Weight": 0.4,
+        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Throwables/T_Grenade.T_Grenade'"
+    },
+    {
         "Name": "BANDAGE",
         "DisplayName": "Bandage",
         "Description": "Bandage Description",
@@ -167,71 +180,6 @@
         "MaxStackCount": 1,
         "Weight": 5.0,
         "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Wearables/T_Backpack01.T_Backpack01'"
-    },
-    {
-        "Name": "BASIC_RIFLE",
-        "DisplayName": "Basic Rifle",
-        "Description": "Basically Provided Rifle",
-        "ItemType": "RangeWeapon",
-        "ItemRarity": "Common",
-        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_RangeWeaponInstance_Rifle.BP_RangeWeaponInstance_Rifle_C'",
-        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemPickupBase_Rifle.BP_ItemPickupBase_Rifle_C'",
-        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Maps/Safe_House/meshes/SM_assualt_rifle_01_dual_mag.SM_assualt_rifle_01_dual_mag'",
-        "MaxStackCount": 1,
-        "Weight": 20.0,
-        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB.T_RifleB'"
-    },
-    {
-        "Name": "BASIC_BULLET",
-        "DisplayName": "Basic Bullet",
-        "Description": "Basically Provided Bullet",
-        "ItemType": "Misc",
-        "ItemRarity": "Common",
-        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemInstance_Bullet.BP_ItemInstance_Bullet_C'",
-        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemPickupBase_Bullet.BP_ItemPickupBase_Bullet_C'",
-        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Maps/Safe_House/meshes/SM_weapon_props_handgun_bullet_01.SM_weapon_props_handgun_bullet_01'",
-        "MaxStackCount": 30,
-        "Weight": 1.0,
-        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Ammo/T_RifleB_Ammo.T_RifleB_Ammo'"
-    },
-    {
-        "Name": "BASIC_GRENADE",
-        "DisplayName": "Basic Grenade",
-        "Description": "Basically Provided Grenade",
-        "ItemType": "ThrowableItem",
-        "ItemRarity": "Common",
-        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Grenade/BP_ItemInstance_Grenade.BP_ItemInstance_Grenade_C'",
-        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Weapons/Grenade/BP_ItemPickup_Grenade.BP_ItemPickup_Grenade_C'",
-        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/ThrowingWeapon/Grenade/SM_Grenade.SM_Grenade'",
-        "MaxStackCount": 3,
-        "Weight": 10.0,
-        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Throwables/T_Grenade.T_Grenade'"
-    },
-    {
-        "Name": "BASIC_FOOD",
-        "DisplayName": "Basic Food",
-        "Description": "Basically Provided Food",
-        "ItemType": "Misc",
-        "ItemRarity": "Common",
-        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemInstance_Food.BP_ItemInstance_Food_C'",
-        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemPickupBase_Food.BP_ItemPickupBase_Food_C'",
-        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Maps/Safe_House/meshes/SM_can_food_closed_06.SM_can_food_closed_06'",
-        "MaxStackCount": 10,
-        "Weight": 3.0,
-        "ItemIcon": ""
-    },
-    {
-        "Name": "BASIC_BANDAGE",
-        "DisplayName": "Basic Bandage",
-        "Description": "Basically Provided Bandage",
-        "ItemType": "EffectItem",
-        "ItemRarity": "Common",
-        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemInstance_Bandage.BP_ItemInstance_Bandage_C'",
-        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/BP_ItemPickupBase_Bandage.BP_ItemPickupBase_Bandage_C'",
-        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Health/Bandage/SM_Bandage.SM_Bandage'",
-        "MaxStackCount": 5,
-        "Weight": 1.0,
-        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_Bandage.T_Bandage'"
     },
     {
         "Name": "KEY_CARD",

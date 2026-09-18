@@ -9,8 +9,8 @@
                 "Prob": 1.0
             }
         ],
-        "MinSpawnCount": 1,
-        "MaxSpawnCount": 3
+        "MinSpawnCount": 20,
+        "MaxSpawnCount": 30
     },
     {
         "Name": "SPAWN_VOLUME_02",
@@ -26,8 +26,8 @@
                 "Prob": 0.5
             }
         ],
-        "MinSpawnCount": 2,
-        "MaxSpawnCount": 5
+        "MinSpawnCount": 10,
+        "MaxSpawnCount": 15
     },
     {
         "Name": "SPAWN_VOLUME_03",
@@ -47,7 +47,7 @@
                 "Prob": 0.4
             }
         ],
-        "MinSpawnCount": 3,
-        "MaxSpawnCount": 7
+        "MinSpawnCount": 15,
+        "MaxSpawnCount": 20
     }
 ]
