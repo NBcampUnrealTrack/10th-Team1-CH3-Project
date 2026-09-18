@@ -8,11 +8,11 @@
                 "PhaseIndex": 0,
                 "SpawnEntries": [
                     {
-                        "Id": "MONSTER_01",
+                        "Id": "Gunner",
                         "Prob": 1.0
                     }
                 ],
-                "SpawnCount": 2,
+                "SpawnCount": 10,
                 "Duration": 0.0
             }
         ]
@@ -26,26 +26,26 @@
                 "PhaseIndex": 0,
                 "SpawnEntries": [
                     {
-                        "Id": "MONSTER_01",
+                        "Id": "Gunner",
                         "Prob": 1.0
                     }
                 ],
-                "SpawnCount": 2,
+                "SpawnCount": 7,
                 "Duration": 5.0
             },
             {
                 "PhaseIndex": 1,
                 "SpawnEntries": [
                     {
-                        "Id": "MONSTER_01",
+                        "Id": "Gunner",
                         "Prob": 0.5
                     },
                     {
-                        "Id": "MONSTER_02",
+                        "Id": "Assasin",
                         "Prob": 0.5
                     }
                 ],
-                "SpawnCount": 4,
+                "SpawnCount": 10,
                 "Duration": 0.0
             }
         ]
@@ -59,37 +59,45 @@
                 "PhaseIndex": 0,
                 "SpawnEntries": [
                     {
-                        "Id": "MONSTER_01",
+                        "Id": "Gunner",
                         "Prob": 1.0
                     }
                 ],
-                "SpawnCount": 2,
+                "SpawnCount": 5,
                 "Duration": 5.0
             },
             {
                 "PhaseIndex": 1,
                 "SpawnEntries": [
                     {
-                        "Id": "MONSTER_02",
-                        "Prob": 0.4
+                        "Id": "Gunner",
+                        "Prob": 0.6
                     },
                     {
-                        "Id": "MONSTER_03",
-                        "Prob": 0.6
+                        "Id": "Assasin",
+                        "Prob": 0.4
                     }
                 ],
-                "SpawnCount": 5,
+                "SpawnCount": 10,
                 "Duration": 7.0
             },
             {
                 "PhaseIndex": 2,
                 "SpawnEntries": [
                     {
-                        "Id": "MONSTER_03",
-                        "Prob": 1.0
+                        "Id": "Gunner",
+                        "Prob": 0.5
+                    },
+                    {
+                        "Id": "Assasin",
+                        "Prob": 0.3
+                    },
+                    {
+                        "Id": "Mech",
+                        "Prob": 0.2
                     }
                 ],
-                "SpawnCount": 7,
+                "SpawnCount": 15,
                 "Duration": 0.0
             }
         ]
