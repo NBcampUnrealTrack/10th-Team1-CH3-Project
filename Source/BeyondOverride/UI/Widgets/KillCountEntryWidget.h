@@ -7,6 +7,7 @@
 #include "KillCountEntryWidget.generated.h"
 
 class UTextBlock;
+class UImage;
 
 UCLASS()
 class BEYONDOVERRIDE_API UKillCountEntryWidget : public UUserWidget
@@ -18,6 +19,12 @@ class BEYONDOVERRIDE_API UKillCountEntryWidget : public UUserWidget
 	void SetKillCountEntry(const FText& InMonsterName, int32 InMonsterKillCount);
 
   private:
+	UPROPERTY(EditDefaultsOnly, Category = "Monster")
+	TObjectPtr<UDataTable> MonsterDataTable;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> MonsterImage;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> MonsterNameText;
 
