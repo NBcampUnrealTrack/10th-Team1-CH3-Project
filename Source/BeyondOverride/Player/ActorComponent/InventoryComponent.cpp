@@ -315,3 +315,21 @@ int32 UInventoryComponent::FindItemIndex(const FName& ItemID) const
 
 	return INDEX_NONE;
 }
+
+int32 UInventoryComponent::FindItemCount(const FName& ItemID) const
+{
+	int32 ItemCount = 0;
+
+	for (int32 i = 0; i < Slots.Num(); i++)
+	{
+		if (IsValid(Slots[i]))
+		{
+			if (ItemID == Slots[i]->GetItemID())
+			{
+				ItemCount += Slots[i]->GetStackCount();
+			}
+		}
+	}
+
+	return ItemCount;
+}
