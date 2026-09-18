@@ -17,6 +17,10 @@ class ABulletProjectile : public AProjectileBase
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Collision;
 
+	// 피격 파티클
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	TObjectPtr<UParticleSystem> HitParticle;
+
   public:
 	ABulletProjectile();
 
