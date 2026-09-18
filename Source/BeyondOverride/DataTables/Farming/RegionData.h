@@ -19,8 +19,5 @@ struct FRegionData : public FTableRowBase
 	FName SpawnVolumeId = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName ExitId = "Default";
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	float ContainerActivateProb = 0.0f;
 };
