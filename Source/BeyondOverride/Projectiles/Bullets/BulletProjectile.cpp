@@ -9,10 +9,9 @@ ABulletProjectile::ABulletProjectile()
 	// Collision 생성
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	SetRootComponent(Collision);
-
-	Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Collision->SetCollisionProfileName(TEXT("Bullet"));
 	Collision->SetNotifyRigidBodyCollision(true);
-	Collision->SetCollisionResponseToAllChannels(ECR_Block);
 
 	// 충돌 이벤트 바인딩
 	Collision->OnComponentHit.AddDynamic(
@@ -21,33 +20,36 @@ ABulletProjectile::ABulletProjectile()
 
 	// ProjectileMovement 설정
 	ProjectileMovement->UpdatedComponent = Collision;
-
-	// 콜리전 채널 설정 (총알 간 충돌 방지)
-	Collision->SetCollisionProfileName(TEXT("Bullet"));
 }
 
-void ABulletProjectile::Initialize(
-	APawn* InInstigator,
-	const int32 InDamage,
-	const FVector& Velocity,
-	const float GravityScale,
-	const float LifeSpan)
+void ABulletProjectile::BeginPlay()
 {
-	Super::Initialize(
-		InInstigator,
-		InDamage,
-		Velocity,
-		GravityScale,
-		LifeSpan);
+	Super::BeginPlay();
 
 	// Instigator와의 충돌 무시
-	Collision->IgnoreActorWhenMoving(InInstigator, true);
+	if (Collision)
+	{
+		Collision->IgnoreActorWhenMoving(GetInstigator(), true);
+	}
 }
 
 void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// 충돌 지점 디버그
 	DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.0f, FColor::Red, false, 2.0f);
+
+	// 잘못된 충돌 로그 (Instigator or Bullet)
+	if (OtherActor == GetInstigator() || OtherActor->IsA(ABulletProjectile::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning,
+			   TEXT("HIT | SelfActor=%s | HitComp=%s | OtherActor=%s | OtherComp=%s | OtherOwner=%s | Instigator=%s"),
+			   *GetNameSafe(this),
+			   *GetNameSafe(HitComponent),
+			   *GetNameSafe(OtherActor),
+			   *GetNameSafe(OtherComp),
+			   *GetNameSafe(OtherComp ? OtherComp->GetOwner() : nullptr),
+			   *GetNameSafe(GetInstigator()));
+	}
 
 	if (OtherActor && OtherActor != GetInstigator())
 	{
