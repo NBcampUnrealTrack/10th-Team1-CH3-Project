@@ -32,26 +32,33 @@ AMonsterAIController::AMonsterAIController()
 	SetPerceptionComponent(*AIPerception);
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 2500.0f;
-	SightConfig->LoseSightRadius = 3000.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 50.0f;
-	SightConfig->SetMaxAge(5.0f);
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 
-	AIPerception->ConfigureSense(*SightConfig);
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
 
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
-	HearingConfig->HearingRange = 1750.0f;
-	HearingConfig->SetMaxAge(5.0f);
 
 	HearingConfig->DetectionByAffiliation.bDetectEnemies = true;
 	HearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	HearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
+}
 
+void AMonsterAIController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	SenseValue->SenseSetup();
+
+	SightConfig->SightRadius = SenseValue->GetSightSenseSize();
+	SightConfig->LoseSightRadius = SenseValue->GetLoseSightSize();
+	SightConfig->PeripheralVisionAngleDegrees = SenseValue->GetVisionAngleDegrees();
+	SightConfig->SetMaxAge(SenseValue->GetMemorize());
+	AIPerception->ConfigureSense(*SightConfig);
+
+	HearingConfig->HearingRange = SenseValue->GetHearSenseSize();
+	HearingConfig->SetMaxAge(SenseValue->GetMemorize());
 	AIPerception->ConfigureSense(*HearingConfig);
 }
 
@@ -170,6 +177,11 @@ void AMonsterAIController::StateChange(EMonsterState Input, float HoldTime)
 EMonsterState AMonsterAIController::GetState() const
 {
 	return State->GetState();
+}
+
+EMonsterState AMonsterAIController::GetBeforeState() const
+{
+	return State->GetBeforeState();
 }
 
 bool AMonsterAIController::IsContinueState() const

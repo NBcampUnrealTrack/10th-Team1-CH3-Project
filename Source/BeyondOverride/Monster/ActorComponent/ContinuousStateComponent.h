@@ -19,8 +19,9 @@ enum class EMonsterState : uint8
 	Chase UMETA(DisplayName = "Chase"),
 	Patrol UMETA(DisplayName = "Patrol"),
 	Attack UMETA(DisplayName = "Attack"),
-	StandOff UMETA(DisplayName = "StandOff"),
 	Atmosphere UMETA(DisplayName = "Atmosphere"),
+	StandOffMove UMETA(DisplayName = "StandOffMove"),
+	StandOffWait UMETA(DisplayName = "StandOffWait"),
 	LocationPatrol UMETA(DisplayName = "LocationPatrol"),
 };
 
@@ -40,6 +41,8 @@ class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
 	void StateChange(EMonsterState Input, float HoldTime);
 
 	EMonsterState GetState() const;
+
+	EMonsterState GetBeforeState() const;
 
   protected:
 	void StateAutoControl();

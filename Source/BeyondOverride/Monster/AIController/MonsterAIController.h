@@ -55,6 +55,8 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterState")
 	EMonsterState GetState() const;
 
+	EMonsterState GetBeforeState() const;
+
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterState")
 	bool IsContinueState() const;
 
@@ -70,6 +72,8 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 
   protected:
 	virtual void BeginPlay() override;
+
+	virtual void PostInitializeComponents() override;
 
 	UFUNCTION()
 	void OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimulus);
