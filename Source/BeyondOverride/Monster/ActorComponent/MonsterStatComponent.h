@@ -19,6 +19,7 @@ enum class EMonsterType : uint8
 	Special UMETA(DisplayName = "Special"),
 	Range UMETA(DisplayName = "Range"),
 	Melee UMETA(DisplayName = "Melee"),
+	Fly UMETA(DisplayName = "Fly"),
 };
 
 UCLASS()

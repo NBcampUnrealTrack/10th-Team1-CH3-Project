@@ -6,11 +6,14 @@
 
 // Add include
 #include "MonsterSpawn.h"
+#include "NavigationPath.h"
 #include "NavigationSystem.h"
 
 #include "Engine/EngineTypes.h"
 #include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Player/Character/BOCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 UMonsterSpawn::UMonsterSpawn()
@@ -36,9 +39,9 @@ void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 	{
 		float Radius = 200;
 
-		for (int i = 0; i < 36; ++i)
+		for (int i = 0; i < 144; ++i)
 		{
-			float Angle = FMath::DegreesToRadians(i * 10.0f);
+			float Angle = FMath::DegreesToRadians(i * 2.5f);
 
 			FVector Point = Location;
 
@@ -49,15 +52,25 @@ void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 			if (NavSystem->ProjectPointToNavigation(Point, NavLocation, FVector(200, 200, 2000.0f)))
 			{
 
-				AMonsterCharacter* TestMonster;
-				/*
+				AMonsterCharacter* TestMonster = NewObject<AMonsterCharacter>(this);
+
 				MoveLocation = NavLocation.Location;
-				UNavigationPath* Path =
-					UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(),
-																		 GetWorld()->GetPla,
-																		 MoveLocation,
-																		 TestMonster);
-																		 */
+
+				if (ABOCharacter* Player = Cast<ABOCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+				{
+					UNavigationPath* Path =
+						UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(),
+																			 Player->GetActorLocation(),
+																			 MoveLocation,
+																			 TestMonster);
+					if (Path && Path->IsValid())
+					{
+						if (!Path->IsPartial())
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 	}

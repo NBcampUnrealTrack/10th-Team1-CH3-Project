@@ -50,9 +50,10 @@ void AMonsterCharacter::FocusSetUp(bool data)
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
 		bUseControllerRotationYaw = data;
-		bUseControllerRotationPitch = data;
 		bUseControllerRotationRoll = data;
 		Movement->bOrientRotationToMovement = data;
+
+		// bUseControllerRotationPitch = data;
 	}
 }
 
