@@ -143,7 +143,7 @@ void UEquipmentManagerComponent::EndAction()
 bool UEquipmentManagerComponent::Reload()
 {
 	// 슬롯 확인
-	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot) || !EquipmentHandlerComponents[ActiveSlot])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
 			return false;
