@@ -106,22 +106,5 @@
         "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_RecoilYaw_ShotgunB.CF_RecoilYaw_ShotgunB'",
         "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_Spread_ShotgunB.CF_Spread_ShotgunB'",
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunB_V.T_ShotgunB_V'"
-    },
-    {
-        "Name": "BASIC_RIFLE",
-        "Damage": 0,
-        "FireRate": 0.0,
-        "FireMode": "FullAuto",
-        "BulletClass": "",
-        "ProjectileSpeed": 0.0,
-        "ProjectileGravityScale": 0.0,
-        "ProjectileRange": 0.0,
-        "ProjectilesPerShot": 1,
-        "MagazineSize": 0,
-        "ReloadTime": 0.0,
-        "RecoilPitchCurve": "",
-        "RecoilYawCurve": "",
-        "SpreadCurve": "",
-        "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB_V.T_RifleB_V'"
     }
 ]

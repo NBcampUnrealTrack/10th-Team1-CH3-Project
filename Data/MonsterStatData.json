@@ -1,0 +1,62 @@
+[
+	{
+		"Name": "Gunner",
+		"MonsterID": "Gunner",
+		"AttackDamage": 15,
+		"RapidCount": 3,
+		"RapidDelay": 0.05,
+		"AttackDelay": 7,
+		"AttackRange": 600,
+		"BulletSpeed": 2500,
+		"Protect": 5,
+		"Intelligence": 0,
+		"WalkSpeed": 600,
+		"SprintSpeed": 1.2,
+		"MonsterType": "Range"
+	},
+	{
+		"Name": "Pupet",
+		"MonsterID": "Pupet",
+		"AttackDamage": 1,
+		"RapidCount": 1,
+		"RapidDelay": 1,
+		"AttackDelay": 7,
+		"AttackRange": 800,
+		"BulletSpeed": 2500,
+		"Protect": 1,
+		"Intelligence": 1,
+		"WalkSpeed": 0,
+		"SprintSpeed": 1.2,
+		"MonsterType": "Range"
+	},
+	{
+		"Name": "Assasin",
+		"MonsterID": "Assasin",
+		"AttackDamage": 30,
+		"RapidCount": 1,
+		"RapidDelay": 0.05,
+		"AttackDelay": 6,
+		"AttackRange": 100,
+		"BulletSpeed": 2500,
+		"Protect": 7,
+		"Intelligence": 0,
+		"WalkSpeed": 650,
+		"SprintSpeed": 1.2,
+		"MonsterType": "Melee"
+	},
+	{
+		"Name": "Mech",
+		"MonsterID": "Mech",
+		"AttackDamage": 50,
+		"RapidCount": 3,
+		"RapidDelay": 0.05,
+		"AttackDelay": 7,
+		"AttackRange": 600,
+		"BulletSpeed": 2500,
+		"Protect": 5,
+		"Intelligence": 4,
+		"WalkSpeed": 200,
+		"SprintSpeed": 1.2,
+		"MonsterType": "Range"
+	}
+]

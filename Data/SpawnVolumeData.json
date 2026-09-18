@@ -5,7 +5,7 @@
         "RegionId": "REGION_01",
         "SpawnEntries": [
             {
-                "Id": "MONSTER_01",
+                "Id": "Gunner",
                 "Prob": 1.0
             }
         ],
@@ -18,12 +18,12 @@
         "RegionId": "REGION_02",
         "SpawnEntries": [
             {
-                "Id": "MONSTER_01",
-                "Prob": 0.5
+                "Id": "Gunner",
+                "Prob": 0.6
             },
             {
-                "Id": "MONSTER_02",
-                "Prob": 0.5
+                "Id": "Assasin",
+                "Prob": 0.4
             }
         ],
         "MinSpawnCount": 10,
@@ -35,16 +35,16 @@
         "RegionId": "REGION_03",
         "SpawnEntries": [
             {
-                "Id": "MONSTER_01",
-                "Prob": 0.2
+                "Id": "Gunner",
+                "Prob": 0.5
             },
             {
-                "Id": "MONSTER_02",
+                "Id": "Assasin",
                 "Prob": 0.3
             },
             {
-                "Id": "MONSTER_03",
-                "Prob": 0.4
+                "Id": "Mech",
+                "Prob": 0.2
             }
         ],
         "MinSpawnCount": 15,
