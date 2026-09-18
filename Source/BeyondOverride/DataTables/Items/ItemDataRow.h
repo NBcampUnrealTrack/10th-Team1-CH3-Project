@@ -11,11 +11,11 @@ UENUM(BlueprintType)
 enum class EItemType : uint8
 {
 	None,
-	Misc,           // 기타
-	RangeWeapon,    // 원거리 무기
-	MeleeWeapon,    // 근접 무기
-	ThrowableItem,  // 투척 아이템
-	EffectItem,     // 효과 아이템
+	Misc,          // 기타
+	RangeWeapon,   // 원거리 무기
+	MeleeWeapon,   // 근접 무기
+	ThrowableItem, // 투척 아이템
+	EffectItem,    // 효과 아이템
 	BagItem,
 	ShieldItem
 };
@@ -36,16 +36,16 @@ struct BEYONDOVERRIDE_API FItemDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-public:
+  public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")
 	FText DisplayName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")
 	FText Description;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Category")
-	EItemType ItemType;
+	EItemType ItemType = EItemType::None;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Category")
-	EItemRarity ItemRarity;
+	EItemRarity ItemRarity = EItemRarity::None;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Class")
 	TSubclassOf<UItemInstanceBase> ItemInstanceClass;
@@ -56,9 +56,9 @@ public:
 	TObjectPtr<UStaticMesh> ItemPickupMesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
-	int32 MaxStackCount;
+	int32 MaxStackCount = 1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
-	float Weight;
+	float Weight = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	TObjectPtr<UTexture2D> ItemIcon;

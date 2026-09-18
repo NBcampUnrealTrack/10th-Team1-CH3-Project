@@ -122,11 +122,11 @@ void UEquipmentSlotWidget::RefreshItem()
 
 	if (TotalAmmoCount)
 	{
-		TotalAmmoCount->SetText(FText::GetEmpty());
+		TotalAmmoCount->SetText(Weapon ? FText::AsNumber(Weapon->GetMagazineSize()) : FText::GetEmpty());
 	}
 	if (TotalAmmoCountInBody)
 	{
-		TotalAmmoCountInBody->SetText(FText::GetEmpty());
+		TotalAmmoCountInBody->SetText(Weapon ? FText::AsNumber(Weapon->GetMagazineSize()) : FText::GetEmpty());
 	}
 	if (WpnAmmoType)
 	{

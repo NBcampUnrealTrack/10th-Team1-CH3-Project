@@ -2,9 +2,9 @@
 
 #include "CoreMinimal.h"
 
-#include "UtilityItemDataRow.generated.h"
+#include "Enums/UtilityType.h"
 
-enum class EUtilityType : uint8;
+#include "UtilityItemDataRow.generated.h"
 
 USTRUCT(BlueprintType)
 struct BEYONDOVERRIDE_API FUtilityItemDataRow : public FTableRowBase
@@ -13,9 +13,9 @@ struct BEYONDOVERRIDE_API FUtilityItemDataRow : public FTableRowBase
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	EUtilityType EffectType; // 타입
+	EUtilityType EffectType = EUtilityType::None; // 타입
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	float EffectAmount; // 효과량
+	float EffectAmount = 0.f; // 효과량
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-	float UseDuration; // 사용에 걸리는 시간
+	float UseDuration = 0.f; // 사용에 걸리는 시간
 };
