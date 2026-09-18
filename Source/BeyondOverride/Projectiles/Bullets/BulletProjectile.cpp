@@ -3,6 +3,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 ABulletProjectile::ABulletProjectile()
 {
@@ -75,7 +76,14 @@ void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 			Hit.ImpactNormal.Rotation());
 	}
 
-	// TODO: 피격 사운드
+	// 피격 사운드
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			HitSound,
+			Hit.ImpactPoint);
+	}
 
 	Destroy();
 }
