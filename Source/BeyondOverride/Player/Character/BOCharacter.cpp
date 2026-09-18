@@ -427,7 +427,9 @@ void ABOCharacter::StopSprint(const FInputActionValue& value)
 
 void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 {
-	if (!bMovementEnabled)
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+	if (!bMovementEnabled || !IsValid(MovementComponent) || MovementComponent->IsFalling())
 	{
 		return;
 	}
