@@ -39,19 +39,22 @@ void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 	DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.0f, FColor::Red, false, 2.0f);
 
 	// 잘못된 충돌 로그 (Instigator or Bullet)
-	if (OtherActor == GetInstigator() || OtherActor->IsA(ABulletProjectile::StaticClass()))
+	if (IsValid(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning,
-			   TEXT("HIT | SelfActor=%s | HitComp=%s | OtherActor=%s | OtherComp=%s | OtherOwner=%s | Instigator=%s"),
-			   *GetNameSafe(this),
-			   *GetNameSafe(HitComponent),
-			   *GetNameSafe(OtherActor),
-			   *GetNameSafe(OtherComp),
-			   *GetNameSafe(OtherComp ? OtherComp->GetOwner() : nullptr),
-			   *GetNameSafe(GetInstigator()));
+		if (OtherActor == GetInstigator() || OtherActor->IsA(ABulletProjectile::StaticClass()))
+		{
+			UE_LOG(LogTemp, Warning,
+				   TEXT("HIT | SelfActor=%s | HitComp=%s | OtherActor=%s | OtherComp=%s | OtherOwner=%s | Instigator=%s"),
+				   *GetNameSafe(this),
+				   *GetNameSafe(HitComponent),
+				   *GetNameSafe(OtherActor),
+				   *GetNameSafe(OtherComp),
+				   *GetNameSafe(OtherComp ? OtherComp->GetOwner() : nullptr),
+				   *GetNameSafe(GetInstigator()));
+		}
 	}
 
-	if (OtherActor && OtherActor != GetInstigator())
+	if (IsValid(OtherActor) && OtherActor != GetInstigator())
 	{
 		UGameplayStatics::ApplyDamage(
 			OtherActor,
