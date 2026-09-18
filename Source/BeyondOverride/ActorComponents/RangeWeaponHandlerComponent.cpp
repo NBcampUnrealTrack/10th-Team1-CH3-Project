@@ -121,6 +121,9 @@ bool URangeWeaponHandlerComponent::Equip()
 		return false;
 	}
 
+	// 초기 조준 설정 - 비조준
+	StopAiming();
+
 	// Equip 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
@@ -136,6 +139,9 @@ bool URangeWeaponHandlerComponent::Unequip()
 
 	// 재장전 중이면 취소
 	OnReloadInterrupted();
+
+	// 조준 해제
+	StopAiming();
 
 	// Unequip 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
