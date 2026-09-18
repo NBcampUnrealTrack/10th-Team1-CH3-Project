@@ -513,6 +513,12 @@ void URangeWeaponHandlerComponent::SpawnBullets()
 	const FVector MuzzleLocation = GetMuzzleLocation(); // 총구 위치
 	const FRotator AimRotation = GetAimRotation();      // 목표 방향
 
+	// 소환 인자 설정
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = GetOwner();
+	SpawnParams.Instigator = Cast<APawn>(GetOwner());
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 	// 사격 당 소환할 개수만큼 반복
 	for (int32 i = 0; i < RangeWeaponData->ProjectilesPerShot; ++i)
 	{
@@ -522,7 +528,8 @@ void URangeWeaponHandlerComponent::SpawnBullets()
 		ABulletProjectile* BulletActor = GetWorld()->SpawnActor<ABulletProjectile>(
 			RangeWeaponData->BulletClass,
 			MuzzleLocation,
-			SpreadRotation);
+			SpreadRotation,
+			SpawnParams); // 소환 인자 지정
 		if (!BulletActor)
 		{
 			continue;
