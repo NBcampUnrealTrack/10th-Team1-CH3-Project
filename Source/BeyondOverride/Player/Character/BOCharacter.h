@@ -79,9 +79,12 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	}
 
 	UFUNCTION(BlueprintPure)
-	bool IsOverweight() const { return bIsOverweight; }
+	bool IsOverweight() const
+	{
+		return bIsOverweight;
+	}
 
-public:
+  public:
 	ABOCharacter();
 
   protected:
@@ -176,6 +179,11 @@ public:
 	UFUNCTION()
 	void Hip(const FInputActionValue& value);
 	UFUNCTION()
+	void StartAiming();
+	UFUNCTION()
+	void StopAiming();
+
+	UFUNCTION()
 	void Reload(const FInputActionValue& value);
 
 	UFUNCTION()
@@ -243,7 +251,7 @@ public:
 	UFUNCTION()
 	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
 
-private:
+  private:
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
 
@@ -265,7 +273,7 @@ private:
 	// EquipmentManagerComponent::OnEffectAppliedDelegate 바인딩 - 유틸리티 아이템 사용 후 호출, 해당 아이템 효과 적용
 	void OnEffectApplied(const FUtilityItemDataRow* UtilityItemData);
 
-private:
+  private:
 	FTimerHandle DeathTimerHandle;
 
 	FVector2D MoveInput = FVector2D::ZeroVector;

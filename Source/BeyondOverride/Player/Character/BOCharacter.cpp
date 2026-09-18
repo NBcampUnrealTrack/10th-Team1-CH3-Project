@@ -9,6 +9,7 @@
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/UtilityItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
+#include "Enums/UtilityType.h"
 #include "Factory/ItemFactory.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOGameMode.h"
@@ -21,16 +22,15 @@
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Items/Objects/ThrowableItemInstance.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
-#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
-#include "Enums/UtilityType.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -499,11 +499,6 @@ void ABOCharacter::CompleteFire(const FInputActionValue& value)
 	}
 }
 
-void ABOCharacter::Hip(const FInputActionValue& value)
-{
-	bIsAiming = false;
-}
-
 void ABOCharacter::Reload(const FInputActionValue& value)
 {
 	if (!CanUseGameplayInput() || bIsRolling)
@@ -646,7 +641,34 @@ void ABOCharacter::Aim(const FInputActionValue& value)
 		return;
 	}
 
+	StartAiming()
+}
+
+void ABOCharacter::Hip(const FInputActionValue& value)
+{
+	StopAiming()
+}
+
+void ABOCharacter::StartAiming()
+{
 	bIsAiming = true;
+
+	// 장비 조준 활성화
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->StartAiming();
+	}
+}
+
+void ABOCharacter::StopAiming()
+{
+	bIsAiming = false;
+
+	// 장비 조준 비활성화
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->StopAiming();
+	}
 }
 
 void ABOCharacter::InteractPress(const FInputActionValue& value)
@@ -934,7 +956,7 @@ void ABOCharacter::HandleDeath(AActor* DamageCauser)
 
 	// 달리기와 조준 해제
 	bIsSprint = false;
-	bIsAiming = false;
+	StopAiming();
 
 	ChangeMoveSpeed();
 
@@ -1301,7 +1323,6 @@ void ABOCharacter::OnEffectApplied(const FUtilityItemDataRow* UtilityItemData)
 	default:
 		break;
 	}
-
 }
 
 FName ABOCharacter::GetRollSectionName() const
@@ -1427,8 +1448,8 @@ bool ABOCharacter::CanUseGameplayInput() const
 
 void ABOCharacter::StopGameplayActions()
 {
-	bIsAiming = false;
-
+	// 달리기 & 조준 비활성화
+	StopAiming();
 	bIsSprint = false;
 	ChangeMoveSpeed();
 
@@ -1460,4 +1481,3 @@ void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
 		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: 인벤토리에 빈 슬롯이 없습니다."));
 	}
 }
-
