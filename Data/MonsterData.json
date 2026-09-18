@@ -1,34 +1,92 @@
 [
-     {
-        "Name": "Wraith",
-        "MonsterID": "Wraith",
-        "MonsterAttackSocket": "Muzzle_01",
-        "MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonWraith/Characters/Heroes/Wraith/Skins/ODGreen/Meshes/Wraith_ODGreen.Wraith_ODGreen'",
-        "MonsterAnimInstance": "/Script/Engine.AnimBlueprint'/Game/Blueprints/Monster/Animation/ABP_Monster.ABP_Monster_C'",
-        "MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'"
-    },
-    {
-        "Name": "MONSTER_01",
-        "MonsterID": "MONSTER_01",
-        "MonsterAttackSocket": "Muzzle_01",
-        "MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonWraith/Characters/Heroes/Wraith/Skins/ODGreen/Meshes/Wraith_ODGreen.Wraith_ODGreen'",
-        "MonsterAnimInstance": "/Script/Engine.AnimBlueprint'/Game/Blueprints/Monster/Animation/ABP_Monster.ABP_Monster_C'",
-        "MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'"
-    },
-    {
-        "Name": "MONSTER_02",
-        "MonsterID": "MONSTER_02",
-        "MonsterAttackSocket": "Muzzle_01",
-        "MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonWraith/Characters/Heroes/Wraith/Skins/ODGreen/Meshes/Wraith_ODGreen.Wraith_ODGreen'",
-        "MonsterAnimInstance": "/Script/Engine.AnimBlueprint'/Game/Blueprints/Monster/Animation/ABP_Monster.ABP_Monster_C'",
-        "MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'"
-    },
-    {
-        "Name": "MONSTER_03",
-        "MonsterID": "MONSTER_03",
-        "MonsterAttackSocket": "Muzzle_01",
-        "MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonWraith/Characters/Heroes/Wraith/Skins/ODGreen/Meshes/Wraith_ODGreen.Wraith_ODGreen'",
-        "MonsterAnimInstance": "/Script/Engine.AnimBlueprint'/Game/Blueprints/Monster/Animation/ABP_Monster.ABP_Monster_C'",
-        "MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'"
-    }
+	{
+		"Name": "Gunner",
+		"MonsterID": "Gunner",
+		"CapsuleRadius": 34,
+		"CapsuleHalfHeight": 88,
+		"SkeletalScale":
+		{
+			"X": 1,
+			"Y": 1,
+			"Z": 1
+		},
+		"SkeletalRotation":
+		{
+			"Pitch": 0,
+			"Yaw": -90,
+			"Roll": 0
+		},
+		"SkeletalLocation":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": -90
+		},
+		"MonsterAttackSocket": "Muzzle_01",
+		"MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonWraith/Characters/Heroes/Wraith/Skins/ODGreen/Meshes/Wraith_ODGreen.Wraith_ODGreen'",
+		"MonsterAnimInstance": "/Script/Engine.AnimBlueprintGeneratedClass'/Game/Blueprints/Monster/Animation/ABP_Gunner.ABP_Gunner_C'",
+		"MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_AssaultRifle_MuzzleFlash.P_AssaultRifle_MuzzleFlash'",
+		"MonsterImage": "/Script/Engine.Texture2D'/Game/UI/Textures/Character/T_Monster01.T_Monster01'",
+		"MonsterName": "Gunner"
+	},
+	{
+		"Name": "Assasin",
+		"MonsterID": "Assasin",
+		"CapsuleRadius": 34,
+		"CapsuleHalfHeight": 88,
+		"SkeletalScale":
+		{
+			"X": 1,
+			"Y": 1,
+			"Z": 1
+		},
+		"SkeletalRotation":
+		{
+			"Pitch": 0,
+			"Yaw": -90,
+			"Roll": 0
+		},
+		"SkeletalLocation":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": -90
+		},
+		"MonsterAttackSocket": "sword_base_l",
+		"MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonKallari/Characters/Heroes/Kallari/Skins/Rogue/Meshes/Kallari_Rogue.Kallari_Rogue'",
+		"MonsterAnimInstance": "/Script/Engine.AnimBlueprintGeneratedClass'/Game/Blueprints/Monster/Animation/ABP_Assasin.ABP_Assasin_C'",
+		"MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_Impact_Metal_Medium_01.P_Impact_Metal_Medium_01'",
+		"MonsterImage": "None",
+		"MonsterName": "Assasin"
+	},
+	{
+		"Name": "Mech",
+		"MonsterID": "Mech",
+		"CapsuleRadius": 100,
+		"CapsuleHalfHeight": 119,
+		"SkeletalScale":
+		{
+			"X": 0.5,
+			"Y": 0.5,
+			"Z": 0.5
+		},
+		"SkeletalRotation":
+		{
+			"Pitch": 0,
+			"Yaw": -90,
+			"Roll": 0
+		},
+		"SkeletalLocation":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": -120
+		},
+		"MonsterAttackSocket": "FirePoint_03",
+		"MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/Mech/Meshes/SKM_Mech.SKM_Mech'",
+		"MonsterAnimInstance": "/Script/Engine.AnimBlueprintGeneratedClass'/Game/Blueprints/Monster/Animation/ABP_Mech.ABP_Mech_C'",
+		"MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapSilver/FX/P_RocketLauncher_MuzzleFlash_Front_01.P_RocketLauncher_MuzzleFlash_Front_01'",
+		"MonsterImage": "/Script/Engine.Texture2D'/Game/UI/Textures/Character/T_Monster03.T_Monster03'",
+		"MonsterName": "Mech"
+	}
 ]

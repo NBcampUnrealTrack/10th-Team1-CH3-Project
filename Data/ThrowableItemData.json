@@ -1,6 +1,6 @@
 [
     {
-        "Name": "BASIC_GRENADE",
+        "Name": "GRENADE",
         "Damage": 50,
         "Radius": 300.0,
         "ThrowDuration": 1.2,
