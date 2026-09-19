@@ -5,11 +5,14 @@
 
 // Add include
 #include "DataTables/Monster/MonsterStatInfo.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
-#include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/DataAssets/MonsterDataAsset.h"
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/BFLMeleeAttack.h"
 #include "Monster/System/BalisticTrace.h"
 #include "Player/Character/BOCharacter.h"
 
@@ -108,7 +111,38 @@ void UMonsterStatComponent::Attack()
 										AttackDelay,
 										BulletSpeed);
 	}
+	else if (MonsterType == EMonsterType::Melee)
+	{
+		ACharacter* Owner = Cast<ACharacter>(GetOwner());
+		if (!Owner)
+		{
+			return;
+		}
 
+		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+		if (!AIController)
+		{
+			return;
+		}
+
+		AActor* Target = UBFLMeleeAttack::DashAttack(Owner, AIController->GetTarget(), GetAttackRange());
+
+		if (Target)
+		{
+
+			ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
+			if (!PlayerCharacter)
+			{
+				return;
+			}
+
+			UGameplayStatics::ApplyDamage(Target,
+										  AttackDamage,
+										  Owner->GetController(),
+										  Owner,
+										  UDamageType::StaticClass());
+		}
+	}
 	CallAttackLock();
 }
 

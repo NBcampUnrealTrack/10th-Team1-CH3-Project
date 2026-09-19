@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -14,6 +14,8 @@ struct FRangeWeaponDataRow;
 struct FMeleeWeaponDataRow;
 struct FThrowableItemDataRow;
 struct FUtilityItemDataRow;
+struct FBackpackDataRow;
+struct FShieldDataRow;
 
 UCLASS()
 class BEYONDOVERRIDE_API UItemDataSubsystem : public UGameInstanceSubsystem
@@ -36,4 +38,6 @@ class BEYONDOVERRIDE_API UItemDataSubsystem : public UGameInstanceSubsystem
 	const FMeleeWeaponDataRow* GetMeleeWeaponData(const FName ItemID) const;
 	const FThrowableItemDataRow* GetThrowableItemData(const FName ItemID) const;
 	const FUtilityItemDataRow* GetUtilityItemData(const FName ItemID) const;
+	const FBackpackDataRow* GetBackpackData(const FName ItemID) const;
+	const FShieldDataRow* GetShieldData(const FName ItemID) const;
 };

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -13,7 +13,9 @@ struct BEYONDOVERRIDE_API FEquippableItemDataRow : public FTableRowBase
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
-	TObjectPtr<USkeletalMesh> EquipMesh;
+	TObjectPtr<USkeletalMesh> EquipMesh; // 장착할 메시
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
+	float EquipDelay = 0.f; // 장착 딜레이
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
 	FName EquipSocketName; // 장착 소켓 이름
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")

@@ -1,4 +1,4 @@
-#include "ActorComponents/EquipmentHandlerComponent.h"
+﻿#include "ActorComponents/EquipmentHandlerComponent.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
@@ -86,6 +86,9 @@ bool UEquipmentHandlerComponent::Equip()
 
 	// 장착 소켓에 메시 부착
 	AttachToSocket(EquippableItemData->EquipSocketName);
+
+	// 장착 딜레이 시작
+	OnEquipStarted();
 
 	return true;
 }
@@ -192,6 +195,12 @@ bool UEquipmentHandlerComponent::CanUse() const
 		return false;
 	}
 
+	// 장착 중인 경우
+	if (IsEquipping())
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -216,4 +225,56 @@ void UEquipmentHandlerComponent::AttachToSocket(const FName& SocketName, bool bH
 	{
 		EquipMeshComponent->SetSkeletalMesh(nullptr);
 	}
+}
+
+void UEquipmentHandlerComponent::OnEquipStarted()
+{
+	// 장착 시작 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Started - %s"), *GetNameSafe(EquippableItemInstance)));
+
+	// 장비 장착 타이머 활성화
+	if (UWorld* World = GetWorld())
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+			EquipTimerHandle,
+			this,
+			&UEquipmentHandlerComponent::OnEquipCompleted,
+			EquippableItemData->EquipDelay,
+			false);
+	}
+}
+
+void UEquipmentHandlerComponent::OnEquipCompleted()
+{
+	// 장착 종료 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Completed - %s"), *GetNameSafe(EquippableItemInstance)));
+
+	// 장비 장착 타이머 명시적으로 제거
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(EquipTimerHandle);
+	}
+}
+
+void UEquipmentHandlerComponent::OnEquipInterrupted()
+{
+	// 장착 중단 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Interrupted - %s"), *GetNameSafe(EquippableItemInstance)));
+
+	// 장비 장착 타이머 제거
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(EquipTimerHandle);
+	}
+}
+
+bool UEquipmentHandlerComponent::IsEquipping() const
+{
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	return World->GetTimerManager().IsTimerActive(EquipTimerHandle);
 }

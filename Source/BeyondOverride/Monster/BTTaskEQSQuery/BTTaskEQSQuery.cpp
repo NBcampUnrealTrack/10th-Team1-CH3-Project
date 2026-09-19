@@ -14,24 +14,12 @@ UBTTaskEQSQuery::UBTTaskEQSQuery()
 
 EBTNodeResult::Type UBTTaskEQSQuery::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-
-	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-	if (!BlackboardComp)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	AMonsterAIController* AIController = Cast<AMonsterAIController>(OwnerComp.GetAIOwner());
 	if (!AIController)
 	{
 		return EBTNodeResult::Failed;
 	}
 
-	if (AIController->GetState() == EMonsterState::StandOffMove &&
-		BlackboardComp->IsVectorValueSet(TEXT("EQSPoint")))
-	{
-		return EBTNodeResult::Failed;
-	}
-
+	AIController->OnStandOff();
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }

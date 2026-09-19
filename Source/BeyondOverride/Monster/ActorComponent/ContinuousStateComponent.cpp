@@ -3,9 +3,22 @@
 // Base include
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
+
 UContinuousStateComponent::UContinuousStateComponent()
 {
 	NowState = EMonsterState::Atmosphere;
+}
+
+void UContinuousStateComponent::OnStandOff()
+{
+	bContinueStandOff = true;
+}
+
+bool UContinuousStateComponent::StandOffGetPosition() const
+{
+	return bContinueStandOff;
 }
 
 bool UContinuousStateComponent::IsContinueState() const
@@ -68,7 +81,7 @@ void UContinuousStateComponent::StateAutoControl()
 	{
 		if (BeforeState != EMonsterState::StandOffWait)
 		{
-			StateChange(EMonsterState::StandOffMove);
+			StateChange(EMonsterState::StandOffMove, 10.0f);
 		}
 		else
 		{
@@ -77,9 +90,17 @@ void UContinuousStateComponent::StateAutoControl()
 		return;
 	}
 
+	if (NowState == EMonsterState::StandOffMove)
+	{
+		StateChange(EMonsterState::StandOffWait, 5.0f);
+		bContinueStandOff = false;
+		return;
+	}
+
 	if (NowState == EMonsterState::StandOffWait)
 	{
 		StateChange(EMonsterState::Chase, 5.0f);
+		bContinueStandOff = false;
 		return;
 	}
 }

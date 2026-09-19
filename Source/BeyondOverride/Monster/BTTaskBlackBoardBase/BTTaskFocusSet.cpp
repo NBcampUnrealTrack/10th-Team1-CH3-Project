@@ -58,17 +58,20 @@ EBTNodeResult::Type UBTTaskFocusSet::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	else
 	{
 		FVector Velocity = AIMonster->GetVelocity();
+		if (AIMonster->GetMonsterType() != EMonsterType::Fly)
+		{
+			Velocity.Z = 0;
+			Velocity.Normalize();
+		}
 
 		if (!Velocity.IsNearlyZero())
 		{
 			TargetRotation = Velocity.GetSafeNormal().Rotation();
 
-			if (AIMonster)
-
-				NewRotation = FMath::RInterpTo(AIMonster->GetActorRotation(),
-											   TargetRotation,
-											   GetWorld()->GetDeltaSeconds(),
-											   RotationSpeed);
+			NewRotation = FMath::RInterpTo(AIMonster->GetActorRotation(),
+										   TargetRotation,
+										   GetWorld()->GetDeltaSeconds(),
+										   RotationSpeed);
 		}
 	}
 	AIMonster->SetActorRotation(NewRotation);

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -9,6 +9,6 @@ enum class EUtilityType : uint8
 {
 	None,
 	HealHP,
-	// HealShield,
+	HealShield,
 	// HealStamina,
 };

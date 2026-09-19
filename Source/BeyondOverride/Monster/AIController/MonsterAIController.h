@@ -9,8 +9,9 @@
 #include "AIController.h"
 
 // Add include
-#include "Monster/ActorComponent/ContinuousStateComponent.h"
-#include "Monster/ActorComponent/ShortTermStateComponent.h"
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
+#include "Monster/Structs/StateParams.h"
 #include "Perception/AIPerceptionTypes.h"
 
 // UHT Header
@@ -38,6 +39,8 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	// BehaviorTree 시작 함수
 	void EnableBehaviorTree();
 
+	// Event
+
 	void PlantFlag(FFlagInfo FlagInfo);
 
 	void PlantFlag(EFlag State, float Time);
@@ -47,6 +50,12 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	bool FoldFlags(EFlag Target);
 
 	bool FoldFlags(EFlag Target, bool& Type);
+
+	// Continuous State
+
+	void OnStandOff();
+
+	bool StandOffGetPosition() const;
 
 	void StateChange(EMonsterState Input);
 
@@ -60,11 +69,16 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterState")
 	bool IsContinueState() const;
 
+	// Sense
+
 	void SetTarget(ABOCharacter* Target);
 	ABOCharacter* GetTarget() const;
 
 	void SetTargetPoint(FVector Point);
 	FVector GetTargetPoint() const;
+
+	void SetEQSPoint(FVector Point);
+	FVector GetEQSPoint() const;
 
 	FVector GetSpawnPoint() const;
 

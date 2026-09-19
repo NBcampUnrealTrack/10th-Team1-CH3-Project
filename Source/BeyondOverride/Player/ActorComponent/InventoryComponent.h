@@ -44,6 +44,7 @@ public:
 	bool FindEmptySlotIndex(int32& EmptySlotIndex) const;
 
 	int32 FindItemIndex(const FName& ItemID) const;
+	int32 GetItemCount(const FName& ItemID) const;
 
 public:
 	UPROPERTY(BlueprintAssignable)

@@ -13,6 +13,7 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/BFLCircleSerchPoint.h"
 #include "Player/Character/BOCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -35,9 +36,10 @@ void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 
 	FVector MoveLocation;
 
+	float Radius = 200;
+
 	if (NavSystem && !NavSystem->ProjectPointToNavigation(Location, NavLocation))
 	{
-		float Radius = 200;
 
 		for (int i = 0; i < 144; ++i)
 		{
