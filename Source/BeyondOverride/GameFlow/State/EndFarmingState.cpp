@@ -7,10 +7,11 @@
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOWorldSubsystem.h"
 #include "GameFlow/Manager/RegionManager.h"
+#include "Logging/BOLog.h"
 
 void UEndFarmingState::Enter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("End Enter"));
+	UE_LOG(LogGameFlow, Warning, TEXT("End Enter"));
 	Super::Enter();
 
 	SetEndTime();
@@ -26,7 +27,7 @@ void UEndFarmingState::SetEndTime()
 
 	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Set End Time"));
+		UE_LOG(LogGameFlow, Warning, TEXT("Set End Time"));
 		WorldSubsystem->SetEndTime();
 	}
 }

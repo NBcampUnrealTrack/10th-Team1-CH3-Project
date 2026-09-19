@@ -10,7 +10,9 @@
 #include "Factory/ItemFactory.h"
 #include "GameFramework/PlayerStart.h"
 #include "Interaction/Actors/StorageContainerActor.h"
+#include "Items/Actors/ItemPickupBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Logging/BOLog.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
@@ -36,12 +38,12 @@ void ABOGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Game Mode BeginPlay"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode BeginPlay"));
 }
 
 void ABOGameMode::InitSetting()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Game Mode Initial Setting"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Initial Setting"));
 
 	if (GameInstance)
 	{
@@ -137,14 +139,14 @@ void ABOGameMode::ProvideBasicEquipment()
 			int32 Tag = FCString::Atoi(*TargetPoint->Tags[0].ToString());
 			FVector Location = TargetPoint->GetActorLocation();
 			FRotator Rotation = TargetPoint->GetActorRotation();
-			ItemFactory.SpawnItemPickup(GetWorld(), BasicEquipments[Tag], 1, Location, Rotation);
+			ItemFactory.SpawnItemPickup(GetWorld(), BasicEquipments[Tag], 0, Location, Rotation);
 		}
 	}
 }
 
 void ABOGameMode::StartFarming()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Game Mode Begin Farming"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Begin Farming"));
 	FarmingStateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
 
 	if (FarmingStateMachine)
@@ -156,7 +158,7 @@ void ABOGameMode::StartFarming()
 
 void ABOGameMode::EndFarming(EFarmingResult Result)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Game Mode End Farming"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode End Farming"));
 	if (FarmingStateMachine)
 	{
 		FarmingStateMachine->SetFarmingResult(Result);
@@ -198,7 +200,7 @@ void ABOGameMode::StartBossBattle()
 
 void ABOGameMode::StartDefense()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Game Mode Begin Defense"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Begin Defense"));
 	/*DefenseStateMachine = NewObject<UDefenseStateMachine>(this, UDefenseStateMachine::StaticClass());
 
 	if (DefenseStateMachine)

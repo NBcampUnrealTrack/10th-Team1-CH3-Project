@@ -2,9 +2,11 @@
 
 #include "GameFlow/State/ProgressFarmingState.h"
 
+#include "Logging/BOLog.h"
+
 void UProgressFarmingState::Enter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Progress Enter"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Progress Enter"));
 
 	Super::Enter();
 }

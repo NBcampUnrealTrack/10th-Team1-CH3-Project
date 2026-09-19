@@ -46,7 +46,11 @@ UItemInstanceBase* FItemFactory::CreateItemInstance(
 
 	// 데이터 초기 설정
 	ItemInstance->Initialize();
-	ItemInstance->SetStackCount(StackCount);
+
+	if (StackCount != 0)
+	{
+		ItemInstance->SetStackCount(StackCount);
+	}
 
 	return ItemInstance;
 }
@@ -111,17 +115,17 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 	}
 
 	//// 액터 생성
-	//AItemPickupBase* ItemPickup = World->SpawnActor<AItemPickupBase>(
+	// AItemPickupBase* ItemPickup = World->SpawnActor<AItemPickupBase>(
 	//	ItemPickupClass,
 	//	Location,
 	//	Rotation);
-	//if (!ItemPickup)
+	// if (!ItemPickup)
 	//{
 	//	return nullptr;
-	//}
+	// }
 
 	//// 액터에 오브젝트 저장
-	//ItemPickup->Initialize(ItemInstance);
+	// ItemPickup->Initialize(ItemInstance);
 
 	// BeginPlay 이전에 ItemInstance를 넘겨줘야 해서 먼저 값을 초기화 한 뒤 생성하도록 변경
 	const FTransform SpawnTransform(Rotation, Location);
@@ -132,8 +136,7 @@ AItemPickupBase* FItemFactory::SpawnItemPickup(
 		nullptr,
 		nullptr,
 		ESpawnActorCollisionHandlingMethod::
-		AdjustIfPossibleButAlwaysSpawn
-	);
+			AdjustIfPossibleButAlwaysSpawn);
 
 	if (!IsValid(ItemPickup))
 	{

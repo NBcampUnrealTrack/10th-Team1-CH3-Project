@@ -9,6 +9,7 @@
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Logging/BOLog.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
@@ -260,8 +261,8 @@ void UBOGameInstance::SaveSurvivalTimeData()
 
 		TotalSurvivalTime += SurvivalTime;
 
-		UE_LOG(LogTemp, Warning, TEXT("Survival Time : %f"), SurvivalTime);
-		UE_LOG(LogTemp, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
+		UE_LOG(LogGameFlow, Warning, TEXT("Survival Time : %f"), SurvivalTime);
+		UE_LOG(LogGameFlow, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
 	}
 }
 

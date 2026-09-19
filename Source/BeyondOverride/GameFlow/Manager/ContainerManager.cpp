@@ -10,6 +10,7 @@
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Logging/BOLog.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "Subsystems/ItemDataSubsystem.h"
@@ -158,7 +159,7 @@ bool UContainerManager::HasStorageKeyCard() const
 
 	for (UItemInstanceBase* Item : StorageInventory)
 	{
-		if (Item->GetItemID() == KeyCardID)
+		if (Item && Item->GetItemID() == KeyCardID)
 		{
 			return true;
 		}
@@ -206,6 +207,17 @@ void UContainerManager::ActivateContainer()
 
 			Container->SetItems(Items);
 		}
+
+		for (int i = Count; i < Size; i++)
+		{
+			TObjectPtr<AStorageContainerActor> Container = Containers[i];
+
+			TArray<TObjectPtr<UItemInstanceBase>> Items{};
+			TObjectPtr<UItemInstanceBase> Item = GetSpawnItem(Container);
+			Items.Add(Item);
+
+			Container->SetItems(Items);
+		}
 	}
 }
 
@@ -228,7 +240,7 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Count : %d"), Count);
+	UE_LOG(LogGameFlow, Warning, TEXT("Container Spawn Count : %d"), Count);
 
 	for (int i = 0; i < Count; i++)
 	{
@@ -248,11 +260,36 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 
 	for (const TPair<FName, int32>& Item : SpawnItems)
 	{
-		if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key, Item.Value))
+		for (int i = 0; i < Item.Value; i++)
 		{
-			Items.Add(ItemInstanceBase);
+			if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key))
+			{
+				Items.Add(ItemInstanceBase);
+			}
 		}
 	}
+}
+
+TObjectPtr<UItemInstanceBase> UContainerManager::GetSpawnItem(AStorageContainerActor* Container)
+{
+	if (!Container)
+	{
+		return nullptr;
+	}
+
+	FSpawnData ContainerData{};
+	if (!GetContainerData(Container->GetStorageContainerID(), ContainerData))
+	{
+		return nullptr;
+	}
+
+	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
+	FName ItemID = GetRandomSpawnItem(SpawnEntries);
+
+	FItemFactory ItemFactory{};
+	UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, ItemID);
+
+	return ItemInstanceBase;
 }
 
 FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries)

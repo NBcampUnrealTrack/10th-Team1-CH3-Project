@@ -5,6 +5,7 @@
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/Spawn/SpawnVolume.h"
 #include "Kismet/GameplayStatics.h"
+#include "Logging/BOLog.h"
 
 void USpawnVolumeManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -118,7 +119,7 @@ void USpawnVolumeManager::ActivateSpawnVolume(ASpawnVolume* SpawnVolume)
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Activate Spawn Volume"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Activate Spawn Volume"));
 	ActivatedSpawnVolumes.Add(SpawnVolume);
 	SpawnVolume->SpawnMonsters();
 }

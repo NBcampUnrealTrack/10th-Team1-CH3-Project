@@ -5,10 +5,11 @@
 #include "GameFlow/BOWorldSubsystem.h"
 #include "GameFlow/Manager/RegionManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Logging/BOLog.h"
 
 void UBeginFarmingState::Enter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Begin Enter"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Begin Enter"));
 	Super::Enter();
 
 	InitRegions();
@@ -39,7 +40,7 @@ void UBeginFarmingState::SetStartTime()
 
 	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Set Start Time"));
+		UE_LOG(LogGameFlow, Warning, TEXT("Set Start Time"));
 		WorldSubsystem->SetStartTime();
 	}
 }
