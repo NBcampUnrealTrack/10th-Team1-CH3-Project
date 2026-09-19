@@ -119,7 +119,13 @@ void UMonsterStatComponent::Attack()
 			return;
 		}
 
-		AActor* Target = UBFLMeleeAttack::DashAttack(Owner, GetAttackRange());
+		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+		if (!AIController)
+		{
+			return;
+		}
+
+		AActor* Target = UBFLMeleeAttack::DashAttack(Owner, AIController->GetTarget(), GetAttackRange());
 
 		if (Target)
 		{

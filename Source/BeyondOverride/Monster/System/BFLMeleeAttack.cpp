@@ -9,9 +9,12 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Player/Character/BOCharacter.h"
 
-AActor* UBFLMeleeAttack::DashAttack(ACharacter* Caster, float AttackRange)
+AActor* UBFLMeleeAttack::DashAttack(ACharacter* Caster, ACharacter* Target, float AttackRange)
 {
-	FVector Direction = Caster->GetViewRotation().Vector().GetSafeNormal();
+	FVector Direction = (Target->GetActorLocation() - Caster->GetActorLocation()).GetSafeNormal();
+	// Caster->GetViewRotation().Vector().GetSafeNormal();
+
+	Direction.Z = Direction.Z + 0.05;
 
 	float DashTime = 0.3f;
 
@@ -58,7 +61,7 @@ AActor* UBFLMeleeAttack::DashAttack(ACharacter* Caster, float AttackRange)
 			TArray<AActor*> Ignores = {};
 			Ignores.Add(HitActor);
 			FVector RecallPoint = HitResult.ImpactPoint;
-			HitActor = DashAttack(Caster, AttackRange, Ignores, RecallPoint, End);
+			HitActor = DashAttack(Caster, Target, AttackRange, Ignores, RecallPoint, End);
 		}
 		return HitActor;
 	}
@@ -66,7 +69,7 @@ AActor* UBFLMeleeAttack::DashAttack(ACharacter* Caster, float AttackRange)
 	return nullptr;
 }
 
-AActor* UBFLMeleeAttack::DashAttack(ACharacter* Caster, float AttackRange, TArray<AActor*> Ignores, FVector RecallSPoint, FVector RecallEPoint)
+AActor* UBFLMeleeAttack::DashAttack(ACharacter* Caster, ACharacter* Target, float AttackRange, TArray<AActor*> Ignores, FVector RecallSPoint, FVector RecallEPoint)
 {
 
 	FHitResult HitResult;
@@ -105,7 +108,7 @@ AActor* UBFLMeleeAttack::DashAttack(ACharacter* Caster, float AttackRange, TArra
 		{
 			Ignores.Add(HitActor);
 			FVector RecallPoint = HitResult.ImpactPoint;
-			HitActor = DashAttack(Caster, AttackRange, Ignores, RecallPoint, End);
+			HitActor = DashAttack(Caster, Target, AttackRange, Ignores, RecallPoint, End);
 		}
 		return HitActor;
 	}

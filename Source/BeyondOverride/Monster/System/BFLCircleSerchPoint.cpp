@@ -34,7 +34,7 @@ FVector UBFLCircleSerchPoint::CircleSerch(bool CanLook, bool NotReturn, AActor* 
 
 	// TraceValue
 	FVector EndTrace = Values.Centor;
-	FVector StartTrace = SamplePoint;
+	FVector StartTrace;
 
 	FHitResult TraceHit;
 
@@ -60,6 +60,7 @@ FVector UBFLCircleSerchPoint::CircleSerch(bool CanLook, bool NotReturn, AActor* 
 				FindPoint = SamplePoint;
 				return FindPoint;
 			}
+			StartTrace = SamplePoint;
 
 			TraceQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
 			TraceQueryParams.AddObjectTypesToQuery(ECC_Pawn);

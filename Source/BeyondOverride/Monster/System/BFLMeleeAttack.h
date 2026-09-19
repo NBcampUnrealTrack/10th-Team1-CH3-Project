@@ -17,8 +17,8 @@ class BEYONDOVERRIDE_API UBFLMeleeAttack : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
   public:
 	UFUNCTION(BlueprintCallable, Category = "Melee Attack")
-	static AActor* DashAttack(ACharacter* Caster, float AttackRange);
+	static AActor* DashAttack(ACharacter* Caster, ACharacter* Target, float AttackRange);
 
   private:
-	static AActor* DashAttack(ACharacter* Caster, float AttackRange, TArray<AActor*> Ignores, FVector RecallSPoint = FVector::ZeroVector, FVector RecallEPoint = FVector::ZeroVector);
+	static AActor* DashAttack(ACharacter* Caster, ACharacter* Target, float AttackRange, TArray<AActor*> Ignores, FVector RecallSPoint = FVector::ZeroVector, FVector RecallEPoint = FVector::ZeroVector);
 };

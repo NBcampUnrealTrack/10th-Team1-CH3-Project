@@ -75,7 +75,7 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 
 		MoveLocation = UBFLCircleSerchPoint::CircleSerch(false, false, nullptr, SerchData, GetWorld());
 
-		BaseAngle = (TargetLocation, MoveLocation).Rotation().Yaw;
+		BaseAngle = (MoveLocation - TargetLocation).Rotation().Yaw;
 		SerchData.Smaple = 144;
 		SerchData.Radius = FVector::Distance(TargetLocation, MoveLocation);
 		SerchData.XYRange = AIMonster->GetAttackRange() / 20.0f;
