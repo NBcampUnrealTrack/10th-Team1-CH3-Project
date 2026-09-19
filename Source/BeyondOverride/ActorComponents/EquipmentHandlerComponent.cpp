@@ -229,6 +229,9 @@ void UEquipmentHandlerComponent::AttachToSocket(const FName& SocketName, bool bH
 
 void UEquipmentHandlerComponent::OnEquipStarted()
 {
+	// 장착 시작 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Started - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 장비 장착 타이머 활성화
 	if (UWorld* World = GetWorld())
 	{
@@ -243,6 +246,9 @@ void UEquipmentHandlerComponent::OnEquipStarted()
 
 void UEquipmentHandlerComponent::OnEquipCompleted()
 {
+	// 장착 종료 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Completed - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 장비 장착 타이머 명시적으로 제거
 	if (UWorld* World = GetWorld())
 	{
@@ -252,6 +258,9 @@ void UEquipmentHandlerComponent::OnEquipCompleted()
 
 void UEquipmentHandlerComponent::OnEquipInterrupted()
 {
+	// 장착 중단 디버그 메시지 출력
+	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Interrupted - %s"), *GetNameSafe(EquippableItemInstance)));
+
 	// 장비 장착 타이머 제거
 	if (UWorld* World = GetWorld())
 	{
