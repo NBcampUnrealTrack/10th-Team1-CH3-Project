@@ -68,5 +68,19 @@
         "EquipSocketName": "Bandage",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/Bandage/DA_EquipmentAnimation_Bandage.DA_EquipmentAnimation_Bandage'"
+    },
+    {
+        "Name": "BACKPACK_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Wearables/Backpack01/SKM_Backpack01.SKM_Backpack01'",
+        "EquipSocketName": "BackpackA",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": ""
+    },
+    {
+        "Name": "SHIELD_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Decorations/Shield/SKM_Shield.SKM_Shield'",
+        "EquipSocketName": "ShieldA",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": ""
     }
 ]

@@ -1,0 +1,9 @@
+[
+    {
+        "Name": "SHIELD_A",
+        "MaxShield": 50,
+        "ShieldRegenDelay": 5.0,
+        "ShieldRegenInterval": 2.0,
+        "ShieldRegenAmount": 5
+    }
+]

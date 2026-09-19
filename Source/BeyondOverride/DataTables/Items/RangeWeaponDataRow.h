@@ -45,7 +45,9 @@ struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
 	TObjectPtr<UCurveFloat> RecoilYawCurve; // Yaw 좌측 반동 (Right)
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spread")
-	TObjectPtr<UCurveFloat> SpreadCurve; // 탄 퍼짐
+	TObjectPtr<UCurveFloat> SpreadCurve; // 탄 퍼짐 (비조준 기준)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spread")
+	float AimSpreadMultiplier = 1.f; // 조준 시 탄 퍼짐 배율
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Icon")
 	TObjectPtr<UTexture2D> ItemIconLong;

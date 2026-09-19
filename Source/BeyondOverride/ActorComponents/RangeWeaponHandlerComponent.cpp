@@ -1,4 +1,4 @@
-#include "ActorComponents/RangeWeaponHandlerComponent.h"
+﻿#include "ActorComponents/RangeWeaponHandlerComponent.h"
 
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
@@ -20,8 +20,10 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	// 총구 소켓 이름
 	MuzzleSocketName = FName("Muzzle");
 
-	// 활성화 여부
+	// 사격 활성화 여부
 	bIsActive = false;
+	// 조준 여부
+	bIsAiming = false;
 }
 
 void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -119,6 +121,9 @@ bool URangeWeaponHandlerComponent::Equip()
 		return false;
 	}
 
+	// 초기 조준 설정 - 비조준
+	StopAiming();
+
 	// Equip 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
@@ -134,6 +139,9 @@ bool URangeWeaponHandlerComponent::Unequip()
 
 	// 재장전 중이면 취소
 	OnReloadInterrupted();
+
+	// 조준 해제
+	StopAiming();
 
 	// Unequip 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
@@ -172,6 +180,16 @@ bool URangeWeaponHandlerComponent::Reload()
 	OnReloadStarted();
 
 	return true;
+}
+
+void URangeWeaponHandlerComponent::StartAiming()
+{
+	bIsAiming = true;
+}
+
+void URangeWeaponHandlerComponent::StopAiming()
+{
+	bIsAiming = false;
 }
 
 bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
@@ -491,7 +509,11 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 	}
 
 	// 탄 퍼짐 각도
-	const float SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	float SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	if (bIsAiming) // 조준 상태면 정확도 증가
+	{
+		SpreadDegree *= RangeWeaponData->AimSpreadMultiplier;
+	}
 	const float SpreadRadians = FMath::DegreesToRadians(SpreadDegree);
 
 	// 원뿔 내 균일 분포
