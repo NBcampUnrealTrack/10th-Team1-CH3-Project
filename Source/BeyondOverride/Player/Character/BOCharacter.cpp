@@ -1288,8 +1288,8 @@ bool ABOCharacter::CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData)
 	{
 	case EUtilityType::HealHP:
 		return StatComponent->GetCurHealth() < StatComponent->GetMaxHealth();
-		/*case EUtilityType::HealShield:
-			return StatComponent->GetCurShield() < StatComponent->GetMaxShield();*/
+	case EUtilityType::HealShield:
+		return StatComponent->GetCurShield() < StatComponent->GetMaxShield();
 	default:
 		return false;
 	}
@@ -1327,7 +1327,19 @@ void ABOCharacter::OnEffectApplied(const FUtilityItemDataRow* UtilityItemData)
 		StatComponent->Heal(HealAmount);
 		break;
 	}
+	case EUtilityType::HealShield:
+	{
+		const int32 HealingShieldAmount = FMath::RoundToInt(UtilityItemData->EffectAmount);
 
+		if (HealingShieldAmount <= 0)
+		{
+			return;
+		}
+
+		// StatComponent->HealShield(HealingShieldAmount);
+
+		break;
+	}
 	default:
 		break;
 	}
