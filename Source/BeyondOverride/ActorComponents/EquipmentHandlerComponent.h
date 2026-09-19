@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -29,6 +29,9 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	// 현재 장비의 고유 데이터
 	const FItemDataRow* ItemData;
 	const FEquippableItemDataRow* EquippableItemData;
+
+	// 장착 딜레이 타이머 핸들
+	FTimerHandle EquipTimerHandle;
 
   public:
 	UEquipmentHandlerComponent();
@@ -75,4 +78,15 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 
 	// 소켓에 메시 부착
 	void AttachToSocket(const FName& SocketName, bool bHideIfNoSocket = false);
+
+  protected:
+	// 장비 장착 시작 시 호출
+	virtual void OnEquipStarted();
+	// 장비 장착 완료 시 호출
+	virtual void OnEquipCompleted();
+	// 장비 장착 중단 시 호출
+	virtual void OnEquipInterrupted();
+
+	// 장비 장착 중인지 여부
+	bool IsEquipping() const;
 };
