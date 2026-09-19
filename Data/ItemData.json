@@ -169,6 +169,19 @@
         "ItemIcon": ""
     },
     {
+        "Name": "BACKPACK_A",
+        "DisplayName": "Backpack A",
+        "Description": "Backpack A Description",
+        "ItemType": "BagItem",
+        "ItemRarity": "Common",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Backpacks/BP_ItemInstance_BackpackA.BP_ItemInstance_BackpackA_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Backpacks/BP_ItemPickup_BackpackA.BP_ItemPickup_BackpackA_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Wearables/Backpack01/SM_Backpack01.SM_Backpack01'",
+        "MaxStackCount": 1,
+        "Weight": 2.5,
+        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Wearables/T_Backpack01.T_Backpack01'"
+    },
+    {
         "Name": "BASIC_BACKPACK",
         "DisplayName": "Basic Backpack",
         "Description": "Basically Provided Backpack",
