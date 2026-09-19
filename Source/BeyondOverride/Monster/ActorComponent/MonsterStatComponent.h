@@ -8,19 +8,14 @@
 // Base include
 #include "Player/ActorComponent/StatComponent.h"
 
+// Add include
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
+
 // UHT Header
 #include "MonsterStatComponent.generated.h"
 
 class UMonsterDataAsset;
-
-UENUM(BlueprintType)
-enum class EMonsterType : uint8
-{
-	Special UMETA(DisplayName = "Special"),
-	Range UMETA(DisplayName = "Range"),
-	Melee UMETA(DisplayName = "Melee"),
-	Fly UMETA(DisplayName = "Fly"),
-};
 
 UCLASS()
 class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent

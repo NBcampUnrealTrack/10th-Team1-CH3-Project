@@ -15,6 +15,7 @@ void UBalisticTrace::BalisticStart(const AActor* Caller, const FVector& Location
 	BulletSpeed = Speed;
 	BulletLocation = Location;
 	BulletDirection = Direction;
+	IgnoredTarget = Caller->GetClass();
 
 	StartLocation = BulletLocation;
 

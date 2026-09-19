@@ -40,8 +40,8 @@ EBTNodeResult::Type UBTTaskCanAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
-	float AttackRange = AIMonster->GetAttackRange() * AIMonster->GetAttackRange();
-	float TargetDistance = FVector::DistSquared(Target->GetActorLocation(), AIMonster->GetActorLocation());
+	float AttackRange = AIMonster->GetAttackRange();
+	float TargetDistance = FVector::Distance(Target->GetActorLocation(), AIMonster->GetActorLocation());
 
 	BlackboardComp->SetValueAsBool(TEXT("bCanAttack"), TargetDistance < AttackRange && !AIMonster->IsDelay());
 	return EBTNodeResult::Succeeded;

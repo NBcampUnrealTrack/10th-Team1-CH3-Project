@@ -9,6 +9,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/BFLCircleSerchPoint.h"
 
 UBTTaskTargetPoint::UBTTaskTargetPoint()
 {
@@ -41,47 +42,61 @@ EBTNodeResult::Type UBTTaskTargetPoint::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
+	if (AIController->GetState() == EMonsterState::Attack ||
+		AIController->GetState() == EMonsterState::StandOffMove ||
+		AIController->GetState() == EMonsterState::StandOffWait)
+	{
+		return EBTNodeResult::Failed;
+	}
+
 	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
 	FNavLocation NavLocation;
 
 	FVector TargetLocation = Target->GetActorLocation();
 
-	FVector MoveLocation;
+	FVector MoveLocation = FVector::ZeroVector;
+	FVector BestLocation = FVector::ZeroVector;
 
-	float AttackRange = AIMonster->GetAttackRange() * AIMonster->GetAttackRange();
-	float TargetDistance = FVector::DistSquared(Target->GetActorLocation(), AIMonster->GetActorLocation());
+	float AttackRange = AIMonster->GetAttackRange();
+	float TargetDistance = FVector::Distance(TargetLocation, AIMonster->GetActorLocation());
 	float BaseAngle = (AIMonster->GetActorLocation() - TargetLocation).Rotation().Yaw;
 
 	if (NavSystem && (!NavSystem->ProjectPointToNavigation(TargetLocation, NavLocation) || TargetDistance < AttackRange))
 	{
 
-		float Radius = AIMonster->GetAttackRange() - (AIMonster->GetAttackRange() / 10);
+		FSerchValues SerchData;
+		SerchData.Smaple = 144;
+		SerchData.Radius = AIMonster->GetAttackRange() - (AIMonster->GetAttackRange() / 10);
+		SerchData.XYRange = AIMonster->GetAttackRange() / 20.0f;
+		SerchData.ZRange = 2000.0f;
+		SerchData.Centor = TargetLocation;
+		SerchData.BaseAngle = BaseAngle;
 
-		for (int i = 0; i < 36; ++i)
-		{
-			float Angle = FMath::DegreesToRadians(BaseAngle + (i * 10.0f));
+		MoveLocation = UBFLCircleSerchPoint::CircleSerch(false, false, nullptr, SerchData, GetWorld());
 
-			FVector Point = TargetLocation;
+		BaseAngle = (MoveLocation - TargetLocation).Rotation().Yaw;
+		SerchData.Smaple = 144;
+		SerchData.Radius = FVector::Distance(TargetLocation, MoveLocation);
+		SerchData.XYRange = AIMonster->GetAttackRange() / 20.0f;
+		SerchData.ZRange = 2000.0f;
+		SerchData.Centor = TargetLocation;
+		SerchData.BaseAngle = BaseAngle;
 
-			Point.X += FMath::Cos(Angle) * Radius;
-			Point.Y += FMath::Sin(Angle) * Radius;
-
-			// Point = Center에서 정확히 Radius만큼 떨어진 위치
-			if (NavSystem->ProjectPointToNavigation(Point, NavLocation, FVector((AIMonster->GetAttackRange() / 20.0f), (AIMonster->GetAttackRange() / 20.0f), 2000.0f)))
-			{
-
-				MoveLocation = NavLocation.Location;
-				break;
-			}
-		}
+		BestLocation = UBFLCircleSerchPoint::CircleSerch(true, true, Target, SerchData, GetWorld());
 	}
 	else
 	{
 		MoveLocation = TargetLocation;
 	}
-
-	BlackboardComp->SetValueAsVector(TEXT("TargetPoint"), MoveLocation);
+	if (BestLocation != FVector::ZeroVector)
+	{
+		MoveLocation = BestLocation;
+	}
+	if (MoveLocation != FVector::ZeroVector)
+	{
+		BlackboardComp->SetValueAsVector(TEXT("TargetPoint"), MoveLocation);
+	}
 
 	return EBTNodeResult::Succeeded;
 }

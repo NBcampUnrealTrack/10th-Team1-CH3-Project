@@ -8,6 +8,9 @@
 // Base include
 #include "GameFramework/Character.h"
 
+// Add Include
+#include "Monster/ActorComponent/MonsterStatComponent.h"
+
 // UHT Header
 #include "MonsterCharacter.generated.h"
 
@@ -25,6 +28,8 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 	AMonsterCharacter();
 
 	void FocusSetUp(bool data);
+
+	EMonsterType GetMonsterType() const;
 
 	void SetMonsterID(FName ID);
 

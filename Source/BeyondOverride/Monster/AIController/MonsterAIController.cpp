@@ -10,6 +10,8 @@
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/ActorComponent/SenseComponent.h"
 #include "Monster/ActorComponent/ShortTermStateComponent.h"
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Hearing.h"
@@ -139,6 +141,8 @@ void AMonsterAIController::FocusSetUp(const EMonsterState& Input)
 
 // 중재자 패턴용
 
+// Event
+
 void AMonsterAIController::PlantFlag(FFlagInfo FlagInfo)
 {
 	Flag->PlantFlag(FlagInfo);
@@ -162,6 +166,18 @@ bool AMonsterAIController::FoldFlags(EFlag Target)
 bool AMonsterAIController::FoldFlags(EFlag Target, bool& Type)
 {
 	return Flag->FoldFlags(Target, Type);
+}
+
+// Continuous State
+
+void AMonsterAIController::OnStandOff()
+{
+	State->OnStandOff();
+}
+
+bool AMonsterAIController::StandOffGetPosition() const
+{
+	return State->StandOffGetPosition();
 }
 
 void AMonsterAIController::StateChange(EMonsterState Input)
@@ -189,6 +205,8 @@ bool AMonsterAIController::IsContinueState() const
 	return State->IsContinueState();
 }
 
+// Sense Code
+
 void AMonsterAIController::SetTarget(ABOCharacter* Target)
 {
 	SenseValue->SetTarget(Target);
@@ -207,6 +225,16 @@ void AMonsterAIController::SetTargetPoint(FVector Point)
 FVector AMonsterAIController::GetTargetPoint() const
 {
 	return SenseValue->GetTargetPoint();
+}
+
+void AMonsterAIController::SetEQSPoint(FVector Point)
+{
+	SenseValue->SetEQSPoint(Point);
+}
+
+FVector AMonsterAIController::GetEQSPoint() const
+{
+	return SenseValue->GetEQSPoint();
 }
 
 FVector AMonsterAIController::GetSpawnPoint() const
