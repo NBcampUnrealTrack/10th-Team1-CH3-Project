@@ -27,7 +27,7 @@ void UTitleScreenWidget::OnStartButtonClicked()
 		ABOGameMode* GM = Cast<ABOGameMode>(UGameplayStatics::GetGameMode(this));
 		if (!GM)
 			return;
-		GM->Start();
+		GM->StartGame();
 	}
 }
 
@@ -38,6 +38,6 @@ void UTitleScreenWidget::OnExitButtonClicked()
 		ABOGameMode* GM = Cast<ABOGameMode>(UGameplayStatics::GetGameMode(this));
 		if (!GM)
 			return;
-		GM->Exit();
+		GM->ExitGame();
 	}
 }

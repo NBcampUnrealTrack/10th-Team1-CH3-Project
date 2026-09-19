@@ -8,6 +8,7 @@
 
 #include "ExitManager.generated.h"
 
+class UBOGameInstance;
 class AExitActor;
 class AExitControllerActor;
 
@@ -32,6 +33,8 @@ class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 	void CleanSetting();
 
   private:
+	TObjectPtr<UBOGameInstance> GameInstance;
+
 	float ExitActivateProb;
 	TArray<TObjectPtr<AExitControllerActor>> ExitControllers;
 };

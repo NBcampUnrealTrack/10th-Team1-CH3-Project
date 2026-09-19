@@ -4,6 +4,7 @@
 
 #include "BOGameInstance.h"
 
+#include "DataAssets/BODataAsset.h"
 #include "DataTables/Items/ItemDataRow.h"
 #include "Engine/TargetPoint.h"
 #include "Factory/ItemFactory.h"
@@ -18,7 +19,7 @@
 #include "UI/Manager/UIManager.h"
 
 ABOGameMode::ABOGameMode()
-	: StateMachine(nullptr)
+	: FarmingStateMachine(nullptr)
 {
 	if (!GetWorld() || !GetWorld()->GetGameInstance())
 	{
@@ -73,7 +74,7 @@ void ABOGameMode::InitSetting()
 	}
 }
 
-void ABOGameMode::Start()
+void ABOGameMode::StartGame()
 {
 	if (GameInstance)
 	{
@@ -112,8 +113,14 @@ void ABOGameMode::ProvideBasicEquipment()
 		return;
 	}
 
+	UBODataAsset* DataAsset = GameInstance->GetBODataAsset();
+	if (!DataAsset)
+	{
+		return;
+	}
+
 	TArray<FName> BasicEquipments{};
-	GameInstance->GetBasicEquipments(BasicEquipments);
+	DataAsset->GetBasicEquipments(BasicEquipments);
 
 	TArray<AActor*> AllActors{};
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), AllActors);
@@ -138,22 +145,22 @@ void ABOGameMode::ProvideBasicEquipment()
 void ABOGameMode::StartFarming()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Game Mode Begin Farming"));
-	StateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
+	FarmingStateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
 
-	if (StateMachine)
+	if (FarmingStateMachine)
 	{
-		StateMachine->Initialize(this);
-		StateMachine->ChangeState(EFarmingState::Begin);
+		FarmingStateMachine->Initialize(this);
+		FarmingStateMachine->ChangeState(EFarmingState::Begin);
 	}
 }
 
 void ABOGameMode::EndFarming(EFarmingResult Result)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Game Mode End Farming"));
-	if (StateMachine)
+	if (FarmingStateMachine)
 	{
-		StateMachine->SetFarmingResult(Result);
-		StateMachine->ChangeState(EFarmingState::End);
+		FarmingStateMachine->SetFarmingResult(Result);
+		FarmingStateMachine->ChangeState(EFarmingState::End);
 	}
 }
 
@@ -174,15 +181,34 @@ void ABOGameMode::Die()
 	}
 }
 
-void ABOGameMode::ToEnding()
+void ABOGameMode::EnterServerRoom()
 {
 	if (GameInstance)
 	{
-		GameInstance->ToEnding();
+		GameInstance->EnterServerRoom();
 	}
 }
 
-void ABOGameMode::Explosion()
+void ABOGameMode::StartBossBattle()
+{
+	// request to monster spawn system
+	// spawn boss
+	// start boss phase
+}
+
+void ABOGameMode::StartDefense()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Game Mode Begin Defense"));
+	/*DefenseStateMachine = NewObject<UDefenseStateMachine>(this, UDefenseStateMachine::StaticClass());
+
+	if (DefenseStateMachine)
+	{
+		DefenseStateMachine->Initialize(this);
+		DefenseStateMachine->ChangeState(EFarmingState::Begin);
+	}*/
+}
+
+void ABOGameMode::ClearGame()
 {
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
@@ -190,7 +216,7 @@ void ABOGameMode::Explosion()
 	}
 }
 
-void ABOGameMode::End()
+void ABOGameMode::Ending()
 {
 	if (GameInstance)
 	{
@@ -198,7 +224,7 @@ void ABOGameMode::End()
 	}
 }
 
-void ABOGameMode::Exit()
+void ABOGameMode::ExitGame()
 {
 	if (GameInstance)
 	{
@@ -221,27 +247,6 @@ void ABOGameMode::AddKilledMonster(FName MonsterId)
 void ABOGameMode::SetKillerMonster(FName MonsterId)
 {
 	KillerMonster = MonsterId;
-}
-
-bool ABOGameMode::IsKeyCardAcquired()
-{
-	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
-	{
-		return false;
-	}
-
-	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
-	{
-		if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
-		{
-			if (InventoryComponent->FindItemIndex(FName(TEXT("KEY_CARD"))) != INDEX_NONE)
-			{
-				return true;
-			}
-		}
-	}
-
-	return false;
 }
 
 void ABOGameMode::GetKilledMonsters(TMap<FName, int32>& Data) const

@@ -13,10 +13,10 @@ struct FRegionData : public FTableRowBase
 
   public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName Id = "Default";
+	FName ID = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName SpawnVolumeId = "Default";
+	FName SpawnVolumeID = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	float ContainerActivateProb = 0.0f;

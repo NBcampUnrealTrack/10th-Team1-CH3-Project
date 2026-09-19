@@ -29,8 +29,8 @@ void ASpawnVolume::BeginPlay()
 	{
 		if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 		{
-			SpawnVolumeManager->GetSpawnVolumeData(Id, SpawnVolumeData);
-			SpawnVolumeManager->GetPhaseData(Id, PhaseData);
+			SpawnVolumeManager->GetSpawnVolumeData(ID, SpawnVolumeData);
+			SpawnVolumeManager->GetPhaseData(ID, PhaseData);
 		}
 	}
 
@@ -61,7 +61,7 @@ void ASpawnVolume::SpawnMonsters()
 	int32 Count = FMath::RandRange(SpawnVolumeData.MinSpawnCount, SpawnVolumeData.MaxSpawnCount);
 	TArray<FSpawnEntry> SpawnEntries = SpawnVolumeData.SpawnEntries;
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Volume : %s"), *Id.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Spawn Volume : %s"), *ID.ToString());
 	UE_LOG(LogTemp, Warning, TEXT("Count : %d"), Count);
 	for (int i = 0; i < Count; i++)
 	{
@@ -143,15 +143,15 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 
 		if (Sum >= Prob)
 		{
-			FName MonsterId = SpawnEntry.Id;
-			UE_LOG(LogTemp, Warning, TEXT("Spawned Monster : %s"), *MonsterId.ToString());
+			FName MonsterID = SpawnEntry.ID;
+			UE_LOG(LogTemp, Warning, TEXT("Spawned Monster : %s"), *MonsterID.ToString());
 
 			// Get Monster Data
 			FMonsterInfo MonsterData{};
-			GameInstance->GetMonsterData(MonsterId, MonsterData);
+			GameInstance->GetMonsterData(MonsterID, MonsterData);
 
 			// Spawn AI
-			MonsterSpawnSystem->MonsterSpawn(SpawnLocation, MonsterId);
+			MonsterSpawnSystem->MonsterSpawn(SpawnLocation, MonsterID);
 
 			if (IsChase)
 			{
@@ -217,14 +217,14 @@ void ASpawnVolume::SpawnPhaseMonsters()
 	PhaseIndex += 1;
 }
 
-FName ASpawnVolume::GetId() const
+FName ASpawnVolume::GetID() const
 {
-	return Id;
+	return ID;
 }
 
-FName ASpawnVolume::GetRegionId() const
+FName ASpawnVolume::GetRegionID() const
 {
-	return SpawnVolumeData.RegionId;
+	return SpawnVolumeData.RegionID;
 }
 
 void ASpawnVolume::CleanSetting()

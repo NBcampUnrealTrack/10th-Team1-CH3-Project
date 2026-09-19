@@ -19,12 +19,8 @@ class BEYONDOVERRIDE_API AKeycardDoorController : public AInteractableActorBase
 	virtual bool CanInteract(AActor* Interactor, FText& OutReason) const override;
 	virtual void PerformInteract(AActor* Interactor) override;
 
+	bool HasPlayerKeyCard() const;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
-
-	UPROPERTY(EditInstanceOnly, Category = "KeycardDoor")
-	TObjectPtr<AActor> KeyCardDoor;
-
-	UPROPERTY(EditInstanceOnly, Category = "KeycardDoor")
-	FName RequiredKeycardID;
 };

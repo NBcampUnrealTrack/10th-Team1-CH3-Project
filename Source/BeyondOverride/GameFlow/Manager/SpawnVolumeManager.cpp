@@ -52,8 +52,8 @@ void USpawnVolumeManager::LoadSpawnVolumeData()
 	{
 		if (Row)
 		{
-			FName Id = Row->Id;
-			SpawnVolumeDatas.Add(Id, *Row);
+			FName ID = Row->ID;
+			SpawnVolumeDatas.Add(ID, *Row);
 		}
 	}
 }
@@ -90,8 +90,8 @@ void USpawnVolumeManager::LoadPhaseData()
 	{
 		if (Row)
 		{
-			FName SpawnVolumeId = Row->SpawnVolumeId;
-			PhaseDatas.Add(SpawnVolumeId, *Row);
+			FName SpawnVolumeID = Row->SpawnVolumeID;
+			PhaseDatas.Add(SpawnVolumeID, *Row);
 		}
 	}
 }
@@ -106,7 +106,7 @@ void USpawnVolumeManager::InitSetting()
 		if (TObjectPtr<ASpawnVolume> SpawnVolume = Cast<ASpawnVolume>(Actor))
 		{
 			SpawnVolume->OnPlayerEntered.BindUObject(this, &USpawnVolumeManager::ActivateSpawnVolume);
-			SpawnVolumeByRegion.Add(SpawnVolume->GetRegionId(), SpawnVolume);
+			SpawnVolumeByRegion.Add(SpawnVolume->GetRegionID(), SpawnVolume);
 		}
 	}
 }
@@ -123,11 +123,11 @@ void USpawnVolumeManager::ActivateSpawnVolume(ASpawnVolume* SpawnVolume)
 	SpawnVolume->SpawnMonsters();
 }
 
-bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeId, FSpawnData& Data) const
+bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeID, FSpawnData& Data) const
 {
-	if (SpawnVolumeDatas.Contains(SpawnVolumeId))
+	if (SpawnVolumeDatas.Contains(SpawnVolumeID))
 	{
-		Data = SpawnVolumeDatas[SpawnVolumeId];
+		Data = SpawnVolumeDatas[SpawnVolumeID];
 
 		return true;
 	}
@@ -135,11 +135,11 @@ bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeId, FSpawnData& Da
 	return false;
 }
 
-bool USpawnVolumeManager::GetPhaseData(FName SpawnVolumeId, FPhaseData& Data) const
+bool USpawnVolumeManager::GetPhaseData(FName SpawnVolumeID, FPhaseData& Data) const
 {
-	if (PhaseDatas.Contains(SpawnVolumeId))
+	if (PhaseDatas.Contains(SpawnVolumeID))
 	{
-		Data = PhaseDatas[SpawnVolumeId];
+		Data = PhaseDatas[SpawnVolumeID];
 
 		return true;
 	}
@@ -147,11 +147,11 @@ bool USpawnVolumeManager::GetPhaseData(FName SpawnVolumeId, FPhaseData& Data) co
 	return false;
 }
 
-ASpawnVolume* USpawnVolumeManager::GetSpawnVolume(FName RegionId) const
+ASpawnVolume* USpawnVolumeManager::GetSpawnVolume(FName RegionID) const
 {
-	if (SpawnVolumeByRegion.Contains(RegionId))
+	if (SpawnVolumeByRegion.Contains(RegionID))
 	{
-		return SpawnVolumeByRegion[RegionId];
+		return SpawnVolumeByRegion[RegionID];
 	}
 
 	return nullptr;

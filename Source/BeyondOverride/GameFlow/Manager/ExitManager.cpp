@@ -5,6 +5,7 @@
 #include "SpawnVolumeManager.h"
 
 #include "Algo/RandomShuffle.h"
+#include "DataAssets/BODataAsset.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/Spawn/SpawnVolume.h"
 #include "Interaction/Actors/ExitControllerActor.h"
@@ -18,10 +19,7 @@ void UExitManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	if (GetWorld())
 	{
-		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
-		{
-			ExitActivateProb = GameInstance->GetExitActivateProb();
-		}
+		GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
 	}
 }
 
@@ -33,6 +31,19 @@ void UExitManager::InitSetting()
 	{
 		return;
 	}
+
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	UBODataAsset* DataAsset = GameInstance->GetBODataAsset();
+	if (!DataAsset)
+	{
+		return;
+	}
+
+	ExitActivateProb = DataAsset->GetExitActivateProb();
 
 	TArray<AActor*> AllExitControllers{};
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AExitControllerActor::StaticClass(), AllExitControllers);
@@ -115,20 +126,20 @@ AExitControllerActor* UExitManager::SelectRandomExit()
 
 void UExitManager::HandleExtract(AExitControllerActor* ExitPoint, AActor* Interactor)
 {
-	if (!ExitPoint || !GetWorld() || !GetWorld()->GetGameInstance())
+	if (!ExitPoint || !GetWorld() || !GameInstance)
 	{
 		return;
 	}
 
-	USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>();
+	USpawnVolumeManager* SpawnVolumeManager = GameInstance->GetSubsystem<USpawnVolumeManager>();
 	if (!SpawnVolumeManager)
 	{
 		return;
 	}
 
-	FName RegionId = ExitPoint->GetRegionId();
+	FName RegionID = ExitPoint->GetRegionID();
 
-	if (ASpawnVolume* SpawnVolume = SpawnVolumeManager->GetSpawnVolume(RegionId))
+	if (ASpawnVolume* SpawnVolume = SpawnVolumeManager->GetSpawnVolume(RegionID))
 	{
 		SpawnVolume->StartPhase();
 	}
