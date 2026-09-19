@@ -80,6 +80,38 @@
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/Bandage/DA_EquipmentAnimation_Bandage.DA_EquipmentAnimation_Bandage'"
     },
     {
+        "Name": "SHIELD_RECHARGER_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Green/Meshes/SKM_sci_fi_barrel_green.SKM_sci_fi_barrel_green'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerA/DA_EquipmentAnimation_ShieldRechargerA.DA_EquipmentAnimation_ShieldRechargerA'"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_B",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Blue/Meshes/SKM_sci_fi_barrel_blue.SKM_sci_fi_barrel_blue'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerB/DA_EquipmentAnimation_ShieldRechargerB.DA_EquipmentAnimation_ShieldRechargerB'"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_C",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Purple/Meshes/SKM_sci_fi_barrel_purple.SKM_sci_fi_barrel_purple'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerC/DA_EquipmentAnimation_ShieldRechargerC.DA_EquipmentAnimation_ShieldRechargerC'"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_D",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Red/Meshes/SKM_sci_fi_barrel_red.SKM_sci_fi_barrel_red'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerD/DA_EquipmentAnimation_ShieldRechargerD.DA_EquipmentAnimation_ShieldRechargerD'"
+    },
+    {
         "Name": "BACKPACK_A",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Wearables/Backpack01/SKM_Backpack01.SKM_Backpack01'",
         "EquipDelay": 0.0,
