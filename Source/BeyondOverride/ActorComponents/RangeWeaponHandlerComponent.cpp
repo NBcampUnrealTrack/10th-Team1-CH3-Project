@@ -1,4 +1,4 @@
-#include "ActorComponents/RangeWeaponHandlerComponent.h"
+﻿#include "ActorComponents/RangeWeaponHandlerComponent.h"
 
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
@@ -189,7 +189,7 @@ void URangeWeaponHandlerComponent::StartAiming()
 
 void URangeWeaponHandlerComponent::StopAiming()
 {
-	bIsAiming = true;
+	bIsAiming = false;
 }
 
 bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
