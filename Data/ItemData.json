@@ -182,6 +182,19 @@
         "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Wearables/T_Backpack01.T_Backpack01'"
     },
     {
+        "Name": "SHIELD_A",
+        "DisplayName": "Shield A",
+        "Description": "Shield A Description",
+        "ItemType": "ShieldItem",
+        "ItemRarity": "Common",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Shields/BP_ItemInstance_ShieldA.BP_ItemInstance_ShieldA_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Shields/BP_ItemPickup_ShieldA.BP_ItemPickup_ShieldA_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Shield/SM_Shield.SM_Shield'",
+        "MaxStackCount": 1,
+        "Weight": 1.0,
+        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Wearables/T_Shield.T_Shield'"
+    },
+    {
         "Name": "BASIC_BACKPACK",
         "DisplayName": "Basic Backpack",
         "Description": "Basically Provided Backpack",

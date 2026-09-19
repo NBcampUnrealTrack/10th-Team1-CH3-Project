@@ -75,5 +75,12 @@
         "EquipSocketName": "BackpackA",
         "HolsterSocketName": "",
         "EquipmentAnimationData": ""
+    },
+    {
+        "Name": "SHIELD_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Decorations/Shield/SKM_Shield.SKM_Shield'",
+        "EquipSocketName": "ShieldA",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": ""
     }
 ]
