@@ -8,34 +8,13 @@
 // Base include
 #include "Components/ActorComponent.h"
 
+// Add include
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
+#include "Monster/Structs/StateParams.h"
+
 // UHT Header
 #include "ShortTermStateComponent.generated.h"
-
-UENUM(BlueprintType)
-enum class EFlag : uint8
-{
-	TakeDamage UMETA(DisplayName = "TakeDamage"),
-	Calling UMETA(DisplayName = "Calling"),
-	Hearing UMETA(DisplayName = "Hearing"),
-};
-
-USTRUCT()
-struct FFlagInfo
-{
-	GENERATED_BODY()
-
-	UPROPERTY(VisibleAnywhere)
-	EFlag Flag;
-
-	UPROPERTY(VisibleAnywhere)
-	bool Complete = false;
-
-	UPROPERTY(VisibleAnywhere)
-	float CallTime;
-
-	UPROPERTY(VisibleAnywhere)
-	bool FlagType = false;
-};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UShortTermStateComponent : public UActorComponent

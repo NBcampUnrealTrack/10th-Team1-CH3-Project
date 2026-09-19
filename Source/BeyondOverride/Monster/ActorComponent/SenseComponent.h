@@ -32,6 +32,9 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
 	void SetSpawnPoint(FVector Point);
 	FVector GetSpawnPoint() const;
 
+	void SetEQSPoint(FVector Point);
+	FVector GetEQSPoint() const;
+
 	float GetMemorize() const;
 	float GetHearSenseSize() const;
 	float GetLoseSightSize() const;
@@ -57,17 +60,20 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
 	FVector SpawnPoint;
 
 	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	FVector EQSPoint;
+
+	UPROPERTY(EditAnywhere, Category = "State|SenseValue")
 	float HearSenseSize = 1750.0f;
 
-	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	UPROPERTY(EditAnywhere, Category = "State|SenseValue")
 	float SightSenseSize = 2500.0f;
 
-	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	UPROPERTY(EditAnywhere, Category = "State|SenseValue")
 	float LoseSightSize = 3000.0f;
 
-	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	UPROPERTY(EditAnywhere, Category = "State|SenseValue")
 	float VisionAngleDegrees = 50.0f;
 
-	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
+	UPROPERTY(EditAnywhere, Category = "State|SenseValue")
 	float Memorize = 5.0f;
 };

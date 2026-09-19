@@ -199,6 +199,11 @@ void AMonsterCharacter::PostInitializeComponents()
 	}
 }
 
+EMonsterType AMonsterCharacter::GetMonsterType() const
+{
+	return MonsterStat->GetMonsterType();
+}
+
 void AMonsterCharacter::SetMonsterID(FName ID)
 {
 	MonsterStat->SetMonsterID(ID);

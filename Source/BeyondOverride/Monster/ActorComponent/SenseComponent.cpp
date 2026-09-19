@@ -50,6 +50,16 @@ FVector USenseComponent::GetSpawnPoint() const
 	return SpawnPoint;
 }
 
+void USenseComponent::SetEQSPoint(FVector Point)
+{
+	EQSPoint = Point;
+}
+
+FVector USenseComponent::GetEQSPoint() const
+{
+	return EQSPoint;
+}
+
 float USenseComponent::GetHearSenseSize() const
 {
 	return HearSenseSize;
