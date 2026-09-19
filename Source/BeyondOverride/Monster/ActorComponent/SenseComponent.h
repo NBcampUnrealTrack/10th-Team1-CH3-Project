@@ -12,6 +12,7 @@
 #include "SenseComponent.generated.h"
 
 class ABOCharacter;
+class UMonsterDataAsset;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
