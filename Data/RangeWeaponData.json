@@ -15,6 +15,7 @@
         "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleA/CF_RecoilPitch_AssaultRifleA.CF_RecoilPitch_AssaultRifleA'",
         "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleA/CF_RecoilYaw_AssaultRifleA.CF_RecoilYaw_AssaultRifleA'",
         "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleA/CF_Spread_AssaultRifleA.CF_Spread_AssaultRifleA'",
+        "AimSpreadMultiplier": 0.5,
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB_V.T_RifleB_V'"
     },
     {
@@ -33,6 +34,7 @@
         "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilPitch_AssaultRifleB.CF_RecoilPitch_AssaultRifleB'",
         "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilYaw_AssaultRifleB.CF_RecoilYaw_AssaultRifleB'",
         "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_Spread_AssaultRifleB.CF_Spread_AssaultRifleB'",
+        "AimSpreadMultiplier": 0.5,
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB_V.T_RifleB_V'"
     },
     {
@@ -51,6 +53,7 @@
         "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolA/CF_RecoilPitch_PistolA.CF_RecoilPitch_PistolA'",
         "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolA/CF_RecoilYaw_PistolA.CF_RecoilYaw_PistolA'",
         "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolA/CF_Spread_PistolA.CF_Spread_PistolA'",
+        "AimSpreadMultiplier": 0.3,
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolB_V.T_PistolB_V'"
     },
     {
@@ -69,6 +72,7 @@
         "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolB/CF_RecoilPitch_PistolB.CF_RecoilPitch_PistolB'",
         "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolB/CF_RecoilYaw_PistolB.CF_RecoilYaw_PistolB'",
         "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolB/CF_Spread_PistolB.CF_Spread_PistolB'",
+        "AimSpreadMultiplier": 0.3,
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolB_V.T_PistolB_V'"
     },
     {
@@ -87,6 +91,7 @@
         "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunA/CF_RecoilPitch_ShotgunA.CF_RecoilPitch_ShotgunA'",
         "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunA/CF_RecoilYaw_ShotgunA.CF_RecoilYaw_ShotgunA'",
         "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunA/CF_Spread_ShotgunA.CF_Spread_ShotgunA'",
+        "AimSpreadMultiplier": 0.7,
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunB_V.T_ShotgunB_V'"
     },
     {
@@ -105,6 +110,7 @@
         "RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_RecoilPitch_ShotgunB.CF_RecoilPitch_ShotgunB'",
         "RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_RecoilYaw_ShotgunB.CF_RecoilYaw_ShotgunB'",
         "SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunB/CF_Spread_ShotgunB.CF_Spread_ShotgunB'",
+        "AimSpreadMultiplier": 0.7,
         "ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunB_V.T_ShotgunB_V'"
     }
 ]
