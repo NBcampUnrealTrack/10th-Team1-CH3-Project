@@ -4,5 +4,29 @@
         "EffectType": "HealHP",
         "EffectAmount": "20.0",
         "UseDuration": "2.0"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_A",
+        "EffectType": "HealShield",
+        "EffectAmount": "20.0",
+        "UseDuration": "0.8"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_B",
+        "EffectType": "HealShield",
+        "EffectAmount": "40.0",
+        "UseDuration": "1.4"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_C",
+        "EffectType": "HealShield",
+        "EffectAmount": "60.0",
+        "UseDuration": "2.0"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_D",
+        "EffectType": "HealShield",
+        "EffectAmount": "80.0",
+        "UseDuration": "2.6"
     }
 ]
