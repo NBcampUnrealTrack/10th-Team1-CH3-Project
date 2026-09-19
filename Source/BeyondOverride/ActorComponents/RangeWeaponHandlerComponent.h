@@ -79,6 +79,11 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 재장전
 	bool Reload();
 
+	// 조준 시작
+	void StartAiming();
+	// 조준 종료
+	void StopAiming();
+
   protected:
 	// 장비 등록 가능 여부
 	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const override;
@@ -92,8 +97,10 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual bool CanUse() const override;
 
   protected:
-	// 활성화 여부
+	// 사격 활성화 여부
 	bool bIsActive;
+	// 조준 여부
+	bool bIsAiming;
 
 	// 사격 타이머
 	FTimerHandle FireTimerHandle;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -22,7 +22,7 @@ class UItemInstanceBase : public UObject
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "ID")
 	FName ItemID; // 아이템 ID
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Properties")
 	int32 StackCount;
 
   public:
