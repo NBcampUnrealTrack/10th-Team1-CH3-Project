@@ -15,6 +15,8 @@ struct BEYONDOVERRIDE_API FEquippableItemDataRow : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
 	TObjectPtr<USkeletalMesh> EquipMesh; // 장착할 메시
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
+	float EquipDelay = 0.f; // 장착 딜레이
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
 	FName EquipSocketName; // 장착 소켓 이름
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equip")
 	FName HolsterSocketName; // 사용하지 않을 때 소켓 이름
