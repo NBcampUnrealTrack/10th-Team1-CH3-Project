@@ -316,7 +316,7 @@ int32 UInventoryComponent::FindItemIndex(const FName& ItemID) const
 	return INDEX_NONE;
 }
 
-int32 UInventoryComponent::FindItemCount(const FName& ItemID) const
+int32 UInventoryComponent::GetItemCount(const FName& ItemID) const
 {
 	int32 ItemCount = 0;
 
