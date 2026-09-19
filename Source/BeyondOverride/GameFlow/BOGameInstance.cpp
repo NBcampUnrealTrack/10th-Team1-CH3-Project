@@ -71,6 +71,8 @@ void UBOGameInstance::InitSetting()
 	PlayerEquipmentInventory.Empty();
 	StorageInventory.Empty();
 	MonsterDatas.Empty();
+
+	OpenLevel(ELevel::Basic);
 }
 
 void UBOGameInstance::Start()
@@ -84,8 +86,6 @@ void UBOGameInstance::Start()
 void UBOGameInstance::End()
 {
 	InitSetting();
-
-	OpenLevel(ELevel::Bunker);
 }
 
 void UBOGameInstance::Exit()
