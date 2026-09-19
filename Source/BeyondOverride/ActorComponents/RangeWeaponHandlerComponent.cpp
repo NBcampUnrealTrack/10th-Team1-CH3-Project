@@ -312,6 +312,12 @@ bool URangeWeaponHandlerComponent::CanReload() const
 		return false;
 	}
 
+	// 장착 중인 경우
+	if (IsEquipping())
+	{
+		return false;
+	}
+
 	// 탄창 가득찬 경우
 	if (RangeWeaponInstance->GetCurrentAmmo() == RangeWeaponInstance->GetMagazineSize())
 	{
