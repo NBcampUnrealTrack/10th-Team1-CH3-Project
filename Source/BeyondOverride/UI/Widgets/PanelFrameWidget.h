@@ -21,6 +21,12 @@ class BEYONDOVERRIDE_API UPanelFrameWidget : public UUserWidget
 	UFUNCTION(BlueprintCallable, Category = "PanelFrame")
 	void SetSlotCount(int32 CurrentCount, int32 MaxCount);
 
+	UFUNCTION(BlueprintCallable, Category = "PanelFrame")
+	void SetCarryWeight(float CurrentWeight, float MaxWeight);
+
+	UFUNCTION(BlueprintCallable, Category = "PanelFrame")
+	void HideCarryWeight();
+
   protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ContainerNameText;
@@ -33,4 +39,16 @@ class BEYONDOVERRIDE_API UPanelFrameWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> MaxCountText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UHorizontalBox> CarryWeightBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> CurrentCarryWeightText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> MaxCarryWeightText;
+
+	UPROPERTY(BlueprintReadOnly, Category = "PanelFrame")
+	bool bIsOverCarryWeight = false;
 };
