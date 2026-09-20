@@ -3,6 +3,7 @@
 #include "ActorComponents/EquipmentManagerComponent.h"
 #include "Components/TextBlock.h"
 #include "DataTables/Items/ItemDataRow.h"
+#include "DataTables/Items/RangeWeaponDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Items/Objects/RangeWeaponInstance.h"
@@ -31,6 +32,7 @@ void UEquipmentSlotWidget::NativeDestruct()
 	if (InventoryComponent)
 	{
 		InventoryComponent->OnEquipmentSlotChanged.RemoveDynamic(this, &UEquipmentSlotWidget::OnEquipmentSlotChanged);
+		InventoryComponent->OnInventoryChanged.RemoveDynamic(this, &UEquipmentSlotWidget::OnInventoryChanged);
 	}
 
 	if (EquipmentManagerComponent)
@@ -49,6 +51,7 @@ void UEquipmentSlotWidget::SetupEquipmentSlot(
 	if (InventoryComponent)
 	{
 		InventoryComponent->OnEquipmentSlotChanged.RemoveDynamic(this, &UEquipmentSlotWidget::OnEquipmentSlotChanged);
+		InventoryComponent->OnInventoryChanged.RemoveDynamic(this, &UEquipmentSlotWidget::OnInventoryChanged);
 	}
 	if (EquipmentManagerComponent)
 	{
@@ -62,6 +65,7 @@ void UEquipmentSlotWidget::SetupEquipmentSlot(
 	if (InventoryComponent)
 	{
 		InventoryComponent->OnEquipmentSlotChanged.AddDynamic(this, &UEquipmentSlotWidget::OnEquipmentSlotChanged);
+		InventoryComponent->OnInventoryChanged.AddDynamic(this, &UEquipmentSlotWidget::OnInventoryChanged);
 	}
 
 	if (EquipmentManagerComponent)
@@ -78,6 +82,12 @@ void UEquipmentSlotWidget::OnEquipmentSlotChanged(EEquipmentSlot ChangedSlot, UI
 	if (ChangedSlot != EquipmentSlot)
 		return;
 
+	RefreshItem();
+}
+
+void UEquipmentSlotWidget::OnInventoryChanged(const TArray<UItemInstanceBase*>& Slots)
+{
+	// 인벤토리 수량이 바뀌면 (탄약 획득/소모 등) 총 탄약 개수를 다시 계산
 	RefreshItem();
 }
 
@@ -111,22 +121,34 @@ void UEquipmentSlotWidget::RefreshItem()
 
 	URangeWeaponInstance* Weapon = Cast<URangeWeaponInstance>(Item);
 
+	const FText CurrentAmmoText = Weapon ? FText::AsNumber(Weapon->GetCurrentAmmo()) : FText::GetEmpty();
 	if (CurrentAmmoCount)
 	{
-		CurrentAmmoCount->SetText(Weapon ? FText::AsNumber(Weapon->GetCurrentAmmo()) : FText::GetEmpty());
+		CurrentAmmoCount->SetText(CurrentAmmoText);
 	}
 	if (CurrentAmmoCountInBody)
 	{
-		CurrentAmmoCountInBody->SetText(Weapon ? FText::AsNumber(Weapon->GetCurrentAmmo()) : FText::GetEmpty());
+		CurrentAmmoCountInBody->SetText(CurrentAmmoText);
 	}
+
+	// 총이 사용하는 탄약(AmmoItemID)의 인벤토리 보유 개수 계산
+	int32 TotalAmmo = 0;
+	if (Weapon && InventoryComponent)
+	{
+		if (const FRangeWeaponDataRow* WeaponData = Weapon->GetRangeWeaponData())
+		{
+			TotalAmmo = InventoryComponent->GetItemCount(WeaponData->AmmoItemID);
+		}
+	}
+	const FText TotalAmmoText = Weapon ? FText::AsNumber(TotalAmmo) : FText::GetEmpty();
 
 	if (TotalAmmoCount)
 	{
-		TotalAmmoCount->SetText(Weapon ? FText::AsNumber(Weapon->GetMagazineSize()) : FText::GetEmpty());
+		TotalAmmoCount->SetText(TotalAmmoText);
 	}
 	if (TotalAmmoCountInBody)
 	{
-		TotalAmmoCountInBody->SetText(Weapon ? FText::AsNumber(Weapon->GetMagazineSize()) : FText::GetEmpty());
+		TotalAmmoCountInBody->SetText(TotalAmmoText);
 	}
 	if (WpnAmmoType)
 	{
