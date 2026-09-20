@@ -10,6 +10,9 @@
 
 class UButton;
 class UTextBlock;
+class UKillCountEntryWidget;
+class UVerticalBox;
+class UImage;
 
 UCLASS()
 class BEYONDOVERRIDE_API UFinalResultScreenWidget : public UUserWidget
@@ -17,9 +20,14 @@ class BEYONDOVERRIDE_API UFinalResultScreenWidget : public UUserWidget
 	GENERATED_BODY()
 
   public:
+	UFinalResultScreenWidget(const FObjectInitializer& ObjectInitializer);
+
 	virtual void NativeConstruct() override;
 
   private:
+	UPROPERTY(EditDefaultsOnly, Category = "Monster")
+	TObjectPtr<UDataTable> MonsterDataTable;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TotalSurvivalTime;
 
@@ -34,6 +42,12 @@ class BEYONDOVERRIDE_API UFinalResultScreenWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> OKBtn;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> KillCountList;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UKillCountEntryWidget> KillCountEntryClass;
 
   public:
 	UFUNCTION()
