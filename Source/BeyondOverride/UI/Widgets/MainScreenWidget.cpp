@@ -89,7 +89,8 @@ void UMainScreenWidget::HandleHealthChanged(int32 Health, int32 MaxHealth)
 	if (!HealthBar)
 		return;
 
-	HealthBar->SetPercent(static_cast<float>(Health) / static_cast<float>(MaxHealth));
+	float Percent = MaxHealth > 0 ? static_cast<float>(Health) / static_cast<float>(MaxHealth) : 0.0f;
+	HealthBar->SetPercent(Percent);
 }
 
 void UMainScreenWidget::HandleShieldChanged(int32 Shield, int32 MaxShield)
@@ -97,5 +98,6 @@ void UMainScreenWidget::HandleShieldChanged(int32 Shield, int32 MaxShield)
 	if (!ShieldBar)
 		return;
 
-	ShieldBar->SetPercent(static_cast<float>(Shield) / static_cast<float>(MaxShield));
+	float Percent = MaxShield > 0 ? static_cast<float>(Shield) / static_cast<float>(MaxShield) : 0.0f;
+	ShieldBar->SetPercent(Percent);
 }
