@@ -2,7 +2,7 @@
     {
         "Name": "UNARM",
         "Damage": 10,
-        "AttackInterval": 2.0,
+        "AttackInterval": 0.5,
         "AttackRadius": 150.0
     },
     {

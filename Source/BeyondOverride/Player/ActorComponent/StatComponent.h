@@ -29,6 +29,9 @@ public:
 	int32 GetMaxShield() const { return MaxShield; }
 	bool GetIsDead() const { return bIsDead; }
 
+	void ApplyShield(int32 NewCurrentShield, int32 NewMaxShield, float NewRegenDelay, float NewRegenInterval, int32 NewRegenAmount);
+	void RemoveShield();
+
 public:
 	FOnHealthChanged OnHealthChanged; // 체력이 변경됐을 때 실행할 델리게이트
 	FOnShieldChanged OnShieldChanged; // 쉴드량이 변경됐을 때 실행할 델리게이트
@@ -47,9 +50,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stat")
 	int32 CurHealth = 100;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
-	int32 MaxShield = 50;
+	int32 MaxShield = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stat")
-	int32 CurShield = 50;
+	int32 CurShield = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stat")
 	bool bIsDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat")
