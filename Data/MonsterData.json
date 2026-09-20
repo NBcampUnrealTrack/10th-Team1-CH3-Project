@@ -34,20 +34,17 @@
 		"MonsterID": "Assasin",
 		"CapsuleRadius": 34,
 		"CapsuleHalfHeight": 88,
-		"SkeletalScale":
-		{
+		"SkeletalScale": {
 			"X": 1,
 			"Y": 1,
 			"Z": 1
 		},
-		"SkeletalRotation":
-		{
+		"SkeletalRotation": {
 			"Pitch": 0,
 			"Yaw": -90,
 			"Roll": 0
 		},
-		"SkeletalLocation":
-		{
+		"SkeletalLocation": {
 			"X": 0,
 			"Y": 0,
 			"Z": -90
@@ -56,7 +53,7 @@
 		"MonsterSkeletal": "/Script/Engine.SkeletalMesh'/Game/Assets/Monsters/ParagonKallari/Characters/Heroes/Kallari/Skins/Rogue/Meshes/Kallari_Rogue.Kallari_Rogue'",
 		"MonsterAnimInstance": "/Script/Engine.AnimBlueprintGeneratedClass'/Game/Blueprints/Monster/Animation/ABP_Assasin.ABP_Assasin_C'",
 		"MonsterAttackEffect": "/Script/Engine.ParticleSystem'/Game/Assets/Items/Weapons/MilitaryWeapDark/FX/P_Impact_Metal_Medium_01.P_Impact_Metal_Medium_01'",
-		"MonsterImage": "None",
+		"MonsterImage": "/Script/Engine.Texture2D'/Game/UI/Textures/Character/T_Monster07.T_Monster07'",
 		"MonsterName": "Assasin"
 	},
 	{

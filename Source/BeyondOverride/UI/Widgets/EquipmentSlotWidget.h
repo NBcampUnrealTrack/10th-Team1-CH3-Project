@@ -81,6 +81,10 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 	UFUNCTION()
 	void OnEquipmentSlotChanged(EEquipmentSlot ChangedSlot, UItemInstanceBase* ItemInstanceBase);
 
+	// 인벤토리 슬롯 내용/수량 변경 시 호출 (총 탄약 개수 갱신용)
+	UFUNCTION()
+	void OnInventoryChanged(const TArray<UItemInstanceBase*>& Slots);
+
 	void OnActiveSlotChanged(EEquipmentSlot ChangedSlot, UEquippableItemInstance* ItemInstance);
 
 	UFUNCTION()
