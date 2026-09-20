@@ -466,36 +466,31 @@ void ABOCharacter::Fire(const FInputActionValue& value)
 		return;
 	}
 
-	if (EquipmentManagerComponent)
+	// 현재 장비 사용 시도
+	if (!EquipmentManagerComponent || !EquipmentManagerComponent->Use())
 	{
-		EquipmentManagerComponent->Use();
+		return;
 	}
 
-	//// 현재 장비 사용 시도
-	//if (!EquipmentManagerComponent || !EquipmentManagerComponent->Use())
-	//{
-	//	return;
-	//}
+	if (!GetMesh() || !GetMesh()->GetAnimInstance())
+	{
+		return;
+	}
 
-	//if (!GetMesh() || !GetMesh()->GetAnimInstance())
-	//{
-	//	return;
-	//}
+	UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!IsValid(AnimInstance))
+	{
+		return;
+	}
 
-	//UBOAnimInstance* AnimInstance = Cast<UBOAnimInstance>(GetMesh()->GetAnimInstance());
-	//if (!IsValid(AnimInstance))
-	//{
-	//	return;
-	//}
-
-	//if (bIsAiming)
-	//{
-	//	AnimInstance->PlayFireAimMontage();
-	//}
-	//else
-	//{
-	//	AnimInstance->PlayFireHipMontage();
-	//}
+	if (bIsAiming)
+	{
+		AnimInstance->PlayFireAimMontage();
+	}
+	else
+	{
+		AnimInstance->PlayFireHipMontage();
+	}
 }
 
 void ABOCharacter::StartFire(const FInputActionValue& value)
