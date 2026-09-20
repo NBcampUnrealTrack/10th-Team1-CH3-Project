@@ -6,6 +6,8 @@
 #include "EndFarmingState.h"
 #include "ProgressFarmingState.h"
 
+#include "Logging/BOLog.h"
+
 UFarmingStateMachine::UFarmingStateMachine()
 	: GameMode(nullptr),
 	  CurrentState(nullptr),
@@ -47,19 +49,19 @@ void UFarmingStateMachine::CreateState(EFarmingState FarmingState)
 	{
 	case EFarmingState::Begin:
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Begin"));
+		UE_LOG(LogGameFlow, Warning, TEXT("State Begin"));
 		CurrentState = NewObject<UBeginFarmingState>(this, UBeginFarmingState::StaticClass());
 		break;
 	}
 	case EFarmingState::Progress:
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Progress"));
+		UE_LOG(LogGameFlow, Warning, TEXT("State Progress"));
 		CurrentState = NewObject<UProgressFarmingState>(this, UProgressFarmingState::StaticClass());
 		break;
 	}
 	case EFarmingState::End:
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State End"));
+		UE_LOG(LogGameFlow, Warning, TEXT("State End"));
 		CurrentState = NewObject<UEndFarmingState>(this, UEndFarmingState::StaticClass());
 		break;
 	}

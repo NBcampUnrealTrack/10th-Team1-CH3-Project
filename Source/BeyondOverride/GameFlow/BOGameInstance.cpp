@@ -9,6 +9,7 @@
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Logging/BOLog.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
@@ -20,9 +21,6 @@
 void UBOGameInstance::Init()
 {
 	Super::Init();
-
-	BODataAsset = nullptr;
-	ExitActivateProb = 0.5f;
 
 	LoadMonsterData();
 
@@ -74,6 +72,8 @@ void UBOGameInstance::InitSetting()
 	PlayerEquipmentInventory.Empty();
 	StorageInventory.Empty();
 	MonsterDatas.Empty();
+
+	OpenLevel(ELevel::Basic);
 }
 
 void UBOGameInstance::Start()
@@ -87,8 +87,6 @@ void UBOGameInstance::Start()
 void UBOGameInstance::End()
 {
 	InitSetting();
-
-	OpenLevel(ELevel::Bunker);
 }
 
 void UBOGameInstance::Exit()
@@ -125,7 +123,10 @@ void UBOGameInstance::EndFarming(EFarmingResult Result)
 
 	SaveFarmingData();
 
-	OpenLevel(ELevel::Bunker);
+	if (Result != EFarmingResult::Clear)
+	{
+		OpenLevel(ELevel::Bunker);
+	}
 }
 
 void UBOGameInstance::Die()
@@ -142,8 +143,9 @@ void UBOGameInstance::Die()
 	}
 }
 
-void UBOGameInstance::ToEnding()
+void UBOGameInstance::EnterServerRoom()
 {
+	SavePlayerData();
 	SaveFarmingData();
 
 	OpenLevel(ELevel::ServerRoom);
@@ -158,9 +160,15 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		SaveStorageData();
 	}
 
-	if (GetWorld() && Levels.Contains(Level))
+	if (GetWorld() && BODataAsset)
 	{
-		UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
+		TMap<ELevel, FName> Levels{};
+		BODataAsset->GetLevels(Levels);
+
+		if (Levels.Contains(Level))
+		{
+			UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
+		}
 	}
 }
 
@@ -236,23 +244,35 @@ void UBOGameInstance::SaveStorageData()
 
 void UBOGameInstance::SaveFarmingData()
 {
+	SaveSurvivalTimeData();
+	SaveCombatData();
+}
+
+void UBOGameInstance::SaveSurvivalTimeData()
+{
 	if (!GetWorld())
 	{
 		return;
 	}
 
-	// survival time
 	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
 	{
 		SurvivalTime = WorldSubsystem->GetSurvivalTime();
 
 		TotalSurvivalTime += SurvivalTime;
 
-		UE_LOG(LogTemp, Warning, TEXT("Survival Time : %f"), SurvivalTime);
-		UE_LOG(LogTemp, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
+		UE_LOG(LogGameFlow, Warning, TEXT("Survival Time : %f"), SurvivalTime);
+		UE_LOG(LogGameFlow, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
+	}
+}
+
+void UBOGameInstance::SaveCombatData()
+{
+	if (!GetWorld())
+	{
+		return;
 	}
 
-	// killed monsters / killer monster
 	if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 	{
 		GameMode->GetKilledMonsters(KilledMonsters);
@@ -278,26 +298,6 @@ void UBOGameInstance::SaveFarmingData()
 UBODataAsset* UBOGameInstance::GetBODataAsset() const
 {
 	return BODataAsset;
-}
-
-void UBOGameInstance::GetLevels(TMap<ELevel, FName>& Data) const
-{
-	Data = Levels;
-}
-
-void UBOGameInstance::GetRegions(TArray<FName>& Data) const
-{
-	Data = Regions;
-}
-
-void UBOGameInstance::GetBasicEquipments(TArray<FName>& Data) const
-{
-	Data = BasicEquipments;
-}
-
-float UBOGameInstance::GetExitActivateProb() const
-{
-	return ExitActivateProb;
 }
 
 void UBOGameInstance::GetMonsterData(FName Id, FMonsterInfo& Data) const

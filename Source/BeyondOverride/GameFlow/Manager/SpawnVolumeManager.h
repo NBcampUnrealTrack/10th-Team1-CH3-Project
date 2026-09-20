@@ -28,9 +28,9 @@ class BEYONDOVERRIDE_API USpawnVolumeManager : public UGameInstanceSubsystem
 	UFUNCTION(BlueprintCallable, Category = "Manager")
 	void ActivateSpawnVolume(ASpawnVolume* SpawnVolume);
 
-	bool GetSpawnVolumeData(FName SpawnVolumeId, FSpawnData& Data) const;
-	bool GetPhaseData(FName SpawnVolumeId, FPhaseData& Data) const;
-	ASpawnVolume* GetSpawnVolume(FName RegionId) const;
+	bool GetSpawnVolumeData(FName SpawnVolumeID, FSpawnData& Data) const;
+	bool GetPhaseData(FName SpawnVolumeID, FPhaseData& Data) const;
+	ASpawnVolume* GetSpawnVolume(FName RegionID) const;
 
 	void CleanSetting();
 

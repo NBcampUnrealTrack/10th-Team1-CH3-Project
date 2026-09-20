@@ -33,9 +33,17 @@ enum class EDeathLocation : uint8
 UENUM(BlueprintType)
 enum class ELevel : uint8
 {
+	Basic,
 	Bunker,
 	Main,
-	ServerRoom
+	ServerRoom // test code
+};
+
+UENUM(BlueprintType)
+enum class ELocation : uint8
+{
+	Corridor,
+	AIBuildingEntrance
 };
 
 UENUM(BlueprintType)
@@ -52,5 +60,6 @@ enum class EFarmingResult : uint8
 {
 	None,
 	Success,
-	Fail
+	Fail,
+	Clear
 };

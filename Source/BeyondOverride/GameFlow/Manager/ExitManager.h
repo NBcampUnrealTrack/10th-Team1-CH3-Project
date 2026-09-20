@@ -8,6 +8,7 @@
 
 #include "ExitManager.generated.h"
 
+class UBOGameInstance;
 class AExitActor;
 class AExitControllerActor;
 
@@ -23,7 +24,7 @@ class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 	void InitSetting();
 
 	void SpawnCharacter();
-	void ActivateExit();
+	void ActivateExits();
 	AExitControllerActor* SelectRandomExit();
 
 	UFUNCTION(BlueprintCallable, Category = "Exit")
@@ -32,6 +33,8 @@ class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 	void CleanSetting();
 
   private:
+	TObjectPtr<UBOGameInstance> GameInstance;
+
 	float ExitActivateProb;
 	TArray<TObjectPtr<AExitControllerActor>> ExitControllers;
 };

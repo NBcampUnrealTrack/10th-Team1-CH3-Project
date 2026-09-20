@@ -6,6 +6,7 @@
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Logging/BOLog.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/MonsterCalling.h"
 #include "Monster/System/MonsterSpawn.h"
@@ -29,8 +30,9 @@ void ASpawnVolume::BeginPlay()
 	{
 		if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 		{
-			SpawnVolumeManager->GetSpawnVolumeData(Id, SpawnVolumeData);
-			SpawnVolumeManager->GetPhaseData(Id, PhaseData);
+			UE_LOG(LogGameFlow, Warning, TEXT("Set Spawn Volume Data"));
+			SpawnVolumeManager->GetSpawnVolumeData(ID, SpawnVolumeData);
+			SpawnVolumeManager->GetPhaseData(ID, PhaseData);
 		}
 	}
 
@@ -43,16 +45,26 @@ void ASpawnVolume::BeginPlay()
 
 void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Volume Overlapped"));
-	UE_LOG(LogTemp, Warning, TEXT("Overlap Actor : %s"), *OtherActor->GetName());
+	UE_LOG(LogGameFlow, Warning, TEXT("%s Overlapped"), *ID.ToString());
+	UE_LOG(LogGameFlow, Warning, TEXT("Overlap Actor : %s"), *OtherActor->GetName());
 
 	if (OtherActor->IsA<ABOCharacter>())
 	{
+		UE_LOG(LogGarbage, Warning, TEXT("Player Overlapped %s"), *ID.ToString());
+
+		if (BoxComp)
+		{
+			UE_LOG(LogGameFlow, Warning, TEXT("%s Remove Overlap Bind"), *ID.ToString());
+
+			BoxComp->OnComponentBeginOverlap.RemoveDynamic(this, &ASpawnVolume::OnOverlapped);
+			BoxComp->SetGenerateOverlapEvents(false);
+		}
+
 		OnPlayerEntered.ExecuteIfBound(this);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not Player"));
+		UE_LOG(LogGameFlow, Warning, TEXT("Not Player"));
 	}
 }
 
@@ -61,11 +73,11 @@ void ASpawnVolume::SpawnMonsters()
 	int32 Count = FMath::RandRange(SpawnVolumeData.MinSpawnCount, SpawnVolumeData.MaxSpawnCount);
 	TArray<FSpawnEntry> SpawnEntries = SpawnVolumeData.SpawnEntries;
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Volume : %s"), *Id.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Count : %d"), Count);
+	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : %s"), *ID.ToString());
+	UE_LOG(LogGameFlow, Warning, TEXT("Count : %d"), Count);
 	for (int i = 0; i < Count; i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Random Monster"));
+		UE_LOG(LogGameFlow, Warning, TEXT("Spawn Random Monster"));
 		SpawnRandomMonster(SpawnEntries, SpawnMinRadius);
 	}
 }
@@ -143,15 +155,15 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 
 		if (Sum >= Prob)
 		{
-			FName MonsterId = SpawnEntry.Id;
-			UE_LOG(LogTemp, Warning, TEXT("Spawned Monster : %s"), *MonsterId.ToString());
+			FName MonsterID = SpawnEntry.ID;
+			UE_LOG(LogGameFlow, Warning, TEXT("Spawned Monster : %s"), *MonsterID.ToString());
 
 			// Get Monster Data
 			FMonsterInfo MonsterData{};
-			GameInstance->GetMonsterData(MonsterId, MonsterData);
+			GameInstance->GetMonsterData(MonsterID, MonsterData);
 
 			// Spawn AI
-			MonsterSpawnSystem->MonsterSpawn(SpawnLocation, MonsterId);
+			MonsterSpawnSystem->MonsterSpawn(SpawnLocation, MonsterID);
 
 			if (IsChase)
 			{
@@ -178,8 +190,8 @@ void ASpawnVolume::StartPhase()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Start Phase"));
-	UE_LOG(LogTemp, Warning, TEXT("Phase Count : %d"), Size);
+	UE_LOG(LogGameFlow, Warning, TEXT("Start Phase"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Phase Count : %d"), Size);
 
 	SpawnPhaseMonsters();
 }
@@ -188,23 +200,23 @@ void ASpawnVolume::SpawnPhaseMonsters()
 {
 	int32 Size = PhaseData.PhaseEntries.Num();
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Phase Monster"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Phase Monster"));
 
 	TArray<FPhaseEntry> PhaseEntries = PhaseData.PhaseEntries;
 	TArray<FSpawnEntry> SpawnEntries = PhaseEntries[PhaseIndex].SpawnEntries;
 	int32 SpawnCount = PhaseEntries[PhaseIndex].SpawnCount;
 
-	UE_LOG(LogTemp, Warning, TEXT("Phase Monster Count : %d"), SpawnCount);
+	UE_LOG(LogGameFlow, Warning, TEXT("Phase Monster Count : %d"), SpawnCount);
 
 	for (int i = 0; i < SpawnCount; i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Phase Random Monster"));
+		UE_LOG(LogGameFlow, Warning, TEXT("Spawn Phase Random Monster"));
 		SpawnRandomMonster(SpawnEntries, SpawnMinRadius, SpawnMaxRadius, true);
 	}
 
 	if (PhaseIndex == Size - 1)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("End Phase"));
+		UE_LOG(LogGameFlow, Warning, TEXT("End Phase"));
 		PhaseIndex = 0;
 
 		return;
@@ -217,14 +229,14 @@ void ASpawnVolume::SpawnPhaseMonsters()
 	PhaseIndex += 1;
 }
 
-FName ASpawnVolume::GetId() const
+FName ASpawnVolume::GetID() const
 {
-	return Id;
+	return ID;
 }
 
-FName ASpawnVolume::GetRegionId() const
+FName ASpawnVolume::GetRegionID() const
 {
-	return SpawnVolumeData.RegionId;
+	return SpawnVolumeData.RegionID;
 }
 
 void ASpawnVolume::CleanSetting()

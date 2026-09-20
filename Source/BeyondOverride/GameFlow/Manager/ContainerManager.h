@@ -9,6 +9,7 @@
 
 #include "ContainerManager.generated.h"
 
+class UBOGameInstance;
 class UItemInstanceBase;
 class AStorageContainerActor;
 
@@ -22,21 +23,25 @@ class BEYONDOVERRIDE_API UContainerManager : public UGameInstanceSubsystem
 	void LoadContainerData();
 
   public:
-	void InitSetting(bool IsKeyCardAcquired);
+	void InitSetting();
+	bool IsKeyCardAcquired() const;
+	bool HasPlayerKeyCard() const;
+	bool HasStorageKeyCard() const;
 
 	void ActivateContainer();
 	void GetSpawnItems(AStorageContainerActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items);
+	TObjectPtr<UItemInstanceBase> GetSpawnItem(AStorageContainerActor* Container);
 	FName GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries);
 
-	bool GetContainerData(FName ContainerId, FSpawnData& Data) const;
+	bool GetContainerData(FName ContainerID, FSpawnData& Data) const;
 
 	void CleanSetting();
 
   private:
-	UPROPERTY()
+	TObjectPtr<UBOGameInstance> GameInstance;
+
 	bool bShouldSpawnKeyCard;
 
-	UPROPERTY()
 	TMap<FName, FSpawnData> ContainerDatas;
 	TMap<FName, TArray<TObjectPtr<AStorageContainerActor>>> ContainerByRegion;
 };

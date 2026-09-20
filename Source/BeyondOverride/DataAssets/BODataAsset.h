@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Engine/DataAsset.h"
+#include "Enums/BOEnums.h"
 
 #include "BODataAsset.generated.h"
 
@@ -17,6 +18,13 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	GENERATED_BODY()
 
   public:
+	void GetLevels(TMap<ELevel, FName>& Data) const;
+	void GetRegions(TArray<FName>& Data) const;
+	void GetBasicEquipments(TArray<FName>& Data) const;
+	FName GetKeyCardID() const;
+	float GetExitActivateProb() const;
+	float GetTotalDefenseTime() const;
+
 	UDataTable* GetRegionDataTable() const;
 	UDataTable* GetSpawnVolumeDataTable() const;
 	UDataTable* GetPhaseDataTable() const;
@@ -24,6 +32,24 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	UDataTable* GetContainerDataTable() const;
 
   public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	TMap<ELevel, FName> Levels;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	TArray<FName> Regions;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	TArray<FName> BasicEquipments;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	FName KeyCardID;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float ExitActivateProb;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	float TotalDefenseTime;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* RegionDataTable;
 

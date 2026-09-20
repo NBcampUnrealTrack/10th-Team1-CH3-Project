@@ -13,7 +13,7 @@ struct FSpawnEntry
 
   public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName Id = "Default";
+	FName ID = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	float Prob = 0.0f;
@@ -26,10 +26,10 @@ struct FSpawnData : public FTableRowBase
 
   public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName Id = "Default";
+	FName ID = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	FName RegionId = "Default";
+	FName RegionID = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TArray<FSpawnEntry> SpawnEntries;

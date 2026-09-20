@@ -7,7 +7,6 @@
 #include "SpawnVolumeManager.h"
 
 #include "GameFlow/BOGameInstance.h"
-#include "GameFlow/BOGameMode.h"
 
 void URegionManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -49,8 +48,8 @@ void URegionManager::LoadRegionData()
 	{
 		if (Row)
 		{
-			FName Id = Row->Id;
-			RegionDatas.Add(Id, *Row);
+			FName ID = Row->ID;
+			RegionDatas.Add(ID, *Row);
 		}
 	}
 }
@@ -62,12 +61,6 @@ void URegionManager::InitSetting()
 		return;
 	}
 
-	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
-	if (!GameMode)
-	{
-		return;
-	}
-
 	if (USpawnVolumeManager* SpawnVolumeManger = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 	{
 		SpawnVolumeManger->InitSetting();
@@ -75,9 +68,7 @@ void URegionManager::InitSetting()
 
 	if (UContainerManager* ContainerManager = GetWorld()->GetGameInstance()->GetSubsystem<UContainerManager>())
 	{
-		bool IsKeyCardAcquired = GameMode->IsKeyCardAcquired();
-
-		ContainerManager->InitSetting(IsKeyCardAcquired);
+		ContainerManager->InitSetting();
 	}
 
 	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())

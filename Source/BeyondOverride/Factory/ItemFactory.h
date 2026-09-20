@@ -12,7 +12,7 @@ struct BEYONDOVERRIDE_API FItemFactory
 	static UItemInstanceBase* CreateItemInstance(
 		UObject* Outer,
 		const FName ItemID,
-		const int32 StackCount = 1);
+		const int32 StackCount = 0);
 
 	// 아이템 액터 소환 - ItemID
 	static AItemPickupBase* SpawnItemPickup(
