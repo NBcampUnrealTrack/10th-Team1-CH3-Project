@@ -6,6 +6,9 @@
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "UI/Widgets/EquipmentSlotWidget.h"
+#include "Enums/EquipmentSlot.h"
+#include "Items/Objects/ItemInstanceBase.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 
 void UMainScreenWidget::NativeConstruct()
 {
@@ -21,6 +24,14 @@ void UMainScreenWidget::NativeConstruct()
 
 	StatComponent->OnHealthChanged.AddDynamic(this, &UMainScreenWidget::HandleHealthChanged);
 	StatComponent->OnShieldChanged.AddDynamic(this, &UMainScreenWidget::HandleShieldChanged);
+
+	InventoryComponent = OwningCharacter->GetPlayerInventoryComponent();
+	if (InventoryComponent)
+	{
+		InventoryComponent->OnEquipmentSlotChanged.AddDynamic(this, &UMainScreenWidget::HandleEquipmentSlotChanged);
+
+		HandleEquipmentSlotChanged(EEquipmentSlot::Shield, InventoryComponent->GetEquipmentItem(EEquipmentSlot::Shield));
+	}
 
 	HandleHealthChanged(StatComponent->GetCurHealth(), StatComponent->GetMaxHealth());
 	HandleShieldChanged(StatComponent->GetCurShield(), StatComponent->GetMaxShield());
@@ -46,6 +57,12 @@ void UMainScreenWidget::NativeDestruct()
 		StatComponent->OnHealthChanged.RemoveDynamic(this, &UMainScreenWidget::HandleHealthChanged);
 		StatComponent->OnShieldChanged.RemoveDynamic(this, &UMainScreenWidget::HandleShieldChanged);
 		StatComponent = nullptr;
+	}
+
+	if (InventoryComponent)
+	{
+		InventoryComponent->OnEquipmentSlotChanged.RemoveDynamic(this, &UMainScreenWidget::HandleEquipmentSlotChanged);
+		InventoryComponent = nullptr;
 	}
 
 	Super::NativeDestruct();
@@ -100,4 +117,12 @@ void UMainScreenWidget::HandleShieldChanged(int32 Shield, int32 MaxShield)
 
 	float Percent = MaxShield > 0 ? static_cast<float>(Shield) / static_cast<float>(MaxShield) : 0.0f;
 	ShieldBar->SetPercent(Percent);
+}
+
+void UMainScreenWidget::HandleEquipmentSlotChanged(EEquipmentSlot ChangedSlot, UItemInstanceBase* ItemInstanceBase)
+{
+	if (ChangedSlot != EEquipmentSlot::Shield || !ShieldBar)
+		return;
+
+	ShieldBar->SetVisibility(IsValid(ItemInstanceBase) ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 }
