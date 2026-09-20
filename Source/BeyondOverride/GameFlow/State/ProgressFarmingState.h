@@ -18,4 +18,9 @@ class BEYONDOVERRIDE_API UProgressFarmingState : public UBaseFarmingState
 
   public:
 	virtual void Enter() override;
+
+  private:
+	void SpawnCharacter();
+	void ActivateExits();
+	void SetStartTime();
 };

@@ -56,9 +56,6 @@ void UExitManager::InitSetting()
 			ExitControllers.Add(ExitController);
 		}
 	}
-
-	SpawnCharacter();
-	ActivateExit();
 }
 
 void UExitManager::SpawnCharacter()
@@ -96,7 +93,7 @@ void UExitManager::SpawnCharacter()
 	}
 }
 
-void UExitManager::ActivateExit()
+void UExitManager::ActivateExits()
 {
 	int32 Size = ExitControllers.Num();
 	int32 Count = FMath::RoundToInt(Size * ExitActivateProb);

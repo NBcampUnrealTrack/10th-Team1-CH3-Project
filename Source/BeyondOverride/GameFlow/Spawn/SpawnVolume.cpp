@@ -30,6 +30,7 @@ void ASpawnVolume::BeginPlay()
 	{
 		if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 		{
+			UE_LOG(LogGameFlow, Warning, TEXT("Set Spawn Volume Data"));
 			SpawnVolumeManager->GetSpawnVolumeData(ID, SpawnVolumeData);
 			SpawnVolumeManager->GetPhaseData(ID, PhaseData);
 		}
@@ -44,11 +45,21 @@ void ASpawnVolume::BeginPlay()
 
 void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume Overlapped"));
+	UE_LOG(LogGameFlow, Warning, TEXT("%s Overlapped"), *ID.ToString());
 	UE_LOG(LogGameFlow, Warning, TEXT("Overlap Actor : %s"), *OtherActor->GetName());
 
 	if (OtherActor->IsA<ABOCharacter>())
 	{
+		UE_LOG(LogGarbage, Warning, TEXT("Player Overlapped %s"), *ID.ToString());
+
+		if (BoxComp)
+		{
+			UE_LOG(LogGameFlow, Warning, TEXT("%s Remove Overlap Bind"), *ID.ToString());
+
+			BoxComp->OnComponentBeginOverlap.RemoveDynamic(this, &ASpawnVolume::OnOverlapped);
+			BoxComp->SetGenerateOverlapEvents(false);
+		}
+
 		OnPlayerEntered.ExecuteIfBound(this);
 	}
 	else
