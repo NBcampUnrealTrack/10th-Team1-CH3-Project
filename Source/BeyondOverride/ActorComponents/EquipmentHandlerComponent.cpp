@@ -1,7 +1,10 @@
 ﻿#include "ActorComponents/EquipmentHandlerComponent.h"
 
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
+#include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "GameFramework/Character.h"
 #include "Items/Objects/EquippableItemInstance.h"
 
@@ -56,6 +59,11 @@ UEquippableItemInstance* UEquipmentHandlerComponent::Unassign()
 		return nullptr;
 	}
 
+	if (IsEquipping())
+	{
+		OnEquipInterrupted();
+	}
+
 	// 장비 메시 제거
 	if (EquipMeshComponent)
 	{
@@ -100,6 +108,11 @@ bool UEquipmentHandlerComponent::Unequip()
 		return false;
 	}
 
+	if (IsEquipping())
+	{
+		OnEquipInterrupted();
+	}
+
 	// 보관 소켓에 메시 부착 - 없으면 숨기기
 	AttachToSocket(EquippableItemData->HolsterSocketName, true);
 
@@ -108,7 +121,7 @@ bool UEquipmentHandlerComponent::Unequip()
 
 bool UEquipmentHandlerComponent::Use()
 {
-	return true;
+	return CanUse();
 }
 
 void UEquipmentHandlerComponent::StartAction()
@@ -184,6 +197,11 @@ bool UEquipmentHandlerComponent::CanUnequip() const
 		return false;
 	}
 
+	if (IsEquipping())
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -229,31 +247,83 @@ void UEquipmentHandlerComponent::AttachToSocket(const FName& SocketName, bool bH
 
 void UEquipmentHandlerComponent::OnEquipStarted()
 {
-	// 장착 시작 디버그 메시지 출력
+	//// 장착 시작 디버그 메시지 출력
+	//GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Started - %s"), *GetNameSafe(EquippableItemInstance)));
+
+	//// 장비 장착 타이머 활성화
+	//if (UWorld* World = GetWorld())
+	//{
+	//	GetWorld()->GetTimerManager().SetTimer(
+	//		EquipTimerHandle,
+	//		this,
+	//		&UEquipmentHandlerComponent::OnEquipCompleted,
+	//		EquippableItemData->EquipDelay,
+	//		false);
+	//}
+
 	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Started - %s"), *GetNameSafe(EquippableItemInstance)));
 
-	// 장비 장착 타이머 활성화
-	if (UWorld* World = GetWorld())
+	if (!EquippableItemData)
 	{
-		GetWorld()->GetTimerManager().SetTimer(
-			EquipTimerHandle,
-			this,
-			&UEquipmentHandlerComponent::OnEquipCompleted,
-			EquippableItemData->EquipDelay,
-			false);
+		return;
 	}
+
+	UEquipmentAnimationDataAsset* AnimationData = EquippableItemData->EquipmentAnimationData;
+	UAnimMontage* EquipMontage = AnimationData ? AnimationData->Equip : nullptr;
+
+	// Equip 몽타주가 없다면 즉시 장착 완료
+	if (!EquipMontage)
+	{
+		OnEquipCompleted();
+		return;
+	}
+
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	USkeletalMeshComponent* CharacterMesh = Character ? Character->GetMesh() : nullptr;
+
+	UAnimInstance* AnimInstance = CharacterMesh ? CharacterMesh->GetAnimInstance() : nullptr;
+
+	// AnimInstance가 없으면 몽타주를 재생할 수 없으므로 즉시 완료
+	if (!AnimInstance)
+	{
+		OnEquipCompleted();
+		return;
+	}
+
+	bIsEquipping = true;
+	PlayingEquipMontage = EquipMontage;
+
+	const float PlayDuration = AnimInstance->Montage_Play(EquipMontage);
+
+	// 몽타주 재생 실패
+	if (PlayDuration <= 0.f)
+	{
+		bIsEquipping = false;
+		PlayingEquipMontage = nullptr;
+
+		OnEquipCompleted();
+		return;
+	}
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &UEquipmentHandlerComponent::HandleEquipMontageEnded);
+
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, EquipMontage);
 }
 
 void UEquipmentHandlerComponent::OnEquipCompleted()
 {
+	bIsEquipping = false;
+	PlayingEquipMontage = nullptr;
+
 	// 장착 종료 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Completed - %s"), *GetNameSafe(EquippableItemInstance)));
 
-	// 장비 장착 타이머 명시적으로 제거
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().ClearTimer(EquipTimerHandle);
-	}
+	//// 장비 장착 타이머 명시적으로 제거
+	//if (UWorld* World = GetWorld())
+	//{
+	//	World->GetTimerManager().ClearTimer(EquipTimerHandle);
+	//}
 }
 
 void UEquipmentHandlerComponent::OnEquipInterrupted()
@@ -261,20 +331,54 @@ void UEquipmentHandlerComponent::OnEquipInterrupted()
 	// 장착 중단 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(1100, 5.0f, FColor::Silver, FString::Printf(TEXT("Equip Interrupted - %s"), *GetNameSafe(EquippableItemInstance)));
 
-	// 장비 장착 타이머 제거
-	if (UWorld* World = GetWorld())
+	//// 장비 장착 타이머 제거
+	//if (UWorld* World = GetWorld())
+	//{
+	//	World->GetTimerManager().ClearTimer(EquipTimerHandle);
+	//}
+
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	USkeletalMeshComponent* CharacterMesh = Character ? Character->GetMesh() : nullptr;
+	UAnimInstance* AnimInstance = CharacterMesh ? CharacterMesh->GetAnimInstance() : nullptr;
+	UAnimMontage* MontageToStop = PlayingEquipMontage;
+
+	bIsEquipping = false;
+	PlayingEquipMontage = nullptr;
+
+	if (AnimInstance && MontageToStop && AnimInstance->Montage_IsPlaying(MontageToStop))
 	{
-		World->GetTimerManager().ClearTimer(EquipTimerHandle);
+		AnimInstance->Montage_Stop(0.1f, MontageToStop);
 	}
 }
 
 bool UEquipmentHandlerComponent::IsEquipping() const
 {
-	const UWorld* World = GetWorld();
+	/*const UWorld* World = GetWorld();
 	if (!World)
 	{
 		return false;
 	}
 
-	return World->GetTimerManager().IsTimerActive(EquipTimerHandle);
+	return World->GetTimerManager().IsTimerActive(EquipTimerHandle);*/
+
+	return bIsEquipping;
+}
+
+void UEquipmentHandlerComponent::HandleEquipMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage != PlayingEquipMontage)
+	{
+		return;
+	}
+
+	PlayingEquipMontage = nullptr;
+	bIsEquipping = false;
+
+	if (bInterrupted)
+	{
+		OnEquipInterrupted();
+		return;
+	}
+
+	OnEquipCompleted();
 }

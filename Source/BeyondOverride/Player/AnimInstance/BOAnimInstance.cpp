@@ -115,14 +115,14 @@ void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset
 	EquipmentLand = NewData->Land;
 }
 
-void UBOAnimInstance::PlayEquipMontage()
+float UBOAnimInstance::PlayEquipMontage()
 {
 	if (!CurrentEquipmentData || !CurrentEquipmentData->Equip)
 	{
-		return;
+		return 0.f;
 	}
 
-	Montage_Play(CurrentEquipmentData->Equip);
+	return Montage_Play(CurrentEquipmentData->Equip);
 }
 
 void UBOAnimInstance::PlayFireHipMontage()
@@ -210,7 +210,7 @@ void UBOAnimInstance::PlayReloadAimMontage()
 		return;
 	}
 
-	Montage_Play(CurrentEquipmentData->WeaponReloadAim);
+	// Montage_Play(CurrentEquipmentData->WeaponReloadAim);
 }
 
 bool UBOAnimInstance::IsReloadMontagePlaying() const
