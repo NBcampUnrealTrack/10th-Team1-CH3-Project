@@ -11,6 +11,7 @@ class UTextBlock;
 class UVerticalBox;
 class UKillCountEntryWidget;
 class UItemSlotPanelWidget;
+class UImage;
 
 UCLASS()
 class BEYONDOVERRIDE_API UResultScreenWidget : public UUserWidget
@@ -28,6 +29,12 @@ class BEYONDOVERRIDE_API UResultScreenWidget : public UUserWidget
 	virtual void NativeDestruct() override;
 
   private:
+	UPROPERTY(EditDefaultsOnly, Category = "Monster")
+	TObjectPtr<UDataTable> MonsterDataTable;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> MonsterImage;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> OKBtn;
 
