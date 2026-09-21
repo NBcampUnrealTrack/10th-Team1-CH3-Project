@@ -8,17 +8,13 @@
 // Base include
 #include "UObject/NoExportTypes.h"
 
+// Add include
+#include "Monster/Enums/SystemEnums.h"
+
 // UHT Header
 #include "MonsterCalling.generated.h"
 
 class ABOCharacter;
-
-UENUM(BlueprintType)
-enum class ECallType : uint8
-{
-	LocationPatrol UMETA(DisplayName = "LocationPatrol"),
-	Attack UMETA(DisplayName = "Attack"),
-};
 
 UCLASS()
 class BEYONDOVERRIDE_API UMonsterCalling : public UObject

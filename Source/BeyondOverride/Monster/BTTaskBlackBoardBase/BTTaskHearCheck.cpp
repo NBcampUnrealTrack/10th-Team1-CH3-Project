@@ -5,8 +5,6 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Monster/ActorComponent/ContinuousStateComponent.h"
-#include "Monster/ActorComponent/ShortTermStateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 
@@ -36,8 +34,9 @@ EBTNodeResult::Type UBTTaskHearCheck::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	{
 		if ((AIController->GetState() == EMonsterState::Chase ||
 			 AIController->GetState() == EMonsterState::Attack ||
-			 AIController->GetState() == EMonsterState::StandOff ||
-			 AIController->GetState() == EMonsterState::Atmosphere) &&
+			 AIController->GetState() == EMonsterState::Atmosphere ||
+			 AIController->GetState() == EMonsterState::StandOffMove ||
+			 AIController->GetState() == EMonsterState::StandOffWait) &&
 			AIController->IsContinueState())
 		{
 			return EBTNodeResult::Failed;

@@ -2,17 +2,15 @@
 
 #include "GameFlow/State/BeginFarmingState.h"
 
-#include "GameFlow/BOWorldSubsystem.h"
 #include "GameFlow/Manager/RegionManager.h"
-#include "Kismet/GameplayStatics.h"
+#include "Logging/BOLog.h"
 
 void UBeginFarmingState::Enter()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Begin Enter"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Begin Enter"));
 	Super::Enter();
 
 	InitRegions();
-	SetStartTime();
 
 	ChangeState(EFarmingState::Progress);
 }
@@ -27,19 +25,5 @@ void UBeginFarmingState::InitRegions()
 	if (URegionManager* RegionManager = GetWorld()->GetGameInstance()->GetSubsystem<URegionManager>())
 	{
 		RegionManager->InitSetting();
-	}
-}
-
-void UBeginFarmingState::SetStartTime()
-{
-	if (!GetWorld())
-	{
-		return;
-	}
-
-	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Set Start Time"));
-		WorldSubsystem->SetStartTime();
 	}
 }

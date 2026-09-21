@@ -2,6 +2,7 @@
     {
         "Name": "UNARM",
         "EquipMesh": "",
+        "EquipDelay": 0.4,
         "EquipSocketName": "",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Unarm/DA_EquipmentAnimation_Unarm.DA_EquipmentAnimation_Unarm'"
@@ -9,6 +10,7 @@
     {
         "Name": "ASSAULT_RIFLE_A",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'",
+        "EquipDelay": 1.5,
         "EquipSocketName": "Assault_Rifle_A",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleA/DA_EquipmentAnimation_AssaultRifleA.DA_EquipmentAnimation_AssaultRifleA'"
@@ -16,6 +18,7 @@
     {
         "Name": "ASSAULT_RIFLE_B",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Assault_Rifle_B.Assault_Rifle_B'",
+        "EquipDelay": 1.5,
         "EquipSocketName": "Assault_Rifle_B",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleB/DA_EquipmentAnimation_AssaultRifleB.DA_EquipmentAnimation_AssaultRifleB'"
@@ -23,6 +26,7 @@
     {
         "Name": "PISTOL_A",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Pistols_A.Pistols_A'",
+        "EquipDelay": 1.3,
         "EquipSocketName": "Pistol_A",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolA/DA_EquipmentAnimation_PistolA.DA_EquipmentAnimation_PistolA'"
@@ -30,6 +34,7 @@
     {
         "Name": "PISTOL_B",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Pistols_B.Pistols_B'",
+        "EquipDelay": 1.3,
         "EquipSocketName": "Pistol_B",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolB/DA_EquipmentAnimation_PistolB.DA_EquipmentAnimation_PistolB'"
@@ -37,6 +42,7 @@
     {
         "Name": "SHOTGUN_A",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Shotgun_A.Shotgun_A'",
+        "EquipDelay": 1.2,
         "EquipSocketName": "Shotgun_A",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunA/DA_EquipmentAnimation_ShotgunA.DA_EquipmentAnimation_ShotgunA'"
@@ -44,6 +50,7 @@
     {
         "Name": "SHOTGUN_B",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Shotgun_B.Shotgun_B'",
+        "EquipDelay": 1.2,
         "EquipSocketName": "Shotgun_B",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunB/DA_EquipmentAnimation_ShotgunB.DA_EquipmentAnimation_ShotgunB'"
@@ -51,6 +58,7 @@
     {
         "Name": "GONBONG",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/Gonbong/Meshs/SKM_Gonbang.SKM_Gonbang'",
+        "EquipDelay": 0.8,
         "EquipSocketName": "Gonbong",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Gonbong/DA_EquipmentAnimation_Gonbong.DA_EquipmentAnimation_Gonbong'"
@@ -58,6 +66,7 @@
     {
         "Name": "GRENADE",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/ThrowingWeapon/Grenade/SKM_Grenade.SKM_Grenade'",
+        "EquipDelay": 0.6,
         "EquipSocketName": "Grenade",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Grenade/DA_EquipmentAnimation_Grenade.DA_EquipmentAnimation_Grenade'"
@@ -65,8 +74,57 @@
     {
         "Name": "BANDAGE",
         "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Decorations/Health/Bandage/SKM_Bandage.SKM_Bandage'",
+        "EquipDelay": 0.6,
         "EquipSocketName": "Bandage",
         "HolsterSocketName": "",
         "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/Bandage/DA_EquipmentAnimation_Bandage.DA_EquipmentAnimation_Bandage'"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Green/Meshes/SKM_sci_fi_barrel_green.SKM_sci_fi_barrel_green'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerA/DA_EquipmentAnimation_ShieldRechargerA.DA_EquipmentAnimation_ShieldRechargerA'"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_B",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Blue/Meshes/SKM_sci_fi_barrel_blue.SKM_sci_fi_barrel_blue'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerB/DA_EquipmentAnimation_ShieldRechargerB.DA_EquipmentAnimation_ShieldRechargerB'"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_C",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Purple/Meshes/SKM_sci_fi_barrel_purple.SKM_sci_fi_barrel_purple'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerC/DA_EquipmentAnimation_ShieldRechargerC.DA_EquipmentAnimation_ShieldRechargerC'"
+    },
+    {
+        "Name": "SHIELD_RECHARGER_D",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Red/Meshes/SKM_sci_fi_barrel_red.SKM_sci_fi_barrel_red'",
+        "EquipDelay": 0.2,
+        "EquipSocketName": "ShieldRecharger",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Utilities/ShieldRechargerD/DA_EquipmentAnimation_ShieldRechargerD.DA_EquipmentAnimation_ShieldRechargerD'"
+    },
+    {
+        "Name": "BACKPACK_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Wearables/Backpack01/SKM_Backpack01.SKM_Backpack01'",
+        "EquipDelay": 0.0,
+        "EquipSocketName": "BackpackA",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": ""
+    },
+    {
+        "Name": "SHIELD_A",
+        "EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Decorations/Shield/SKM_Shield.SKM_Shield'",
+        "EquipDelay": 0.0,
+        "EquipSocketName": "ShieldA",
+        "HolsterSocketName": "",
+        "EquipmentAnimationData": ""
     }
 ]

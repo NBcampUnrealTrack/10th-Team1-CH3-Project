@@ -23,16 +23,21 @@ class BEYONDOVERRIDE_API AStorageContainerActor : public AInteractableActorBase
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void SetItems(const TArray<UItemInstanceBase*>& Items);
 
+	FName GetStorageContainerID() const
+	{
+		return StorageContainerID;
+	}
+
 	UInventoryComponent* GetInventoryComponent()
 	{
 		return InventoryComponent;
 	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container")
-	FName StorageContainerId = "Default";
-
   protected:
 	virtual void PerformInteract(AActor* Interactor) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container")
+	FName StorageContainerID;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComp;

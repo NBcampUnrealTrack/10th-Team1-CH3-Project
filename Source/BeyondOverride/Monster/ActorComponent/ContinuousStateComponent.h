@@ -8,21 +8,14 @@
 // Base include
 #include "Components/ActorComponent.h"
 
+// Add include
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
+
 // UHT Header
 #include "ContinuousStateComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnStateCast, const EMonsterState&);
-
-UENUM(BlueprintType)
-enum class EMonsterState : uint8
-{
-	Chase UMETA(DisplayName = "Chase"),
-	Patrol UMETA(DisplayName = "Patrol"),
-	Attack UMETA(DisplayName = "Attack"),
-	StandOff UMETA(DisplayName = "StandOff"),
-	Atmosphere UMETA(DisplayName = "Atmosphere"),
-	LocationPatrol UMETA(DisplayName = "LocationPatrol"),
-};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
@@ -33,6 +26,10 @@ class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
   public:
 	UContinuousStateComponent();
 
+	void OnStandOff();
+
+	bool StandOffGetPosition() const;
+
 	bool IsContinueState() const;
 
 	void StateChange(EMonsterState Input);
@@ -40,6 +37,8 @@ class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
 	void StateChange(EMonsterState Input, float HoldTime);
 
 	EMonsterState GetState() const;
+
+	EMonsterState GetBeforeState() const;
 
   protected:
 	void StateAutoControl();
@@ -51,6 +50,9 @@ class BEYONDOVERRIDE_API UContinuousStateComponent : public UActorComponent
 	FOnStateCast OnStateCast;
 
   protected:
+	UPROPERTY(VisibleAnywhere, Category = "State|Viewer")
+	bool bContinueStandOff = false;
+
 	UPROPERTY(VisibleAnywhere, Category = "State|Viewer")
 	EMonsterState NowState;
 

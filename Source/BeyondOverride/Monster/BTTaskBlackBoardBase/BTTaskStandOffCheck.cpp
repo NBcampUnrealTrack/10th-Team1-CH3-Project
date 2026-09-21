@@ -32,30 +32,20 @@ EBTNodeResult::Type UBTTaskStandOffCheck::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	AMonsterCharacter* AIMonster = Cast<AMonsterCharacter>(AIController->GetPawn());
-	if (!AIMonster)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	ABOCharacter* Target = AIController->GetTarget();
 	if (!Target)
 	{
 		return EBTNodeResult::Failed;
 	}
 
-	FVector NowEQSPoint = BlackboardComp->GetValueAsVector(TEXT("EQSPoint"));
-	if (NowEQSPoint == FVector::ZeroVector)
+	if (AIController->GetState() == EMonsterState::StandOffMove ||
+		AIController->GetState() == EMonsterState::StandOffWait)
 	{
-		return EBTNodeResult::Failed;
-	}
-
-	if (AIController->GetState() == EMonsterState::StandOff)
-	{
-		if (AIController->IsContinueState())
+		if (AIController->StandOffGetPosition())
 		{
-			BlackboardComp->SetValueAsVector(TEXT("EQSPoint"), AIMonster->GetActorLocation());
+			AIController->SetEQSPoint(BlackboardComp->GetValueAsVector(TEXT("EQSPoint")));
 		}
+		BlackboardComp->SetValueAsBool(TEXT("EQSRun"), AIController->StandOffGetPosition());
 		return EBTNodeResult::Succeeded;
 	}
 

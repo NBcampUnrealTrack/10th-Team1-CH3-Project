@@ -30,20 +30,19 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
 	void Die();
-	void ToEnding();
+	void EnterServerRoom();
 	void OpenLevel(ELevel Level);
 
 	void SavePlayerData();
 	void SaveStorageData();
 	void SaveFarmingData();
+	void SaveSurvivalTimeData();
+	void SaveCombatData();
 
   public:
 	UBODataAsset* GetBODataAsset() const;
-	void GetLevels(TMap<ELevel, FName>& Data) const;
-	void GetRegions(TArray<FName>& Data) const;
-	void GetBasicEquipments(TArray<FName>& Data) const;
-	float GetExitActivateProb() const;
-	void GetMonsterData(FName Id, FMonsterInfo& Data) const;
+
+	void GetMonsterData(FName Id, FMonsterInfo& Data) const; // move to monster spawn system
 
 	EGameState GetGameState() const;
 	EPlayingState GetPlayingState() const;
@@ -72,18 +71,6 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	UBODataAsset* BODataAsset;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TMap<ELevel, FName> Levels;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TArray<FName> Regions;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TArray<FName> BasicEquipments;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	float ExitActivateProb;
-
   private:
 	EGameState GameState;
 	EPlayingState PlayingState;
@@ -110,5 +97,5 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	UPROPERTY()
 	TArray<UItemInstanceBase*> StorageInventory;
 	UPROPERTY()
-	TMap<FName, FMonsterInfo> MonsterDatas;
+	TMap<FName, FMonsterInfo> MonsterDatas; // move to monster spawn system
 };

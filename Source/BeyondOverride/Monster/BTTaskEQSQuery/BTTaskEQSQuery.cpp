@@ -5,6 +5,7 @@
 
 // Add include
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Monster/AiController/MonsterAIController.h"
 
 UBTTaskEQSQuery::UBTTaskEQSQuery()
 {
@@ -13,10 +14,12 @@ UBTTaskEQSQuery::UBTTaskEQSQuery()
 
 EBTNodeResult::Type UBTTaskEQSQuery::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-	if (!BlackboardComp)
+	AMonsterAIController* AIController = Cast<AMonsterAIController>(OwnerComp.GetAIOwner());
+	if (!AIController)
 	{
 		return EBTNodeResult::Failed;
 	}
-	return EBTNodeResult::Succeeded;
+
+	AIController->OnStandOff();
+	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }

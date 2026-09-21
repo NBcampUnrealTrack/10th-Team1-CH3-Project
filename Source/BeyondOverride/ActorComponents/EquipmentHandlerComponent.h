@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -8,6 +8,7 @@
 
 class USkeletalMeshComponent;
 class UEquippableItemInstance;
+class UAnimMontage;
 
 struct FItemDataRow;
 struct FEquippableItemDataRow;
@@ -17,7 +18,7 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	// 캐릭터에 부착 및 장비 메시를 설정할 메시 컴포넌트
 	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> EquipMeshComponent;
@@ -30,18 +31,34 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	const FItemDataRow* ItemData;
 	const FEquippableItemDataRow* EquippableItemData;
 
-  public:
+	// 장착 몽타주가 재생 중인지
+	bool bIsEquipping = false;
+
+	// 현재 재생 중인 Equip 몽타주
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> PlayingEquipMontage;
+
+	// 장착 딜레이 타이머 핸들
+	FTimerHandle EquipTimerHandle;
+
+public:
 	UEquipmentHandlerComponent();
 
-  protected:
+protected:
 	virtual void OnRegister() override;
 
-  public:
+public:
 	// 현재 등록된 장비가 있는지 여부
 	bool HasEquipment() const;
 
 	// 등록된 장비 반환
 	UEquippableItemInstance* GetEquippableItemInstance() const;
+
+	// 장비 메시 컴포넌트 반환 (프리뷰에서)
+	USkeletalMeshComponent* GetEquipMeshComponent() const
+	{
+		return EquipMeshComponent;
+	}
 
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance);
@@ -61,7 +78,7 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 	// 사용 종료
 	virtual void EndAction();
 
-  protected:
+protected:
 	// 장비 등록 가능 여부
 	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const;
 	// 장비 제거 가능 여부
@@ -75,4 +92,18 @@ class BEYONDOVERRIDE_API UEquipmentHandlerComponent : public UActorComponent
 
 	// 소켓에 메시 부착
 	void AttachToSocket(const FName& SocketName, bool bHideIfNoSocket = false);
+
+protected:
+	// 장비 장착 시작 시 호출
+	virtual void OnEquipStarted();
+	// 장비 장착 완료 시 호출
+	virtual void OnEquipCompleted();
+	// 장비 장착 중단 시 호출
+	virtual void OnEquipInterrupted();
+
+	// 장비 장착 중인지 여부
+	bool IsEquipping() const;
+
+private:
+	void HandleEquipMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 };

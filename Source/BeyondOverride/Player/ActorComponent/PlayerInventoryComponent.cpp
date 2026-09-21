@@ -1,16 +1,23 @@
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 
 #include "Enums/EquipmentSlot.h"
+#include "DataTables/Items/BackpackDataRow.h"
 #include "Items/Objects/ItemInstanceBase.h"
+
 
 UPlayerInventoryComponent::UPlayerInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	MaxSlotCount = 10;
 }
 
 void UPlayerInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BaseSlotCount = MaxSlotCount;
+	BaseMaxCarryWeight = MaxCarryWeight;
 
 	InitializeEquipmentSlot();
 }
@@ -58,11 +65,6 @@ void UPlayerInventoryComponent::RecalculateCarryWeight()
 		}
 
 		NewCarryWeight += ItemData->Weight * Item->GetStackCount();
-	}
-
-	if (FMath::IsNearlyEqual(CurCarryWeight, NewCarryWeight))
-	{
-		return;
 	}
 
 	CurCarryWeight = NewCarryWeight;
@@ -150,9 +152,111 @@ bool UPlayerInventoryComponent::SetEquipmentItemStackCount(EEquipmentSlot Slot, 
 	return true;
 }
 
+TArray<UItemInstanceBase*> UPlayerInventoryComponent::ApplyBackpack(const FBackpackDataRow* BackpackData)
+{
+	TArray<UItemInstanceBase*> ItemsToDrop;
+
+	const int32 SlotBonus = BackpackData ? FMath::Max(0, BackpackData->SlotCount) : 0;
+	const float WeightBonus = BackpackData ? FMath::Max(0.f, BackpackData->WeightCapacity) : 0.f;
+	const int32 NewSlotCount = BaseSlotCount + SlotBonus;
+
+	MaxCarryWeight = BaseMaxCarryWeight + WeightBonus;
+
+	// 슬롯 확장
+	if (NewSlotCount >= Slots.Num())
+	{
+		MaxSlotCount = NewSlotCount;
+		Slots.SetNum(NewSlotCount);
+
+		NotifyInventoryChanged();
+
+		return ItemsToDrop;
+	}
+
+	// 축소될 영역의 아이템을 먼저 빼놓음
+	TArray<TObjectPtr<UItemInstanceBase>> OverflowItems;
+
+	for (int32 Index = NewSlotCount; Index < Slots.Num(); ++Index)
+	{
+		if (IsValid(Slots[Index]))
+		{
+			OverflowItems.Add(Slots[Index]);
+		}
+	}
+
+	Slots.SetNum(NewSlotCount);
+	MaxSlotCount = NewSlotCount;
+
+	// 남아 있는 빈칸으로 이동
+	for (UItemInstanceBase* Item : OverflowItems)
+	{
+		if (!IsValid(Item))
+		{
+			continue;
+		}
+
+		int32 EmptySlotIndex = -1;
+		FindEmptySlotIndex(EmptySlotIndex);
+
+		if (Slots.IsValidIndex(EmptySlotIndex))
+		{
+			Slots[EmptySlotIndex] = Item;
+		}
+		else
+		{
+			ItemsToDrop.Add(Item);
+		}
+	}
+
+	NotifyInventoryChanged();
+
+	return ItemsToDrop;
+}
+
 int32 UPlayerInventoryComponent::GetEquipmentSlotIndex(EEquipmentSlot Slot) const
 {
-	return static_cast<int32>(Slot);
+	switch (Slot)
+	{
+	case EEquipmentSlot::Primary:
+		return 0;
+	case EEquipmentSlot::Secondary:
+		return 1;
+	case EEquipmentSlot::Melee:
+		return 2;
+	case EEquipmentSlot::Throwable:
+		return 3;
+	case EEquipmentSlot::Effect:
+		return 4;
+	case EEquipmentSlot::Bag:
+		return 5;
+	case EEquipmentSlot::Shield:
+		return 6;
+	default:
+		return INDEX_NONE;
+	}
+}
+
+EEquipmentSlot UPlayerInventoryComponent::GetEquipmentSlotType(int32 SlotIndex) const
+{
+	switch (SlotIndex)
+	{
+	case 0:
+		return EEquipmentSlot::Primary;
+	case 1:
+		return EEquipmentSlot::Secondary;
+	case 2:
+		return EEquipmentSlot::Melee;
+	case 3:
+		return EEquipmentSlot::Throwable;
+	case 4:
+		return EEquipmentSlot::Effect;
+	case 5:
+		return EEquipmentSlot::Bag;
+	case 6:
+		return EEquipmentSlot::Shield;
+	default:
+		return EEquipmentSlot::Unarmed;
+	}
 }
 
 bool UPlayerInventoryComponent::IsValidEquipmentSlot(EEquipmentSlot Slot) const
@@ -185,9 +289,15 @@ bool UPlayerInventoryComponent::SetEquipmentSlots(const TArray<UItemInstanceBase
 
 	for (int32 i = 0; i < NewSlots.Num(); ++i)
 	{
+		if (!IsValid(NewSlots[i]))
+		{
+			EquipmentSlots[i] = nullptr;
+			continue;
+		}
+
 		EquipmentSlots[i] = DuplicateObject<UItemInstanceBase>(NewSlots[i], this);
 
-		if (IsValid(NewSlots[i]))
+		if (IsValid(EquipmentSlots[i]))
 		{
 			EquipmentSlots[i]->Initialize();
 		}
@@ -195,7 +305,7 @@ bool UPlayerInventoryComponent::SetEquipmentSlots(const TArray<UItemInstanceBase
 
 	for (int32 i = 0; i < EquipmentSlots.Num(); ++i)
 	{
-		const EEquipmentSlot Slot = static_cast<EEquipmentSlot>(i);
+		const EEquipmentSlot Slot = GetEquipmentSlotType(i);
 
 		UItemInstanceBase* PreviousItem = PreviousSlots.IsValidIndex(i) ? PreviousSlots[i].Get() : nullptr;
 		UItemInstanceBase* NewItem = EquipmentSlots[i];

@@ -49,7 +49,7 @@ EBTNodeResult::Type UBTTaskPerceptionCheck::ExecuteTask(UBehaviorTreeComponent& 
 	{
 		AIController->SetTarget(NearestTarget);
 		UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
-		Calling->CallMonsters(AIMonster->GetActorLocation(), 1000.0f, NearestTarget, ECallType::Attack);
+		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, NearestTarget, ECallType::Attack);
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), NearestTarget);
 		AIController->SetTargetPoint(FVector::ZeroVector);
 

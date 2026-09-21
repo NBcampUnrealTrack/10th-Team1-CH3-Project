@@ -5,11 +5,14 @@
 
 // Add include
 #include "DataTables/Monster/MonsterStatInfo.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
-#include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/DataAssets/MonsterDataAsset.h"
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/BFLMeleeAttack.h"
 #include "Monster/System/BalisticTrace.h"
 #include "Player/Character/BOCharacter.h"
 
@@ -23,6 +26,11 @@ UMonsterStatComponent::UMonsterStatComponent()
 	{
 		MonsterData = DataAssetFinder.Object;
 	}
+}
+
+EMonsterType UMonsterStatComponent::GetMonsterType() const
+{
+	return MonsterType;
 }
 
 float UMonsterStatComponent::GetWalkSpeed() const
@@ -103,7 +111,38 @@ void UMonsterStatComponent::Attack()
 										AttackDelay,
 										BulletSpeed);
 	}
+	else if (MonsterType == EMonsterType::Melee)
+	{
+		ACharacter* Owner = Cast<ACharacter>(GetOwner());
+		if (!Owner)
+		{
+			return;
+		}
 
+		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+		if (!AIController)
+		{
+			return;
+		}
+
+		AActor* Target = UBFLMeleeAttack::DashAttack(Owner, AIController->GetTarget(), GetAttackRange());
+
+		if (Target)
+		{
+
+			ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
+			if (!PlayerCharacter)
+			{
+				return;
+			}
+
+			UGameplayStatics::ApplyDamage(Target,
+										  AttackDamage,
+										  Owner->GetController(),
+										  Owner,
+										  UDamageType::StaticClass());
+		}
+	}
 	CallAttackLock();
 }
 
@@ -144,7 +183,11 @@ void UMonsterStatComponent::OnBalisticHit(AActor* Target)
 	{
 		return;
 	}
-
+	ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
+	if (!PlayerCharacter)
+	{
+		return;
+	}
 	UGameplayStatics::ApplyDamage(Target,
 								  AttackDamage,
 								  Owner->GetController(),
@@ -164,27 +207,36 @@ void UMonsterStatComponent::StatSetup()
 		return;
 	}
 
-	FMonsterStatInfo* MonsterStastInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("MonsterID Serching"));
-	if (!MonsterStastInfo)
+	FMonsterStatInfo* MonsterStatInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("MonsterID Serching"));
+	if (!MonsterStatInfo)
 	{
 		SetMonsterID("Gunner");
-		MonsterStastInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("GunnerID Serching"));
+		MonsterStatInfo = MonsterData->StatTable->FindRow<FMonsterStatInfo>(Monster->GetMonsterID(), TEXT("GunnerID Serching"));
 	}
 
+	// Health Info
+	MaxHealth = MonsterStatInfo->MaxHealth;
+	CurHealth = MonsterStatInfo->CurHealth;
+	MaxShield = MonsterStatInfo->MaxShield;
+	CurShield = MonsterStatInfo->CurShield;
+	ShieldDelayTime = MonsterStatInfo->ShieldDelayTime;
+	ShieldRegenTime = MonsterStatInfo->ShieldRegenTime;
+	ShieldRegenAmount = MonsterStatInfo->ShieldRegenAmount;
+
 	// Attack Info
-	AttackDamage = MonsterStastInfo->AttackDamage;
-	RapidCount = MonsterStastInfo->RapidCount;
-	RapidDelay = MonsterStastInfo->RapidDelay;
-	AttackDelay = MonsterStastInfo->AttackDelay;
-	AttackRange = MonsterStastInfo->AttackRange;
-	BulletSpeed = MonsterStastInfo->BulletSpeed;
+	AttackDamage = MonsterStatInfo->AttackDamage;
+	RapidCount = MonsterStatInfo->RapidCount;
+	RapidDelay = MonsterStatInfo->RapidDelay;
+	AttackDelay = MonsterStatInfo->AttackDelay;
+	AttackRange = MonsterStatInfo->AttackRange;
+	BulletSpeed = MonsterStatInfo->BulletSpeed;
 
 	// Another Info
-	Protect = MonsterStastInfo->Protect;
-	Intelligence = MonsterStastInfo->Intelligence;
-	WalkSpeed = MonsterStastInfo->WalkSpeed;
-	SprintSpeed = MonsterStastInfo->SprintSpeed;
+	Protect = MonsterStatInfo->Protect;
+	Intelligence = MonsterStatInfo->Intelligence;
+	WalkSpeed = MonsterStatInfo->WalkSpeed;
+	SprintSpeed = MonsterStatInfo->SprintSpeed;
 
 	// Monster key Info
-	MonsterType = MonsterStastInfo->MonsterType;
+	MonsterType = MonsterStatInfo->MonsterType;
 }

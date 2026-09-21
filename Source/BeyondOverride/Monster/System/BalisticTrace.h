@@ -50,6 +50,8 @@ class BEYONDOVERRIDE_API UBalisticTrace : public UObject
 
 	FTimerHandle Update;
 
+	UClass* IgnoredTarget;
+
 	FCollisionQueryParams QueryParams;
 	FCollisionObjectQueryParams TraceParams;
 };

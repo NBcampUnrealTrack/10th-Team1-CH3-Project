@@ -1,6 +1,10 @@
 #include "Interaction/Actors/KeycardDoorController.h"
 
+#include "DataAssets/BODataAsset.h"
+#include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOGameMode.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
+#include "Player/Character/BOCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AKeycardDoorController::AKeycardDoorController()
@@ -23,15 +27,9 @@ void AKeycardDoorController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetWorld())
+	if (HasPlayerKeyCard())
 	{
-		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
-		{
-			if (GameMode->IsKeyCardAcquired())
-			{
-				PromptData.bEnabled = true;
-			}
-		}
+		PromptData.bEnabled = true;
 	}
 }
 
@@ -40,15 +38,7 @@ bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) c
 	OutReason = PromptData.DisableReason;
 
 	// 키카드 보유하고있는지 로직추가
-	if (GetWorld())
-	{
-		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
-		{
-			return GameMode->IsKeyCardAcquired();
-		}
-	}
-
-	return false;
+	return HasPlayerKeyCard();
 }
 
 void AKeycardDoorController::PerformInteract(AActor* Interactor)
@@ -57,7 +47,42 @@ void AKeycardDoorController::PerformInteract(AActor* Interactor)
 	{
 		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 		{
-			GameMode->ToEnding();
+			GameMode->EnterServerRoom();
 		}
 	}
+}
+
+bool AKeycardDoorController::HasPlayerKeyCard() const
+{
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
+	{
+		return false;
+	}
+
+	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	if (!GameInstance)
+	{
+		return false;
+	}
+
+	UBODataAsset* DataAsset = GameInstance->GetBODataAsset();
+	if (!DataAsset)
+	{
+		return false;
+	}
+
+	FName KeyCardID = DataAsset->GetKeyCardID();
+
+	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
+	{
+		if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
+		{
+			if (InventoryComponent->FindItemIndex(KeyCardID) != INDEX_NONE)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

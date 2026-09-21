@@ -10,6 +10,9 @@ class UStatComponent;
 class UProgressBar;
 class UPanelWidget;
 class ABOCharacter;
+class UPlayerInventoryComponent;
+class UItemInstanceBase;
+enum class EEquipmentSlot : uint8;
 
 UCLASS()
 class BEYONDOVERRIDE_API UMainScreenWidget : public UUserWidget
@@ -53,11 +56,17 @@ class BEYONDOVERRIDE_API UMainScreenWidget : public UUserWidget
 	UPROPERTY()
 	TObjectPtr<ABOCharacter> OwningCharacter;
 
+	UPROPERTY()
+	TObjectPtr<UPlayerInventoryComponent> InventoryComponent;
+
 	UFUNCTION()
 	void HandleHealthChanged(int32 Health, int32 MaxHealth);
 
 	UFUNCTION()
 	void HandleShieldChanged(int32 Shield, int32 MaxShield);
+
+	UFUNCTION()
+	void HandleEquipmentSlotChanged(EEquipmentSlot ChangedSlot, UItemInstanceBase* ItemInstanceBase);
 
 	void UpdateCompass();
 };

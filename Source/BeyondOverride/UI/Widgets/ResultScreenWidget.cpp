@@ -1,8 +1,10 @@
 ﻿#include "UI/Widgets/ResultScreenWidget.h"
 
 #include "Components/Button.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
+#include "DataTables/Monster/MonsterInfo.h"
 #include "GameFlow/BOGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
@@ -48,6 +50,14 @@ void UResultScreenWidget::NativeConstruct()
 		{
 			const FName Killer = GI->GetKillerMonster();
 			KillerText->SetText(FText::FromString(Killer.ToString() + TEXT("에게")));
+
+			if (MonsterImage && MonsterDataTable)
+			{
+				TArray<FMonsterInfo*> AllRows;
+				FMonsterInfo* FoundRow = MonsterDataTable->FindRow<FMonsterInfo>(Killer, TEXT("Killer_FindByName"));
+
+				MonsterImage->SetBrushFromTexture(FoundRow->MonsterImage);
+			}
 		}
 	}
 

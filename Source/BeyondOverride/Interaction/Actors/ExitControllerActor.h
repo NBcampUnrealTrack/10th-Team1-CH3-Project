@@ -30,9 +30,9 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 	};
 
 	UFUNCTION(BlueprintCallable, Category = "Extraction")
-	FName GetRegionId() const
+	FName GetRegionID() const
 	{
-		return RegionId;
+		return RegionID;
 	};
 
   protected:
@@ -48,7 +48,7 @@ class BEYONDOVERRIDE_API AExitControllerActor : public AInteractableActorBase
 	TObjectPtr<AExitActor> TargetExit;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Extraction")
-	FName RegionId = "Default";
+	FName RegionID;
 
 	UPROPERTY(BlueprintAssignable, Category = "Extraction")
 	FOnExtractControlRequested OnExtractControlRequested;

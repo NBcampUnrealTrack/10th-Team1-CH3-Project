@@ -11,6 +11,7 @@
 
 class UBOGameInstance;
 class UFarmingStateMachine;
+// class UDefenseStateMachine;
 
 UCLASS()
 class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
@@ -23,33 +24,38 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	virtual void BeginPlay() override;
 
 	void InitSetting();
-	void Start();
+	void StartGame(); // after start button clicked
 	void EnterBunker();
 	void ProvideBasicEquipment();
-	void StartFarming();
+	void StartFarming(); // when interacting with the bunker entrance
 	void EndFarming(EFarmingResult Result);
 	void Die();
-	void ToEnding();
-	void Explosion();
-	void End();
-	void Exit();
+	void EnterServerRoom(); // test code
+	void StartBossBattle(); // when interacting with the server room door
+	void StartDefense();    // when interacting with the main computer first time
+	void ClearGame();       // when interacting with the main computer after defense
+	void Ending();          // after final result widget's ok button clicked
+	void ExitGame();        // after quit button clicked
 
 	void AddKilledMonster(FName MonsterId);
 	void SetKillerMonster(FName MonsterId);
 
-	bool IsKeyCardAcquired();
-
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;
 	FName GetKillerMonster() const;
 
-  public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
+  private:
+	UPROPERTY()
 	TObjectPtr<UBOGameInstance> GameInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GameMode")
-	TObjectPtr<UFarmingStateMachine> StateMachine;
+	UPROPERTY()
+	TObjectPtr<UFarmingStateMachine> FarmingStateMachine;
+
+	/*UPROPERTY()
+	TObjectPtr<UDefenseStateMachine> DefenseStateMachine;*/
 
   private:
 	TMap<FName, int32> KilledMonsters;
 	FName KillerMonster;
+
+	FTimerHandle DefenseTimer;
 };

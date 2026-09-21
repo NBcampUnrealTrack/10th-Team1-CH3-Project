@@ -3,6 +3,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 ABulletProjectile::ABulletProjectile()
 {
@@ -36,7 +37,7 @@ void ABulletProjectile::BeginPlay()
 void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// 충돌 지점 디버그
-	DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.0f, FColor::Red, false, 2.0f);
+	// DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.0f, FColor::Red, false, 2.0f);
 
 	// 잘못된 충돌 로그 (Instigator or Bullet)
 	if (IsValid(OtherActor))
@@ -54,6 +55,7 @@ void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 		}
 	}
 
+	/// 데미지 적용
 	if (IsValid(OtherActor) && OtherActor != GetInstigator())
 	{
 		UGameplayStatics::ApplyDamage(
@@ -62,8 +64,25 @@ void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 			GetInstigatorController(),
 			this,
 			UDamageType::StaticClass());
+	}
 
-		// TODO: 피격 이펙트 및 사운드
+	// 피격 파티클
+	if (HitParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitParticle,
+			Hit.ImpactPoint,
+			Hit.ImpactNormal.Rotation());
+	}
+
+	// 피격 사운드
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			HitSound,
+			Hit.ImpactPoint);
 	}
 
 	Destroy();

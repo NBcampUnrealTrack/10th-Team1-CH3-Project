@@ -37,8 +37,8 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	void StartPhase();
 	void SpawnPhaseMonsters();
 
-	FName GetId() const;
-	FName GetRegionId() const;
+	FName GetID() const;
+	FName GetRegionID() const;
 
 	void CleanSetting();
 
@@ -50,7 +50,7 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	TObjectPtr<UBoxComponent> BoxComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
-	FName Id;
+	FName ID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnVolume")
 	float SpawnMinRadius;

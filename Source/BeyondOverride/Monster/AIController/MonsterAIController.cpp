@@ -10,6 +10,8 @@
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/ActorComponent/SenseComponent.h"
 #include "Monster/ActorComponent/ShortTermStateComponent.h"
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Hearing.h"
@@ -32,26 +34,33 @@ AMonsterAIController::AMonsterAIController()
 	SetPerceptionComponent(*AIPerception);
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 2500.0f;
-	SightConfig->LoseSightRadius = 3000.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 50.0f;
-	SightConfig->SetMaxAge(5.0f);
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 
-	AIPerception->ConfigureSense(*SightConfig);
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
 
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
-	HearingConfig->HearingRange = 1750.0f;
-	HearingConfig->SetMaxAge(5.0f);
 
 	HearingConfig->DetectionByAffiliation.bDetectEnemies = true;
 	HearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	HearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
+}
 
+void AMonsterAIController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	SenseValue->SenseSetup();
+
+	SightConfig->SightRadius = SenseValue->GetSightSenseSize();
+	SightConfig->LoseSightRadius = SenseValue->GetLoseSightSize();
+	SightConfig->PeripheralVisionAngleDegrees = SenseValue->GetVisionAngleDegrees();
+	SightConfig->SetMaxAge(SenseValue->GetMemorize());
+	AIPerception->ConfigureSense(*SightConfig);
+
+	HearingConfig->HearingRange = SenseValue->GetHearSenseSize();
+	HearingConfig->SetMaxAge(SenseValue->GetMemorize());
 	AIPerception->ConfigureSense(*HearingConfig);
 }
 
@@ -132,6 +141,8 @@ void AMonsterAIController::FocusSetUp(const EMonsterState& Input)
 
 // 중재자 패턴용
 
+// Event
+
 void AMonsterAIController::PlantFlag(FFlagInfo FlagInfo)
 {
 	Flag->PlantFlag(FlagInfo);
@@ -157,6 +168,18 @@ bool AMonsterAIController::FoldFlags(EFlag Target, bool& Type)
 	return Flag->FoldFlags(Target, Type);
 }
 
+// Continuous State
+
+void AMonsterAIController::OnStandOff()
+{
+	State->OnStandOff();
+}
+
+bool AMonsterAIController::StandOffGetPosition() const
+{
+	return State->StandOffGetPosition();
+}
+
 void AMonsterAIController::StateChange(EMonsterState Input)
 {
 	State->StateChange(Input);
@@ -172,10 +195,17 @@ EMonsterState AMonsterAIController::GetState() const
 	return State->GetState();
 }
 
+EMonsterState AMonsterAIController::GetBeforeState() const
+{
+	return State->GetBeforeState();
+}
+
 bool AMonsterAIController::IsContinueState() const
 {
 	return State->IsContinueState();
 }
+
+// Sense Code
 
 void AMonsterAIController::SetTarget(ABOCharacter* Target)
 {
@@ -195,6 +225,16 @@ void AMonsterAIController::SetTargetPoint(FVector Point)
 FVector AMonsterAIController::GetTargetPoint() const
 {
 	return SenseValue->GetTargetPoint();
+}
+
+void AMonsterAIController::SetEQSPoint(FVector Point)
+{
+	SenseValue->SetEQSPoint(Point);
+}
+
+FVector AMonsterAIController::GetEQSPoint() const
+{
+	return SenseValue->GetEQSPoint();
 }
 
 FVector AMonsterAIController::GetSpawnPoint() const

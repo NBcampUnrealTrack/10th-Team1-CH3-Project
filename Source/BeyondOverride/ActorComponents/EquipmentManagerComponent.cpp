@@ -40,6 +40,16 @@ bool UEquipmentManagerComponent::HasEquipment(EEquipmentSlot Slot) const
 	return EquipmentHandlerComponents[Slot]->GetEquippableItemInstance() != nullptr;
 }
 
+UEquipmentHandlerComponent* UEquipmentManagerComponent::GetActiveHandler() const
+{
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
+	{
+		return nullptr;
+	}
+
+	return EquipmentHandlerComponents[ActiveSlot];
+}
+
 void UEquipmentManagerComponent::Initialize()
 {
 	// Unarmed 설정
@@ -117,7 +127,7 @@ bool UEquipmentManagerComponent::Use()
 	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Use 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// 장비 사용
@@ -143,10 +153,10 @@ void UEquipmentManagerComponent::EndAction()
 bool UEquipmentManagerComponent::Reload()
 {
 	// 슬롯 확인
-	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot) || !EquipmentHandlerComponents[ActiveSlot])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// RangeWeapon이 아닌 경우
@@ -154,7 +164,7 @@ bool UEquipmentManagerComponent::Reload()
 	if (!RangeWeaponHandler)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Reload 실패 - %s 슬롯이 URangeWeaponHandlerComponent가 아님"), *UEnum::GetValueAsString(ActiveSlot))
-			return false;
+		return false;
 	}
 
 	// 재장전
@@ -167,6 +177,44 @@ bool UEquipmentManagerComponent::Reload()
 
 	UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] 재장전 성공 - %s 슬롯: %s"), *UEnum::GetValueAsString(ActiveSlot), *GetNameSafe(RangeWeaponHandler->GetEquippableItemInstance()));
 	return true;
+}
+
+void UEquipmentManagerComponent::StartAiming()
+{
+	// 슬롯 확인
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot) || !EquipmentHandlerComponents[ActiveSlot])
+	{
+		return;
+	}
+
+	// RangeWeapon이 아닌 경우
+	URangeWeaponHandlerComponent* RangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[ActiveSlot]);
+	if (!RangeWeaponHandler)
+	{
+		return;
+	}
+
+	// 조준 시작
+	RangeWeaponHandler->StartAiming();
+}
+
+void UEquipmentManagerComponent::StopAiming()
+{
+	// 슬롯 확인
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot) || !EquipmentHandlerComponents[ActiveSlot])
+	{
+		return;
+	}
+
+	// RangeWeapon이 아닌 경우
+	URangeWeaponHandlerComponent* RangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[ActiveSlot]);
+	if (!RangeWeaponHandler)
+	{
+		return;
+	}
+
+	// 조준 종료
+	RangeWeaponHandler->StopAiming();
 }
 
 bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
@@ -183,7 +231,7 @@ bool UEquipmentManagerComponent::Assign(EEquipmentSlot Slot, UItemInstanceBase* 
 	if (!EquipmentHandlerComponents.Contains(Slot) || !EquipmentHandlerComponents[Slot])
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UEquipmentManagerComponent] Assign 실패 - %s 슬롯이 유효하지 않음"), *UEnum::GetValueAsString(Slot))
-			return false;
+		return false;
 	}
 
 	// 등록 시도

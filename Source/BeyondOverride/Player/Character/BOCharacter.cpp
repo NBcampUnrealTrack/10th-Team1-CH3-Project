@@ -8,7 +8,10 @@
 #include "Camera/CameraComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/UtilityItemDataRow.h"
+#include "DataTables/Items/BackpackDataRow.h"
+#include "DataTables/Items/ShieldDataRow.h"
 #include "Enums/EquipmentSlot.h"
+#include "Enums/UtilityType.h"
 #include "Factory/ItemFactory.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOGameMode.h"
@@ -20,17 +23,18 @@
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Items/Objects/ThrowableItemInstance.h"
+#include "Items/Objects/BackpackInstance.h"
+#include "Items/Objects/ShieldInstance.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
 #include "Player/ActorComponent/InventoryInteractionComponent.h"
-#include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/NearbyItemComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/ActorComponent/StatComponent.h"
 #include "Player/AnimInstance/BOAnimInstance.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Manager/UIManager.h"
-#include "Enums/UtilityType.h"
 
 ABOCharacter::ABOCharacter()
 {
@@ -69,6 +73,7 @@ void ABOCharacter::BeginPlay()
 	{
 		StatComponent->OnDamaged.AddUObject(this, &ABOCharacter::HandleDamaged);
 		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
+		StatComponent->OnShieldChanged.AddDynamic(this, &ABOCharacter::OnShieldValueChanged);
 	}
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
@@ -111,25 +116,25 @@ void ABOCharacter::BeginPlay()
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Load Player Stat"));
 					StatComponent->SetMaxHealth(GameInstance->GetMaxHealth());
-					StatComponent->SetMaxShield(GameInstance->GetMaxShield());
+					// StatComponent->SetMaxShield(GameInstance->GetMaxShield());
 
 					if (GameInstance->GetPlayingState() == EPlayingState::Bunker)
 					{
 						StatComponent->SetCurHealth(StatComponent->GetMaxHealth());
-						StatComponent->SetCurShield(StatComponent->GetMaxShield());
+						// StatComponent->SetCurShield(StatComponent->GetMaxShield());
 					}
 					else
 					{
 						StatComponent->SetCurHealth(GameInstance->GetCurHealth());
-						StatComponent->SetCurShield(GameInstance->GetCurShield());
+						// StatComponent->SetCurShield(GameInstance->GetCurShield());
 					}
 				}
 
 				if (PlayerInventoryComponent)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Load Player Inventory"));
-					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());
 					PlayerInventoryComponent->SetEquipmentSlots(GameInstance->GetPlayerEquipmentInventory());
+					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());
 				}
 			}
 		}
@@ -147,6 +152,7 @@ void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		StatComponent->OnDamaged.RemoveAll(this);
 		StatComponent->OnDeath.RemoveAll(this);
+		StatComponent->OnShieldChanged.RemoveDynamic(this, &ABOCharacter::OnShieldValueChanged);
 	}
 
 	if (IsValid(PlayerInventoryComponent))
@@ -231,9 +237,10 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 			if (PlayerController->PrimaryAction)
 			{
-				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Fire);
 				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::StartFire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Fire);
 				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Completed, this, &ABOCharacter::CompleteFire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Canceled, this, &ABOCharacter::CompleteFire);
 			}
 
 			if (PlayerController->SecondaryAction)
@@ -344,14 +351,12 @@ void ABOCharacter::SetMovementEnabled(bool bEnabled)
 
 	if (!bEnabled)
 	{
-		bIsSprint = false;
-
 		if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
 		{
 			MovementComponent->StopMovementImmediately();
 		}
 
-		ChangeMoveSpeed();
+		StopSprinting();
 	}
 }
 
@@ -415,11 +420,21 @@ void ABOCharacter::StartSprint(const FInputActionValue& value)
 		return;
 	}
 
+	StartSprinting();
+}
+
+void ABOCharacter::StopSprint(const FInputActionValue& value)
+{
+	StopSprinting();
+}
+
+void ABOCharacter::StartSprinting()
+{
 	bIsSprint = true;
 	ChangeMoveSpeed();
 }
 
-void ABOCharacter::StopSprint(const FInputActionValue& value)
+void ABOCharacter::StopSprinting()
 {
 	bIsSprint = false;
 	ChangeMoveSpeed();
@@ -427,7 +442,9 @@ void ABOCharacter::StopSprint(const FInputActionValue& value)
 
 void ABOCharacter::ToggleCrouch(const FInputActionValue& value)
 {
-	if (!bMovementEnabled)
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+
+	if (!bMovementEnabled || !IsValid(MovementComponent) || MovementComponent->IsFalling())
 	{
 		return;
 	}
@@ -497,11 +514,6 @@ void ABOCharacter::CompleteFire(const FInputActionValue& value)
 	{
 		EquipmentManagerComponent->EndAction();
 	}
-}
-
-void ABOCharacter::Hip(const FInputActionValue& value)
-{
-	bIsAiming = false;
 }
 
 void ABOCharacter::Reload(const FInputActionValue& value)
@@ -646,7 +658,34 @@ void ABOCharacter::Aim(const FInputActionValue& value)
 		return;
 	}
 
+	StartAiming();
+}
+
+void ABOCharacter::Hip(const FInputActionValue& value)
+{
+	StopAiming();
+}
+
+void ABOCharacter::StartAiming()
+{
 	bIsAiming = true;
+
+	// 장비 조준 활성화
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->StartAiming();
+	}
+}
+
+void ABOCharacter::StopAiming()
+{
+	bIsAiming = false;
+
+	// 장비 조준 비활성화
+	if (EquipmentManagerComponent)
+	{
+		EquipmentManagerComponent->StopAiming();
+	}
 }
 
 void ABOCharacter::InteractPress(const FInputActionValue& value)
@@ -847,6 +886,18 @@ void ABOCharacter::ChangeMoveSpeed()
 
 void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
 {
+	if (Slot == EEquipmentSlot::Bag)
+	{
+		HandleBackpackChanged(ItemInstanceBase);
+		return;
+	}
+
+	if (Slot == EEquipmentSlot::Shield)
+	{
+		HandleShieldChanged(ItemInstanceBase);
+		return;
+	}
+
 	if (!IsValid(EquipmentManagerComponent))
 	{
 		return;
@@ -857,7 +908,14 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 	// 해당 슬롯의 기존 장비 제거
 	if (EquipmentManagerComponent->HasEquipment(Slot))
 	{
-		EquipmentManagerComponent->Unassign(Slot);
+		UItemInstanceBase* RemovedItem = EquipmentManagerComponent->Unassign(Slot);
+
+		if (!IsValid(RemovedItem))
+		{
+			UE_LOG(LogTemp, Error, TEXT("장비 핸들러에서 %s 슬롯 제거 실패"), *UEnum::GetValueAsString(Slot));
+
+			return;
+		}
 	}
 
 	// 슬롯이 비워진 경우 제거만 하고 종료
@@ -877,6 +935,18 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 	{
 		EquipmentManagerComponent->Equip(Slot);
 	}
+}
+
+void ABOCharacter::OnShieldValueChanged(int32 CurrentShield, int32 MaxShield)
+{
+	if (!IsValid(EquippedShieldInstance))
+	{
+		return;
+	}
+
+	const int32 Delta = CurrentShield - EquippedShieldInstance->GetCurrentShield();
+
+	EquippedShieldInstance->ModifyShield(Delta);
 }
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
@@ -919,6 +989,67 @@ void ABOCharacter::HandleDamaged()
 	PlayerController->ClientStartCameraShake(DamageCameraShakeClass);
 }
 
+void ABOCharacter::HandleBackpackChanged(UItemInstanceBase* NewItem)
+{
+	if (!IsValid(PlayerInventoryComponent))
+	{
+		return;
+	}
+
+	const UBackpackInstance* Backpack = Cast<UBackpackInstance>(NewItem);
+	const FBackpackDataRow* BackpackData = Backpack ? Backpack->GetBackpackData() : nullptr;
+
+	TArray<UItemInstanceBase*> ItemsToDrop = PlayerInventoryComponent->ApplyBackpack(BackpackData);
+
+	for (int32 Index = 0; Index < ItemsToDrop.Num(); Index++)
+	{
+		UItemInstanceBase* Item = ItemsToDrop[Index];
+
+		if (!IsValid(Item))
+		{
+			continue;
+		}
+
+		const FVector DropLocation = GetActorLocation() + GetActorForwardVector() * 100.f + GetActorRightVector() * Index * 30.f;
+
+		FItemFactory::SpawnItemPickup(GetWorld(), Item, DropLocation);
+	}
+}
+
+void ABOCharacter::HandleShieldChanged(UItemInstanceBase* NewItem)
+{
+	if (IsValid(EquippedShieldInstance))
+	{
+		const int32 Delta = StatComponent->GetCurShield() - EquippedShieldInstance->GetCurrentShield();
+
+		EquippedShieldInstance->ModifyShield(Delta);
+	}
+
+	EquippedShieldInstance = Cast<UShieldInstance>(NewItem);
+
+	if (!IsValid(EquippedShieldInstance))
+	{
+		StatComponent->RemoveShield();
+		return;
+	}
+
+	const FShieldDataRow* ShieldData = EquippedShieldInstance->GetShieldData();
+
+	if (!ShieldData)
+	{
+		EquippedShieldInstance = nullptr;
+		StatComponent->RemoveShield();
+		return;
+	}
+
+	StatComponent->ApplyShield(
+		EquippedShieldInstance->GetCurrentShield(),
+		ShieldData->MaxShield,
+		ShieldData->ShieldRegenDelay,
+		ShieldData->ShieldRegenInterval,
+		ShieldData->ShieldRegenAmount);
+}
+
 void ABOCharacter::HandleDeath(AActor* DamageCauser)
 {
 	DeathDamageCauser = DamageCauser;
@@ -933,10 +1064,8 @@ void ABOCharacter::HandleDeath(AActor* DamageCauser)
 	}
 
 	// 달리기와 조준 해제
-	bIsSprint = false;
-	bIsAiming = false;
-
-	ChangeMoveSpeed();
+	StopSprinting();
+	StopAiming();
 
 	if (IsValid(EquipmentManagerComponent))
 	{
@@ -1258,8 +1387,8 @@ bool ABOCharacter::CanUseUtilityItem(const FUtilityItemDataRow* UtilityItemData)
 	{
 	case EUtilityType::HealHP:
 		return StatComponent->GetCurHealth() < StatComponent->GetMaxHealth();
-		/*case EUtilityType::HealShield:
-			return StatComponent->GetCurShield() < StatComponent->GetMaxShield();*/
+	case EUtilityType::HealShield:
+		return StatComponent->GetCurShield() < StatComponent->GetMaxShield();
 	default:
 		return false;
 	}
@@ -1297,11 +1426,22 @@ void ABOCharacter::OnEffectApplied(const FUtilityItemDataRow* UtilityItemData)
 		StatComponent->Heal(HealAmount);
 		break;
 	}
+	case EUtilityType::HealShield:
+	{
+		const int32 HealingShieldAmount = FMath::RoundToInt(UtilityItemData->EffectAmount);
 
+		if (HealingShieldAmount <= 0)
+		{
+			return;
+		}
+
+		// StatComponent->HealShield(HealingShieldAmount);
+
+		break;
+	}
 	default:
 		break;
 	}
-
 }
 
 FName ABOCharacter::GetRollSectionName() const
@@ -1392,24 +1532,6 @@ void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	}
 }
 
-void ABOCharacter::OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-	if (Montage != RollMontage)
-	{
-		return;
-	}
-
-	StopRoll();
-
-	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
-
-	if (IsValid(MovementComponent))
-	{
-		MovementComponent->Velocity.X = 0.0f;
-		MovementComponent->Velocity.Y = 0.0f;
-	}
-}
-
 bool ABOCharacter::CanUseGameplayInput() const
 {
 	if (!bGameplayInputEnabled)
@@ -1427,10 +1549,9 @@ bool ABOCharacter::CanUseGameplayInput() const
 
 void ABOCharacter::StopGameplayActions()
 {
-	bIsAiming = false;
-
-	bIsSprint = false;
-	ChangeMoveSpeed();
+	// 달리기 & 조준 비활성화
+	StopSprinting();
+	StopAiming();
 
 	if (IsValid(EquipmentManagerComponent))
 	{
@@ -1460,4 +1581,3 @@ void ABOCharacter::AddTestItem(FName ItemID, int32 Count)
 		UE_LOG(LogTemp, Warning, TEXT("AddTestItem: 인벤토리에 빈 슬롯이 없습니다."));
 	}
 }
-

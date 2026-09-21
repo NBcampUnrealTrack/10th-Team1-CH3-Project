@@ -48,15 +48,15 @@ EBTNodeResult::Type UBTTaskTakeDamage::ExecuteTask(UBehaviorTreeComponent& Owner
 	}
 
 	float TargetDist = FVector::Distance(Target->GetActorLocation(), AIMonster->GetActorLocation());
-	float CanFind = 2000.0f;
-	float CanNotFind = 5000.0f;
+	float CanFind = 5000.0f;
+	float CanNotFind = 10000.0f;
 
 	UMonsterCalling* Calling = NewObject<UMonsterCalling>(AIMonster);
 
 	if (TargetDist <= CanFind && bHitDamage)
 	{
 		BlackboardComp->SetValueAsObject(TEXT("TargetPlayer"), Target);
-		Calling->CallMonsters(AIMonster->GetActorLocation(), 3000.0f, Target, ECallType::Attack);
+		Calling->CallMonsters(AIMonster->GetActorLocation(), 6000.0f, Target, ECallType::Attack);
 		AIController->SetTargetPoint(FVector::ZeroVector);
 		AIController->StateChange(EMonsterState::Chase, 10.0f);
 		return EBTNodeResult::Succeeded;

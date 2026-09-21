@@ -45,14 +45,17 @@ EBTNodeResult::Type UBTTaskStandOffContinue::ExecuteTask(UBehaviorTreeComponent&
 		return EBTNodeResult::Failed;
 	}
 
-	FVector NowEQSPoint = BlackboardComp->GetValueAsVector(TEXT("EQSPoint"));
+	FVector NowEQSPoint = AIController->GetEQSPoint();
 
-	if (AIController->GetState() == EMonsterState::StandOff &&
-		Movement->Velocity.IsNearlyZero() &&
-		!AIController->IsContinueState() &&
-		FVector::PointsAreNear(NowEQSPoint, AIMonster->GetActorLocation(), 0))
+	if (AIController->GetState() == EMonsterState::StandOffMove &&
+		FVector::PointsAreNear(NowEQSPoint, AIMonster->GetActorLocation(), 50.0f))
 	{
-		AIController->StateChange(EMonsterState::StandOff, 5.0f);
+		AIController->StateChange(EMonsterState::StandOffWait, 5.0f);
+		return EBTNodeResult::Succeeded;
+	}
+	if (AIController->GetState() == EMonsterState::StandOffMove ||
+		AIController->GetState() == EMonsterState::StandOffWait)
+	{
 		return EBTNodeResult::Succeeded;
 	}
 

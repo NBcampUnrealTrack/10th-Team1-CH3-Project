@@ -58,6 +58,11 @@ EBTNodeResult::Type UBTTaskFocusSet::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	else
 	{
 		FVector Velocity = AIMonster->GetVelocity();
+		if (AIMonster->GetMonsterType() != EMonsterType::Fly)
+		{
+			Velocity.Z = 0;
+			Velocity.Normalize();
+		}
 
 		if (!Velocity.IsNearlyZero())
 		{

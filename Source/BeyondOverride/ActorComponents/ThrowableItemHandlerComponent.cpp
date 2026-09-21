@@ -216,8 +216,8 @@ FRotator UThrowableItemHandlerComponent::GetAimRotation() const
 
 	// 목표 위치
 	const FVector AimLocation = HitResult.bBlockingHit
-									? HitResult.ImpactPoint
-									: EndLocation;
+		? HitResult.ImpactPoint
+		: EndLocation;
 
 	// 투척 방향 구하기
 	const FRotator ThrowRotation = UKismetMathLibrary::FindLookAtRotation(

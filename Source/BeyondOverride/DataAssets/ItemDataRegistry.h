@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -24,4 +24,8 @@ class BEYONDOVERRIDE_API UItemDataRegistry : public UDataAsset
 	TObjectPtr<UDataTable> ThrowableItemTable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UDataTable> UtilityItemTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UDataTable> BackpackTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UDataTable> ShieldTable;
 };

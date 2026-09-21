@@ -73,6 +73,8 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// Getters
 	EEquipmentSlot GetActiveSlot() const;         // 현재 활성화 슬롯 반환
 	bool HasEquipment(EEquipmentSlot Slot) const; // 슬롯에 장비가 등록되었는지 여부
+	// 현재 활성화된 슬롯의 핸들러 컴포넌트 반환 (프리뷰 등 외부에서 현재 장착 중인 장비 정보를 읽어갈 때 사용)
+	UEquipmentHandlerComponent* GetActiveHandler() const;
 
 	// 초기화 - Owner의 BeginPlay() 시 호출
 	void Initialize();
@@ -92,6 +94,11 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 
 	// 현재 장비 재장전 - RangeWeapon 전용
 	bool Reload();
+
+	// 현재 장비 조준 시작 - RangeWeapon 전용
+	void StartAiming();
+	// 현재 장비 조준 종료 - RangeWeapon 전용
+	void StopAiming();
 
 	// 슬롯에 장비 등록
 	bool Assign(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);

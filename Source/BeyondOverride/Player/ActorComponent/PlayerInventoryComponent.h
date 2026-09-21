@@ -4,6 +4,8 @@
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "PlayerInventoryComponent.generated.h"
 
+struct FBackpackDataRow;
+
 class UItemInstanceBase;
 
 enum class EEquipmentSlot : uint8;
@@ -65,6 +67,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetMaxCarryWeight() const { return MaxCarryWeight; }
 
+	// 가방을 적용했을 때, 슬롯 부족으로 들어가지 못한 아이템 반환
+	TArray<UItemInstanceBase*> ApplyBackpack(const FBackpackDataRow* BackpackData);
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnEquipmentSlotChanged OnEquipmentSlotChanged;
@@ -86,6 +91,7 @@ protected:
 private:
 	void InitializeEquipmentSlot();
 	int32 GetEquipmentSlotIndex(EEquipmentSlot Slot) const;
+	EEquipmentSlot GetEquipmentSlotType(int32 SlotIndex) const;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Equipment", meta = (AllowPrivateAccess = "true"))
@@ -96,4 +102,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	float MaxCarryWeight = 50.0f;
+
+	int32 BaseSlotCount = 0;
+	float BaseMaxCarryWeight = 0.f;
 };

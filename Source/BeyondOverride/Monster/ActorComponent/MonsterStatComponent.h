@@ -8,18 +8,14 @@
 // Base include
 #include "Player/ActorComponent/StatComponent.h"
 
+// Add include
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
+
 // UHT Header
 #include "MonsterStatComponent.generated.h"
 
 class UMonsterDataAsset;
-
-UENUM(BlueprintType)
-enum class EMonsterType : uint8
-{
-	Special UMETA(DisplayName = "Special"),
-	Range UMETA(DisplayName = "Range"),
-	Melee UMETA(DisplayName = "Melee"),
-};
 
 UCLASS()
 class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
@@ -29,6 +25,8 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	// Methtods
   public:
 	UMonsterStatComponent();
+
+	EMonsterType GetMonsterType() const;
 
 	float GetWalkSpeed() const;
 
@@ -55,10 +53,11 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	virtual void BeginPlay() override;
 	void OnBalisticHit(AActor* Target);
 
+	// Properties
+  public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
 	TObjectPtr<UMonsterDataAsset> MonsterData;
 
-	// Properties
   protected:
 	// Attack Info
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

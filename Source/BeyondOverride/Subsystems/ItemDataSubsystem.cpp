@@ -1,10 +1,12 @@
-#include "Subsystems/ItemDataSubsystem.h"
+﻿#include "Subsystems/ItemDataSubsystem.h"
 
 #include "DataAssets/ItemDataRegistry.h"
+#include "DataTables/Items/BackpackDataRow.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/ItemDataRow.h"
 #include "DataTables/Items/MeleeWeaponDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
+#include "DataTables/Items/ShieldDataRow.h"
 #include "DataTables/Items/ThrowableItemDataRow.h"
 #include "DataTables/Items/UtilityItemDataRow.h"
 
@@ -129,4 +131,40 @@ const FUtilityItemDataRow* UItemDataSubsystem::GetUtilityItemData(const FName It
 	}
 
 	return UtilityItemData;
+}
+
+const FBackpackDataRow* UItemDataSubsystem::GetBackpackData(const FName ItemID) const
+{
+	if (!ItemDataRegistry || !ItemDataRegistry->BackpackTable)
+	{
+		return nullptr;
+	}
+
+	const FBackpackDataRow* BackpackData = ItemDataRegistry->BackpackTable->FindRow<FBackpackDataRow>(ItemID, TEXT("UItemDataSubsystem::GetBackpackData"));
+
+	if (!BackpackData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BackpackData not found: %s"), *ItemID.ToString());
+		return nullptr;
+	}
+
+	return BackpackData;
+}
+
+const FShieldDataRow* UItemDataSubsystem::GetShieldData(const FName ItemID) const
+{
+	if (!ItemDataRegistry || !ItemDataRegistry->ShieldTable)
+	{
+		return nullptr;
+	}
+
+	const FShieldDataRow* ShieldData = ItemDataRegistry->ShieldTable->FindRow<FShieldDataRow>(ItemID, TEXT("UItemDataSubsystem::GetShieldData"));
+
+	if (!ShieldData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ShieldData not found: %s"), *ItemID.ToString());
+		return nullptr;
+	}
+
+	return ShieldData;
 }

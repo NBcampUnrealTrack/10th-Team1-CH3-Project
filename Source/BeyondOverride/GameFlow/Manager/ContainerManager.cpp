@@ -10,6 +10,9 @@
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Logging/BOLog.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
+#include "Player/Character/BOCharacter.h"
 #include "Subsystems/ItemDataSubsystem.h"
 
 void UContainerManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -18,6 +21,11 @@ void UContainerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	ContainerDatas.Empty();
 	bShouldSpawnKeyCard = false;
+
+	if (GetWorld())
+	{
+		GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	}
 
 	LoadContainerData();
 }
@@ -29,7 +37,6 @@ void UContainerManager::LoadContainerData()
 		return;
 	}
 
-	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
 	if (!GameInstance)
 	{
 		return;
@@ -54,16 +61,16 @@ void UContainerManager::LoadContainerData()
 	{
 		if (Row)
 		{
-			FName Id = Row->Id;
-			ContainerDatas.Add(Id, *Row);
+			FName ID = Row->ID;
+			ContainerDatas.Add(ID, *Row);
 		}
 	}
 }
 
-void UContainerManager::InitSetting(bool IsKeyCardAcquired)
+void UContainerManager::InitSetting()
 {
 	ContainerByRegion.Empty();
-	bShouldSpawnKeyCard = !IsKeyCardAcquired;
+	bShouldSpawnKeyCard = !IsKeyCardAcquired();
 
 	if (!GetWorld())
 	{
@@ -77,32 +84,98 @@ void UContainerManager::InitSetting(bool IsKeyCardAcquired)
 	{
 		AStorageContainerActor* Container = Cast<AStorageContainerActor>(Actor);
 
-		FName ContainerId = Container->StorageContainerId; // change to getter function
+		FName ContainerID = Container->GetStorageContainerID();
 
-		if (ContainerDatas.Contains(ContainerId))
+		if (ContainerDatas.Contains(ContainerID))
 		{
-			FName RegionId = ContainerDatas[ContainerId].RegionId;
+			FName RegionID = ContainerDatas[ContainerID].RegionID;
 
-			if (!ContainerByRegion.Contains(RegionId))
+			if (!ContainerByRegion.Contains(RegionID))
 			{
-				ContainerByRegion.Add(RegionId);
+				ContainerByRegion.Add(RegionID);
 			}
 
-			ContainerByRegion[RegionId].Add(Container);
+			ContainerByRegion[RegionID].Add(Container);
 		}
 	}
 
 	ActivateContainer();
 }
 
+bool UContainerManager::IsKeyCardAcquired() const
+{
+	return HasPlayerKeyCard() || HasStorageKeyCard();
+}
+
+bool UContainerManager::HasPlayerKeyCard() const
+{
+	if (!GetWorld() || !GetWorld()->GetFirstPlayerController())
+	{
+		return false;
+	}
+
+	if (!GameInstance)
+	{
+		return false;
+	}
+
+	UBODataAsset* DataAsset = GameInstance->GetBODataAsset();
+	if (!DataAsset)
+	{
+		return false;
+	}
+
+	FName KeyCardID = DataAsset->GetKeyCardID();
+
+	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
+	{
+		if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
+		{
+			if (InventoryComponent->FindItemIndex(KeyCardID) != INDEX_NONE)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool UContainerManager::HasStorageKeyCard() const
+{
+	if (!GameInstance)
+	{
+		return false;
+	}
+
+	UBODataAsset* DataAsset = GameInstance->GetBODataAsset();
+	if (!DataAsset)
+	{
+		return false;
+	}
+
+	FName KeyCardID = DataAsset->GetKeyCardID();
+	TArray<UItemInstanceBase*> StorageInventory = GameInstance->GetStorageInventory();
+
+	for (UItemInstanceBase* Item : StorageInventory)
+	{
+		if (Item && Item->GetItemID() == KeyCardID)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void UContainerManager::ActivateContainer()
 {
-	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	if (!GameInstance)
 	{
 		return;
 	}
 
-	URegionManager* RegionManager = GetWorld()->GetGameInstance()->GetSubsystem<URegionManager>();
+	URegionManager* RegionManager = GameInstance->GetSubsystem<URegionManager>();
 	if (!RegionManager)
 	{
 		return;
@@ -110,11 +183,11 @@ void UContainerManager::ActivateContainer()
 
 	for (const TPair<FName, TArray<TObjectPtr<AStorageContainerActor>>>& Pair : ContainerByRegion)
 	{
-		FName RegionId = Pair.Key;
+		FName RegionID = Pair.Key;
 		TArray<TObjectPtr<AStorageContainerActor>> Containers = Pair.Value;
 
 		FRegionData RegionData{};
-		if (!RegionManager->GetRegiondata(RegionId, RegionData))
+		if (!RegionManager->GetRegiondata(RegionID, RegionData))
 		{
 			return;
 		}
@@ -134,6 +207,17 @@ void UContainerManager::ActivateContainer()
 
 			Container->SetItems(Items);
 		}
+
+		for (int i = Count; i < Size; i++)
+		{
+			TObjectPtr<AStorageContainerActor> Container = Containers[i];
+
+			TArray<TObjectPtr<UItemInstanceBase>> Items{};
+			TObjectPtr<UItemInstanceBase> Item = GetSpawnItem(Container);
+			Items.Add(Item);
+
+			Container->SetItems(Items);
+		}
 	}
 }
 
@@ -148,7 +232,7 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	TMap<FName, int32> SpawnItems{};
 
 	FSpawnData ContainerData{};
-	if (!GetContainerData(Container->StorageContainerId, ContainerData)) // change to GetId()
+	if (!GetContainerData(Container->GetStorageContainerID(), ContainerData))
 	{
 		return;
 	}
@@ -156,19 +240,19 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Count : %d"), Count);
+	UE_LOG(LogGameFlow, Warning, TEXT("Container Spawn Count : %d"), Count);
 
 	for (int i = 0; i < Count; i++)
 	{
-		FName ItemId = GetRandomSpawnItem(SpawnEntries);
+		FName ItemID = GetRandomSpawnItem(SpawnEntries);
 
-		if (SpawnItems.Contains(ItemId))
+		if (SpawnItems.Contains(ItemID))
 		{
-			SpawnItems[ItemId] += 1;
+			SpawnItems[ItemID] += 1;
 		}
 		else
 		{
-			SpawnItems.Add(ItemId, 1);
+			SpawnItems.Add(ItemID, 1);
 		}
 	}
 
@@ -176,26 +260,60 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 
 	for (const TPair<FName, int32>& Item : SpawnItems)
 	{
-		if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key, Item.Value))
+		for (int i = 0; i < Item.Value; i++)
 		{
-			Items.Add(ItemInstanceBase);
+			if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key))
+			{
+				Items.Add(ItemInstanceBase);
+			}
 		}
 	}
 }
 
+TObjectPtr<UItemInstanceBase> UContainerManager::GetSpawnItem(AStorageContainerActor* Container)
+{
+	if (!Container)
+	{
+		return nullptr;
+	}
+
+	FSpawnData ContainerData{};
+	if (!GetContainerData(Container->GetStorageContainerID(), ContainerData))
+	{
+		return nullptr;
+	}
+
+	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
+	FName ItemID = GetRandomSpawnItem(SpawnEntries);
+
+	FItemFactory ItemFactory{};
+	UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, ItemID);
+
+	return ItemInstanceBase;
+}
+
 FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntries)
 {
-	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	FName Default = FName(TEXT("Default"));
+
+	if (!GameInstance)
 	{
-		return FName(TEXT("Default"));
+		return Default;
 	}
 
-	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
+	UBODataAsset* DataAsset = GameInstance->GetBODataAsset();
+	if (!DataAsset)
+	{
+		return Default;
+	}
+
+	UItemDataSubsystem* ItemDataSubsystem = GameInstance->GetSubsystem<UItemDataSubsystem>();
 	if (!ItemDataSubsystem)
 	{
-		return FName(TEXT("Default"));
+		return Default;
 	}
 
+	FName KeyCardID = DataAsset->GetKeyCardID();
 	float Prob = FMath::RandRange(0.0f, 1.0f);
 	float Sum{};
 
@@ -205,11 +323,11 @@ FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntr
 
 		if (Sum >= Prob)
 		{
-			FName ItemId = SpawnEntry.Id;
+			FName ItemID = SpawnEntry.ID;
 
-			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemId))
+			if (const FItemDataRow* ItemData = ItemDataSubsystem->GetItemData(ItemID))
 			{
-				if (ItemId == FName(TEXT("KEY_CARD")))
+				if (ItemID == KeyCardID)
 				{
 					if (!bShouldSpawnKeyCard)
 					{
@@ -223,19 +341,19 @@ FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntr
 					}
 				}
 
-				return ItemId;
+				return ItemID;
 			}
 		}
 	}
 
-	return FName(TEXT("Default"));
+	return Default;
 }
 
-bool UContainerManager::GetContainerData(FName ContainerId, FSpawnData& Data) const
+bool UContainerManager::GetContainerData(FName ContainerID, FSpawnData& Data) const
 {
-	if (ContainerDatas.Contains(ContainerId))
+	if (ContainerDatas.Contains(ContainerID))
 	{
-		Data = ContainerDatas[ContainerId];
+		Data = ContainerDatas[ContainerID];
 
 		return true;
 	}

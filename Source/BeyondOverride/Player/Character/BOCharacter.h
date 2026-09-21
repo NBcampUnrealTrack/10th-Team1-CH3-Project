@@ -18,6 +18,8 @@ class UNearbyItemComponent;
 class UCharacterPreviewComponent;
 
 class UItemInstanceBase;
+class UBackpackInstance;
+class UShieldInstance;
 class UEquippableItemInstance;
 
 class UAnimMontage;
@@ -31,7 +33,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UEquipmentManagerComponent* GetEquipmentComponent() const
 	{
 		return EquipmentManagerComponent;
@@ -79,12 +81,15 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	}
 
 	UFUNCTION(BlueprintPure)
-	bool IsOverweight() const { return bIsOverweight; }
+	bool IsOverweight() const
+	{
+		return bIsOverweight;
+	}
 
 public:
 	ABOCharacter();
 
-  protected:
+protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
@@ -93,7 +98,7 @@ public:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-  protected:
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -148,19 +153,26 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UCharacterPreviewComponent> CharacterPreviewComponent;
 
-  private:
+private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
 	void Look(const FInputActionValue& value);
+
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
 	UFUNCTION()
 	void StopJump(const FInputActionValue& value);
+
 	UFUNCTION()
 	void StartSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
+	UFUNCTION()
+	void StartSprinting();
+	UFUNCTION()
+	void StopSprinting();
+
 	UFUNCTION()
 	void ToggleCrouch(const FInputActionValue& value);
 
@@ -175,6 +187,11 @@ public:
 	void Aim(const FInputActionValue& value);
 	UFUNCTION()
 	void Hip(const FInputActionValue& value);
+	UFUNCTION()
+	void StartAiming();
+	UFUNCTION()
+	void StopAiming();
+
 	UFUNCTION()
 	void Reload(const FInputActionValue& value);
 
@@ -225,6 +242,12 @@ public:
 
 	void HandleDamaged();
 
+	void HandleBackpackChanged(UItemInstanceBase* NewItem);
+	void HandleShieldChanged(UItemInstanceBase* NewItem);
+
+	UPROPERTY()
+	TObjectPtr<UShieldInstance> EquippedShieldInstance;
+
 	// 사망 관련
 	UFUNCTION()
 	void HandleDeath(AActor* DamageCauser);
@@ -233,10 +256,13 @@ public:
 	TWeakObjectPtr<AActor> DeathDamageCauser;
 	bool bDeathSequenceFinished = false;
 
-  public:
+public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	UFUNCTION()
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
+
+	UFUNCTION()
+	void OnShieldValueChanged(int32 CurrentShield, int32 MaxShield);
 
 	void TryEquipSlot(EEquipmentSlot Slot);
 
@@ -275,7 +301,6 @@ private:
 
 	FVector GetRollDirection() const;
 	void OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-	void OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	bool CanUseGameplayInput() const;
 	void StopGameplayActions();

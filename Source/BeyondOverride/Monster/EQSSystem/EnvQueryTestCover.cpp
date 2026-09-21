@@ -12,8 +12,7 @@
 
 UEnvQueryTestCover::UEnvQueryTestCover()
 {
-	TestPurpose = EEnvTestPurpose::Filter;
-	FilterType = EEnvTestFilterType::Minimum;
+	TestPurpose = EEnvTestPurpose::Score;
 	ValidItemType = UEnvQueryItemType_Point::StaticClass();
 }
 

@@ -1,9 +1,11 @@
-#include "ActorComponents/RangeWeaponHandlerComponent.h"
+﻿#include "ActorComponents/RangeWeaponHandlerComponent.h"
 
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
 #include "Enums/FireMode.h"
+#include "Animation/AnimInstance.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "Items/Objects/EquippableItemInstance.h"
@@ -20,8 +22,10 @@ URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 	// 총구 소켓 이름
 	MuzzleSocketName = FName("Muzzle");
 
-	// 활성화 여부
+	// 사격 활성화 여부
 	bIsActive = false;
+	// 조준 여부
+	bIsAiming = false;
 }
 
 void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -87,6 +91,23 @@ bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableI
 
 UEquippableItemInstance* URangeWeaponHandlerComponent::Unassign()
 {
+	if (IsEquipping())
+	{
+		OnEquipInterrupted();
+	}
+
+	// 좌클릭 및 연사 종료
+	EndAction();
+
+	if (GetWorld())
+	{
+		// 기존 사격 타이머 종료
+		GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+	}
+
+	// 장전 중이면 장전 취소
+	OnReloadInterrupted();
+
 	UEquippableItemInstance* OutEquippableItemInstance = Super::Unassign();
 	if (!OutEquippableItemInstance)
 	{
@@ -119,6 +140,9 @@ bool URangeWeaponHandlerComponent::Equip()
 		return false;
 	}
 
+	// 초기 조준 설정 - 비조준
+	StopAiming();
+
 	// Equip 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Equipped - %s"), *GetNameSafe(EquippableItemInstance)));
 
@@ -132,8 +156,18 @@ bool URangeWeaponHandlerComponent::Unequip()
 		return false;
 	}
 
-	// 재장전 중이면 취소
-	OnReloadInterrupted();
+	//// 재장전 중이면 취소
+	//OnReloadInterrupted();
+
+	EndAction();
+
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+	}
+
+	// 조준 해제
+	StopAiming();
 
 	// Unequip 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2001, 5.0f, FColor::Blue, FString::Printf(TEXT("Range Weapon Unequipped - %s"), *GetNameSafe(EquippableItemInstance)));
@@ -143,6 +177,11 @@ bool URangeWeaponHandlerComponent::Unequip()
 
 bool URangeWeaponHandlerComponent::Use()
 {
+	if (!bIsActive)
+	{
+		StartAction();
+	}
+
 	return false;
 }
 
@@ -172,6 +211,21 @@ bool URangeWeaponHandlerComponent::Reload()
 	OnReloadStarted();
 
 	return true;
+}
+
+void URangeWeaponHandlerComponent::StartAiming()
+{
+	bIsAiming = true;
+}
+
+void URangeWeaponHandlerComponent::StopAiming()
+{
+	bIsAiming = false;
+}
+
+bool URangeWeaponHandlerComponent::IsReloading() const
+{
+	return GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(ReloadTimerHandle);
 }
 
 bool URangeWeaponHandlerComponent::CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const
@@ -207,11 +261,17 @@ bool URangeWeaponHandlerComponent::CanUnequip() const
 		return false;
 	}
 
-	// 사용 중
-	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	// 장전 중에는 해제 및 교체 불가
+	if (IsReloading())
 	{
 		return false;
 	}
+
+	//// 사용 중
+	//if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	//{
+	//	return false;
+	//}
 
 	return true;
 }
@@ -223,7 +283,22 @@ bool URangeWeaponHandlerComponent::CanUse() const
 		return false;
 	}
 
+	if (IsReloading())
+	{
+		return false;
+	}
+
 	return true;
+}
+
+void URangeWeaponHandlerComponent::OnEquipCompleted()
+{
+	Super::OnEquipCompleted();
+
+	if (bIsActive)
+	{
+		Fire();
+	}
 }
 
 void URangeWeaponHandlerComponent::Fire()
@@ -236,9 +311,6 @@ void URangeWeaponHandlerComponent::Fire()
 
 	// 총알 소환
 	SpawnBullets();
-
-	// 재장전 중이면, 취소 후 사격
-	OnReloadInterrupted();
 
 	// 반동 추가
 	AddRecoil();
@@ -290,6 +362,12 @@ bool URangeWeaponHandlerComponent::CanReload() const
 {
 	// 등록된 장비 없음
 	if (!HasEquipment())
+	{
+		return false;
+	}
+
+	// 장착 중인 경우
+	if (IsEquipping())
 	{
 		return false;
 	}
@@ -449,8 +527,8 @@ FRotator URangeWeaponHandlerComponent::GetAimRotation() const
 
 	// 목표 위치
 	const FVector AimLocation = HitResult.bBlockingHit
-									? HitResult.ImpactPoint
-									: EndLocation;
+		? HitResult.ImpactPoint
+		: EndLocation;
 
 	// 총구 방향 구하기
 	const FRotator AimRotation = UKismetMathLibrary::FindLookAtRotation(
@@ -491,13 +569,17 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 	}
 
 	// 탄 퍼짐 각도
-	const float SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	float SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	if (bIsAiming) // 조준 상태면 정확도 증가
+	{
+		SpreadDegree *= RangeWeaponData->AimSpreadMultiplier;
+	}
 	const float SpreadRadians = FMath::DegreesToRadians(SpreadDegree);
 
 	// 원뿔 내 균일 분포
 	return FMath::VRandCone(
-			   AimRotation.Vector(),
-			   SpreadRadians)
+		AimRotation.Vector(),
+		SpreadRadians)
 		.Rotation();
 }
 
@@ -675,6 +757,11 @@ void URangeWeaponHandlerComponent::OnReloadStarted()
 
 void URangeWeaponHandlerComponent::OnReloadCompleted()
 {
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+	}
+
 	// RequestReloadAmmoDelegate 바인딩 확인
 	if (!RequestReloadAmmoDelegate.IsBound())
 	{
@@ -692,6 +779,11 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 	// 탄약 추가
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
 
+	if (bIsActive)
+	{
+		Fire();
+	}
+
 	// 재장전 완료 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Reload Completed - %s"), *GetNameSafe(EquippableItemInstance)));
 }
@@ -699,7 +791,7 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 void URangeWeaponHandlerComponent::OnReloadInterrupted()
 {
 	// 재장전 중이 아닌 경우
-	if (!GetWorld() || !GetWorld()->GetTimerManager().IsTimerActive(ReloadTimerHandle))
+	if (!IsReloading())
 	{
 		return;
 	}
@@ -709,6 +801,17 @@ void URangeWeaponHandlerComponent::OnReloadInterrupted()
 
 	// 재장전 애니메이션 중단
 	StopReloadAnimation();
+
+	// 캐릭터의 장전 몽타주 정지
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+
+	if (Character && Character->GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
+		{
+			AnimInstance->Montage_Stop(0.1f);
+		}
+	}
 
 	// 재장전 중단 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Reload Interrupted - %s"), *GetNameSafe(EquippableItemInstance)));

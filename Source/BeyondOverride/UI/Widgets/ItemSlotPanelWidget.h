@@ -14,6 +14,7 @@ class UItemInstanceBase;
 class AItemPickupBase;
 class UPanelFrameWidget;
 class UNearbyItemComponent;
+class UPlayerInventoryComponent;
 
 UENUM()
 enum class EItemSlotPanelMode : uint8
@@ -70,6 +71,9 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 	UPROPERTY()
 	TObjectPtr<UInventoryInteractionComponent> InteractionComponent;
 
+	UPROPERTY()
+	TObjectPtr<UPlayerInventoryComponent> PlayerInventoryComponent;
+
 	void UnbindInventory();
 
 	UFUNCTION()
@@ -77,4 +81,7 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 
 	UFUNCTION()
 	void HandleSlotClicked(int32 SlotIndex, bool bLeftClick);
+
+	UFUNCTION()
+	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
 };

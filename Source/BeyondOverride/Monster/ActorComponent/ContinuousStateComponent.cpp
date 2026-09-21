@@ -3,9 +3,22 @@
 // Base include
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 
+#include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/StateEnums.h"
+
 UContinuousStateComponent::UContinuousStateComponent()
 {
 	NowState = EMonsterState::Atmosphere;
+}
+
+void UContinuousStateComponent::OnStandOff()
+{
+	bContinueStandOff = true;
+}
+
+bool UContinuousStateComponent::StandOffGetPosition() const
+{
+	return bContinueStandOff;
 }
 
 bool UContinuousStateComponent::IsContinueState() const
@@ -17,12 +30,14 @@ bool UContinuousStateComponent::IsContinueState() const
 
 void UContinuousStateComponent::StateChange(EMonsterState Input)
 {
+	BeforeState = NowState;
 	NowState = Input;
 	OnStateCast.Broadcast(NowState);
 }
 
 void UContinuousStateComponent::StateChange(EMonsterState Input, float HoldTime)
 {
+	BeforeState = NowState;
 	NowState = Input;
 	OnStateCast.Broadcast(NowState);
 	GetWorld()->GetTimerManager().SetTimer(StateTimer,
@@ -37,14 +52,20 @@ EMonsterState UContinuousStateComponent::GetState() const
 	return NowState;
 }
 
+EMonsterState UContinuousStateComponent::GetBeforeState() const
+{
+	return BeforeState;
+}
+
 void UContinuousStateComponent::StateAutoControl()
 {
+
+	float RangeRand = 4.0f;
+	float TimerSec = 8.0f + FMath::RandRange(-RangeRand, RangeRand);
+
 	if (NowState == EMonsterState::LocationPatrol ||
 		NowState == EMonsterState::Patrol)
 	{
-
-		float RangeRand = 4.0f;
-		float TimerSec = 8.0f + FMath::RandRange(-RangeRand, RangeRand);
 
 		StateChange(EMonsterState::Atmosphere, TimerSec);
 		return;
@@ -58,21 +79,28 @@ void UContinuousStateComponent::StateAutoControl()
 
 	if (NowState == EMonsterState::Chase)
 	{
-		if (BeforeState != EMonsterState::StandOff)
+		if (BeforeState != EMonsterState::StandOffWait)
 		{
-			StateChange(EMonsterState::StandOff);
+			StateChange(EMonsterState::StandOffMove, 10.0f);
 		}
 		else
 		{
-			BeforeState = EMonsterState::Chase;
+			StateChange(EMonsterState::Atmosphere, TimerSec);
 		}
 		return;
 	}
 
-	if (NowState == EMonsterState::StandOff)
+	if (NowState == EMonsterState::StandOffMove)
 	{
-		BeforeState = EMonsterState::StandOff;
+		StateChange(EMonsterState::StandOffWait, 5.0f);
+		bContinueStandOff = false;
+		return;
+	}
+
+	if (NowState == EMonsterState::StandOffWait)
+	{
 		StateChange(EMonsterState::Chase, 5.0f);
+		bContinueStandOff = false;
 		return;
 	}
 }

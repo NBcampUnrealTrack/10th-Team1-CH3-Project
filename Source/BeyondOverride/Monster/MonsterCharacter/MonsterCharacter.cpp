@@ -29,14 +29,6 @@ AMonsterCharacter::AMonsterCharacter()
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-
-	if (Movement)
-	{
-		Movement->MaxWalkSpeed = MonsterStat->GetWalkSpeed() * 1;
-		Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
-	}
-
 	static ConstructorHelpers::FObjectFinder<UMonsterDataAsset> DataAssetFinder(TEXT("/Game/Blueprints/Monster/DataAssets/DA_MonstersInfo.DA_MonstersInfo"));
 
 	if (DataAssetFinder.Succeeded())
@@ -50,9 +42,13 @@ void AMonsterCharacter::FocusSetUp(bool data)
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
 		bUseControllerRotationYaw = data;
-		bUseControllerRotationPitch = data;
 		bUseControllerRotationRoll = data;
 		Movement->bOrientRotationToMovement = data;
+
+		if (MonsterStat->GetMonsterType() == EMonsterType::Fly)
+		{
+			bUseControllerRotationPitch = data;
+		}
 	}
 }
 
@@ -196,6 +192,16 @@ void AMonsterCharacter::PostInitializeComponents()
 
 	SetUpMesh();
 	MonsterStat->StatSetup();
+	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
+	{
+		Movement->MaxWalkSpeed = MonsterStat->GetWalkSpeed() * 1;
+		Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	}
+}
+
+EMonsterType AMonsterCharacter::GetMonsterType() const
+{
+	return MonsterStat->GetMonsterType();
 }
 
 void AMonsterCharacter::SetMonsterID(FName ID)

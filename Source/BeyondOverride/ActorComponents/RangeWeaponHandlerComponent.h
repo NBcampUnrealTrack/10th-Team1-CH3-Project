@@ -32,7 +32,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	// 사격 수행 시 송출하는 델리게이트
 	FOnFireExecutedDelegate OnFireExecutedDelegate;
 	// 재장전 가능 여부 델리게이트
@@ -40,7 +40,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
-  protected:
+protected:
 	// 등록된 Range Weapon 인스턴스
 	UPROPERTY()
 	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;
@@ -51,13 +51,13 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 총구 소켓 이름
 	FName MuzzleSocketName;
 
-  public:
+public:
 	URangeWeaponHandlerComponent();
 
-  protected:
+protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-  public:
+public:
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
 	// 장비 제거
@@ -79,7 +79,15 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 재장전
 	bool Reload();
 
-  protected:
+	// 조준 시작
+	void StartAiming();
+	// 조준 종료
+	void StopAiming();
+
+	bool IsReloading() const;
+
+
+protected:
 	// 장비 등록 가능 여부
 	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const override;
 	// 장비 제거 가능 여부
@@ -91,9 +99,13 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 장비 사용 가능 여부
 	virtual bool CanUse() const override;
 
-  protected:
-	// 활성화 여부
+	virtual void OnEquipCompleted() override;
+
+protected:
+	// 사격 활성화 여부
 	bool bIsActive;
+	// 조준 여부
+	bool bIsAiming;
 
 	// 사격 타이머
 	FTimerHandle FireTimerHandle;
@@ -110,7 +122,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 탄 퍼짐 각도 (원뿔 영역 내 균일 분포)
 	FTimeline SpreadDegreeTimeline;
 
-  protected:
+protected:
 	// 사격
 	void Fire();
 
@@ -153,7 +165,7 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	// 재장전 애니메이션 중단
 	void StopReloadAnimation();
 
-  protected:
+protected:
 	// 사격 종료 시 호출
 	void OnFireCompleted();
 

@@ -10,6 +10,7 @@
 #include "UI/Widgets/ItemSlotWidget.h"
 #include "UI/Widgets/PanelFrameWidget.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Player/ActorComponent/PlayerInventoryComponent.h"
 
 UItemSlotPanelWidget::UItemSlotPanelWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -49,6 +50,17 @@ void UItemSlotPanelWidget::UnbindInventory()
 		InventoryComponent->OnInventoryChanged.RemoveDynamic(this, &UItemSlotPanelWidget::OnInventoryChanged);
 		InventoryComponent = nullptr;
 	}
+
+	if (PlayerInventoryComponent)
+	{
+		PlayerInventoryComponent->OnWeightChanged.RemoveDynamic(this, &UItemSlotPanelWidget::OnWeightChanged);
+		PlayerInventoryComponent = nullptr;
+	}
+
+	if (PanelFrame)
+	{
+		PanelFrame->HideCarryWeight();
+	}
 }
 
 void UItemSlotPanelWidget::SetInventory(UInventoryComponent* InInventory, UInventoryInteractionComponent* InInteraction)
@@ -63,6 +75,13 @@ void UItemSlotPanelWidget::SetInventory(UInventoryComponent* InInventory, UInven
 	if (InventoryComponent)
 	{
 		InventoryComponent->OnInventoryChanged.AddDynamic(this, &UItemSlotPanelWidget::OnInventoryChanged);
+	}
+
+	PlayerInventoryComponent = Cast<UPlayerInventoryComponent>(InInventory);
+	if (PlayerInventoryComponent)
+	{
+		PlayerInventoryComponent->OnWeightChanged.AddDynamic(this, &UItemSlotPanelWidget::OnWeightChanged);
+		OnWeightChanged(PlayerInventoryComponent->GetCurCarryWeight(), PlayerInventoryComponent->GetMaxCarryWeight());
 	}
 
 	RefreshSlots();
@@ -159,5 +178,13 @@ void UItemSlotPanelWidget::HandleSlotClicked(int32 SlotIndex, bool bLeftClick)
 	else
 	{
 		InteractionComponent->HandleNearbySlotClick(NearbyItemComponent, SlotIndex, bLeftClick);
+	}
+}
+
+void UItemSlotPanelWidget::OnWeightChanged(float CurCarryWeight, float MaxCarryWeight)
+{
+	if (PanelFrame)
+	{	
+		PanelFrame->SetCarryWeight(CurCarryWeight, MaxCarryWeight);
 	}
 }
