@@ -94,7 +94,6 @@ public:
 	int32 GetMoney() const { return Money; }
 
 	// 돈 설정
-	UFUNCTION(BlueprintPure)
 	void SetMoney(int32 NewMoney);
 
 public:
