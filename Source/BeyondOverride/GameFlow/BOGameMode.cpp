@@ -45,6 +45,9 @@ void ABOGameMode::InitSetting()
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Initial Setting"));
 
+	FTimerHandle LoadingTimer;
+	// GetWorld()->GetTimerManager().SetTimer(LoadingTimer, this, &ABOGameMode::OnLevelOpened, 10.0f, false);
+
 	if (GameInstance)
 	{
 		EGameState BOGameState = GameInstance->GetGameState();
@@ -147,6 +150,12 @@ void ABOGameMode::ProvideBasicEquipment()
 void ABOGameMode::StartFarming()
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Begin Farming"));
+
+	if (!GameInstance)
+	{
+		return;
+	}
+
 	FarmingStateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
 
 	if (FarmingStateMachine)
@@ -159,6 +168,7 @@ void ABOGameMode::StartFarming()
 void ABOGameMode::EndFarming(EFarmingResult Result)
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode End Farming"));
+
 	if (FarmingStateMachine)
 	{
 		FarmingStateMachine->SetFarmingResult(Result);
@@ -231,6 +241,15 @@ void ABOGameMode::ExitGame()
 	if (GameInstance)
 	{
 		GameInstance->Exit();
+	}
+}
+
+void ABOGameMode::OnLevelOpened()
+{
+	UE_LOG(LogGameFlow, Warning, TEXT("OnLevelOpened"));
+	if (GameInstance)
+	{
+		GameInstance->OnLevelOpened();
 	}
 }
 

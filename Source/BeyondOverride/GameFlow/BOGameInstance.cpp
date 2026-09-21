@@ -4,8 +4,10 @@
 
 #include "BOGameMode.h"
 #include "BOWorldSubsystem.h"
+#include "MoviePlayer.h"
 
 #include "DataTables/Monster/MonsterInfo.h"
+#include "GameFlow/Manager/LoadingScreenManager.h"
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -160,15 +162,37 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		SaveStorageData();
 	}
 
-	if (GetWorld() && BODataAsset)
+	if (!GetWorld() || !BODataAsset)
 	{
-		TMap<ELevel, FName> Levels{};
-		BODataAsset->GetLevels(Levels);
+		return;
+	}
 
-		if (Levels.Contains(Level))
+	TMap<ELevel, FName> Levels{};
+	BODataAsset->GetLevels(Levels);
+
+	if (!Levels.Contains(Level))
+	{
+		return;
+	}
+
+	if (Level != ELevel::Basic)
+	{
+		// 플레이 정지
+		if (ULoadingScreenManager* LoadingScreenManager = GetSubsystem<ULoadingScreenManager>())
 		{
-			UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
+			LoadingScreenManager->ShowLoadingScreenWidget();
 		}
+	}
+
+	UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
+}
+
+void UBOGameInstance::OnLevelOpened()
+{
+	// 플레이 재개
+	if (ULoadingScreenManager* LoadingScreenManager = GetSubsystem<ULoadingScreenManager>())
+	{
+		LoadingScreenManager->HideLoadingScreenWidget();
 	}
 }
 

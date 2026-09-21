@@ -17,6 +17,11 @@ void UBODataAsset::GetBasicEquipments(TArray<FName>& Data) const
 	Data = BasicEquipments;
 }
 
+TSubclassOf<ULoadingScreenWidget> UBODataAsset::GetLoadingScreenWidgetClass() const
+{
+	return LoadingScreenWidgetClass;
+}
+
 FName UBODataAsset::GetKeyCardID() const
 {
 	return KeyCardID;

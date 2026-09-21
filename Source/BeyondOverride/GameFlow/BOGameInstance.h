@@ -32,6 +32,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void Die();
 	void EnterServerRoom();
 	void OpenLevel(ELevel Level);
+	void OnLevelOpened();
 
 	void SavePlayerData();
 	void SaveStorageData();

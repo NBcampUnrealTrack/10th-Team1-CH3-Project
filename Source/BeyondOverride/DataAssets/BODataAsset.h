@@ -6,6 +6,7 @@
 
 #include "Engine/DataAsset.h"
 #include "Enums/BOEnums.h"
+#include "UI/Widgets/LoadingScreenWidget.h"
 
 #include "BODataAsset.generated.h"
 
@@ -21,6 +22,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	void GetLevels(TMap<ELevel, FName>& Data) const;
 	void GetRegions(TArray<FName>& Data) const;
 	void GetBasicEquipments(TArray<FName>& Data) const;
+	TSubclassOf<ULoadingScreenWidget> GetLoadingScreenWidgetClass() const;
 	FName GetKeyCardID() const;
 	float GetExitActivateProb() const;
 	float GetTotalDefenseTime() const;
@@ -32,6 +34,9 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	UDataTable* GetContainerDataTable() const;
 
   public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
+	TSubclassOf<ULoadingScreenWidget> LoadingScreenWidgetClass;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TMap<ELevel, FName> Levels;
 
