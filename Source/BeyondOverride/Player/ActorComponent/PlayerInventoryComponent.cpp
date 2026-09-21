@@ -313,6 +313,16 @@ bool UPlayerInventoryComponent::SpendMoney(int32 Amount)
 	return true;
 }
 
+void UPlayerInventoryComponent::SetMoney(int32 NewMoney)
+{
+	if (NewMoney < 0)
+	{
+		return;
+	}
+
+	Money = NewMoney;
+}
+
 int32 UPlayerInventoryComponent::GetEquipmentSlotIndex(EEquipmentSlot Slot) const
 {
 	switch (Slot)
