@@ -8,6 +8,8 @@
 #include "Camera/CameraComponent.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/UtilityItemDataRow.h"
+#include "DataTables/Items/BackpackDataRow.h"
+#include "DataTables/Items/ShieldDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Enums/UtilityType.h"
 #include "Factory/ItemFactory.h"
@@ -21,6 +23,8 @@
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Items/Objects/ThrowableItemInstance.h"
+#include "Items/Objects/BackpackInstance.h"
+#include "Items/Objects/ShieldInstance.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
@@ -69,6 +73,7 @@ void ABOCharacter::BeginPlay()
 	{
 		StatComponent->OnDamaged.AddUObject(this, &ABOCharacter::HandleDamaged);
 		StatComponent->OnDeath.AddUObject(this, &ABOCharacter::HandleDeath);
+		StatComponent->OnShieldChanged.AddDynamic(this, &ABOCharacter::OnShieldValueChanged);
 	}
 
 	if (UUIManager* UIManager = UUIManager::Get(this))
@@ -111,25 +116,25 @@ void ABOCharacter::BeginPlay()
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Load Player Stat"));
 					StatComponent->SetMaxHealth(GameInstance->GetMaxHealth());
-					StatComponent->SetMaxShield(GameInstance->GetMaxShield());
+					// StatComponent->SetMaxShield(GameInstance->GetMaxShield());
 
 					if (GameInstance->GetPlayingState() == EPlayingState::Bunker)
 					{
 						StatComponent->SetCurHealth(StatComponent->GetMaxHealth());
-						StatComponent->SetCurShield(StatComponent->GetMaxShield());
+						// StatComponent->SetCurShield(StatComponent->GetMaxShield());
 					}
 					else
 					{
 						StatComponent->SetCurHealth(GameInstance->GetCurHealth());
-						StatComponent->SetCurShield(GameInstance->GetCurShield());
+						// StatComponent->SetCurShield(GameInstance->GetCurShield());
 					}
 				}
 
 				if (PlayerInventoryComponent)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Load Player Inventory"));
-					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());
 					PlayerInventoryComponent->SetEquipmentSlots(GameInstance->GetPlayerEquipmentInventory());
+					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());
 				}
 			}
 		}
@@ -147,6 +152,7 @@ void ABOCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		StatComponent->OnDamaged.RemoveAll(this);
 		StatComponent->OnDeath.RemoveAll(this);
+		StatComponent->OnShieldChanged.RemoveDynamic(this, &ABOCharacter::OnShieldValueChanged);
 	}
 
 	if (IsValid(PlayerInventoryComponent))
@@ -231,9 +237,10 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 			if (PlayerController->PrimaryAction)
 			{
-				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Fire);
 				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Started, this, &ABOCharacter::StartFire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Triggered, this, &ABOCharacter::Fire);
 				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Completed, this, &ABOCharacter::CompleteFire);
+				EnhancedInput->BindAction(PlayerController->PrimaryAction, ETriggerEvent::Canceled, this, &ABOCharacter::CompleteFire);
 			}
 
 			if (PlayerController->SecondaryAction)
@@ -879,6 +886,18 @@ void ABOCharacter::ChangeMoveSpeed()
 
 void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase)
 {
+	if (Slot == EEquipmentSlot::Bag)
+	{
+		HandleBackpackChanged(ItemInstanceBase);
+		return;
+	}
+
+	if (Slot == EEquipmentSlot::Shield)
+	{
+		HandleShieldChanged(ItemInstanceBase);
+		return;
+	}
+
 	if (!IsValid(EquipmentManagerComponent))
 	{
 		return;
@@ -889,7 +908,14 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 	// 해당 슬롯의 기존 장비 제거
 	if (EquipmentManagerComponent->HasEquipment(Slot))
 	{
-		EquipmentManagerComponent->Unassign(Slot);
+		UItemInstanceBase* RemovedItem = EquipmentManagerComponent->Unassign(Slot);
+
+		if (!IsValid(RemovedItem))
+		{
+			UE_LOG(LogTemp, Error, TEXT("장비 핸들러에서 %s 슬롯 제거 실패"), *UEnum::GetValueAsString(Slot));
+
+			return;
+		}
 	}
 
 	// 슬롯이 비워진 경우 제거만 하고 종료
@@ -909,6 +935,18 @@ void ABOCharacter::OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase
 	{
 		EquipmentManagerComponent->Equip(Slot);
 	}
+}
+
+void ABOCharacter::OnShieldValueChanged(int32 CurrentShield, int32 MaxShield)
+{
+	if (!IsValid(EquippedShieldInstance))
+	{
+		return;
+	}
+
+	const int32 Delta = CurrentShield - EquippedShieldInstance->GetCurrentShield();
+
+	EquippedShieldInstance->ModifyShield(Delta);
 }
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
@@ -949,6 +987,67 @@ void ABOCharacter::HandleDamaged()
 	}
 
 	PlayerController->ClientStartCameraShake(DamageCameraShakeClass);
+}
+
+void ABOCharacter::HandleBackpackChanged(UItemInstanceBase* NewItem)
+{
+	if (!IsValid(PlayerInventoryComponent))
+	{
+		return;
+	}
+
+	const UBackpackInstance* Backpack = Cast<UBackpackInstance>(NewItem);
+	const FBackpackDataRow* BackpackData = Backpack ? Backpack->GetBackpackData() : nullptr;
+
+	TArray<UItemInstanceBase*> ItemsToDrop = PlayerInventoryComponent->ApplyBackpack(BackpackData);
+
+	for (int32 Index = 0; Index < ItemsToDrop.Num(); Index++)
+	{
+		UItemInstanceBase* Item = ItemsToDrop[Index];
+
+		if (!IsValid(Item))
+		{
+			continue;
+		}
+
+		const FVector DropLocation = GetActorLocation() + GetActorForwardVector() * 100.f + GetActorRightVector() * Index * 30.f;
+
+		FItemFactory::SpawnItemPickup(GetWorld(), Item, DropLocation);
+	}
+}
+
+void ABOCharacter::HandleShieldChanged(UItemInstanceBase* NewItem)
+{
+	if (IsValid(EquippedShieldInstance))
+	{
+		const int32 Delta = StatComponent->GetCurShield() - EquippedShieldInstance->GetCurrentShield();
+
+		EquippedShieldInstance->ModifyShield(Delta);
+	}
+
+	EquippedShieldInstance = Cast<UShieldInstance>(NewItem);
+
+	if (!IsValid(EquippedShieldInstance))
+	{
+		StatComponent->RemoveShield();
+		return;
+	}
+
+	const FShieldDataRow* ShieldData = EquippedShieldInstance->GetShieldData();
+
+	if (!ShieldData)
+	{
+		EquippedShieldInstance = nullptr;
+		StatComponent->RemoveShield();
+		return;
+	}
+
+	StatComponent->ApplyShield(
+		EquippedShieldInstance->GetCurrentShield(),
+		ShieldData->MaxShield,
+		ShieldData->ShieldRegenDelay,
+		ShieldData->ShieldRegenInterval,
+		ShieldData->ShieldRegenAmount);
 }
 
 void ABOCharacter::HandleDeath(AActor* DamageCauser)
@@ -1416,24 +1515,6 @@ FVector ABOCharacter::GetRollDirection() const
 }
 
 void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-	if (Montage != RollMontage)
-	{
-		return;
-	}
-
-	StopRoll();
-
-	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
-
-	if (IsValid(MovementComponent))
-	{
-		MovementComponent->Velocity.X = 0.0f;
-		MovementComponent->Velocity.Y = 0.0f;
-	}
-}
-
-void ABOCharacter::OnReloadMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Montage != RollMontage)
 	{
