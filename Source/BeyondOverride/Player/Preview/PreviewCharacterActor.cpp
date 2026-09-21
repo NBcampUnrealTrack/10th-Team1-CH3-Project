@@ -1,11 +1,15 @@
 #include "Player/Preview/PreviewCharacterActor.h"
 
 #include "ActorComponents/EquipmentHandlerComponent.h"
+#include "ActorComponents/EquipmentManagerComponent.h"
 #include "Components/PointLightComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "DataTables/Items/EquippableItemDataRow.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "GameFramework/Character.h"
+#include "Items/Objects/EquippableItemInstance.h"
+#include "Player/AnimInstance/BOAnimInstance.h"
 
 APreviewCharacterActor::APreviewCharacterActor()
 {
@@ -108,6 +112,21 @@ void APreviewCharacterActor::SyncEquipmentFrom(ACharacter* SourceCharacter)
 		if (BodyMesh->DoesSocketExist(SocketName))
 		{
 			PreviewEquipMesh->AttachToComponent(BodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+		}
+	}
+
+	// 실제 캐릭터가 현재 손에 들고 있는 장비의 애니메이션 데이터(장착 자세용 블렌드스페이스 등)를
+	// 프리뷰의 AnimInstance에도 그대로 적용
+	UEquipmentManagerComponent* SourceEquipmentManager = SourceCharacter->FindComponentByClass<UEquipmentManagerComponent>();
+	UEquipmentHandlerComponent* ActiveHandler = SourceEquipmentManager ? SourceEquipmentManager->GetActiveHandler() : nullptr;
+	UEquippableItemInstance* ActiveItemInstance = ActiveHandler ? ActiveHandler->GetEquippableItemInstance() : nullptr;
+	const FEquippableItemDataRow* ActiveItemData = ActiveItemInstance ? ActiveItemInstance->GetEquippableItemData() : nullptr;
+
+	if (UBOAnimInstance* PreviewAnimInstance = Cast<UBOAnimInstance>(BodyMesh->GetAnimInstance()))
+	{
+		if (ActiveItemData && ActiveItemData->EquipmentAnimationData)
+		{
+			PreviewAnimInstance->ApplyEquipmentAnimation(ActiveItemData->EquipmentAnimationData);
 		}
 	}
 }

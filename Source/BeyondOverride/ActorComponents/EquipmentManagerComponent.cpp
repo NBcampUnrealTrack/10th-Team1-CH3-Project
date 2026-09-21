@@ -40,6 +40,16 @@ bool UEquipmentManagerComponent::HasEquipment(EEquipmentSlot Slot) const
 	return EquipmentHandlerComponents[Slot]->GetEquippableItemInstance() != nullptr;
 }
 
+UEquipmentHandlerComponent* UEquipmentManagerComponent::GetActiveHandler() const
+{
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot))
+	{
+		return nullptr;
+	}
+
+	return EquipmentHandlerComponents[ActiveSlot];
+}
+
 void UEquipmentManagerComponent::Initialize()
 {
 	// Unarmed 설정
