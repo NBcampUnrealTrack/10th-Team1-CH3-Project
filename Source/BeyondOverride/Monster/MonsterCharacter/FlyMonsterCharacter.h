@@ -28,7 +28,12 @@ class BEYONDOVERRIDE_API AFlyMonsterCharacter : public ACharacter
 
 	void MoveFlying(const FVector& TargetLocation);
 
-	FVector GetWallEndPoint(const FVector& Start, const FVector& Direction, const FVector& WallLocation, const FVector& WallExtent, const FRotator& WallRotation);
+	FVector GetWallEndPoint(FVector DirectionData,
+							FVector ImpactData,
+							FVector TargetOrigin,
+							FVector TargetExtent,
+							FRotator TargetRotation,
+							float& Distance);
 
   public:
 	UPROPERTY(VisibleAnywhere, Category = "Monster|NavCheck")
