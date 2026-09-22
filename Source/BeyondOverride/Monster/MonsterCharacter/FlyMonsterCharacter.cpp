@@ -122,10 +122,12 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 			return Path;
 		}
 
+		FVector WallWorldOrigin = WallCollision->Bounds.Origin;
+
 		FBoxSphereBounds WallBounds = WallCollision->CalcLocalBounds();
 
 		FVector WallBoundsExtent = WallBounds.BoxExtent;
-		FVector WallBoundsOrigin = WallBounds.Origin;
+		FVector WallLocalOrigin = WallBounds.Origin;
 
 		FTransform WallTransform = WallCollision->GetComponentTransform();
 
@@ -156,16 +158,18 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 			float EndOne;
 			float EndTwo;
 
+			FVector LocalImpact = WallTransform.InverseTransformPosition(HitResult.ImpactPoint);
+
 			FVector WallEndFirst = GetWallEndPoint(WallSideDirection1 * loop,
-												   HitResult.ImpactPoint,
-												   WallBoundsOrigin,
+												   LocalImpact,
+												   WallLocalOrigin,
 												   WallBoundsExtent,
 												   WallRotation,
 												   EndOne);
 
 			FVector WallEndSecond = GetWallEndPoint(WallSideDirection2 * loop,
-													HitResult.ImpactPoint,
-													WallBoundsOrigin,
+													LocalImpact,
+													WallLocalOrigin,
 													WallBoundsExtent,
 													WallRotation,
 													EndTwo);
@@ -174,12 +178,27 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 			WallEndSecond = WallEndSecond + (WallSideDirection2 * loop) * (TraceRadius * 1.4 / 2);
 
 			TArray<FVector> WallEndCheck;
-			WallEndCheck.Add(WallEndFirst);
-			WallEndCheck.Add(WallEndSecond);
-
 			TArray<float> WallEndCheckDistance;
-			WallEndCheckDistance.Add(EndOne);
-			WallEndCheckDistance.Add(EndTwo);
+
+			float CheckDistance = FVector::Distance(WallEndFirst, FVector(0.0f, 0.0f, 0.0f));
+
+			if (CheckDistance < 10000000.0f)
+			{
+				WallEndCheck.Add(WallEndFirst);
+				WallEndCheckDistance.Add(EndOne);
+			}
+
+			CheckDistance = FVector::Distance(WallEndSecond, FVector(0.0f, 0.0f, 0.0f));
+			if (CheckDistance < 10000000.0f)
+			{
+				WallEndCheck.Add(WallEndSecond);
+				WallEndCheckDistance.Add(EndTwo);
+			}
+
+			if (WallEndCheck.IsEmpty())
+			{
+				continue;
+			}
 
 			FHitResult WallCheckHitResult1;
 			FHitResult WallCheckHitResult2;
@@ -217,6 +236,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 				if (Trace2)
 				{
 					bGoImpactPoint[1 + Check - loop] = true;
+					WallEndCheckDistance[Check] = WallEndCheckDistance[Check] +
+												  FVector::Distance(HitResult.ImpactPoint, Start);
 				}
 				CanMoveEndPoint.Add(WallEndCheck[Check]);
 				EndDistance.Add(WallEndCheckDistance[Check]);
@@ -227,7 +248,7 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 
 		FVector WallEndPoint = GetWallEndPoint(HitResult.ImpactNormal,
 											   HitResult.ImpactPoint,
-											   WallBoundsOrigin,
+											   WallLocalOrigin,
 											   WallBoundsExtent,
 											   WallRotation,
 											   WallDepth);
@@ -371,6 +392,16 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 	}
 
 	LocalEdge = LocalImpact + LocalDirection * T;
+
+	if (LocalEdge.X > 1000000.0f ||
+		LocalEdge.X > -1000000.0f ||
+		LocalEdge.Y > 1000000.0f ||
+		LocalEdge.Y > -1000000.0f ||
+		LocalEdge.Z > 1000000.0f ||
+		LocalEdge.Z > -1000000.0f)
+	{
+		return FVector(100000000.0f, 100000000.0f, 100000000.0f);
+	}
 
 	FVector WorldEdge = TargetOrigin +
 						TargetRotation.RotateVector(LocalEdge);
