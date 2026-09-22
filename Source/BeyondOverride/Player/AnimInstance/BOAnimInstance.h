@@ -19,7 +19,7 @@ class BEYONDOVERRIDE_API UBOAnimInstance : public UAnimInstance
 
 public:
 	void ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset* NewData);
-	void PlayEquipMontage();
+	float PlayEquipMontage();
 	void PlayFireHipMontage();
 	void PlayFireAimMontage();
 	void PlayReloadHipMontage();

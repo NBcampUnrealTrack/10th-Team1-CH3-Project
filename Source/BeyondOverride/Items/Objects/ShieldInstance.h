@@ -13,13 +13,16 @@ class BEYONDOVERRIDE_API UShieldInstance : public UEquippableItemInstance
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	const FShieldDataRow* ShieldData;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Properties")
 	int32 CurrentShield; // 현재 실드량
 
-  public:
+	UPROPERTY()
+	bool bShieldInitialized = false;
+
+public:
 	UShieldInstance();
 
 	// 아이템 정보 초기 로드

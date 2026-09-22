@@ -15,7 +15,6 @@ void UStatComponent::BeginPlay()
 	Super::BeginPlay();
 
 	CurHealth = MaxHealth;
-	CurShield = MaxShield;
 	bIsDead = false;
 
 	OnHealthChanged.Broadcast(CurHealth, MaxHealth);
@@ -100,6 +99,39 @@ void UStatComponent::SetMaxShield(int32 NewMaxShield)
 	RestartShieldRegenTimer();
 }
 
+void UStatComponent::ApplyShield(int32 NewCurrentShield, int32 NewMaxShield, float NewRegenDelay, float NewRegenInterval, int32 NewRegenAmount)
+{
+	ResetShieldRegenTimer();
+
+	MaxShield = FMath::Max(0, NewMaxShield);
+	CurShield = FMath::Clamp(NewCurrentShield, 0, MaxShield);
+
+	ShieldDelayTime = FMath::Max(0.f, NewRegenDelay);
+	ShieldRegenTime = FMath::Max(0.f, NewRegenInterval);
+	ShieldRegenAmount = FMath::Max(0, NewRegenAmount);
+
+	OnShieldChanged.Broadcast(CurShield, MaxShield);
+
+	if (CurShield < MaxShield && ShieldRegenTime > 0.f && ShieldRegenAmount > 0)
+	{
+		RestartShieldRegenTimer();
+	}
+}
+
+void UStatComponent::RemoveShield()
+{
+	ResetShieldRegenTimer();
+
+	CurShield = 0;
+	MaxShield = 0;
+
+	ShieldDelayTime = 0.f;
+	ShieldRegenTime = 0.f;
+	ShieldRegenAmount = 0;
+
+	OnShieldChanged.Broadcast(CurShield, MaxShield);
+}
+
 void UStatComponent::ResetShieldRegenTimer()
 {
 	if (!GetWorld())
@@ -115,7 +147,7 @@ void UStatComponent::ResetShieldRegenTimer()
 
 void UStatComponent::StartShieldRegen()
 {
-	if (bIsDead || CurShield >= MaxShield)
+	if (bIsDead || CurShield >= MaxShield || ShieldRegenTime <= 0.f || ShieldRegenAmount <= 0)
 	{
 		return;
 	}
@@ -162,6 +194,12 @@ void UStatComponent::Die(AActor* DamageCauser)
 
 void UStatComponent::RestartShieldRegenTimer()
 {
+	if (MaxShield <= 0 || ShieldRegenTime <= 0.f || ShieldRegenAmount <= 0)
+	{
+		return;
+	}
+
+
 	if (bIsDead || !GetWorld())
 	{
 		return;

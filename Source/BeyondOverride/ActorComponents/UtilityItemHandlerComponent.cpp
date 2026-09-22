@@ -151,6 +151,13 @@ bool UUtilityItemHandlerComponent::CanUse() const
 		return false;
 	}
 
+	// 이미 사용 중
+	if (!GetWorld() ||
+		GetWorld()->GetTimerManager().IsTimerActive(UseTimerHandle))
+	{
+		return false;
+	}
+
 	// 사용 가능한지 델리게이트로 확인
 	if (!CanUseUtilityItemDelegate.IsBound() ||
 		!CanUseUtilityItemDelegate.Execute(UtilityItemData))

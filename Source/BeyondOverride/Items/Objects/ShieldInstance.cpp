@@ -19,6 +19,22 @@ void UShieldInstance::Initialize()
 	// ShieldData 로드
 	UItemDataSubsystem* ItemDataSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UItemDataSubsystem>();
 	ShieldData = ItemDataSubsystem->GetShieldData(ItemID);
+
+	if (!ShieldData)
+	{
+		CurrentShield = 0;
+		return;
+	}
+
+	if (!bShieldInitialized)
+	{
+		CurrentShield = ShieldData->MaxShield;
+		bShieldInitialized = true;
+	}
+	else
+	{
+		CurrentShield = FMath::Clamp(CurrentShield, 0, ShieldData->MaxShield);
+	}
 }
 
 const FShieldDataRow* UShieldInstance::GetShieldData() const
@@ -33,14 +49,10 @@ int32 UShieldInstance::GetCurrentShield() const
 
 void UShieldInstance::ModifyShield(int32 Delta)
 {
-	CurrentShield += Delta;
+	if (!ShieldData)
+	{
+		return;
+	}
 
-	if (ShieldData)
-	{
-		CurrentShield = FMath::Clamp(CurrentShield, 0, ShieldData->MaxShield); // 음수 & 실드 최대치 초과 방지
-	}
-	else
-	{
-		CurrentShield = FMath::Max(0, CurrentShield); // 음수 방지
-	}
+	CurrentShield = FMath::Clamp(CurrentShield + Delta, 0, ShieldData->MaxShield);
 }
