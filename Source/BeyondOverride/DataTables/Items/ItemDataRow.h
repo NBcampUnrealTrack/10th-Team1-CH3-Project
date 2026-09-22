@@ -36,7 +36,7 @@ struct BEYONDOVERRIDE_API FItemDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")
 	FText DisplayName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Info")
@@ -62,4 +62,7 @@ struct BEYONDOVERRIDE_API FItemDataRow : public FTableRowBase
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	TObjectPtr<UTexture2D> ItemIcon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Price", meta = (ClampMin = "0"))
+	int32 SellPrice = 0;
 };

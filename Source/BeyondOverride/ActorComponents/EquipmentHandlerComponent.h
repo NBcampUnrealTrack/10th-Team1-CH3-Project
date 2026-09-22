@@ -54,6 +54,12 @@ public:
 	// 등록된 장비 반환
 	UEquippableItemInstance* GetEquippableItemInstance() const;
 
+	// 장비 메시 컴포넌트 반환 (프리뷰에서)
+	USkeletalMeshComponent* GetEquipMeshComponent() const
+	{
+		return EquipMeshComponent;
+	}
+
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance);
 	// 장비 제거

@@ -1,4 +1,4 @@
-#include "Player/ActorComponent/PlayerInventoryComponent.h"
+ï»¿#include "Player/ActorComponent/PlayerInventoryComponent.h"
 
 #include "Enums/EquipmentSlot.h"
 #include "DataTables/Items/BackpackDataRow.h"
@@ -162,7 +162,7 @@ TArray<UItemInstanceBase*> UPlayerInventoryComponent::ApplyBackpack(const FBackp
 
 	MaxCarryWeight = BaseMaxCarryWeight + WeightBonus;
 
-	// ½½·Ô È®Àå
+	// ìŠ¬ë¡¯ í™•ì¥
 	if (NewSlotCount >= Slots.Num())
 	{
 		MaxSlotCount = NewSlotCount;
@@ -173,7 +173,7 @@ TArray<UItemInstanceBase*> UPlayerInventoryComponent::ApplyBackpack(const FBackp
 		return ItemsToDrop;
 	}
 
-	// Ãà¼ÒµÉ ¿µ¿ªÀÇ ¾ÆÀÌÅÛÀ» ¸ÕÀú »©³õÀ½
+	// ì¶•ì†Œë  ì˜ì—­ì˜ ì•„ì´í…œì„ ë¨¼ì € ë¹¼ë†“ìŒ
 	TArray<TObjectPtr<UItemInstanceBase>> OverflowItems;
 
 	for (int32 Index = NewSlotCount; Index < Slots.Num(); ++Index)
@@ -187,7 +187,7 @@ TArray<UItemInstanceBase*> UPlayerInventoryComponent::ApplyBackpack(const FBackp
 	Slots.SetNum(NewSlotCount);
 	MaxSlotCount = NewSlotCount;
 
-	// ³²¾Æ ÀÖ´Â ºóÄ­À¸·Î ÀÌµ¿
+	// ë‚¨ì•„ ìˆëŠ” ë¹ˆì¹¸ìœ¼ë¡œ ì´ë™
 	for (UItemInstanceBase* Item : OverflowItems)
 	{
 		if (!IsValid(Item))
@@ -211,6 +211,116 @@ TArray<UItemInstanceBase*> UPlayerInventoryComponent::ApplyBackpack(const FBackp
 	NotifyInventoryChanged();
 
 	return ItemsToDrop;
+}
+
+int32 UPlayerInventoryComponent::GetTotalItemCount(FName ItemID) const
+{
+	int32 Count = GetItemCount(ItemID);
+
+	for (const UItemInstanceBase* Item : EquipmentSlots)
+	{
+		if (IsValid(Item) && Item->GetItemID() == ItemID)
+		{
+			Count += Item->GetStackCount();
+		}
+	}
+
+	return Count;
+}
+
+bool UPlayerInventoryComponent::SellItem(FName ItemID, int32 Count)
+{
+	if (ItemID.IsNone() || Count <= 0 || GetTotalItemCount(ItemID) < Count)
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = nullptr;
+
+	for (const UItemInstanceBase* Item : Slots)
+	{
+		if (IsValid(Item) && Item->GetItemID() == ItemID)
+		{
+			ItemData = Item->GetItemData();
+			break;
+		}
+	}
+
+	if (!ItemData)
+	{
+		for (const UItemInstanceBase* Item : EquipmentSlots)
+		{
+			if (IsValid(Item) && Item->GetItemID() == ItemID)
+			{
+				ItemData = Item->GetItemData();
+				break;
+			}
+		}
+	}
+
+	if (!ItemData || ItemData->SellPrice < 0)
+	{
+		return false;
+	}
+
+	const int32 Proceeds = ItemData->SellPrice * Count;
+
+	int32 Remaining = Count;
+
+	// ì¼ë°˜ ìŠ¬ë¡¯ì—ì„œ ë¨¼ì € íŒë§¤
+	for (int32 Index = 0; Index < Slots.Num() && Remaining > 0; ++Index)
+	{
+		UItemInstanceBase* Item = Slots[Index];
+		if (!IsValid(Item) || Item->GetItemID() != ItemID)
+		{
+			continue;
+		}
+
+		const int32 Removed = FMath::Min(Remaining, Item->GetStackCount());
+		SetItemStackCount(Index, Item->GetStackCount() - Removed);
+		Remaining -= Removed;
+	}
+
+	// ë¶€ì¡±í•˜ë©´ ì¥ë¹„ ìŠ¬ë¡¯ì—ì„œë„ íŒë§¤
+	for (int32 Index = 0; Index < EquipmentSlots.Num() && Remaining > 0; ++Index)
+	{
+		UItemInstanceBase* Item = EquipmentSlots[Index];
+		if (!IsValid(Item) || Item->GetItemID() != ItemID)
+		{
+			continue;
+		}
+
+		const int32 Removed = FMath::Min(Remaining, Item->GetStackCount());
+		SetEquipmentItemStackCount(GetEquipmentSlotType(Index), Item->GetStackCount() - Removed);
+		Remaining -= Removed;
+	}
+
+	Money += Proceeds;
+
+	OnMoneyChanged.Broadcast(Money);
+	return true;
+}
+
+bool UPlayerInventoryComponent::SpendMoney(int32 Amount)
+{
+	if (Amount <= 0 || Money < Amount)
+	{
+		return false;
+	}
+
+	Money -= Amount;
+	OnMoneyChanged.Broadcast(Money);
+	return true;
+}
+
+void UPlayerInventoryComponent::SetMoney(int32 NewMoney)
+{
+	if (NewMoney < 0)
+	{
+		return;
+	}
+
+	Money = NewMoney;
 }
 
 int32 UPlayerInventoryComponent::GetEquipmentSlotIndex(EEquipmentSlot Slot) const
@@ -341,13 +451,13 @@ bool UPlayerInventoryComponent::SetEquipmentItem(EEquipmentSlot Slot, UItemInsta
 
 	EquipmentSlots[SlotIndex] = Item;
 
-	// ¾ÆÀÌÅÛ ÀÚÃ¼°¡ ´Ş¶óÁ³À» ¶§¸¸ Àåºñ µ¿±âÈ­ ÀÌº¥Æ® È£Ãâ
+	// ì•„ì´í…œ ìì²´ê°€ ë‹¬ë¼ì¡Œì„ ë•Œë§Œ ì¥ë¹„ ë™ê¸°í™” ì´ë²¤íŠ¸ í˜¸ì¶œ
 	if (PreviousItem != Item)
 	{
 		OnEquipmentItemChanged.Broadcast(Slot, Item);
 	}
 
-	// UI´Â Ç×»ó °»½Å
+	// UIëŠ” í•­ìƒ ê°±ì‹ 
 	OnEquipmentSlotChanged.Broadcast(Slot, Item);
 
 	RecalculateCarryWeight();
