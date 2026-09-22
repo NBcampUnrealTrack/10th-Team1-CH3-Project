@@ -6,6 +6,7 @@
 // Add include
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 AFlyMonsterCharacter::AFlyMonsterCharacter()
@@ -30,10 +31,18 @@ void AFlyMonsterCharacter::Tick(float DeltaSecond)
 
 	if (Paths.IsEmpty())
 	{
+		APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+		if (!Player)
+		{
+			return;
+		}
 
-		FVector TargetLocation = FVector(FMath::RandRange(-5000.0f, 5000.0f),
-										 FMath::RandRange(-5000.0f, 5000.0f),
-										 FMath::RandRange(100.0f, 500.0f));
+		FVector TargetLocation = GetActorLocation();
+		TargetLocation.X += FMath::FRandRange(-300.0f, 300.0f);
+		TargetLocation.Y += FMath::FRandRange(-300.0f, 300.0f);
+
+		// FVector TargetLocation = Player->GetActorLocation();
+		// TargetLocation.Z = TargetLocation.Z + 230.0f;
 
 		uint32 loop = 0;
 
@@ -94,8 +103,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 	bool bHit = UKismetSystemLibrary::CapsuleTraceSingle(this,
 														 Start,
 														 End,
-														 TraceRadius * 1.4, // Radius
-														 TraceRadius * 1.4, // Half Height
+														 TraceRadius, // Radius
+														 TraceRadius, // Half Height
 														 UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 														 false,             // Complex
 														 TArray<AActor*>(), // Ignore Actors
@@ -174,8 +183,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 													WallRotation,
 													EndTwo);
 
-			WallEndFirst = WallEndFirst + (WallSideDirection1 * loop) * (TraceRadius * 1.4 / 2);
-			WallEndSecond = WallEndSecond + (WallSideDirection2 * loop) * (TraceRadius * 1.4 / 2);
+			WallEndFirst = WallEndFirst + (WallSideDirection1 * loop) * (TraceRadius / 2);
+			WallEndSecond = WallEndSecond + (WallSideDirection2 * loop) * (TraceRadius / 2);
 
 			TArray<FVector> WallEndCheck;
 			TArray<float> WallEndCheckDistance;
@@ -208,8 +217,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 				bool Trace1 = UKismetSystemLibrary::CapsuleTraceSingle(this,
 																	   Start,
 																	   WallEndCheck[Check],
-																	   TraceRadius * 1.4, // Radius
-																	   TraceRadius * 1.4, // Half Height
+																	   TraceRadius, // Radius
+																	   TraceRadius, // Half Height
 																	   UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																	   false,             // Complex
 																	   TArray<AActor*>(), // Ignore Actors
@@ -220,8 +229,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 				bool Trace2 = UKismetSystemLibrary::CapsuleTraceSingle(this,
 																	   HitResult.ImpactPoint,
 																	   WallEndCheck[Check],
-																	   TraceRadius * 1.4, // Radius
-																	   TraceRadius * 1.4, // Half Height
+																	   TraceRadius, // Radius
+																	   TraceRadius, // Half Height
 																	   UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																	   false,             // Complex
 																	   TArray<AActor*>(), // Ignore Actors
@@ -261,13 +270,13 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 			FHitResult TraceHitResult;
 			FVector TracePointCheck;
 			TracePointCheck = CanMoveEndPoint[loop] + ImpactDirection * WallDepth;
-			TracePointCheck = TracePointCheck + ImpactDirection * (TraceRadius * 1.4 / 2);
+			TracePointCheck = TracePointCheck + ImpactDirection * (TraceRadius / 2);
 
 			bool Trace = UKismetSystemLibrary::CapsuleTraceSingle(this,
 																  CanMoveEndPoint[loop],
 																  TracePointCheck,
-																  TraceRadius * 1.4, // Radius
-																  TraceRadius * 1.4, // Half Height
+																  TraceRadius, // Radius
+																  TraceRadius, // Half Height
 																  UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																  false,             // Complex
 																  TArray<AActor*>(), // Ignore Actors
