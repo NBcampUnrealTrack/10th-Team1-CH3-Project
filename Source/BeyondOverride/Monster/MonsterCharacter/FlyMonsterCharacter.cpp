@@ -16,10 +16,6 @@ AFlyMonsterCharacter::AFlyMonsterCharacter()
 
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
-		Movement->GravityScale = 0.0f;
-		Movement->SetMovementMode(MOVE_Flying);
-		Movement->DefaultLandMovementMode = MOVE_Flying;
-		Movement->SetPlaneConstraintEnabled(false);
 		Movement->bOrientRotationToMovement = true;
 		Movement->RotationRate = FRotator(540.0f, 540.0f, 0.0f);
 	}
@@ -37,9 +33,10 @@ void AFlyMonsterCharacter::Tick(float DeltaSecond)
 			return;
 		}
 
-		FVector TargetLocation = GetActorLocation();
-		TargetLocation.X += FMath::FRandRange(-300.0f, 300.0f);
-		TargetLocation.Y += FMath::FRandRange(-300.0f, 300.0f);
+		FVector TargetLocation = Player->GetActorLocation();
+		TargetLocation.X += FMath::FRandRange(-900.0f, 900.0f);
+		TargetLocation.Y += FMath::FRandRange(-900.0f, 900.0f);
+		TargetLocation.Z = FMath::FRandRange(TargetLocation.Z + 300.0f, TargetLocation.Z + 500.0f);
 
 		// FVector TargetLocation = Player->GetActorLocation();
 		// TargetLocation.Z = TargetLocation.Z + 230.0f;
@@ -77,6 +74,11 @@ void AFlyMonsterCharacter::Tick(float DeltaSecond)
 void AFlyMonsterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	GetWorld()->GetTimerManager().SetTimer(ChangeTimer,
+										   this,
+										   &AFlyMonsterCharacter::FlyChange,
+										   5.0f,
+										   true);
 }
 
 // 자료 저장은 2개 장애물 없을 시 Start부터 End까지 반환
@@ -415,4 +417,26 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 	Distance = FVector::Distance(ImpactData, WorldEdge);
 
 	return WorldEdge;
+}
+
+void AFlyMonsterCharacter::FlyChange()
+{
+	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
+	{
+		Mod = !Mod;
+
+		if (Mod)
+		{
+			Movement->GravityScale = 0.0f;
+			Movement->SetMovementMode(MOVE_Flying);
+			Movement->DefaultLandMovementMode = MOVE_Flying;
+		}
+		else
+		{
+			Movement->GravityScale = 1.0f;
+			Movement->SetMovementMode(MOVE_Walking);
+			Movement->DefaultLandMovementMode = MOVE_Walking;
+		}
+		Movement->SetPlaneConstraintEnabled(Mod);
+	}
 }

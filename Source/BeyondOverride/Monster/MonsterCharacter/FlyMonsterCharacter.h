@@ -35,7 +35,13 @@ class BEYONDOVERRIDE_API AFlyMonsterCharacter : public ACharacter
 							FRotator TargetRotation,
 							float& Distance);
 
+	void FlyChange();
+
   public:
+	bool Mod = false;
+
 	UPROPERTY(VisibleAnywhere, Category = "Monster|NavCheck")
 	TArray<FVector> Paths;
+
+	FTimerHandle ChangeTimer;
 };
