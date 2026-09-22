@@ -37,9 +37,6 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void Ending();          // after final result widget's ok button clicked
 	void ExitGame();        // after quit button clicked
 
-	UFUNCTION(BlueprintCallable)
-	void OnLevelOpened();
-
 	void AddKilledMonster(FName MonsterId);
 	void SetKillerMonster(FName MonsterId);
 

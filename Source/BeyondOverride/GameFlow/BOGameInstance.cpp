@@ -7,6 +7,7 @@
 #include "MoviePlayer.h"
 
 #include "DataTables/Monster/MonsterInfo.h"
+#include "Engine/AssetManager.h"
 #include "GameFlow/Manager/LoadingScreenManager.h"
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,9 +25,18 @@ void UBOGameInstance::Init()
 {
 	Super::Init();
 
+	if (!GetWorld() || !BODataAsset)
+	{
+		return;
+	}
+
+	BODataAsset->GetLevels(Levels);
+
 	LoadMonsterData();
 
 	InitSetting();
+
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UBOGameInstance::OnPostLoadMap);
 }
 
 void UBOGameInstance::LoadMonsterData()
@@ -58,6 +68,7 @@ void UBOGameInstance::InitSetting()
 	PlayingState = EPlayingState::None;
 	DeathLocation = EDeathLocation::None;
 	FarmingResult = EFarmingResult::None;
+	CurLevel = ELevel::Basic;
 
 	TotalSurvivalTime = 0.0f;
 	SurvivalTime = 0.0f;
@@ -75,7 +86,7 @@ void UBOGameInstance::InitSetting()
 	StorageInventory.Empty();
 	MonsterDatas.Empty();
 
-	OpenLevel(ELevel::Basic);
+	OpenLevel(CurLevel);
 }
 
 void UBOGameInstance::Start()
@@ -155,20 +166,14 @@ void UBOGameInstance::EnterServerRoom()
 
 void UBOGameInstance::OpenLevel(ELevel Level)
 {
+	CurLevel = Level;
+
 	SavePlayerData();
 
 	if (PlayingState == EPlayingState::Bunker)
 	{
 		SaveStorageData();
 	}
-
-	if (!GetWorld() || !BODataAsset)
-	{
-		return;
-	}
-
-	TMap<ELevel, FName> Levels{};
-	BODataAsset->GetLevels(Levels);
 
 	if (!Levels.Contains(Level))
 	{
@@ -177,22 +182,62 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 
 	if (Level != ELevel::Basic)
 	{
-		// 플레이 정지
-		if (ULoadingScreenManager* LoadingScreenManager = GetSubsystem<ULoadingScreenManager>())
-		{
-			LoadingScreenManager->ShowLoadingScreenWidget();
-		}
+		ShowLoadingScreenWidget(true);
 	}
 
-	UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
+	if (GetWorld())
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), Levels[Level]);
+	}
 }
 
-void UBOGameInstance::OnLevelOpened()
+void UBOGameInstance::ShowLoadingScreenWidget(bool IsNew)
 {
-	// 플레이 재개
+	if (ULoadingScreenManager* LoadingScreenManager = GetSubsystem<ULoadingScreenManager>())
+	{
+		LoadingScreenManager->ShowLoadingScreenWidget(IsNew);
+	}
+}
+
+void UBOGameInstance::OnPostLoadMap(UWorld* World)
+{
+	if (CurLevel == ELevel::Basic)
+	{
+		return;
+	}
+
+	ShowLoadingScreenWidget(false);
+
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(HideLoadingScreenTimer);
+		GetWorld()->GetTimerManager().SetTimer(HideLoadingScreenTimer, this, &UBOGameInstance::HideLoadingScreenWidget, 5.0f, false);
+	}
+}
+
+void UBOGameInstance::HideLoadingScreenWidget()
+{
 	if (ULoadingScreenManager* LoadingScreenManager = GetSubsystem<ULoadingScreenManager>())
 	{
 		LoadingScreenManager->HideLoadingScreenWidget();
+	}
+
+	OnLevelPrepared();
+}
+
+void UBOGameInstance::OnCharacterPrepared()
+{
+	if (CurLevel == ELevel::Basic)
+	{
+		OnLevelPrepared();
+	}
+}
+
+void UBOGameInstance::OnLevelPrepared()
+{
+	if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+	{
+		GameMode->InitSetting();
 	}
 }
 
@@ -405,6 +450,11 @@ float UBOGameInstance::GetCurShield() const
 float UBOGameInstance::GetMaxShield() const
 {
 	return MaxShield;
+}
+
+bool UBOGameInstance::GetIsLevelPreparing() const
+{
+	return IsLevelPreparing;
 }
 
 TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerItemInventory() const

@@ -6,10 +6,10 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
-#include "DataTables/Items/EquippableItemDataRow.h"
-#include "DataTables/Items/UtilityItemDataRow.h"
 #include "DataTables/Items/BackpackDataRow.h"
+#include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/ShieldDataRow.h"
+#include "DataTables/Items/UtilityItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Enums/UtilityType.h"
 #include "Factory/ItemFactory.h"
@@ -19,12 +19,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
 #include "Items/Actors/ItemPickupBase.h"
+#include "Items/Objects/BackpackInstance.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
-#include "Items/Objects/ThrowableItemInstance.h"
-#include "Items/Objects/BackpackInstance.h"
 #include "Items/Objects/ShieldInstance.h"
+#include "Items/Objects/ThrowableItemInstance.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
@@ -139,9 +139,9 @@ void ABOCharacter::BeginPlay()
 			}
 		}
 
-		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
 		{
-			GameMode->InitSetting();
+			GameInstance->OnCharacterPrepared();
 		}
 	}
 }

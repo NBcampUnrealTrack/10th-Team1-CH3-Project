@@ -45,9 +45,6 @@ void ABOGameMode::InitSetting()
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Initial Setting"));
 
-	FTimerHandle LoadingTimer;
-	// GetWorld()->GetTimerManager().SetTimer(LoadingTimer, this, &ABOGameMode::OnLevelOpened, 10.0f, false);
-
 	if (GameInstance)
 	{
 		EGameState BOGameState = GameInstance->GetGameState();
@@ -241,15 +238,6 @@ void ABOGameMode::ExitGame()
 	if (GameInstance)
 	{
 		GameInstance->Exit();
-	}
-}
-
-void ABOGameMode::OnLevelOpened()
-{
-	UE_LOG(LogGameFlow, Warning, TEXT("OnLevelOpened"));
-	if (GameInstance)
-	{
-		GameInstance->OnLevelOpened();
 	}
 }
 

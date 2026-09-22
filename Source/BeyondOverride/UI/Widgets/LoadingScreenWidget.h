@@ -17,29 +17,13 @@ class BEYONDOVERRIDE_API ULoadingScreenWidget : public UUserWidget
 	GENERATED_BODY()
 
   public:
-	virtual void NativeConstruct() override;
-
-	void UpdateLoading(float DeltaTime);
-
-  private:
-	void SetRandomLoadingImages();
 	void SetLoadingProgressBar(float Percent);
-	void SetLoadingImage(int32 Index);
+	void SetLoadingImage(TObjectPtr<UTexture2D> Image);
 
   public:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	UProgressBar* LoadingProgressBar;
+	TObjectPtr<UProgressBar> LoadingProgressBar;
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	UImage* LoadingImage;
-
-  public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
-	TArray<TObjectPtr<UTexture2D>> LoadingImages;
-
-  private:
-	float CurProgress;
-	float ImageChangeTime;
-	int32 ImageCount;
-	int32 ImageIndex;
+	TObjectPtr<UImage> LoadingImage;
 };

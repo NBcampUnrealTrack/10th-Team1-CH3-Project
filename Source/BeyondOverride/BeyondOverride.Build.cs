@@ -16,7 +16,9 @@ public class BeyondOverride : ModuleRules
             "AIModule",
             "NavigationSystem",
             "MoviePlayer",
-            "RenderCore"
+            "RenderCore",
+            "Slate",
+            "SlateCore"
         });
 
         PublicIncludePaths.AddRange(new string[] {

@@ -2,8 +2,11 @@
 
 #include "DataAssets/BODataAsset.h"
 
+#include "Logging/BOLog.h"
+
 void UBODataAsset::GetLevels(TMap<ELevel, FName>& Data) const
 {
+	UE_LOG(LogGameFlow, Warning, TEXT("Get Levels"));
 	Data = Levels;
 }
 
@@ -20,6 +23,31 @@ void UBODataAsset::GetBasicEquipments(TArray<FName>& Data) const
 TSubclassOf<ULoadingScreenWidget> UBODataAsset::GetLoadingScreenWidgetClass() const
 {
 	return LoadingScreenWidgetClass;
+}
+
+void UBODataAsset::GetLoadingImages(TArray<TObjectPtr<UTexture2D>>& Images) const
+{
+	Images = LoadingImages;
+}
+
+float UBODataAsset::GetLoadingScreenUpdateTime() const
+{
+	return LoadingScreenUpdateTime;
+}
+
+float UBODataAsset::GetLoadingImageChangeTime() const
+{
+	return LoadingImageChangeTime;
+}
+
+float UBODataAsset::GetLoadingImageUpdateInterval() const
+{
+	return LoadingImageUpdateInterval;
+}
+
+float UBODataAsset::GetLoadingProgressUpdateInterval() const
+{
+	return LoadingProgressUpdateInterval;
 }
 
 FName UBODataAsset::GetKeyCardID() const

@@ -9,8 +9,6 @@
 
 #include "LoadingScreenManager.generated.h"
 
-class UBOGameInstance;
-
 UCLASS()
 class BEYONDOVERRIDE_API ULoadingScreenManager : public UGameInstanceSubsystem
 {
@@ -20,26 +18,29 @@ class BEYONDOVERRIDE_API ULoadingScreenManager : public UGameInstanceSubsystem
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
   public:
-	void ShowLoadingScreenWidget();
+	void InitSetting();
 
-	UFUNCTION(BlueprintCallable)
-	void OnPostLoadMap(UWorld* World);
-
-	UFUNCTION(BlueprintCallable)
-	void OnEndFrame();
-
-	bool IsRenderingReady() const;
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateLoadingScreenWidget(float DeltaTime);
-
+	void ShowLoadingScreenWidget(bool IsNew);
 	void HideLoadingScreenWidget();
 
-  private:
-	UBOGameInstance* GameInstance;
+	UFUNCTION(BlueprintCallable)
+	void UpdateLoadingScreenWidget();
 
-	float FramesToWait;
+  private:
+	float UpdateTime;
+	float ImageChangeTime;
+	float ImageUpdateInterval;
+	float ProgressUpdateInterval;
+	int32 ImageCount;
+
+	float CurUpdateTime;
+	float CurImageTime;
+	float CurProgress;
+	int32 ImageIndex;
 
 	TSubclassOf<ULoadingScreenWidget> LoadingScreenWidgetClass;
-	TObjectPtr<ULoadingScreenWidget> LoadingScreenWidget;
+	TWeakObjectPtr<ULoadingScreenWidget> LoadingScreenWidget;
+	TArray<TObjectPtr<UTexture2D>> LoadingImages;
+
+	FTimerHandle UpdateTimer;
 };

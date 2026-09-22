@@ -31,8 +31,18 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void EndFarming(EFarmingResult Result);
 	void Die();
 	void EnterServerRoom();
+
 	void OpenLevel(ELevel Level);
-	void OnLevelOpened();
+	void ShowLoadingScreenWidget(bool IsNew);
+
+	UFUNCTION(BlueprintCallable)
+	void OnPostLoadMap(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
+	void HideLoadingScreenWidget();
+
+	void OnCharacterPrepared();
+	void OnLevelPrepared();
 
 	void SavePlayerData();
 	void SaveStorageData();
@@ -63,6 +73,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	float GetCurShield() const;
 	float GetMaxShield() const;
 
+	bool GetIsLevelPreparing() const;
+
 	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
 	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
 	TArray<UItemInstanceBase*> GetStorageInventory() const;
@@ -77,6 +89,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	EPlayingState PlayingState;
 	EDeathLocation DeathLocation;
 	EFarmingResult FarmingResult;
+	ELevel CurLevel;
 
 	float TotalSurvivalTime;
 	float SurvivalTime;
@@ -90,6 +103,11 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 MaxHealth;
 	int32 CurShield;
 	int32 MaxShield;
+
+	bool IsLevelPreparing;
+	TMap<ELevel, FName> Levels;
+
+	FTimerHandle HideLoadingScreenTimer;
 
 	UPROPERTY()
 	TArray<UItemInstanceBase*> PlayerItemInventory;
