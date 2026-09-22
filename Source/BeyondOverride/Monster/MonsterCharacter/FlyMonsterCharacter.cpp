@@ -203,7 +203,7 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 			FHitResult WallCheckHitResult1;
 			FHitResult WallCheckHitResult2;
 
-			for (int Check = 0; Check < 2; Check = Check + 1)
+			for (int Check = 0; Check < WallEndCheck.Num(); Check = Check + 1)
 			{
 				bool Trace1 = UKismetSystemLibrary::CapsuleTraceSingle(this,
 																	   Start,
