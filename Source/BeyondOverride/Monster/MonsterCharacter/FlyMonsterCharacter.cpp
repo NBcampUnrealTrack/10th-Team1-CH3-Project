@@ -393,14 +393,11 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 
 	LocalEdge = LocalImpact + LocalDirection * T;
 
-	if (LocalEdge.X > 1000000.0f ||
-		LocalEdge.X > -1000000.0f ||
-		LocalEdge.Y > 1000000.0f ||
-		LocalEdge.Y > -1000000.0f ||
-		LocalEdge.Z > 1000000.0f ||
-		LocalEdge.Z > -1000000.0f)
+	if (FMath::Abs(LocalEdge.X) > 1000000.0f ||
+		FMath::Abs(LocalEdge.Y) > 1000000.0f ||
+		FMath::Abs(LocalEdge.Z) > 1000000.0f)
 	{
-		return FVector(100000000.0f, 100000000.0f, 100000000.0f);
+		return FVector(100000000.0f);
 	}
 
 	FVector WorldEdge = TargetOrigin +
