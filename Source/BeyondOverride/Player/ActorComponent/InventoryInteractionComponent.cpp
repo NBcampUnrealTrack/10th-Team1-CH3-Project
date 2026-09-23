@@ -206,13 +206,18 @@ bool UInventoryInteractionComponent::HandleNearbySlotClick(UNearbyItemComponent*
 
 bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
 {
-	UNearbyItemComponent* NearbyItemComponent = nullptr;
-
 	AActor* Owner = GetOwner();
 
-	if (IsValid(Owner))
+	if (!IsValid(Owner))
 	{
-		NearbyItemComponent = Owner->FindComponentByClass<UNearbyItemComponent>();
+		return false;
+	}
+
+	UNearbyItemComponent* NearbyItemComponent = Owner->FindComponentByClass<UNearbyItemComponent>();
+
+	if (IsValid(NearbyItemComponent))
+	{
+		return false;
 	}
 
 	if (bLeftClick)
@@ -221,6 +226,21 @@ bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
 	}
 
 	return DropOne(NearbyItemComponent);
+}
+
+bool UInventoryInteractionComponent::SellItem(bool bLeftClick)
+{
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	if (bLeftClick)
+	{
+		return SellAll();
+	}
+
+	return SellOne();
 }
 
 bool UInventoryInteractionComponent::IsHoldingItem() const
@@ -291,9 +311,7 @@ bool UInventoryInteractionComponent::PickupHalf(UInventoryComponent* Inventory, 
 
 	if (StackCount <= 1)
 	{
-		return PickupAll(
-			Inventory,
-			SlotIndex);
+		return PickupAll(Inventory, SlotIndex);
 	}
 
 	const int32 HoldCount = StackCount / 2;
@@ -1217,6 +1235,44 @@ bool UInventoryInteractionComponent::DropOne(UNearbyItemComponent* NearbyItemCom
 	HoldItem->SetStackCount(HoldCount - 1);
 
 	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::SellAll()
+{
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UPlayerInventoryComponent* PlayerInventoryComponent = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+
+	if (IsValid(PlayerInventoryComponent))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::SellOne()
+{
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UPlayerInventoryComponent* PlayerInventoryComponent = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+
+	if (IsValid(PlayerInventoryComponent))
+	{
+		return false;
+	}
 
 	return true;
 }

@@ -29,6 +29,8 @@ public:
 	bool HandleNearbySlotClick(UNearbyItemComponent* NearbyItemComponent, int32 SlotIndex, bool bLeftClick);
 	UFUNCTION(BlueprintCallable)
 	bool DropItem(bool bLeftClick); // 손에 들고 있는 아이템 버리기
+	UFUNCTION(BlueprintCallable)
+	bool SellItem(bool bLeftClick); // 손에 들고 있는 아이템 판매
 
 	// 현재 손에 들고 있는 아이템 정보
 	UFUNCTION(BlueprintPure)
@@ -101,6 +103,12 @@ private:
 	// 아이템 버리기
 	bool DropAll(UNearbyItemComponent* NearbyItemComponent = nullptr);
 	bool DropOne(UNearbyItemComponent* NearbyItemComponent = nullptr);
+	// --------------------------------------------------
+
+	// ------------------ 판매 함수 ---------------------
+	// 아이템 판매
+	bool SellAll();
+	bool SellOne();
 	// --------------------------------------------------
 
 private:
