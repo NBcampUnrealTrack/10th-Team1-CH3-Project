@@ -15,4 +15,5 @@ enum class EMonsterType : uint8
 	Range UMETA(DisplayName = "Range"),
 	Melee UMETA(DisplayName = "Melee"),
 	Fly UMETA(DisplayName = "Fly"),
+	Boss UMETA(DisplayName = "Boss")
 };
