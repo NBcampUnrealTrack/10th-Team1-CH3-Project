@@ -1,10 +1,10 @@
 ﻿#include "ActorComponents/RangeWeaponHandlerComponent.h"
 
+#include "Animation/AnimInstance.h"
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
 #include "Enums/FireMode.h"
-#include "Animation/AnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
@@ -157,7 +157,7 @@ bool URangeWeaponHandlerComponent::Unequip()
 	}
 
 	//// 재장전 중이면 취소
-	//OnReloadInterrupted();
+	// OnReloadInterrupted();
 
 	EndAction();
 
@@ -268,10 +268,10 @@ bool URangeWeaponHandlerComponent::CanUnequip() const
 	}
 
 	//// 사용 중
-	//if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	// if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
 	//{
 	//	return false;
-	//}
+	// }
 
 	return true;
 }
@@ -328,7 +328,7 @@ void URangeWeaponHandlerComponent::Fire()
 	PlayTimeline();
 
 	// 사격 실행 델리게이트 송출
-	OnFireExecutedDelegate.Broadcast();
+	OnFireExecutedDelegate.Broadcast(RangeWeaponInstance->GetCurrentAmmo());
 
 	// 사격 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
@@ -527,8 +527,8 @@ FRotator URangeWeaponHandlerComponent::GetAimRotation() const
 
 	// 목표 위치
 	const FVector AimLocation = HitResult.bBlockingHit
-		? HitResult.ImpactPoint
-		: EndLocation;
+									? HitResult.ImpactPoint
+									: EndLocation;
 
 	// 총구 방향 구하기
 	const FRotator AimRotation = UKismetMathLibrary::FindLookAtRotation(
@@ -578,8 +578,8 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 
 	// 원뿔 내 균일 분포
 	return FMath::VRandCone(
-		AimRotation.Vector(),
-		SpreadRadians)
+			   AimRotation.Vector(),
+			   SpreadRadians)
 		.Rotation();
 }
 

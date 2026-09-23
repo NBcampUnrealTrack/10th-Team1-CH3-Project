@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -23,8 +23,10 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(
 	UEquippableItemInstance*);
 
 // [RangeWeapon] 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 재생 등 수행
-DECLARE_MULTICAST_DELEGATE(
-	FOnFireExecutedDelegate);
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+	FOnRangeWeaponFireExecutedDelegate,
+	EEquipmentSlot, // 사격을 진행한 슬롯
+	int32);         // 사격 후 남은 탄약 개수
 
 // [RangeWeapon] 재장전 가능한지 확인하는 델리게이트 - 여분 탄약 개수 등 확인하여 재장전 가능 여부 반환
 DECLARE_DELEGATE_RetVal_OneParam(
@@ -110,7 +112,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	FOnActiveSlotChangedDelegate OnActiveSlotChangedDelegate;
 
 	// 사격 실행 델리게이트
-	FOnFireExecutedDelegate OnFireExecutedDelegate;
+	FOnRangeWeaponFireExecutedDelegate OnRangeWeaponFireExecutedDelegate;
 
 	// 재장전 가능 여부 델리게이트
 	FCanReloadDelegate CanReloadDelegate;
@@ -130,7 +132,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	void BindDelegates();
 
 	// [Range Weapon] 델리게이트 바인딩 이벤트
-	void OnFireExecuted() const;
+	void OnFireExecuted(int32 RemainingAmmoCount) const;
 	bool CanReload(const FName& AmmoItemID) const;
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
 

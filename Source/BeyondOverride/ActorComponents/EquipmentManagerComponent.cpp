@@ -1,4 +1,4 @@
-#include "ActorComponents/EquipmentManagerComponent.h"
+﻿#include "ActorComponents/EquipmentManagerComponent.h"
 
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
@@ -338,9 +338,9 @@ void UEquipmentManagerComponent::BindDelegates()
 	}
 }
 
-void UEquipmentManagerComponent::OnFireExecuted() const
+void UEquipmentManagerComponent::OnFireExecuted(int32 RemainingAmmoCount) const
 {
-	OnFireExecutedDelegate.Broadcast();
+	OnRangeWeaponFireExecutedDelegate.Broadcast(ActiveSlot, RemainingAmmoCount);
 }
 
 bool UEquipmentManagerComponent::CanReload(const FName& AmmoItemID) const

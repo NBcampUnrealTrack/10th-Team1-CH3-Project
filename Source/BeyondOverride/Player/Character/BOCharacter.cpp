@@ -1188,7 +1188,7 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &ABOCharacter::OnActiveSlotChanged);
 
 	// Primary & Secondary (Range Weapon)
-	EquipmentManagerComponent->OnFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
+	EquipmentManagerComponent->OnRangeWeaponFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::CanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::RequestReloadAmmo);
 
@@ -1231,7 +1231,7 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 	}
 }
 
-void ABOCharacter::OnFireExecuted() const
+void ABOCharacter::OnFireExecuted(EEquipmentSlot Slot, int32 RemainingAmmoCount) const
 {
 	if (!GetMesh() || !GetMesh()->GetAnimInstance())
 	{
