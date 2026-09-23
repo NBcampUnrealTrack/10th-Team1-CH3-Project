@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -37,6 +37,12 @@ DECLARE_DELEGATE_RetVal_TwoParams(
 	FRequestReloadAmmoDelegate,
 	const FName&, // 탄약 ItemID
 	const int32); // 필요한 탄약 개수
+
+// [RangeWeapon] 탄약 개수 변경 알림 델리게이트 - 사격 & 재장전 후 송출되며, 슬롯 UI의 탄약 개수 변경 등 수행
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+	FOnRangeWeaponAmmoCountUpdatedDelegate,
+	EEquipmentSlot,
+	const int32); // 현재 탄약 개수
 
 // [Throwable & Utility Item] 아이템 사용 시 개수 변경 알리는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
@@ -117,6 +123,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
 
+	// 총기 탄약 개수 변경 알림 델리게이트
+	FOnRangeWeaponAmmoCountUpdatedDelegate OnRangeWeaponAmmoCountUpdatedDelegate;
+
 	// 사용 후 아이템 개수 변경 알림 델리게이트
 	FOnEquipmentCountUpdatedDelegate OnEquipmentCountUpdatedDelegate;
 
@@ -133,6 +142,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	void OnFireExecuted() const;
 	bool CanReload(const FName& AmmoItemID) const;
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
+	void OnAmmoCountUpdated(const int32 AmmoCount) const;
 
 	// [Throwable & Utility Item] 델리게이트 바인딩 이벤트
 	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance);

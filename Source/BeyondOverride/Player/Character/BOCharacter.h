@@ -33,7 +33,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
+  public:
 	UEquipmentManagerComponent* GetEquipmentComponent() const
 	{
 		return EquipmentManagerComponent;
@@ -86,10 +86,10 @@ public:
 		return bIsOverweight;
 	}
 
-public:
+  public:
 	ABOCharacter();
 
-protected:
+  protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
@@ -98,7 +98,7 @@ protected:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-protected:
+  protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -153,7 +153,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UCharacterPreviewComponent> CharacterPreviewComponent;
 
-private:
+  private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
@@ -256,7 +256,7 @@ private:
 	TWeakObjectPtr<AActor> DeathDamageCauser;
 	bool bDeathSequenceFinished = false;
 
-public:
+  public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	UFUNCTION()
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
@@ -269,7 +269,7 @@ public:
 	UFUNCTION()
 	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
 
-private:
+  private:
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
 
@@ -282,6 +282,8 @@ private:
 	bool CanReload(const FName& AmmoItemID) const;
 	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 - 재장전 완료 시 호출, 보충할 개수 반환
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
+	// EquipmentManagerComponent::OnRangeWeaponAmmoCountUpdatedDelegate 바인딩 - 사격 & 재장전 후 탄약 개수 변경 시 송출, 슬롯 UI의 탄약 개수 업데이트
+	void OnRangeWeaponAmmoCountUpdated(EEquipmentSlot Slot, const int32 AmmoCount);
 
 	// EquipmentManagerComponent::OnEquipmentCountUpdatedDelegate 바인딩 - Throwable & Utility 아이템 사용 후 호출, 해당 슬롯 아이템의 스택 개수 변경됨을 알림
 	void OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
@@ -291,7 +293,7 @@ private:
 	// EquipmentManagerComponent::OnEffectAppliedDelegate 바인딩 - 유틸리티 아이템 사용 후 호출, 해당 아이템 효과 적용
 	void OnEffectApplied(const FUtilityItemDataRow* UtilityItemData);
 
-private:
+  private:
 	FTimerHandle DeathTimerHandle;
 
 	FVector2D MoveInput = FVector2D::ZeroVector;
