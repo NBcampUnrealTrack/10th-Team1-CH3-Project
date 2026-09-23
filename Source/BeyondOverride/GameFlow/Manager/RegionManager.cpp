@@ -8,52 +8,6 @@
 
 #include "GameFlow/BOGameInstance.h"
 
-void URegionManager::Initialize(FSubsystemCollectionBase& Collection)
-{
-	Super::Initialize(Collection);
-
-	RegionDatas.Empty();
-	LoadRegionData();
-}
-
-void URegionManager::LoadRegionData()
-{
-	if (!GetWorld())
-	{
-		return;
-	}
-
-	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
-	if (!GameInstance)
-	{
-		return;
-	}
-
-	UBODataAsset* BODataAsset = GameInstance->GetBODataAsset();
-	if (!BODataAsset)
-	{
-		return;
-	}
-
-	UDataTable* RegionDataTable = BODataAsset->GetRegionDataTable();
-	if (!RegionDataTable)
-	{
-		return;
-	}
-
-	TArray<FRegionData*> AllRows{};
-	RegionDataTable->GetAllRows<FRegionData>(TEXT("Get All Region Datas"), AllRows);
-
-	for (FRegionData* Row : AllRows)
-	{
-		if (Row)
-		{
-			FName ID = Row->ID;
-			RegionDatas.Add(ID, *Row);
-		}
-	}
-}
-
 void URegionManager::InitSetting()
 {
 	if (!GetWorld() || !GetWorld()->GetGameInstance())
@@ -104,16 +58,4 @@ void URegionManager::CleanSetting()
 	{
 		ExitManager->CleanSetting();
 	}
-}
-
-bool URegionManager::GetRegiondata(FName RegionId, FRegionData& Data) const
-{
-	if (RegionDatas.Contains(RegionId))
-	{
-		Data = RegionDatas[RegionId];
-
-		return true;
-	}
-
-	return false;
 }

@@ -36,6 +36,7 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
 	void SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float MinDist = -1.0f, float MaxDist = -1.0f, bool IsChase = false);
 	void StartPhase();
 	void SpawnPhaseMonsters();
+	void ActivateContainers();
 
 	FName GetID() const;
 	FName GetRegionID() const;
@@ -61,11 +62,8 @@ class BEYONDOVERRIDE_API ASpawnVolume : public AActor
   private:
 	int32 PhaseIndex;
 
-	FSpawnData SpawnVolumeData;
+	FSpawnVolumeData SpawnVolumeData;
 	FPhaseData PhaseData;
 
 	FTimerHandle PhaseTimer;
-
-  public:
-	FOnPlayerEntered OnPlayerEntered;
 };

@@ -14,7 +14,6 @@ void USpawnVolumeManager::Initialize(FSubsystemCollectionBase& Collection)
 	SpawnVolumeDatas.Empty();
 	PhaseDatas.Empty();
 
-	ActivatedSpawnVolumes.Empty();
 	SpawnVolumeByRegion.Empty();
 
 	LoadSpawnVolumeData();
@@ -46,10 +45,10 @@ void USpawnVolumeManager::LoadSpawnVolumeData()
 		return;
 	}
 
-	TArray<FSpawnData*> AllRows{};
-	SpawnVolumeDataTable->GetAllRows<FSpawnData>(TEXT("Get All Spawn Volume Datas"), AllRows);
+	TArray<FSpawnVolumeData*> AllRows{};
+	SpawnVolumeDataTable->GetAllRows<FSpawnVolumeData>(TEXT("Get All Spawn Volume Datas"), AllRows);
 
-	for (FSpawnData* Row : AllRows)
+	for (FSpawnVolumeData* Row : AllRows)
 	{
 		if (Row)
 		{
@@ -106,25 +105,12 @@ void USpawnVolumeManager::InitSetting()
 	{
 		if (TObjectPtr<ASpawnVolume> SpawnVolume = Cast<ASpawnVolume>(Actor))
 		{
-			SpawnVolume->OnPlayerEntered.BindUObject(this, &USpawnVolumeManager::ActivateSpawnVolume);
 			SpawnVolumeByRegion.Add(SpawnVolume->GetRegionID(), SpawnVolume);
 		}
 	}
 }
 
-void USpawnVolumeManager::ActivateSpawnVolume(ASpawnVolume* SpawnVolume)
-{
-	if (ActivatedSpawnVolumes.Contains(SpawnVolume))
-	{
-		return;
-	}
-
-	UE_LOG(LogGameFlow, Warning, TEXT("Activate Spawn Volume"));
-	ActivatedSpawnVolumes.Add(SpawnVolume);
-	SpawnVolume->SpawnMonsters();
-}
-
-bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeID, FSpawnData& Data) const
+bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeID, FSpawnVolumeData& Data) const
 {
 	if (SpawnVolumeDatas.Contains(SpawnVolumeID))
 	{
@@ -168,6 +154,5 @@ void USpawnVolumeManager::CleanSetting()
 		}
 	}
 
-	ActivatedSpawnVolumes.Empty();
 	SpawnVolumeByRegion.Empty();
 }
