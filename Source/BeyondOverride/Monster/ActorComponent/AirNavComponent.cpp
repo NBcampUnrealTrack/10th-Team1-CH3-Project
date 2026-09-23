@@ -15,6 +15,11 @@ UAirNavComponent::UAirNavComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UAirNavComponent::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 TArray<FVector> UAirNavComponent::AirNav(const FVector& TargetLocation, const FVector& StartLocation)
 {
 	TArray<FVector> Path;
@@ -265,11 +270,6 @@ TArray<FVector> UAirNavComponent::AirNav(const FVector& TargetLocation, const FV
 	}
 
 	return Path;
-}
-
-void UAirNavComponent::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 FVector UAirNavComponent::GetWallEndPoint(FVector DirectionData,

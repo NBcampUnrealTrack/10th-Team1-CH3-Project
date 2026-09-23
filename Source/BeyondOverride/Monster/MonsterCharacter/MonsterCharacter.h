@@ -41,7 +41,10 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	bool IsDelay();
 
-	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	virtual float TakeDamage(float DamageAmount,
+							 FDamageEvent const& DamageEvent,
+							 AController* EventInstigator,
+							 AActor* DamageCauser) override;
 
 	void MonsterAttack();
 
