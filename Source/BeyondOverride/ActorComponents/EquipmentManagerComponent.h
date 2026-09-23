@@ -22,6 +22,11 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(
 	EEquipmentSlot,
 	UEquippableItemInstance*);
 
+// [RangeWeapon] 탄 퍼짐 각도 변경 시 송출하는 델리게이트 - 다이나믹 크로스헤어 UI 업데이트
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnSpreadDegreeUpdatedDelegate,
+	float); // 현재 탄 퍼짐 각도
+
 // [RangeWeapon] 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 재생 등 수행
 DECLARE_MULTICAST_DELEGATE_TwoParams(
 	FOnRangeWeaponFireExecutedDelegate,
@@ -72,6 +77,10 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
   public:
 	UEquipmentManagerComponent();
 
+  protected:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+  public:
 	// Getters
 	EEquipmentSlot GetActiveSlot() const;         // 현재 활성화 슬롯 반환
 	bool HasEquipment(EEquipmentSlot Slot) const; // 슬롯에 장비가 등록되었는지 여부
@@ -111,6 +120,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 장비 인스턴스 전달 델리게이트
 	FOnActiveSlotChangedDelegate OnActiveSlotChangedDelegate;
 
+	// 탄 퍼짐 각도 델리게이트
+	FOnSpreadDegreeUpdatedDelegate OnSpreadDegreeUpdatedDelegate;
+
 	// 사격 실행 델리게이트
 	FOnRangeWeaponFireExecutedDelegate OnRangeWeaponFireExecutedDelegate;
 
@@ -132,6 +144,7 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	void BindDelegates();
 
 	// [Range Weapon] 델리게이트 바인딩 이벤트
+	void OnSpreadDegreeUpdated(float SpreadDegree) const;
 	void OnFireExecuted(int32 RemainingAmmoCount) const;
 	bool CanReload(const FName& AmmoItemID) const;
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);

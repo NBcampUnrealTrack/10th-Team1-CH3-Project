@@ -56,6 +56,17 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 	RecoilAccumulator -= RecoilDelta;
 }
 
+float URangeWeaponHandlerComponent::GetCurrentSpreadDegree() const
+{
+	float SpreadDegree = 0.f;
+	if (UCurveFloat* SpreadCurve = RangeWeaponData->SpreadCurve)
+	{
+		SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	}
+
+	return SpreadDegree;
+}
+
 bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
 {
 	if (!Super::Assign(InEquippableItemInstance))
@@ -731,12 +742,12 @@ void URangeWeaponHandlerComponent::OnFireCompleted()
 	const EFireMode FireMode = RangeWeaponData->FireMode;
 
 	// 활성화 & FullAuto -> 반복 사격
-	if (bIsActive && FireMode == EFireMode::FullAuto)
+	if (CanFire() && bIsActive && FireMode == EFireMode::FullAuto)
 	{
 		// 사격
 		Fire();
 	}
-	else // 사격 종료
+	else
 	{
 		// 반동 & 탄 퍼짐 타임라인 역재생 - 회복
 		PlayTimeline(true);

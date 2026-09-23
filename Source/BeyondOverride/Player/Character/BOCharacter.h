@@ -276,6 +276,8 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	// EquipmentManagerComponent::OnActiveSlotChangedDelegate 바인딩 - 활성화 슬롯 변경 시 호출
 	void OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
 
+	//  EquipmentManagerComponent::OnSpreadDegreeUpdatedDelegate 바인딩 - 탄 퍼짐 변경 시 호출, 다이나믹 크로스헤어 UI 업데이트
+	void OnSpreadDegreeUpdated(float SpreadDegree);
 	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출, 사격 애니메이션 재생 및 남은 탄약 개수 UI 업데이트
 	void OnFireExecuted(EEquipmentSlot Slot, int32 RemainingAmmoCount) const;
 	// EquipmentManagerComponent::CanReloadDelegate 바인딩 - 재장전 시도 시 호출, 가능 여부 반환

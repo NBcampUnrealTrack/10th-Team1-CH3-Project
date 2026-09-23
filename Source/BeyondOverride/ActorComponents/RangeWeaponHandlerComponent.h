@@ -59,6 +59,10 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
   public:
+	// 현재 탄 퍼짐 각도 반환
+	float GetCurrentSpreadDegree() const;
+
+  public:
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
 	// 장비 제거

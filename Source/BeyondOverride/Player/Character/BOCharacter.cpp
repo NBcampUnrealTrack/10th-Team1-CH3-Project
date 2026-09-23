@@ -1188,6 +1188,7 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &ABOCharacter::OnActiveSlotChanged);
 
 	// Primary & Secondary (Range Weapon)
+	EquipmentManagerComponent->OnSpreadDegreeUpdatedDelegate.AddUObject(this, &ABOCharacter::OnSpreadDegreeUpdated);
 	EquipmentManagerComponent->OnRangeWeaponFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::CanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::RequestReloadAmmo);
@@ -1229,6 +1230,13 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 			BOAnimInstance->ApplyEquipmentAnimation(EquipmentAnimationData);
 		}
 	}
+}
+
+void ABOCharacter::OnSpreadDegreeUpdated(float SpreadDegree)
+{
+	// TODO: 다이나믹 크로스헤어 UI에 현재 탄 퍼짐 각도 전달
+
+	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::White, FString::Printf(TEXT("현재 탄 퍼짐 각도 - %.3f"), SpreadDegree));
 }
 
 void ABOCharacter::OnFireExecuted(EEquipmentSlot Slot, int32 RemainingAmmoCount) const
