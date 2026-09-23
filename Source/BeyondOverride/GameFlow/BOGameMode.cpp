@@ -147,6 +147,12 @@ void ABOGameMode::ProvideBasicEquipment()
 void ABOGameMode::StartFarming()
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Begin Farming"));
+
+	if (!GameInstance)
+	{
+		return;
+	}
+
 	FarmingStateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
 
 	if (FarmingStateMachine)
@@ -159,6 +165,7 @@ void ABOGameMode::StartFarming()
 void ABOGameMode::EndFarming(EFarmingResult Result)
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode End Farming"));
+
 	if (FarmingStateMachine)
 	{
 		FarmingStateMachine->SetFarmingResult(Result);

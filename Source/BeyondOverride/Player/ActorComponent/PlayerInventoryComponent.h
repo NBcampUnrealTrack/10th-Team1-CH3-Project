@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Player/ActorComponent/InventoryComponent.h"
@@ -10,25 +10,31 @@ class UItemInstanceBase;
 
 enum class EEquipmentSlot : uint8;
 
-// UI¿ë ¾ÆÀÌÅÛ °³¼ö º¯°æ ½Ã
+// UIìš© ì•„ì´í…œ ê°œìˆ˜ ë³€ê²½ ì‹œ
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnEquipmentSlotChanged,
 	EEquipmentSlot, Slot,
 	UItemInstanceBase*, ItemInstanceBase
 );
 
-// assign/unassign¿ë ¾ÆÀÌÅÛ ÀÚÃ¼°¡ º¯°æ ½Ã
+// assign/unassignìš© ì•„ì´í…œ ìì²´ê°€ ë³€ê²½ ì‹œ
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnEquipmentItemChanged,
 	EEquipmentSlot, Slot,
 	UItemInstanceBase*, ItemInstanceBase
 );
 
-// ¹«°Ô º¯°æ
+// ë¬´ê²Œ ë³€ê²½
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FOnWeightChanged,
 	float, CurCarryWeight,
 	float, MaxCarryWeight
+);
+
+// ëˆ ë³€ê²½
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnMoneyChanged,
+	int32, Money
 );
 
 UCLASS()
@@ -44,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetEquipmentSlots(const TArray<UItemInstanceBase*>& NewSlots);
 
-	// Àåºñ ½½·Ô Á¶ÀÛ
+	// ì¥ë¹„ ìŠ¬ë¡¯ ì¡°ì‘
 	UFUNCTION(BlueprintCallable)
 	bool SetEquipmentItem(EEquipmentSlot Slot, UItemInstanceBase* Item);
 
@@ -57,7 +63,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool CanEquipItem(EEquipmentSlot Slot, const UItemInstanceBase* Item) const;
 
-	// Àåºñ ½½·Ô ¾ÆÀÌÅÛ ¼ö·® º¯°æ
+	// ì¥ë¹„ ìŠ¬ë¡¯ ì•„ì´í…œ ìˆ˜ëŸ‰ ë³€ê²½
 	UFUNCTION(BlueprintCallable)
 	bool SetEquipmentItemStackCount(EEquipmentSlot Slot, int32 StackCount);
 
@@ -67,8 +73,28 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetMaxCarryWeight() const { return MaxCarryWeight; }
 
-	// °¡¹æÀ» Àû¿ëÇßÀ» ¶§, ½½·Ô ºÎÁ·À¸·Î µé¾î°¡Áö ¸øÇÑ ¾ÆÀÌÅÛ ¹İÈ¯
+	// ê°€ë°©ì„ ì ìš©í–ˆì„ ë•Œ, ìŠ¬ë¡¯ ë¶€ì¡±ìœ¼ë¡œ ë“¤ì–´ê°€ì§€ ëª»í•œ ì•„ì´í…œ ë°˜í™˜
 	TArray<UItemInstanceBase*> ApplyBackpack(const FBackpackDataRow* BackpackData);
+
+
+	// ì¼ë°˜ ìŠ¬ë¡¯ + ì¥ë¹„ ìŠ¬ë¡¯ì˜ ì´ ì•„ì´í…œ ê°œìˆ˜ ë°˜í™˜
+	UFUNCTION(BlueprintPure)
+	int32 GetTotalItemCount(FName ItemID) const;
+
+	// ItemIDë¥¼ Countë§Œí¼ íŒë§¤
+	UFUNCTION(BlueprintCallable)
+	bool SellItem(FName ItemID, int32 Count);
+
+	// ëˆ ì‚¬ìš©
+	UFUNCTION(BlueprintCallable)
+	bool SpendMoney(int32 Amount);
+
+	// í˜„ì¬ ë³´ìœ  ëˆ ë°˜í™˜
+	UFUNCTION(BlueprintPure)
+	int32 GetMoney() const { return Money; }
+
+	// ëˆ ì„¤ì •
+	void SetMoney(int32 NewMoney);
 
 public:
 	UPROPERTY(BlueprintAssignable)
@@ -77,6 +103,8 @@ public:
 	FOnEquipmentItemChanged OnEquipmentItemChanged;
 	UPROPERTY(BlueprintAssignable)
 	FOnWeightChanged OnWeightChanged;
+	UPROPERTY(BlueprintAssignable)
+	FOnMoneyChanged OnMoneyChanged;
 
 public:
 	UPlayerInventoryComponent();
@@ -105,4 +133,6 @@ private:
 
 	int32 BaseSlotCount = 0;
 	float BaseMaxCarryWeight = 0.f;
+
+	int32 Money = 0;
 };

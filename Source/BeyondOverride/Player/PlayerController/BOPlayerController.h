@@ -14,13 +14,13 @@ class BEYONDOVERRIDE_API ABOPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-public:
+  public:
 	ABOPlayerController();
 
-protected:
+  protected:
 	virtual void BeginPlay() override;
 
-public:
+  public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* InputMappingContext = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -66,6 +66,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
 	UInputAction* DropEquipmentAction = nullptr;
 
-public:
+  public:
 	void ShowMainHUDWidget();
 };

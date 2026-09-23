@@ -240,8 +240,6 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
 
-	UE_LOG(LogGameFlow, Warning, TEXT("Container Spawn Count : %d"), Count);
-
 	for (int i = 0; i < Count; i++)
 	{
 		FName ItemID = GetRandomSpawnItem(SpawnEntries);

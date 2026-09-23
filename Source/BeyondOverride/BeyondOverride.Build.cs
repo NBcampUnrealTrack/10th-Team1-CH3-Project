@@ -14,7 +14,11 @@ public class BeyondOverride : ModuleRules
             "EnhancedInput",
             "UMG",
             "AIModule",
-            "NavigationSystem"
+            "NavigationSystem",
+            "MoviePlayer",
+            "RenderCore",
+            "Slate",
+            "SlateCore"
         });
 
         PublicIncludePaths.AddRange(new string[] {
