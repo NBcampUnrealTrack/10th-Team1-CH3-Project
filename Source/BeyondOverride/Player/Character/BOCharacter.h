@@ -33,7 +33,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UEquipmentManagerComponent* GetEquipmentComponent() const
 	{
 		return EquipmentManagerComponent;
@@ -86,10 +86,10 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 		return bIsOverweight;
 	}
 
-  public:
+public:
 	ABOCharacter();
 
-  protected:
+protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
@@ -98,7 +98,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-  protected:
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -153,7 +153,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UCharacterPreviewComponent> CharacterPreviewComponent;
 
-  private:
+private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
@@ -256,7 +256,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	TWeakObjectPtr<AActor> DeathDamageCauser;
 	bool bDeathSequenceFinished = false;
 
-  public:
+public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	UFUNCTION()
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
@@ -269,15 +269,15 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	UFUNCTION()
 	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
 
-  private:
+private:
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
 
 	// EquipmentManagerComponent::OnActiveSlotChangedDelegate 바인딩 - 활성화 슬롯 변경 시 호출
 	void OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
 
-	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출, 사격 애니메이션 재생 및 남은 탄약 개수 UI 업데이트
-	void OnFireExecuted(EEquipmentSlot Slot, int32 RemainingAmmoCount) const;
+	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출, 사격 애니메이션 재생
+	void OnFireExecuted() const;
 	// EquipmentManagerComponent::CanReloadDelegate 바인딩 - 재장전 시도 시 호출, 가능 여부 반환
 	bool CanReload(const FName& AmmoItemID) const;
 	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 - 재장전 완료 시 호출, 보충할 개수 반환
@@ -291,7 +291,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	// EquipmentManagerComponent::OnEffectAppliedDelegate 바인딩 - 유틸리티 아이템 사용 후 호출, 해당 아이템 효과 적용
 	void OnEffectApplied(const FUtilityItemDataRow* UtilityItemData);
 
-  private:
+private:
 	FTimerHandle DeathTimerHandle;
 
 	FVector2D MoveInput = FVector2D::ZeroVector;
