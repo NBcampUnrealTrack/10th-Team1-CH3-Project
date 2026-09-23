@@ -26,7 +26,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	float GetLoadingImageUpdateInterval() const;
 	float GetLoadingProgressUpdateInterval() const;
 
-	void GetLevels(TMap<ELevel, FName>& Data) const;
+	void GetLevels(TMap<ELevel, TObjectPtr<UWorld>>& Data) const;
 	// void GetLevels(TMap<ELevel, TSoftObjectPtr<UWorld>>& Data) const;
 	void GetRegions(TArray<FName>& Data) const;
 	void GetBasicEquipments(TArray<FName>& Data) const;
@@ -60,7 +60,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	float LoadingProgressUpdateInterval;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TMap<ELevel, FName> Levels;
+	TMap<ELevel, TObjectPtr<UWorld>> Levels;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TArray<FName> Regions;

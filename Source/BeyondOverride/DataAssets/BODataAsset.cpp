@@ -4,7 +4,7 @@
 
 #include "Logging/BOLog.h"
 
-void UBODataAsset::GetLevels(TMap<ELevel, FName>& Data) const
+void UBODataAsset::GetLevels(TMap<ELevel, TObjectPtr<UWorld>>& Data) const
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Get Levels"));
 	Data = Levels;
