@@ -11,6 +11,7 @@ class UTextBlock;
 class UItemInstanceBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotClicked, int32, SlotIndex, bool, bLeftClick);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotHovered, bool, bIsHovered, UItemInstanceBase*, SlotData);
 
 UCLASS()
 class BEYONDOVERRIDE_API UItemSlotWidget : public UUserWidget
@@ -27,8 +28,13 @@ class BEYONDOVERRIDE_API UItemSlotWidget : public UUserWidget
 	UPROPERTY(BlueprintAssignable)
 	FOnSlotClicked OnSlotClicked;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnSlotHovered OnSlotHovered;
+
   protected:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> IconImage;
@@ -38,4 +44,5 @@ class BEYONDOVERRIDE_API UItemSlotWidget : public UUserWidget
 
   private:
 	int32 SlotIndex = -1;
+	TObjectPtr<UItemInstanceBase> SlotData;
 };

@@ -9,6 +9,8 @@
 
 void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 {
+	SlotData = Item;
+
 	if (Item && Item->GetItemData())
 	{
 		if (IconImage)
@@ -74,3 +76,14 @@ FReply UItemSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 
 	return FReply::Unhandled();
 }
+
+void UItemSlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	OnSlotHovered.Broadcast(true, SlotData);
+}
+
+void UItemSlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	OnSlotHovered.Broadcast(false, nullptr);
+}
+

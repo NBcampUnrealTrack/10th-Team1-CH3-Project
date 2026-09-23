@@ -23,6 +23,8 @@ enum class EItemSlotPanelMode : uint8
 	WorldItems,
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotHoverChanged, bool, bIsHovered, UItemInstanceBase*, Item);
+
 UCLASS()
 class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 {
@@ -42,6 +44,9 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 	void RefreshSlots();
 
 	void SetContainerName(const FText& InName);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnSlotHoverChanged OnSlotHoverChanged;
 
   protected:
 	UPROPERTY(meta = (BindWidget))
@@ -84,4 +89,7 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 
 	UFUNCTION()
 	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
+
+	UFUNCTION()
+	void HandleSlotHovered(bool bIsHovered, UItemInstanceBase* SlotData);
 };
