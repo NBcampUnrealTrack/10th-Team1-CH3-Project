@@ -65,4 +65,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Price", meta = (ClampMin = "0"))
 	int32 SellPrice = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Price", meta = (ClampMin = "0"))
+	int32 BuyPrice = 0;
 };

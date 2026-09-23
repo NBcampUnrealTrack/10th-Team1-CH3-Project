@@ -669,6 +669,8 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 void ABOCharacter::StartAiming()
 {
 	bIsAiming = true;
+	SpeedMultiplier = 0.75f;
+	ChangeMoveSpeed();
 
 	// 장비 조준 활성화
 	if (EquipmentManagerComponent)
@@ -680,6 +682,8 @@ void ABOCharacter::StartAiming()
 void ABOCharacter::StopAiming()
 {
 	bIsAiming = false;
+	SpeedMultiplier = 1.0f;
+	ChangeMoveSpeed();
 
 	// 장비 조준 비활성화
 	if (EquipmentManagerComponent)
@@ -690,11 +694,16 @@ void ABOCharacter::StopAiming()
 
 void ABOCharacter::InteractPress(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->PressInteract();
 
-		// TEMP: 장비 획득 및 장착
+		// 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
 		{
 			if (UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance())
@@ -951,8 +960,6 @@ void ABOCharacter::OnShieldValueChanged(int32 CurrentShield, int32 MaxShield)
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
 {
-	bGameplayInputEnabled = !bAnyMenuOpen;
-
 	if (bAnyMenuOpen)
 	{
 		StopGameplayActions();
@@ -1541,18 +1548,37 @@ void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 
-	if (IsValid(MovementComponent))
+	if (!IsValid(MovementComponent))
+	{
+		return;
+	}
+
+	if (MoveInput.IsNearlyZero())
 	{
 		MovementComponent->Velocity.X = 0.0f;
 		MovementComponent->Velocity.Y = 0.0f;
+		return;
 	}
+
+	FVector MoveDirection = GetActorForwardVector() * MoveInput.X + GetActorRightVector() * MoveInput.Y;
+
+	MoveDirection.Z = 0.0f;
+	MoveDirection.Normalize();
+
+	const FVector NewVelocity = MoveDirection * MovementComponent->GetMaxSpeed();
+
+	MovementComponent->Velocity.X = NewVelocity.X;
+	MovementComponent->Velocity.Y = NewVelocity.Y;
 }
 
 bool ABOCharacter::CanUseGameplayInput() const
 {
-	if (!bGameplayInputEnabled)
+	if (const UUIManager* UIManager = UUIManager::Get(this))
 	{
-		return false;
+		if (UIManager->IsAnyMenuOpen())
+		{
+			return false;
+		}
 	}
 
 	if (IsValid(StatComponent) && StatComponent->GetIsDead())
