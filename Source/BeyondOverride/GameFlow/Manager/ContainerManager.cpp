@@ -153,6 +153,8 @@ void UContainerManager::ActivateContainers(TObjectPtr<ASpawnVolume> OverlappedSp
 		return;
 	}
 
+	UE_LOG(LogGameFlow, Warning, TEXT("Container Manager : Activate Containers"));
+
 	FContainerData ContainerData = ContainerDatas[RegionID];
 	float Prob = ContainerData.ContainerActivateProb;
 
@@ -176,6 +178,8 @@ void UContainerManager::ActivateContainers(TObjectPtr<ASpawnVolume> OverlappedSp
 
 	for (int i = 0; i < Count; i++)
 	{
+		UE_LOG(LogGameFlow, Warning, TEXT("Set Container Items"));
+
 		TObjectPtr<AStorageContainerActor> Container = Containers[i];
 
 		TArray<TObjectPtr<UItemInstanceBase>> Items{};
@@ -186,6 +190,8 @@ void UContainerManager::ActivateContainers(TObjectPtr<ASpawnVolume> OverlappedSp
 
 	for (int i = Count; i < Size; i++)
 	{
+		UE_LOG(LogGameFlow, Warning, TEXT("Set Container Single Item"));
+
 		TObjectPtr<AStorageContainerActor> Container = Containers[i];
 
 		TArray<TObjectPtr<UItemInstanceBase>> Items{};
@@ -226,6 +232,7 @@ void UContainerManager::GetSpawnItems(const FContainerData ContainerData, TArray
 		{
 			if (UItemInstanceBase* ItemInstanceBase = ItemFactory.CreateItemInstance(this, Item.Key))
 			{
+				UE_LOG(LogGameFlow, Warning, TEXT("Add Item"));
 				Items.Add(ItemInstanceBase);
 			}
 		}

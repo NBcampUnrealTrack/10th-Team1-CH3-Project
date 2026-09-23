@@ -231,8 +231,15 @@ void ASpawnVolume::SpawnPhaseMonsters()
 
 void ASpawnVolume::ActivateContainers()
 {
+	if (!GetGameInstance())
+	{
+		return;
+	}
+
 	if (UContainerManager* ContainerManager = GetGameInstance()->GetSubsystem<UContainerManager>())
 	{
+		UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : Activate Containers"));
+
 		ContainerManager->ActivateContainers(this);
 	}
 }
