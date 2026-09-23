@@ -279,11 +279,13 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	//  EquipmentManagerComponent::OnSpreadDegreeUpdatedDelegate 바인딩 - 탄 퍼짐 변경 시 호출, 다이나믹 크로스헤어 UI 업데이트
 	void OnSpreadDegreeUpdated(float SpreadDegree);
 	// EquipmentManagerComponent::OnFireExecutedDelegate 바인딩 - 사격 실행 시 호출, 사격 애니메이션 재생 및 남은 탄약 개수 UI 업데이트
-	void OnFireExecuted(EEquipmentSlot Slot, int32 RemainingAmmoCount) const;
+	void OnFireExecuted();
 	// EquipmentManagerComponent::CanReloadDelegate 바인딩 - 재장전 시도 시 호출, 가능 여부 반환
 	bool CanReload(const FName& AmmoItemID) const;
 	// EquipmentManagerComponent::RequestReloadAmmoDelegate 바인딩 - 재장전 완료 시 호출, 보충할 개수 반환
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
+	// EquipmentManagerComponent::OnRangeWeaponAmmoCountUpdatedDelegate 바인딩 - 사격 & 재장전 후 탄약 개수 변경 시 송출, 슬롯 UI의 탄약 개수 업데이트
+	void OnRangeWeaponAmmoCountUpdated(EEquipmentSlot Slot, const int32 AmmoCount);
 
 	// EquipmentManagerComponent::OnEquipmentCountUpdatedDelegate 바인딩 - Throwable & Utility 아이템 사용 후 호출, 해당 슬롯 아이템의 스택 개수 변경됨을 알림
 	void OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);

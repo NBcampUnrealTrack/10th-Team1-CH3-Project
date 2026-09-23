@@ -1189,9 +1189,10 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 
 	// Primary & Secondary (Range Weapon)
 	EquipmentManagerComponent->OnSpreadDegreeUpdatedDelegate.AddUObject(this, &ABOCharacter::OnSpreadDegreeUpdated);
-	EquipmentManagerComponent->OnRangeWeaponFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
+	EquipmentManagerComponent->OnFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::CanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::RequestReloadAmmo);
+	EquipmentManagerComponent->OnRangeWeaponAmmoCountUpdatedDelegate.AddUObject(this, &ABOCharacter::OnRangeWeaponAmmoCountUpdated);
 
 	// Throwable & Utility
 	EquipmentManagerComponent->OnEquipmentCountUpdatedDelegate.AddUObject(this, &ABOCharacter::OnEquipmentCountUpdated);
@@ -1239,7 +1240,7 @@ void ABOCharacter::OnSpreadDegreeUpdated(float SpreadDegree)
 	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::White, FString::Printf(TEXT("현재 탄 퍼짐 각도 - %.3f"), SpreadDegree));
 }
 
-void ABOCharacter::OnFireExecuted(EEquipmentSlot Slot, int32 RemainingAmmoCount) const
+void ABOCharacter::OnFireExecuted()
 {
 	if (!GetMesh() || !GetMesh()->GetAnimInstance())
 	{
@@ -1341,6 +1342,13 @@ int32 ABOCharacter::RequestReloadAmmo(const FName& AmmoItemID, const int32 Reque
 	}
 
 	return SuppliedAmmoCount;
+}
+
+void ABOCharacter::OnRangeWeaponAmmoCountUpdated(EEquipmentSlot Slot, const int32 AmmoCount)
+{
+	// TODO: AmmoCount로 탄약 개수 UI 업데이트
+
+	GEngine->AddOnScreenDebugMessage(10000, 5.0f, FColor::White, FString::Printf(TEXT("현재 탄약 개수 - %d"), AmmoCount));
 }
 
 void ABOCharacter::OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)

@@ -320,6 +320,7 @@ void UEquipmentManagerComponent::BindDelegates()
 			PrimaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
 			PrimaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::CanReload);
 			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::RequestReloadAmmo);
+			PrimaryRangeWeaponHandler->OnAmmoCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnAmmoCountUpdated);
 		}
 	}
 
@@ -331,6 +332,7 @@ void UEquipmentManagerComponent::BindDelegates()
 			SecondaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
 			SecondaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::CanReload);
 			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::RequestReloadAmmo);
+			SecondaryRangeWeaponHandler->OnAmmoCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnAmmoCountUpdated);
 		}
 	}
 
@@ -355,9 +357,9 @@ void UEquipmentManagerComponent::BindDelegates()
 	}
 }
 
-void UEquipmentManagerComponent::OnFireExecuted(int32 RemainingAmmoCount) const
+void UEquipmentManagerComponent::OnFireExecuted() const
 {
-	OnRangeWeaponFireExecutedDelegate.Broadcast(ActiveSlot, RemainingAmmoCount);
+	OnFireExecutedDelegate.Broadcast();
 }
 
 bool UEquipmentManagerComponent::CanReload(const FName& AmmoItemID) const
@@ -382,6 +384,11 @@ int32 UEquipmentManagerComponent::RequestReloadAmmo(const FName& AmmoItemID, con
 
 	// 재장전에 사용할 탄약 개수 전달
 	return RequestReloadAmmoDelegate.Execute(AmmoItemID, RequestedAmmoCount);
+}
+
+void UEquipmentManagerComponent::OnAmmoCountUpdated(const int32 AmmoCount) const
+{
+	OnRangeWeaponAmmoCountUpdatedDelegate.Broadcast(ActiveSlot, AmmoCount);
 }
 
 void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance)

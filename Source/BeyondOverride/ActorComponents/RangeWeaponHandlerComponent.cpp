@@ -339,7 +339,10 @@ void URangeWeaponHandlerComponent::Fire()
 	PlayTimeline();
 
 	// 사격 실행 델리게이트 송출
-	OnFireExecutedDelegate.Broadcast(RangeWeaponInstance->GetCurrentAmmo());
+	OnFireExecutedDelegate.Broadcast();
+
+	// 사격 후 탄약 개수 델리게이트 송출
+	OnAmmoCountUpdatedDelegate.Broadcast(RangeWeaponInstance->GetCurrentAmmo());
 
 	// 사격 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
@@ -789,6 +792,9 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 
 	// 탄약 추가
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
+
+	// 재장전 후 탄약 개수 델리게이트 송출
+	OnAmmoCountUpdatedDelegate.Broadcast(RangeWeaponInstance->GetCurrentAmmo());
 
 	if (bIsActive)
 	{

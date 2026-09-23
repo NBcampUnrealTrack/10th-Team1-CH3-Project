@@ -11,10 +11,9 @@ class URangeWeaponInstance;
 
 struct FRangeWeaponDataRow;
 
-// 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 및 남은 탄약 개수 UI 업데이트 등 수행
-DECLARE_MULTICAST_DELEGATE_OneParam(
-	FOnFireExecutedDelegate,
-	int32); // 사격 후 남은 탄약 개수
+// 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 등 수행
+DECLARE_MULTICAST_DELEGATE(
+	FOnFireExecutedDelegate);
 
 // 재장전 가능한지 확인하는 델리게이트 - 재장전 가능 검증에 실행하여, 무기의 탄약 ID를 인자로 주고 해당 탄약의 여분이 있는지 여부를 반환함
 DECLARE_DELEGATE_RetVal_OneParam(
@@ -28,6 +27,11 @@ DECLARE_DELEGATE_RetVal_TwoParams(
 	const FName&, // 탄약 ItemID
 	const int32); // 필요한 탄약 개수
 
+// 현재 탄약 개수 변경 델리게이트 - 사격 & 재장전 후 탄약 개수 변경 시 호출하여, 남은 탄약 개수를 UI에 반영함
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnAmmoCountUpdatedDelegate,
+	const int32); // 현재 탄약 개수
+
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
 {
@@ -40,6 +44,8 @@ class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandler
 	FCanReloadDelegate CanReloadDelegate;
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
+	// 현재 탄약 개수 업데이트 델리게이트
+	FOnAmmoCountUpdatedDelegate OnAmmoCountUpdatedDelegate;
 
   protected:
 	// 등록된 Range Weapon 인스턴스
