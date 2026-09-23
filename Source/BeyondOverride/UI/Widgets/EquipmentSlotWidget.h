@@ -31,7 +31,6 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
   protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UItemSlotWidget> ItemSlot;
@@ -86,6 +85,8 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 	void OnInventoryChanged(const TArray<UItemInstanceBase*>& Slots);
 
 	void OnActiveSlotChanged(EEquipmentSlot ChangedSlot, UEquippableItemInstance* ItemInstance);
+
+	void OnRangeWeaponAmmoCountUpdated(EEquipmentSlot FiredSlot, int32 AmmoCount);
 
 	UFUNCTION()
 	void HandleItemSlotClicked(int32 SlotIndex, bool bLeftClick);
