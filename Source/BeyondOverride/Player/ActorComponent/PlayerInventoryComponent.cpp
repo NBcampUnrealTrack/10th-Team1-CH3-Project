@@ -213,6 +213,20 @@ TArray<UItemInstanceBase*> UPlayerInventoryComponent::ApplyBackpack(const FBackp
 	return ItemsToDrop;
 }
 
+bool UPlayerInventoryComponent::AddMoney(int32 Amount)
+{
+	if (Amount <= 0)
+	{
+		return false;
+	}
+
+	Money += Amount;
+
+	OnMoneyChanged.Broadcast(Money);
+
+	return true;
+}
+
 int32 UPlayerInventoryComponent::GetTotalItemCount(FName ItemID) const
 {
 	int32 Count = GetItemCount(ItemID);
@@ -226,79 +240,6 @@ int32 UPlayerInventoryComponent::GetTotalItemCount(FName ItemID) const
 	}
 
 	return Count;
-}
-
-bool UPlayerInventoryComponent::SellItem(FName ItemID, int32 Count)
-{
-	if (ItemID.IsNone() || Count <= 0 || GetTotalItemCount(ItemID) < Count)
-	{
-		return false;
-	}
-
-	const FItemDataRow* ItemData = nullptr;
-
-	for (const UItemInstanceBase* Item : Slots)
-	{
-		if (IsValid(Item) && Item->GetItemID() == ItemID)
-		{
-			ItemData = Item->GetItemData();
-			break;
-		}
-	}
-
-	if (!ItemData)
-	{
-		for (const UItemInstanceBase* Item : EquipmentSlots)
-		{
-			if (IsValid(Item) && Item->GetItemID() == ItemID)
-			{
-				ItemData = Item->GetItemData();
-				break;
-			}
-		}
-	}
-
-	if (!ItemData || ItemData->SellPrice < 0)
-	{
-		return false;
-	}
-
-	const int32 Proceeds = ItemData->SellPrice * Count;
-
-	int32 Remaining = Count;
-
-	// 일반 슬롯에서 먼저 판매
-	for (int32 Index = 0; Index < Slots.Num() && Remaining > 0; ++Index)
-	{
-		UItemInstanceBase* Item = Slots[Index];
-		if (!IsValid(Item) || Item->GetItemID() != ItemID)
-		{
-			continue;
-		}
-
-		const int32 Removed = FMath::Min(Remaining, Item->GetStackCount());
-		SetItemStackCount(Index, Item->GetStackCount() - Removed);
-		Remaining -= Removed;
-	}
-
-	// 부족하면 장비 슬롯에서도 판매
-	for (int32 Index = 0; Index < EquipmentSlots.Num() && Remaining > 0; ++Index)
-	{
-		UItemInstanceBase* Item = EquipmentSlots[Index];
-		if (!IsValid(Item) || Item->GetItemID() != ItemID)
-		{
-			continue;
-		}
-
-		const int32 Removed = FMath::Min(Remaining, Item->GetStackCount());
-		SetEquipmentItemStackCount(GetEquipmentSlotType(Index), Item->GetStackCount() - Removed);
-		Remaining -= Removed;
-	}
-
-	Money += Proceeds;
-
-	OnMoneyChanged.Broadcast(Money);
-	return true;
 }
 
 bool UPlayerInventoryComponent::SpendMoney(int32 Amount)
@@ -321,6 +262,7 @@ void UPlayerInventoryComponent::SetMoney(int32 NewMoney)
 	}
 
 	Money = NewMoney;
+	OnMoneyChanged.Broadcast(Money);
 }
 
 int32 UPlayerInventoryComponent::GetEquipmentSlotIndex(EEquipmentSlot Slot) const
