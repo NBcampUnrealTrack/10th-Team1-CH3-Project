@@ -26,15 +26,13 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	float GetLoadingImageUpdateInterval() const;
 	float GetLoadingProgressUpdateInterval() const;
 
-	void GetLevels(TMap<ELevel, TObjectPtr<UWorld>>& Data) const;
-	// void GetLevels(TMap<ELevel, TSoftObjectPtr<UWorld>>& Data) const;
+	void GetLevels(TMap<ELevel, TSoftObjectPtr<UWorld>>& Data) const;
 	void GetRegions(TArray<FName>& Data) const;
 	void GetBasicEquipments(TArray<FName>& Data) const;
 	FName GetKeyCardID() const;
 	float GetExitActivateProb() const;
 	float GetTotalDefenseTime() const;
 
-	UDataTable* GetRegionDataTable() const;
 	UDataTable* GetSpawnVolumeDataTable() const;
 	UDataTable* GetPhaseDataTable() const;
 	UDataTable* GetMonsterDataTable() const;
@@ -60,7 +58,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	float LoadingProgressUpdateInterval;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TMap<ELevel, TObjectPtr<UWorld>> Levels;
+	TMap<ELevel, TSoftObjectPtr<UWorld>> Levels;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TArray<FName> Regions;
@@ -76,9 +74,6 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	float TotalDefenseTime;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
-	UDataTable* RegionDataTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* SpawnVolumeDataTable;

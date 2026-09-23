@@ -187,7 +187,7 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 
 	if (GetWorld())
 	{
-		UGameplayStatics::OpenLevel(GetWorld(), Levels[Level].GetFName());
+		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Levels[Level]);
 	}
 }
 

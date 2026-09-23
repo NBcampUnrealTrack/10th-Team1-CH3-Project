@@ -4,7 +4,7 @@
 
 #include "Logging/BOLog.h"
 
-void UBODataAsset::GetLevels(TMap<ELevel, TObjectPtr<UWorld>>& Data) const
+void UBODataAsset::GetLevels(TMap<ELevel, TSoftObjectPtr<UWorld>>& Data) const
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Get Levels"));
 	Data = Levels;
@@ -63,11 +63,6 @@ float UBODataAsset::GetExitActivateProb() const
 float UBODataAsset::GetTotalDefenseTime() const
 {
 	return TotalDefenseTime;
-}
-
-UDataTable* UBODataAsset::GetRegionDataTable() const
-{
-	return RegionDataTable;
 }
 
 UDataTable* UBODataAsset::GetSpawnVolumeDataTable() const

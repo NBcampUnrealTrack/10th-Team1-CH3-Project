@@ -105,7 +105,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 MaxShield;
 
 	bool IsLevelPreparing;
-	TMap<ELevel, TObjectPtr<UWorld>> Levels;
+	TMap<ELevel, TSoftObjectPtr<UWorld>> Levels;
 
 	FTimerHandle HideLoadingScreenTimer;
 
