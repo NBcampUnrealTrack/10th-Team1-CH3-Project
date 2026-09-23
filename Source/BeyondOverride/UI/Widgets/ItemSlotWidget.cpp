@@ -39,7 +39,7 @@ void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 		{
 			if (Item->GetStackCount() > 1)
 			{
-				CountText->SetText(FText::AsNumber(Item->GetStackCount()));
+				CountText->SetText(FText::FromString(TEXT("x") + FString::FromInt(Item->GetStackCount())));
 				CountText->SetVisibility(ESlateVisibility::HitTestInvisible);
 			}
 			else
