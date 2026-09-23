@@ -28,6 +28,9 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 		UInventoryInteractionComponent* InInteraction,
 		UEquipmentManagerComponent* InEquipmentManager);
 
+	UFUNCTION(BlueprintCallable, Category = "Rarity")
+	void SetShowRarity(bool bInShowRarity);
+
   protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -58,6 +61,9 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	TObjectPtr<UWidget> WBP_Equipped;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+	bool bShowRarity = true;
 
   private:
 	TMap<int32, FString> SlotEmptyNameMap = {

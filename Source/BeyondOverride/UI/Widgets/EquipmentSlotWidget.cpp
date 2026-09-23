@@ -24,6 +24,8 @@ void UEquipmentSlotWidget::NativeConstruct()
 	if (ItemSlot)
 	{
 		ItemSlot->OnSlotClicked.AddDynamic(this, &UEquipmentSlotWidget::HandleItemSlotClicked);
+
+		ItemSlot->SetShowRarity(bShowRarity);
 	}
 }
 
@@ -78,6 +80,11 @@ void UEquipmentSlotWidget::SetupEquipmentSlot(
 
 	RefreshItem();
 	RefreshEquippedBadge();
+}
+
+void UEquipmentSlotWidget::SetShowRarity(bool bInShowRarity)
+{
+	bShowRarity = bInShowRarity;
 }
 
 void UEquipmentSlotWidget::OnEquipmentSlotChanged(EEquipmentSlot ChangedSlot, UItemInstanceBase* ItemInstanceBase)
