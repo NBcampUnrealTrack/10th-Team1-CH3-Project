@@ -1,97 +1,34 @@
-// 26/09/20 Copyright CH3 Team1 Jinho Song
+// 26/09/23 Copyright CH3 Team1 Jinho Song
 
 // Base include
-#include "Monster/MonsterCharacter/FlyMonsterCharacter.h"
+#include "Monster/ActorComponent/AirNavComponent.h"
 
 // Add include
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-AFlyMonsterCharacter::AFlyMonsterCharacter()
+UAirNavComponent::UAirNavComponent()
 {
-
-	PrimaryActorTick.bCanEverTick = true;
-
-	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
-	{
-		Movement->GravityScale = 0.0f;
-		Movement->SetMovementMode(MOVE_Flying);
-		Movement->DefaultLandMovementMode = MOVE_Flying;
-		Movement->bOrientRotationToMovement = true;
-		Movement->RotationRate = FRotator(540.0f, 540.0f, 0.0f);
-	}
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void AFlyMonsterCharacter::Tick(float DeltaSecond)
+TArray<FVector> UAirNavComponent::AirNav(const FVector& TargetLocation, const FVector& StartLocation)
 {
-	Super::Tick(DeltaSecond);
-
-	if (Paths.IsEmpty())
-	{
-		APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-		if (!Player)
-		{
-			return;
-		}
-
-		FVector TargetLocation = Player->GetActorLocation();
-		TargetLocation.X += FMath::FRandRange(-900.0f, 900.0f);
-		TargetLocation.Y += FMath::FRandRange(-900.0f, 900.0f);
-		TargetLocation.Z = FMath::FRandRange(TargetLocation.Z + 300.0f, TargetLocation.Z + 500.0f);
-
-		// FVector TargetLocation = Player->GetActorLocation();
-		// TargetLocation.Z = TargetLocation.Z + 230.0f;
-
-		uint32 loop = 0;
-
-		Paths.Add(GetActorLocation());
-
-		while (loop < 50 && (Paths.IsEmpty() || *Paths.rbegin() != TargetLocation))
-		{
-			Paths.Append(TestNav(TargetLocation, *Paths.rbegin()));
-			loop = loop + 1;
-		}
-
-		if (loop >= 50)
-		{
-			Paths.Empty();
-			loop = 0;
-		}
-
-		if (Paths.IsEmpty())
-		{
-			return;
-		}
-	}
-
-	MoveFlying(*Paths.begin());
-
-	if (FVector::PointsAreNear(GetActorLocation(), *Paths.begin(), 500.0f))
-	{
-		Paths.RemoveAt(0);
-	}
-}
-
-void AFlyMonsterCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	// GetWorld()->GetTimerManager().SetTimer(ChangeTimer,
-	//									   this,
-	//									   &AFlyMonsterCharacter::FlyChange,
-	//									   5.0f,
-	//									   true);
-}
-
-TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, const FVector& StartLocation)
-{
-
 	TArray<FVector> Path;
 
 	float Radius;
 	float HalfHeight;
-	GetCapsuleComponent()->GetScaledCapsuleSize(Radius, HalfHeight);
+
+	ACharacter* Owner = Cast<ACharacter>(GetOwner());
+	if (!Owner)
+	{
+		return Path;
+	}
+
+	Owner->GetCapsuleComponent()->GetScaledCapsuleSize(Radius, HalfHeight);
 
 	float TraceRadius = Radius > HalfHeight ? Radius : HalfHeight;
 
@@ -330,18 +267,17 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 	return Path;
 }
 
-void AFlyMonsterCharacter::MoveFlying(const FVector& TargetLocation)
+void UAirNavComponent::BeginPlay()
 {
-	const FVector Direction = (TargetLocation - GetActorLocation()).GetSafeNormal();
-	AddMovementInput(Direction);
+	Super::BeginPlay();
 }
 
-FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
-											  FVector ImpactData,
-											  FVector TargetOrigin,
-											  FVector TargetExtent,
-											  FRotator TargetRotation,
-											  float& Distance)
+FVector UAirNavComponent::GetWallEndPoint(FVector DirectionData,
+										  FVector ImpactData,
+										  FVector TargetOrigin,
+										  FVector TargetExtent,
+										  FRotator TargetRotation,
+										  float& Distance)
 {
 	FVector LocalDirection = TargetRotation.UnrotateVector(DirectionData).GetSafeNormal();
 
@@ -355,28 +291,19 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 
 	if (!FMath::IsNearlyZero(LocalDirection.X))
 	{
-		float XBoundary = LocalDirection.X > 0.0f
-							  ? TargetExtent.X
-							  : -TargetExtent.X;
-
+		float XBoundary = LocalDirection.X > 0.0f ? TargetExtent.X : -TargetExtent.X;
 		TX = (XBoundary - LocalImpact.X) / LocalDirection.X;
 	}
 
 	if (!FMath::IsNearlyZero(LocalDirection.Y))
 	{
-		float YBoundary = LocalDirection.Y > 0.0f
-							  ? TargetExtent.Y
-							  : -TargetExtent.Y;
-
+		float YBoundary = LocalDirection.Y > 0.0f ? TargetExtent.Y : -TargetExtent.Y;
 		TY = (YBoundary - LocalImpact.Y) / LocalDirection.Y;
 	}
 
 	if (!FMath::IsNearlyZero(LocalDirection.Z))
 	{
-		float ZBoundary = LocalDirection.Z > 0.0f
-							  ? TargetExtent.Z
-							  : -TargetExtent.Z;
-
+		float ZBoundary = LocalDirection.Z > 0.0f ? TargetExtent.Z : -TargetExtent.Z;
 		TZ = (ZBoundary - LocalImpact.Z) / LocalDirection.Z;
 	}
 
@@ -406,32 +333,9 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 		return FVector(100000000.0f);
 	}
 
-	FVector WorldEdge = TargetOrigin +
-						TargetRotation.RotateVector(LocalEdge);
+	FVector WorldEdge = TargetOrigin + TargetRotation.RotateVector(LocalEdge);
 
 	Distance = FVector::Distance(ImpactData, WorldEdge);
 
 	return WorldEdge;
-}
-
-void AFlyMonsterCharacter::FlyChange()
-{
-	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
-	{
-		Mod = !Mod;
-
-		if (Mod)
-		{
-			Movement->GravityScale = 0.0f;
-			Movement->SetMovementMode(MOVE_Flying);
-			Movement->DefaultLandMovementMode = MOVE_Flying;
-		}
-		else
-		{
-			Movement->GravityScale = 1.0f;
-			Movement->SetMovementMode(MOVE_Walking);
-			Movement->DefaultLandMovementMode = MOVE_Walking;
-		}
-		Movement->SetPlaneConstraintEnabled(Mod);
-	}
 }

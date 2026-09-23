@@ -24,7 +24,8 @@ class BEYONDOVERRIDE_API AFlyMonsterCharacter : public ACharacter
   protected:
 	virtual void BeginPlay() override;
 
-	TArray<FVector> TestNav(const FVector& TargetLocation, const FVector& StartLocation);
+	TArray<FVector> TestNav(const FVector& TargetLocation,
+							const FVector& StartLocation);
 
 	void MoveFlying(const FVector& TargetLocation);
 
