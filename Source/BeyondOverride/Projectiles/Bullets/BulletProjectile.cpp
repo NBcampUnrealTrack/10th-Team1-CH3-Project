@@ -1,4 +1,6 @@
-#include "Projectiles/Bullets/BulletProjectile.h"
+﻿#include "Projectiles/Bullets/BulletProjectile.h"
+
+#include "BulletProjectile.h"
 
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -10,14 +12,13 @@ ABulletProjectile::ABulletProjectile()
 	// Collision 생성
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	SetRootComponent(Collision);
-	Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Collision->SetCollisionProfileName(TEXT("Bullet"));
-	Collision->SetNotifyRigidBodyCollision(true);
+	Collision->SetNotifyRigidBodyCollision(true); // Hit 이벤트 활성화
+	Collision->SetGenerateOverlapEvents(true);    // Overlap 이벤트 활성화
 
-	// 충돌 이벤트 바인딩
-	Collision->OnComponentHit.AddDynamic(
-		this,
-		&ABulletProjectile::OnHit);
+	// 피격 이벤트 바인딩
+	Collision->OnComponentHit.AddDynamic(this, &ABulletProjectile::OnHit);
+	Collision->OnComponentBeginOverlap.AddDynamic(this, &ABulletProjectile::OnBeginOverlap);
 
 	// ProjectileMovement 설정
 	ProjectileMovement->UpdatedComponent = Collision;
@@ -34,28 +35,39 @@ void ABulletProjectile::BeginPlay()
 	}
 }
 
-void ABulletProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ABulletProjectile::OnHit(
+	UPrimitiveComponent* HitComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse,
+	const FHitResult& Hit)
 {
-	// 충돌 지점 디버그
-	// DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.0f, FColor::Red, false, 2.0f);
+	HandleImpact(OtherActor, Hit);
+}
 
-	// 잘못된 충돌 로그 (Instigator or Bullet)
+void ABulletProjectile::OnBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	HandleImpact(OtherActor, SweepResult);
+}
+
+void ABulletProjectile::HandleImpact(AActor* OtherActor, const FHitResult& Hit)
+{
+	// Instigator 또는 총알 무시
 	if (IsValid(OtherActor))
 	{
 		if (OtherActor == GetInstigator() || OtherActor->IsA(ABulletProjectile::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning,
-				   TEXT("HIT | SelfActor=%s | HitComp=%s | OtherActor=%s | OtherComp=%s | OtherOwner=%s | Instigator=%s"),
-				   *GetNameSafe(this),
-				   *GetNameSafe(HitComponent),
-				   *GetNameSafe(OtherActor),
-				   *GetNameSafe(OtherComp),
-				   *GetNameSafe(OtherComp ? OtherComp->GetOwner() : nullptr),
-				   *GetNameSafe(GetInstigator()));
+			return;
 		}
 	}
 
-	/// 데미지 적용
+	// 데미지 적용
 	if (IsValid(OtherActor) && OtherActor != GetInstigator())
 	{
 		UGameplayStatics::ApplyDamage(
