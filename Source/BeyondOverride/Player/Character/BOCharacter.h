@@ -111,7 +111,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float SprintSpeed = 600.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
-	float RollSpeed = 1000.0f;
+	float RollSpeed = 900.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
 	float CrouchSpeedMultiplier = 0.5f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -232,7 +232,6 @@ private:
 	bool bIsSprint = false;
 	bool bIsAiming = false;
 	bool bMovementEnabled = true;
-	bool bGameplayInputEnabled = true;
 
 	UFUNCTION(Exec)
 	void AddTestItem(FName ItemID, int32 Count = 1);

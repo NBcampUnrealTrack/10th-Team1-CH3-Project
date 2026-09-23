@@ -215,7 +215,7 @@ bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
 
 	UNearbyItemComponent* NearbyItemComponent = Owner->FindComponentByClass<UNearbyItemComponent>();
 
-	if (IsValid(NearbyItemComponent))
+	if (!IsValid(NearbyItemComponent))
 	{
 		return false;
 	}
@@ -241,6 +241,61 @@ bool UInventoryInteractionComponent::SellItem(bool bLeftClick)
 	}
 
 	return SellOne();
+}
+
+bool UInventoryInteractionComponent::BuyItem(UItemInstanceBase* Item)
+{
+	if (!IsValid(Item))
+	{
+		return false;
+	}
+
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UPlayerInventoryComponent* PlayerInventory = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+
+	if (!IsValid(PlayerInventory))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = Item->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	const int32 ItemCount = Item->GetStackCount();
+
+	if (ItemCount <= 0 || ItemData->BuyPrice < 0)
+	{
+		return false;
+	}
+
+	const int64 Price = ItemData->BuyPrice * ItemCount;
+
+	if (PlayerInventory->GetMoney() < Price)
+	{
+		return false;
+	}
+
+	if (!PlayerInventory->AddItem(Item))
+	{
+		return false;
+	}
+
+	if (Price == 0)
+	{
+		return true;
+	}
+
+	return PlayerInventory->SpendMoney(Price);
 }
 
 bool UInventoryInteractionComponent::IsHoldingItem() const
@@ -1241,6 +1296,33 @@ bool UInventoryInteractionComponent::DropOne(UNearbyItemComponent* NearbyItemCom
 
 bool UInventoryInteractionComponent::SellAll()
 {
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = HoldItem->GetItemData();
+
+	if (!ItemData || ItemData->SellPrice <= 0)
+	{
+		return false;
+	}
+
+	const int32 HoldCount = HoldItem->GetStackCount();
+
+	if (HoldCount <= 0)
+	{
+		return false;
+	}
+
+	const int64 TotalPrice =
+		static_cast<int64>(ItemData->SellPrice) * HoldCount;
+
+	if (TotalPrice > MAX_int32)
+	{
+		return false;
+	}
+
 	AActor* Owner = GetOwner();
 
 	if (!IsValid(Owner))
@@ -1248,18 +1330,47 @@ bool UInventoryInteractionComponent::SellAll()
 		return false;
 	}
 
-	UPlayerInventoryComponent* PlayerInventoryComponent = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+	UPlayerInventoryComponent* PlayerInventory = Owner->FindComponentByClass<UPlayerInventoryComponent>();
 
-	if (IsValid(PlayerInventoryComponent))
+	if (!IsValid(PlayerInventory))
 	{
 		return false;
 	}
+
+	if (!PlayerInventory->AddMoney(static_cast<int32>(TotalPrice)))
+	{
+		return false;
+	}
+
+	// 전체 판매 완료
+	HoldItem = nullptr;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
 
 	return true;
 }
 
 bool UInventoryInteractionComponent::SellOne()
 {
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = HoldItem->GetItemData();
+
+	if (!ItemData || ItemData->SellPrice <= 0)
+	{
+		return false;
+	}
+
+	const int32 HoldCount = HoldItem->GetStackCount();
+
+	if (HoldCount <= 0)
+	{
+		return false;
+	}
+
 	AActor* Owner = GetOwner();
 
 	if (!IsValid(Owner))
@@ -1267,12 +1378,30 @@ bool UInventoryInteractionComponent::SellOne()
 		return false;
 	}
 
-	UPlayerInventoryComponent* PlayerInventoryComponent = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+	UPlayerInventoryComponent* PlayerInventory = Owner->FindComponentByClass<UPlayerInventoryComponent>();
 
-	if (IsValid(PlayerInventoryComponent))
+	if (!IsValid(PlayerInventory))
 	{
 		return false;
 	}
+
+	if (!PlayerInventory->AddMoney(ItemData->SellPrice))
+	{
+		return false;
+	}
+
+	const int32 NewCount = HoldCount - 1;
+
+	if (NewCount <= 0)
+	{
+		HoldItem = nullptr;
+	}
+	else
+	{
+		HoldItem->SetStackCount(NewCount);
+	}
+
+	OnHoldItemChanged.Broadcast(HoldItem);
 
 	return true;
 }
