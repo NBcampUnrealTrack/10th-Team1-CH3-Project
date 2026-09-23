@@ -19,7 +19,7 @@ void UItemTooltipWidget::OnItemHovered(bool bIsHovered, UItemInstanceBase* Item)
 	if (bIsHovered && SlotData)
 	{
 		SetTooltipData();
-		UpdatePosition();	
+		UpdatePosition();
 	}
 }
 
@@ -28,12 +28,19 @@ void UItemTooltipWidget::SetTooltipData()
 	if (!SlotData)
 		return;
 
-	if (const FItemDataRow* Data = SlotData->GetItemData())
+	const FItemDataRow* Data = SlotData->GetItemData();
+	int32 StackCount = SlotData->GetStackCount();
+
+	if (Data && StackCount)
 	{
 		ItemNameText->SetText(Data->DisplayName);
 		ItemDescText->SetText(Data->Description);
-		ItemPriceText->SetText(FText::AsNumber(Data->SellPrice));
-		ItemWeightText->SetText(FText::AsNumber(Data->Weight));
+
+		ItemTotalPriceText->SetText(FText::AsNumber(Data->SellPrice * StackCount));
+		ItemTotalWeightText->SetText(FText::AsNumber(Data->Weight * StackCount));
+
+		ItemUnitPriceText->SetText(StackCount > 1 ? FText::FromString(FString::Printf(TEXT("(%d)"), Data->SellPrice)) : FText::GetEmpty());
+		ItemUnitWeightText->SetText(StackCount > 1 ? FText::FromString(FString::Printf(TEXT("(%s)"), *FString::SanitizeFloat(Data->Weight))) : FText::GetEmpty());
 	}
 }
 

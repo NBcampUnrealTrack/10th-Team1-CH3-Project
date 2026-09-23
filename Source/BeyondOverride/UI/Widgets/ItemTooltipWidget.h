@@ -33,10 +33,16 @@ class BEYONDOVERRIDE_API UItemTooltipWidget : public UUserWidget
 	TObjectPtr<UTextBlock> ItemDescText;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> ItemPriceText;
+	TObjectPtr<UTextBlock> ItemTotalPriceText;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> ItemWeightText;
+	TObjectPtr<UTextBlock> ItemUnitPriceText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemTotalWeightText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemUnitWeightText;
 
 	void UpdatePosition();
 };
