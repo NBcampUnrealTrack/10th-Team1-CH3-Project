@@ -15,18 +15,14 @@
 AAttackMissileActor::AAttackMissileActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("Root Scene Comp"));
-	SetRootComponent(RootComp);
-
 	CollisionComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Sphere Collision Comp"));
-	CollisionComp->SetSimulatePhysics(true);
 	CollisionComp->SetCollisionProfileName(TEXT("Missile"));
+	CollisionComp->SetSimulatePhysics(true);
 	CollisionComp->OnComponentHit.AddDynamic(this, &AAttackMissileActor::OnCollisionHit);
-	CollisionComp->SetupAttachment(RootComp);
+	SetRootComponent(CollisionComp);
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Comp"));
-	StaticMeshComp->SetSimulatePhysics(true);
-	StaticMeshComp->SetupAttachment(RootComp);
+	StaticMeshComp->SetupAttachment(CollisionComp);
 }
 
 void AAttackMissileActor::BeginPlay()
@@ -36,6 +32,20 @@ void AAttackMissileActor::BeginPlay()
 
 void AAttackMissileActor::TargetPoint(FVector Point)
 {
+	FVector Start = CollisionComp->GetComponentLocation();
+	FVector ToTarget = Point - Start;
+
+	float Distance = ToTarget.Size();
+	FVector Direction = ToTarget.GetSafeNormal();
+
+	float Speed = Distance / 1.0;
+
+	FVector DesiredVelocity = Direction * Speed;
+
+	FVector CurrentVelocity = CollisionComp->GetPhysicsLinearVelocity();
+	FVector DeltaVelocity = DesiredVelocity - CurrentVelocity;
+
+	CollisionComp->AddImpulse(DeltaVelocity * CollisionComp->GetMass());
 }
 
 void AAttackMissileActor::ExplosionSequnce()
