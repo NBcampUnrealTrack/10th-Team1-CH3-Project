@@ -24,6 +24,10 @@ void UBFLSoundEvent::NoisePlay(FVector Location, float Radius, UObject* WorldCon
 	}
 
 	APawn* Player = UGameplayStatics::GetPlayerPawn(World, 0);
+	if (!Player)
+	{
+		return;
+	}
 
 	UAISense_Hearing::ReportNoiseEvent(World,
 									   Location,
