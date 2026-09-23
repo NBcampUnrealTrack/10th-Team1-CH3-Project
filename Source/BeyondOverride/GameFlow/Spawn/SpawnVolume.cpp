@@ -4,6 +4,7 @@
 
 #include "DataTables/Monster/MonsterInfo.h"
 #include "GameFlow/BOGameInstance.h"
+#include "GameFlow/Manager/ContainerManager.h"
 #include "GameFlow/Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Logging/BOLog.h"
@@ -57,9 +58,10 @@ void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* Oth
 
 			BoxComp->OnComponentBeginOverlap.RemoveDynamic(this, &ASpawnVolume::OnOverlapped);
 			BoxComp->SetGenerateOverlapEvents(false);
-		}
 
-		OnPlayerEntered.ExecuteIfBound(this);
+			SpawnMonsters();
+			ActivateContainers();
+		}
 	}
 	else
 	{
@@ -225,6 +227,14 @@ void ASpawnVolume::SpawnPhaseMonsters()
 	GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
 
 	PhaseIndex += 1;
+}
+
+void ASpawnVolume::ActivateContainers()
+{
+	if (UContainerManager* ContainerManager = GetGameInstance()->GetSubsystem<UContainerManager>())
+	{
+		ContainerManager->ActivateContainers(this);
+	}
 }
 
 FName ASpawnVolume::GetID() const

@@ -7,6 +7,7 @@
 #include "Algo/RandomShuffle.h"
 #include "Factory/ItemFactory.h"
 #include "GameFlow/BOGameInstance.h"
+#include "GameFlow/Spawn/SpawnVolume.h"
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -54,52 +55,22 @@ void UContainerManager::LoadContainerData()
 		return;
 	}
 
-	TArray<FSpawnData*> AllRows{};
-	ContainerDataTable->GetAllRows<FSpawnData>(TEXT("Get All Container Datas"), AllRows);
+	TArray<FContainerData*> AllRows{};
+	ContainerDataTable->GetAllRows<FContainerData>(TEXT("Get All Container Datas"), AllRows);
 
-	for (FSpawnData* Row : AllRows)
+	for (FContainerData* Row : AllRows)
 	{
 		if (Row)
 		{
-			FName ID = Row->ID;
-			ContainerDatas.Add(ID, *Row);
+			FName RegionID = Row->RegionID;
+			ContainerDatas.Add(RegionID, *Row);
 		}
 	}
 }
 
 void UContainerManager::InitSetting()
 {
-	ContainerByRegion.Empty();
 	bShouldSpawnKeyCard = !IsKeyCardAcquired();
-
-	if (!GetWorld())
-	{
-		return;
-	}
-
-	TArray<AActor*> AllActors{};
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AStorageContainerActor::StaticClass(), AllActors);
-
-	for (AActor* Actor : AllActors)
-	{
-		AStorageContainerActor* Container = Cast<AStorageContainerActor>(Actor);
-
-		FName ContainerID = Container->GetStorageContainerID();
-
-		if (ContainerDatas.Contains(ContainerID))
-		{
-			FName RegionID = ContainerDatas[ContainerID].RegionID;
-
-			if (!ContainerByRegion.Contains(RegionID))
-			{
-				ContainerByRegion.Add(RegionID);
-			}
-
-			ContainerByRegion[RegionID].Add(Container);
-		}
-	}
-
-	ActivateContainer();
 }
 
 bool UContainerManager::IsKeyCardAcquired() const
@@ -168,74 +139,67 @@ bool UContainerManager::HasStorageKeyCard() const
 	return false;
 }
 
-void UContainerManager::ActivateContainer()
+void UContainerManager::ActivateContainers(TObjectPtr<ASpawnVolume> OverlappedSpawnVolume)
 {
-	if (!GameInstance)
+	if (!IsValid(OverlappedSpawnVolume))
 	{
 		return;
 	}
 
-	URegionManager* RegionManager = GameInstance->GetSubsystem<URegionManager>();
-	if (!RegionManager)
+	FName RegionID = OverlappedSpawnVolume->GetRegionID();
+
+	if (!ContainerDatas.Contains(RegionID))
 	{
 		return;
 	}
 
-	for (const TPair<FName, TArray<TObjectPtr<AStorageContainerActor>>>& Pair : ContainerByRegion)
+	FContainerData ContainerData = ContainerDatas[RegionID];
+	float Prob = ContainerData.ContainerActivateProb;
+
+	TArray<TObjectPtr<AStorageContainerActor>> Containers{};
+
+	TArray<AActor*> AllActors{};
+	OverlappedSpawnVolume->GetOverlappingActors(AllActors, AStorageContainerActor::StaticClass());
+
+	for (AActor* Actor : AllActors)
 	{
-		FName RegionID = Pair.Key;
-		TArray<TObjectPtr<AStorageContainerActor>> Containers = Pair.Value;
-
-		FRegionData RegionData{};
-		if (!RegionManager->GetRegiondata(RegionID, RegionData))
+		if (AStorageContainerActor* Container = Cast<AStorageContainerActor>(Actor))
 		{
-			return;
+			Containers.Add(Container);
 		}
+	}
 
-		float Prob = RegionData.ContainerActivateProb;
-		int32 Size = Containers.Num();
-		int32 Count = FMath::RoundToInt(Size * Prob);
+	int32 Size = Containers.Num();
+	int32 Count = FMath::RoundToInt(Size * Prob);
 
-		Algo::RandomShuffle(Containers);
+	Algo::RandomShuffle(Containers);
 
-		for (int i = 0; i < Count; i++)
-		{
-			TObjectPtr<AStorageContainerActor> Container = Containers[i];
+	for (int i = 0; i < Count; i++)
+	{
+		TObjectPtr<AStorageContainerActor> Container = Containers[i];
 
-			TArray<TObjectPtr<UItemInstanceBase>> Items{};
-			GetSpawnItems(Container, Items);
+		TArray<TObjectPtr<UItemInstanceBase>> Items{};
+		GetSpawnItems(ContainerData, Items);
 
-			Container->SetItems(Items);
-		}
+		Container->SetItems(Items);
+	}
 
-		for (int i = Count; i < Size; i++)
-		{
-			TObjectPtr<AStorageContainerActor> Container = Containers[i];
+	for (int i = Count; i < Size; i++)
+	{
+		TObjectPtr<AStorageContainerActor> Container = Containers[i];
 
-			TArray<TObjectPtr<UItemInstanceBase>> Items{};
-			TObjectPtr<UItemInstanceBase> Item = GetSpawnItem(Container);
-			Items.Add(Item);
+		TArray<TObjectPtr<UItemInstanceBase>> Items{};
+		TObjectPtr<UItemInstanceBase> Item = GetSpawnItem(ContainerData);
+		Items.Add(Item);
 
-			Container->SetItems(Items);
-		}
+		Container->SetItems(Items);
 	}
 }
 
-void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<TObjectPtr<UItemInstanceBase>>& Items)
+void UContainerManager::GetSpawnItems(const FContainerData ContainerData, TArray<TObjectPtr<UItemInstanceBase>>& Items)
 {
-	if (!Container)
-	{
-		return;
-	}
-
 	Items.Empty();
 	TMap<FName, int32> SpawnItems{};
-
-	FSpawnData ContainerData{};
-	if (!GetContainerData(Container->GetStorageContainerID(), ContainerData))
-	{
-		return;
-	}
 
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	int32 Count = FMath::RandRange(ContainerData.MinSpawnCount, ContainerData.MaxSpawnCount);
@@ -268,19 +232,8 @@ void UContainerManager::GetSpawnItems(AStorageContainerActor* Container, TArray<
 	}
 }
 
-TObjectPtr<UItemInstanceBase> UContainerManager::GetSpawnItem(AStorageContainerActor* Container)
+TObjectPtr<UItemInstanceBase> UContainerManager::GetSpawnItem(const FContainerData& ContainerData)
 {
-	if (!Container)
-	{
-		return nullptr;
-	}
-
-	FSpawnData ContainerData{};
-	if (!GetContainerData(Container->GetStorageContainerID(), ContainerData))
-	{
-		return nullptr;
-	}
-
 	TArray<FSpawnEntry> SpawnEntries = ContainerData.SpawnEntries;
 	FName ItemID = GetRandomSpawnItem(SpawnEntries);
 
@@ -347,20 +300,7 @@ FName UContainerManager::GetRandomSpawnItem(const TArray<FSpawnEntry>& SpawnEntr
 	return Default;
 }
 
-bool UContainerManager::GetContainerData(FName ContainerID, FSpawnData& Data) const
-{
-	if (ContainerDatas.Contains(ContainerID))
-	{
-		Data = ContainerDatas[ContainerID];
-
-		return true;
-	}
-
-	return false;
-}
-
 void UContainerManager::CleanSetting()
 {
-	ContainerDatas.Empty();
-	ContainerByRegion.Empty();
+	bShouldSpawnKeyCard = false;
 }

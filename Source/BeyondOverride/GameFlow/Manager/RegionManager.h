@@ -17,16 +17,7 @@ class BEYONDOVERRIDE_API URegionManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-  private:
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-
-	void LoadRegionData();
-
   public:
 	void InitSetting();
 	void CleanSetting();
-	bool GetRegiondata(FName RegionId, FRegionData& Data) const;
-
-  private:
-	TMap<FName, FRegionData> RegionDatas;
 };
