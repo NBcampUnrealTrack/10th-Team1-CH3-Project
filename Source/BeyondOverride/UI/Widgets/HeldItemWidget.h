@@ -26,4 +26,6 @@ class BEYONDOVERRIDE_API UHeldItemWidget : public UItemSlotWidget
 
 	UFUNCTION()
 	void OnHoldItemChanged(const UItemInstanceBase* HoldItem);
+
+	void UpdatePosition();
 };

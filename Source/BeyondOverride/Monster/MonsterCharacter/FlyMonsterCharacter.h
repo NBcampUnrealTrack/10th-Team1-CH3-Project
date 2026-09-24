@@ -24,7 +24,8 @@ class BEYONDOVERRIDE_API AFlyMonsterCharacter : public ACharacter
   protected:
 	virtual void BeginPlay() override;
 
-	TArray<FVector> TestNav(const FVector& TargetLocation, const FVector& StartLocation);
+	TArray<FVector> TestNav(const FVector& TargetLocation,
+							const FVector& StartLocation);
 
 	void MoveFlying(const FVector& TargetLocation);
 
@@ -35,7 +36,13 @@ class BEYONDOVERRIDE_API AFlyMonsterCharacter : public ACharacter
 							FRotator TargetRotation,
 							float& Distance);
 
+	void FlyChange();
+
   public:
+	bool Mod = false;
+
 	UPROPERTY(VisibleAnywhere, Category = "Monster|NavCheck")
 	TArray<FVector> Paths;
+
+	FTimerHandle ChangeTimer;
 };

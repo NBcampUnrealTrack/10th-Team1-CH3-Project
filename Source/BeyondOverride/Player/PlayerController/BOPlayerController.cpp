@@ -1,5 +1,9 @@
 ﻿#include "Player/PlayerController/BOPlayerController.h"
+
 #include "EnhancedInputSubsystems.h"
+
+#include "GameFlow/BOGameInstance.h"
+#include "Logging/BOLog.h"
 #include "UI/Manager/UIManager.h"
 
 ABOPlayerController::ABOPlayerController()
@@ -20,6 +24,19 @@ void ABOPlayerController::BeginPlay()
 			}
 		}
 	}
+
+	/*if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			if (GameInstance->GetIsLevelPreparing())
+			{
+				UE_LOG(LogGameFlow, Warning, TEXT("Level Prepared"));
+
+				GameInstance->OnLevelPrepared();
+			}
+		}
+	}*/
 
 	/*
 	if (UUIManager* UIManager = UUIManager::Get(this))

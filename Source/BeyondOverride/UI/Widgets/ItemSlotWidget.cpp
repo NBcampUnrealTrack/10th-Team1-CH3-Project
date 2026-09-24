@@ -2,6 +2,7 @@
 
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "DataAssets/ItemRarityStyleDataAsset.h"
 #include "DataTables/Items/ItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
 #include "Items/Objects/ItemInstanceBase.h"
@@ -9,11 +10,15 @@
 
 void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 {
+	SlotData = Item;
+
 	if (Item && Item->GetItemData())
 	{
+		const FItemDataRow* ItemData = Item->GetItemData();
+
 		if (IconImage)
 		{
-			UTexture2D* Icon = Item->GetItemData()->ItemIcon;
+			UTexture2D* Icon = ItemData->ItemIcon;
 
 			if (bUseLongImg)
 			{
@@ -37,12 +42,32 @@ void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 		{
 			if (Item->GetStackCount() > 1)
 			{
-				CountText->SetText(FText::AsNumber(Item->GetStackCount()));
+				CountText->SetText(FText::FromString(TEXT("x") + FString::FromInt(Item->GetStackCount())));
 				CountText->SetVisibility(ESlateVisibility::HitTestInvisible);
 			}
 			else
 			{
 				CountText->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
+
+		if (ItemRarity)
+		{
+			if (!bShowRarity || ItemData->ItemRarity == EItemRarity::Common || !RarityStyleData)
+			{
+				ItemRarity->SetVisibility(ESlateVisibility::Collapsed);
+			}
+			else
+			{
+				if (const FSlateBrush* FoundBrush = RarityStyleData->RarityBrushMap.Find(ItemData->ItemRarity))
+				{
+					ItemRarity->SetVisibility(ESlateVisibility::Visible);
+					ItemRarity->SetBrush(*FoundBrush);
+				}
+				else
+				{
+					ItemRarity->SetVisibility(ESlateVisibility::Collapsed);
+				}
 			}
 		}
 	}
@@ -56,7 +81,16 @@ void UItemSlotWidget::SetItem(UItemInstanceBase* Item, bool bUseLongImg)
 		{
 			CountText->SetVisibility(ESlateVisibility::Collapsed);
 		}
+		if (ItemRarity)
+		{
+			ItemRarity->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
+}
+
+void UItemSlotWidget::SetShowRarity(bool bInShowRarity)
+{
+	bShowRarity = bInShowRarity;
 }
 
 FReply UItemSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -73,4 +107,14 @@ FReply UItemSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 	}
 
 	return FReply::Unhandled();
+}
+
+void UItemSlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	OnSlotHovered.Broadcast(true, SlotData);
+}
+
+void UItemSlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	OnSlotHovered.Broadcast(false, nullptr);
 }

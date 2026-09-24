@@ -2,8 +2,11 @@
 
 #include "DataAssets/BODataAsset.h"
 
-void UBODataAsset::GetLevels(TMap<ELevel, FName>& Data) const
+#include "Logging/BOLog.h"
+
+void UBODataAsset::GetLevels(TMap<ELevel, TSoftObjectPtr<UWorld>>& Data) const
 {
+	UE_LOG(LogGameFlow, Warning, TEXT("Get Levels"));
 	Data = Levels;
 }
 
@@ -15,6 +18,36 @@ void UBODataAsset::GetRegions(TArray<FName>& Data) const
 void UBODataAsset::GetBasicEquipments(TArray<FName>& Data) const
 {
 	Data = BasicEquipments;
+}
+
+TSubclassOf<ULoadingScreenWidget> UBODataAsset::GetLoadingScreenWidgetClass() const
+{
+	return LoadingScreenWidgetClass;
+}
+
+void UBODataAsset::GetLoadingImages(TArray<TObjectPtr<UTexture2D>>& Images) const
+{
+	Images = LoadingImages;
+}
+
+float UBODataAsset::GetLoadingScreenUpdateTime() const
+{
+	return LoadingScreenUpdateTime;
+}
+
+float UBODataAsset::GetLoadingImageChangeTime() const
+{
+	return LoadingImageChangeTime;
+}
+
+float UBODataAsset::GetLoadingImageUpdateInterval() const
+{
+	return LoadingImageUpdateInterval;
+}
+
+float UBODataAsset::GetLoadingProgressUpdateInterval() const
+{
+	return LoadingProgressUpdateInterval;
 }
 
 FName UBODataAsset::GetKeyCardID() const
@@ -30,11 +63,6 @@ float UBODataAsset::GetExitActivateProb() const
 float UBODataAsset::GetTotalDefenseTime() const
 {
 	return TotalDefenseTime;
-}
-
-UDataTable* UBODataAsset::GetRegionDataTable() const
-{
-	return RegionDataTable;
 }
 
 UDataTable* UBODataAsset::GetSpawnVolumeDataTable() const

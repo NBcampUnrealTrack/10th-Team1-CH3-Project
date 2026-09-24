@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -30,6 +30,7 @@ class ABulletProjectile : public AProjectileBase
   protected:
 	virtual void BeginPlay() override;
 
+	// Hit 이벤트
 	UFUNCTION()
 	virtual void OnHit(
 		UPrimitiveComponent* HitComponent,
@@ -37,4 +38,16 @@ class ABulletProjectile : public AProjectileBase
 		UPrimitiveComponent* OtherComp,
 		FVector NormalImpulse,
 		const FHitResult& Hit);
+	// Begin Overlap 이벤트
+	UFUNCTION()
+	virtual void OnBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	// 총알 피격 처리
+	virtual void HandleImpact(AActor* OtherActor, const FHitResult& Hit);
 };

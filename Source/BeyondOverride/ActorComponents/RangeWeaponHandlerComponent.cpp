@@ -1,10 +1,10 @@
 ﻿#include "ActorComponents/RangeWeaponHandlerComponent.h"
 
+#include "Animation/AnimInstance.h"
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
 #include "Enums/FireMode.h"
-#include "Animation/AnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
@@ -54,6 +54,17 @@ void URangeWeaponHandlerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 	// 누적에 반영
 	RecoilAccumulator -= RecoilDelta;
+}
+
+float URangeWeaponHandlerComponent::GetCurrentSpreadDegree() const
+{
+	float SpreadDegree = 0.f;
+	if (UCurveFloat* SpreadCurve = RangeWeaponData->SpreadCurve)
+	{
+		SpreadDegree = SpreadCurve->GetFloatValue(SpreadDegreeTimeline.GetPlaybackPosition());
+	}
+
+	return SpreadDegree;
 }
 
 bool URangeWeaponHandlerComponent::Assign(UEquippableItemInstance* InEquippableItemInstance)
@@ -157,7 +168,7 @@ bool URangeWeaponHandlerComponent::Unequip()
 	}
 
 	//// 재장전 중이면 취소
-	//OnReloadInterrupted();
+	// OnReloadInterrupted();
 
 	EndAction();
 
@@ -268,10 +279,10 @@ bool URangeWeaponHandlerComponent::CanUnequip() const
 	}
 
 	//// 사용 중
-	//if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	// if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
 	//{
 	//	return false;
-	//}
+	// }
 
 	return true;
 }
@@ -329,6 +340,9 @@ void URangeWeaponHandlerComponent::Fire()
 
 	// 사격 실행 델리게이트 송출
 	OnFireExecutedDelegate.Broadcast();
+
+	// 사격 후 탄약 개수 델리게이트 송출
+	OnAmmoCountUpdatedDelegate.Broadcast(RangeWeaponInstance->GetCurrentAmmo());
 
 	// 사격 디버그 메시지 출력
 	GEngine->AddOnScreenDebugMessage(2002, 5.0f, FColor::Blue, FString::Printf(TEXT("Fire - %d / %d"), RangeWeaponInstance->GetCurrentAmmo(), RangeWeaponInstance->GetMagazineSize()));
@@ -527,8 +541,8 @@ FRotator URangeWeaponHandlerComponent::GetAimRotation() const
 
 	// 목표 위치
 	const FVector AimLocation = HitResult.bBlockingHit
-		? HitResult.ImpactPoint
-		: EndLocation;
+									? HitResult.ImpactPoint
+									: EndLocation;
 
 	// 총구 방향 구하기
 	const FRotator AimRotation = UKismetMathLibrary::FindLookAtRotation(
@@ -578,8 +592,8 @@ FRotator URangeWeaponHandlerComponent::GetSpreadRotation(const FRotator& AimRota
 
 	// 원뿔 내 균일 분포
 	return FMath::VRandCone(
-		AimRotation.Vector(),
-		SpreadRadians)
+			   AimRotation.Vector(),
+			   SpreadRadians)
 		.Rotation();
 }
 
@@ -731,12 +745,12 @@ void URangeWeaponHandlerComponent::OnFireCompleted()
 	const EFireMode FireMode = RangeWeaponData->FireMode;
 
 	// 활성화 & FullAuto -> 반복 사격
-	if (bIsActive && FireMode == EFireMode::FullAuto)
+	if (CanFire() && bIsActive && FireMode == EFireMode::FullAuto)
 	{
 		// 사격
 		Fire();
 	}
-	else // 사격 종료
+	else
 	{
 		// 반동 & 탄 퍼짐 타임라인 역재생 - 회복
 		PlayTimeline(true);
@@ -778,6 +792,9 @@ void URangeWeaponHandlerComponent::OnReloadCompleted()
 
 	// 탄약 추가
 	RangeWeaponInstance->AddAmmo(AddedAmmo);
+
+	// 재장전 후 탄약 개수 델리게이트 송출
+	OnAmmoCountUpdatedDelegate.Broadcast(RangeWeaponInstance->GetCurrentAmmo());
 
 	if (bIsActive)
 	{

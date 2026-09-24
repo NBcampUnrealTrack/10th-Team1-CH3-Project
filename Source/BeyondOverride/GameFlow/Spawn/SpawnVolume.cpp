@@ -4,6 +4,7 @@
 
 #include "DataTables/Monster/MonsterInfo.h"
 #include "GameFlow/BOGameInstance.h"
+#include "GameFlow/Manager/ContainerManager.h"
 #include "GameFlow/Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Logging/BOLog.h"
@@ -33,7 +34,6 @@ void ASpawnVolume::BeginPlay()
 	{
 		if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 		{
-			UE_LOG(LogGameFlow, Warning, TEXT("Set Spawn Volume Data"));
 			SpawnVolumeManager->GetSpawnVolumeData(ID, SpawnVolumeData);
 			SpawnVolumeManager->GetPhaseData(ID, PhaseData);
 		}
@@ -61,9 +61,10 @@ void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* Oth
 
 			BoxComp->OnComponentBeginOverlap.RemoveDynamic(this, &ASpawnVolume::OnOverlapped);
 			BoxComp->SetGenerateOverlapEvents(false);
-		}
 
-		OnPlayerEntered.ExecuteIfBound(this);
+			SpawnMonsters();
+			ActivateContainers();
+		}
 	}
 	else
 	{
@@ -78,9 +79,9 @@ void ASpawnVolume::SpawnMonsters()
 
 	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : %s"), *ID.ToString());
 	UE_LOG(LogGameFlow, Warning, TEXT("Count : %d"), Count);
+
 	for (int i = 0; i < Count; i++)
 	{
-		UE_LOG(LogGameFlow, Warning, TEXT("Spawn Random Monster"));
 		SpawnRandomMonster(SpawnEntries, SpawnMinRadius);
 	}
 }
@@ -159,7 +160,6 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 		if (Sum >= Prob)
 		{
 			FName MonsterID = SpawnEntry.ID;
-			UE_LOG(LogGameFlow, Warning, TEXT("Spawned Monster : %s"), *MonsterID.ToString());
 
 			// Get Monster Data
 			FMonsterInfo MonsterData{};
@@ -230,6 +230,21 @@ void ASpawnVolume::SpawnPhaseMonsters()
 	GetWorld()->GetTimerManager().SetTimer(PhaseTimer, this, &ASpawnVolume::StartPhase, Duration, false);
 
 	PhaseIndex += 1;
+}
+
+void ASpawnVolume::ActivateContainers()
+{
+	if (!GetGameInstance())
+	{
+		return;
+	}
+
+	if (UContainerManager* ContainerManager = GetGameInstance()->GetSubsystem<UContainerManager>())
+	{
+		UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : Activate Containers"));
+
+		ContainerManager->ActivateContainers(this);
+	}
 }
 
 FName ASpawnVolume::GetID() const

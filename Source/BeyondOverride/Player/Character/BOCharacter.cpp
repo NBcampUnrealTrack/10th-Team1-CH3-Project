@@ -6,10 +6,10 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
-#include "DataTables/Items/EquippableItemDataRow.h"
-#include "DataTables/Items/UtilityItemDataRow.h"
 #include "DataTables/Items/BackpackDataRow.h"
+#include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/ShieldDataRow.h"
+#include "DataTables/Items/UtilityItemDataRow.h"
 #include "Enums/EquipmentSlot.h"
 #include "Enums/UtilityType.h"
 #include "Factory/ItemFactory.h"
@@ -19,12 +19,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/InteractComponent.h"
 #include "Items/Actors/ItemPickupBase.h"
+#include "Items/Objects/BackpackInstance.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/MeleeWeaponInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
-#include "Items/Objects/ThrowableItemInstance.h"
-#include "Items/Objects/BackpackInstance.h"
 #include "Items/Objects/ShieldInstance.h"
+#include "Items/Objects/ThrowableItemInstance.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/CharacterPreviewComponent.h"
 #include "Player/ActorComponent/EquipmentComponent.h"
@@ -139,9 +139,9 @@ void ABOCharacter::BeginPlay()
 			}
 		}
 
-		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
 		{
-			GameMode->InitSetting();
+			GameInstance->OnCharacterPrepared();
 		}
 	}
 }
@@ -669,6 +669,8 @@ void ABOCharacter::Hip(const FInputActionValue& value)
 void ABOCharacter::StartAiming()
 {
 	bIsAiming = true;
+	SpeedMultiplier = 0.75f;
+	ChangeMoveSpeed();
 
 	// 장비 조준 활성화
 	if (EquipmentManagerComponent)
@@ -680,6 +682,8 @@ void ABOCharacter::StartAiming()
 void ABOCharacter::StopAiming()
 {
 	bIsAiming = false;
+	SpeedMultiplier = 1.0f;
+	ChangeMoveSpeed();
 
 	// 장비 조준 비활성화
 	if (EquipmentManagerComponent)
@@ -690,11 +694,16 @@ void ABOCharacter::StopAiming()
 
 void ABOCharacter::InteractPress(const FInputActionValue& value)
 {
+	if (!CanUseGameplayInput())
+	{
+		return;
+	}
+
 	if (IsValid(InteractComponent))
 	{
 		InteractComponent->PressInteract();
 
-		// TEMP: 장비 획득 및 장착
+		// 장비 획득 및 장착
 		if (AItemPickupBase* ItemPickup = Cast<AItemPickupBase>(InteractComponent->GetFocusedActor()))
 		{
 			if (UItemInstanceBase* ItemInstance = ItemPickup->GetItemInstance())
@@ -951,8 +960,6 @@ void ABOCharacter::OnShieldValueChanged(int32 CurrentShield, int32 MaxShield)
 
 void ABOCharacter::OnMenuOpenStateChanged(bool bAnyMenuOpen)
 {
-	bGameplayInputEnabled = !bAnyMenuOpen;
-
 	if (bAnyMenuOpen)
 	{
 		StopGameplayActions();
@@ -1188,9 +1195,11 @@ void ABOCharacter::BindingEquipmentManagerComponentDelegates()
 	EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &ABOCharacter::OnActiveSlotChanged);
 
 	// Primary & Secondary (Range Weapon)
+	EquipmentManagerComponent->OnSpreadDegreeUpdatedDelegate.AddUObject(this, &ABOCharacter::OnSpreadDegreeUpdated);
 	EquipmentManagerComponent->OnFireExecutedDelegate.AddUObject(this, &ABOCharacter::OnFireExecuted);
 	EquipmentManagerComponent->CanReloadDelegate.BindUObject(this, &ABOCharacter::CanReload);
 	EquipmentManagerComponent->RequestReloadAmmoDelegate.BindUObject(this, &ABOCharacter::RequestReloadAmmo);
+	EquipmentManagerComponent->OnRangeWeaponAmmoCountUpdatedDelegate.AddUObject(this, &ABOCharacter::OnRangeWeaponAmmoCountUpdated);
 
 	// Throwable & Utility
 	EquipmentManagerComponent->OnEquipmentCountUpdatedDelegate.AddUObject(this, &ABOCharacter::OnEquipmentCountUpdated);
@@ -1231,7 +1240,14 @@ void ABOCharacter::OnActiveSlotChanged(EEquipmentSlot Slot, UEquippableItemInsta
 	}
 }
 
-void ABOCharacter::OnFireExecuted() const
+void ABOCharacter::OnSpreadDegreeUpdated(float SpreadDegree)
+{
+	// TODO: 다이나믹 크로스헤어 UI에 현재 탄 퍼짐 각도 전달
+
+	GEngine->AddOnScreenDebugMessage(5000, 5.0f, FColor::White, FString::Printf(TEXT("현재 탄 퍼짐 각도 - %.3f"), SpreadDegree));
+}
+
+void ABOCharacter::OnFireExecuted()
 {
 	if (!GetMesh() || !GetMesh()->GetAnimInstance())
 	{
@@ -1333,6 +1349,13 @@ int32 ABOCharacter::RequestReloadAmmo(const FName& AmmoItemID, const int32 Reque
 	}
 
 	return SuppliedAmmoCount;
+}
+
+void ABOCharacter::OnRangeWeaponAmmoCountUpdated(EEquipmentSlot Slot, const int32 AmmoCount)
+{
+	// TODO: AmmoCount로 탄약 개수 UI 업데이트
+
+	GEngine->AddOnScreenDebugMessage(10000, 5.0f, FColor::White, FString::Printf(TEXT("현재 탄약 개수 - %d"), AmmoCount));
 }
 
 void ABOCharacter::OnEquipmentCountUpdated(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance)
@@ -1525,18 +1548,37 @@ void ABOCharacter::OnRollMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 
-	if (IsValid(MovementComponent))
+	if (!IsValid(MovementComponent))
+	{
+		return;
+	}
+
+	if (MoveInput.IsNearlyZero())
 	{
 		MovementComponent->Velocity.X = 0.0f;
 		MovementComponent->Velocity.Y = 0.0f;
+		return;
 	}
+
+	FVector MoveDirection = GetActorForwardVector() * MoveInput.X + GetActorRightVector() * MoveInput.Y;
+
+	MoveDirection.Z = 0.0f;
+	MoveDirection.Normalize();
+
+	const FVector NewVelocity = MoveDirection * MovementComponent->GetMaxSpeed();
+
+	MovementComponent->Velocity.X = NewVelocity.X;
+	MovementComponent->Velocity.Y = NewVelocity.Y;
 }
 
 bool ABOCharacter::CanUseGameplayInput() const
 {
-	if (!bGameplayInputEnabled)
+	if (const UUIManager* UIManager = UUIManager::Get(this))
 	{
-		return false;
+		if (UIManager->IsAnyMenuOpen())
+		{
+			return false;
+		}
 	}
 
 	if (IsValid(StatComponent) && StatComponent->GetIsDead())

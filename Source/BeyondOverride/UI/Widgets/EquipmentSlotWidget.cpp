@@ -24,6 +24,8 @@ void UEquipmentSlotWidget::NativeConstruct()
 	if (ItemSlot)
 	{
 		ItemSlot->OnSlotClicked.AddDynamic(this, &UEquipmentSlotWidget::HandleItemSlotClicked);
+
+		ItemSlot->SetShowRarity(bShowRarity);
 	}
 }
 
@@ -38,6 +40,7 @@ void UEquipmentSlotWidget::NativeDestruct()
 	if (EquipmentManagerComponent)
 	{
 		EquipmentManagerComponent->OnActiveSlotChangedDelegate.RemoveAll(this);
+		EquipmentManagerComponent->OnRangeWeaponAmmoCountUpdatedDelegate.RemoveAll(this);
 	}
 
 	Super::NativeDestruct();
@@ -71,10 +74,17 @@ void UEquipmentSlotWidget::SetupEquipmentSlot(
 	if (EquipmentManagerComponent)
 	{
 		EquipmentManagerComponent->OnActiveSlotChangedDelegate.AddUObject(this, &UEquipmentSlotWidget::OnActiveSlotChanged);
+
+		EquipmentManagerComponent->OnRangeWeaponAmmoCountUpdatedDelegate.AddUObject(this, &UEquipmentSlotWidget::OnRangeWeaponAmmoCountUpdated);
 	}
 
 	RefreshItem();
 	RefreshEquippedBadge();
+}
+
+void UEquipmentSlotWidget::SetShowRarity(bool bInShowRarity)
+{
+	bShowRarity = bInShowRarity;
 }
 
 void UEquipmentSlotWidget::OnEquipmentSlotChanged(EEquipmentSlot ChangedSlot, UItemInstanceBase* ItemInstanceBase)
@@ -94,6 +104,19 @@ void UEquipmentSlotWidget::OnInventoryChanged(const TArray<UItemInstanceBase*>& 
 void UEquipmentSlotWidget::OnActiveSlotChanged(EEquipmentSlot ChangedSlot, UEquippableItemInstance* ItemInstance)
 {
 	RefreshEquippedBadge();
+}
+
+void UEquipmentSlotWidget::OnRangeWeaponAmmoCountUpdated(EEquipmentSlot FiredSlot, int32 AmmoCount)
+{
+	if (FiredSlot != EquipmentSlot)
+		return;
+
+	const FText AmmoText = FText::AsNumber(AmmoCount);
+
+	if (CurrentAmmoCount)
+		CurrentAmmoCount->SetText(AmmoText);
+	if (CurrentAmmoCountInBody)
+		CurrentAmmoCountInBody->SetText(AmmoText);
 }
 
 void UEquipmentSlotWidget::RefreshEquippedBadge()
@@ -153,26 +176,6 @@ void UEquipmentSlotWidget::RefreshItem()
 	if (WpnAmmoType)
 	{
 		WpnAmmoType->SetText(FText::GetEmpty());
-	}
-}
-
-void UEquipmentSlotWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (CurrentAmmoCount && InventoryComponent)
-	{
-		if (URangeWeaponInstance* Weapon = Cast<URangeWeaponInstance>(InventoryComponent->GetEquipmentItem(EquipmentSlot)))
-		{
-			CurrentAmmoCount->SetText(FText::AsNumber(Weapon->GetCurrentAmmo()));
-		}
-	}
-	if (CurrentAmmoCountInBody && InventoryComponent)
-	{
-		if (URangeWeaponInstance* Weapon = Cast<URangeWeaponInstance>(InventoryComponent->GetEquipmentItem(EquipmentSlot)))
-		{
-			CurrentAmmoCountInBody->SetText(FText::AsNumber(Weapon->GetCurrentAmmo()));
-		}
 	}
 }
 

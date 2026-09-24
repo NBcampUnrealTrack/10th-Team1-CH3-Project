@@ -28,10 +28,12 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 		UInventoryInteractionComponent* InInteraction,
 		UEquipmentManagerComponent* InEquipmentManager);
 
+	UFUNCTION(BlueprintCallable, Category = "Rarity")
+	void SetShowRarity(bool bInShowRarity);
+
   protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UItemSlotWidget> ItemSlot;
@@ -60,6 +62,9 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	TObjectPtr<UWidget> WBP_Equipped;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+	bool bShowRarity = true;
+
   private:
 	TMap<int32, FString> SlotEmptyNameMap = {
 		{1, TEXT("주무기")},
@@ -86,6 +91,8 @@ class BEYONDOVERRIDE_API UEquipmentSlotWidget : public UUserWidget
 	void OnInventoryChanged(const TArray<UItemInstanceBase*>& Slots);
 
 	void OnActiveSlotChanged(EEquipmentSlot ChangedSlot, UEquippableItemInstance* ItemInstance);
+
+	void OnRangeWeaponAmmoCountUpdated(EEquipmentSlot FiredSlot, int32 AmmoCount);
 
 	UFUNCTION()
 	void HandleItemSlotClicked(int32 SlotIndex, bool bLeftClick);

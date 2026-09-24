@@ -6,6 +6,7 @@
 // Add include
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 AFlyMonsterCharacter::AFlyMonsterCharacter()
@@ -18,7 +19,6 @@ AFlyMonsterCharacter::AFlyMonsterCharacter()
 		Movement->GravityScale = 0.0f;
 		Movement->SetMovementMode(MOVE_Flying);
 		Movement->DefaultLandMovementMode = MOVE_Flying;
-		Movement->SetPlaneConstraintEnabled(false);
 		Movement->bOrientRotationToMovement = true;
 		Movement->RotationRate = FRotator(540.0f, 540.0f, 0.0f);
 	}
@@ -30,10 +30,19 @@ void AFlyMonsterCharacter::Tick(float DeltaSecond)
 
 	if (Paths.IsEmpty())
 	{
+		APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+		if (!Player)
+		{
+			return;
+		}
 
-		FVector TargetLocation = FVector(FMath::RandRange(-5000.0f, 5000.0f),
-										 FMath::RandRange(-5000.0f, 5000.0f),
-										 FMath::RandRange(100.0f, 500.0f));
+		FVector TargetLocation = Player->GetActorLocation();
+		TargetLocation.X += FMath::FRandRange(-900.0f, 900.0f);
+		TargetLocation.Y += FMath::FRandRange(-900.0f, 900.0f);
+		TargetLocation.Z = FMath::FRandRange(TargetLocation.Z + 300.0f, TargetLocation.Z + 500.0f);
+
+		// FVector TargetLocation = Player->GetActorLocation();
+		// TargetLocation.Z = TargetLocation.Z + 230.0f;
 
 		uint32 loop = 0;
 
@@ -68,11 +77,13 @@ void AFlyMonsterCharacter::Tick(float DeltaSecond)
 void AFlyMonsterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	// GetWorld()->GetTimerManager().SetTimer(ChangeTimer,
+	//									   this,
+	//									   &AFlyMonsterCharacter::FlyChange,
+	//									   5.0f,
+	//									   true);
 }
 
-// 자료 저장은 2개 장애물 없을 시 Start부터 End까지 반환
-// 장애물 있을 시 우회 시작부터 끝까지 반환
-// 우회 중 장애물 충돌시 이동 가능 지점을 End로 반환
 TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, const FVector& StartLocation)
 {
 
@@ -94,8 +105,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 	bool bHit = UKismetSystemLibrary::CapsuleTraceSingle(this,
 														 Start,
 														 End,
-														 TraceRadius * 1.4, // Radius
-														 TraceRadius * 1.4, // Half Height
+														 TraceRadius, // Radius
+														 TraceRadius, // Half Height
 														 UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 														 false,             // Complex
 														 TArray<AActor*>(), // Ignore Actors
@@ -121,8 +132,6 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 		{
 			return Path;
 		}
-
-		FVector WallWorldOrigin = WallCollision->Bounds.Origin;
 
 		FBoxSphereBounds WallBounds = WallCollision->CalcLocalBounds();
 
@@ -174,22 +183,22 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 													WallRotation,
 													EndTwo);
 
-			WallEndFirst = WallEndFirst + (WallSideDirection1 * loop) * (TraceRadius * 1.4 / 2);
-			WallEndSecond = WallEndSecond + (WallSideDirection2 * loop) * (TraceRadius * 1.4 / 2);
+			WallEndFirst = WallEndFirst + (WallSideDirection1 * loop) * (TraceRadius / 2);
+			WallEndSecond = WallEndSecond + (WallSideDirection2 * loop) * (TraceRadius / 2);
 
 			TArray<FVector> WallEndCheck;
 			TArray<float> WallEndCheckDistance;
 
 			float CheckDistance = FVector::Distance(WallEndFirst, FVector(0.0f, 0.0f, 0.0f));
 
-			if (CheckDistance < 10000000.0f)
+			if (CheckDistance < 100000.0f)
 			{
 				WallEndCheck.Add(WallEndFirst);
 				WallEndCheckDistance.Add(EndOne);
 			}
 
 			CheckDistance = FVector::Distance(WallEndSecond, FVector(0.0f, 0.0f, 0.0f));
-			if (CheckDistance < 10000000.0f)
+			if (CheckDistance < 100000.0f)
 			{
 				WallEndCheck.Add(WallEndSecond);
 				WallEndCheckDistance.Add(EndTwo);
@@ -208,8 +217,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 				bool Trace1 = UKismetSystemLibrary::CapsuleTraceSingle(this,
 																	   Start,
 																	   WallEndCheck[Check],
-																	   TraceRadius * 1.4, // Radius
-																	   TraceRadius * 1.4, // Half Height
+																	   TraceRadius, // Radius
+																	   TraceRadius, // Half Height
 																	   UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																	   false,             // Complex
 																	   TArray<AActor*>(), // Ignore Actors
@@ -220,8 +229,8 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 				bool Trace2 = UKismetSystemLibrary::CapsuleTraceSingle(this,
 																	   HitResult.ImpactPoint,
 																	   WallEndCheck[Check],
-																	   TraceRadius * 1.4, // Radius
-																	   TraceRadius * 1.4, // Half Height
+																	   TraceRadius, // Radius
+																	   TraceRadius, // Half Height
 																	   UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																	   false,             // Complex
 																	   TArray<AActor*>(), // Ignore Actors
@@ -261,13 +270,13 @@ TArray<FVector> AFlyMonsterCharacter::TestNav(const FVector& TargetLocation, con
 			FHitResult TraceHitResult;
 			FVector TracePointCheck;
 			TracePointCheck = CanMoveEndPoint[loop] + ImpactDirection * WallDepth;
-			TracePointCheck = TracePointCheck + ImpactDirection * (TraceRadius * 1.4 / 2);
+			TracePointCheck = TracePointCheck + ImpactDirection * (TraceRadius / 2);
 
 			bool Trace = UKismetSystemLibrary::CapsuleTraceSingle(this,
 																  CanMoveEndPoint[loop],
 																  TracePointCheck,
-																  TraceRadius * 1.4, // Radius
-																  TraceRadius * 1.4, // Half Height
+																  TraceRadius, // Radius
+																  TraceRadius, // Half Height
 																  UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																  false,             // Complex
 																  TArray<AActor*>(), // Ignore Actors
@@ -350,8 +359,7 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 							  ? TargetExtent.X
 							  : -TargetExtent.X;
 
-		TX =
-			(XBoundary - LocalImpact.X) / LocalDirection.X;
+		TX = (XBoundary - LocalImpact.X) / LocalDirection.X;
 	}
 
 	if (!FMath::IsNearlyZero(LocalDirection.Y))
@@ -360,8 +368,7 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 							  ? TargetExtent.Y
 							  : -TargetExtent.Y;
 
-		TY =
-			(YBoundary - LocalImpact.Y) / LocalDirection.Y;
+		TY = (YBoundary - LocalImpact.Y) / LocalDirection.Y;
 	}
 
 	if (!FMath::IsNearlyZero(LocalDirection.Z))
@@ -370,8 +377,7 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 							  ? TargetExtent.Z
 							  : -TargetExtent.Z;
 
-		TZ =
-			(ZBoundary - LocalImpact.Z) / LocalDirection.Z;
+		TZ = (ZBoundary - LocalImpact.Z) / LocalDirection.Z;
 	}
 
 	float T = BIG_NUMBER;
@@ -406,4 +412,26 @@ FVector AFlyMonsterCharacter::GetWallEndPoint(FVector DirectionData,
 	Distance = FVector::Distance(ImpactData, WorldEdge);
 
 	return WorldEdge;
+}
+
+void AFlyMonsterCharacter::FlyChange()
+{
+	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
+	{
+		Mod = !Mod;
+
+		if (Mod)
+		{
+			Movement->GravityScale = 0.0f;
+			Movement->SetMovementMode(MOVE_Flying);
+			Movement->DefaultLandMovementMode = MOVE_Flying;
+		}
+		else
+		{
+			Movement->GravityScale = 1.0f;
+			Movement->SetMovementMode(MOVE_Walking);
+			Movement->DefaultLandMovementMode = MOVE_Walking;
+		}
+		Movement->SetPlaneConstraintEnabled(Mod);
+	}
 }

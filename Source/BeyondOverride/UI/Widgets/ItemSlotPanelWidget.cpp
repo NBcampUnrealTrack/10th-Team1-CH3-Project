@@ -153,7 +153,8 @@ void UItemSlotPanelWidget::RefreshSlots()
 		SlotWidget->SetSlotIndex(Index);
 		SlotWidget->SetItem(Item);
 		SlotWidget->OnSlotClicked.AddDynamic(this, &UItemSlotPanelWidget::HandleSlotClicked);
-
+		SlotWidget->OnSlotHovered.AddDynamic(this, &UItemSlotPanelWidget::HandleSlotHovered);
+		
 		const int32 Row = Index / ColumnCount;
 		const int32 Column = Index % ColumnCount;
 
@@ -187,4 +188,9 @@ void UItemSlotPanelWidget::OnWeightChanged(float CurCarryWeight, float MaxCarryW
 	{	
 		PanelFrame->SetCarryWeight(CurCarryWeight, MaxCarryWeight);
 	}
+}
+
+void UItemSlotPanelWidget::HandleSlotHovered(bool bIsHovered, UItemInstanceBase* SlotData)
+{
+	OnSlotHoverChanged.Broadcast(bIsHovered, SlotData);
 }

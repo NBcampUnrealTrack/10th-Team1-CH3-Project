@@ -20,7 +20,7 @@ struct FSpawnEntry
 };
 
 USTRUCT(BlueprintType)
-struct FSpawnData : public FTableRowBase
+struct FSpawnVolumeData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -30,6 +30,28 @@ struct FSpawnData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	FName RegionID = "Default";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TArray<FSpawnEntry> SpawnEntries;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 MinSpawnCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 MaxSpawnCount = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FContainerData : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+  public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	FName RegionID = "Default";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	float ContainerActivateProb = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TArray<FSpawnEntry> SpawnEntries;
