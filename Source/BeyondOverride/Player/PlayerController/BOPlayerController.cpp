@@ -25,19 +25,6 @@ void ABOPlayerController::BeginPlay()
 		}
 	}
 
-	/*if (GetWorld())
-	{
-		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
-		{
-			if (GameInstance->GetIsLevelPreparing())
-			{
-				UE_LOG(LogGameFlow, Warning, TEXT("Level Prepared"));
-
-				GameInstance->OnLevelPrepared();
-			}
-		}
-	}*/
-
 	/*
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{

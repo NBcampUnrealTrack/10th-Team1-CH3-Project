@@ -30,6 +30,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void StartFarming();
 	void EndFarming(EFarmingResult Result);
 	void Die();
+	void EnterAIBuilding();
 	void EnterServerRoom();
 
 	void OpenLevel(ELevel Level);
@@ -43,12 +44,14 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	void OnCharacterPrepared();
 	void OnLevelPrepared();
+	void OnBossDefeated();
 
+  private:
 	void SavePlayerData();
 	void SaveStorageData();
-	void SaveFarmingData();
-	void SaveSurvivalTimeData();
-	void SaveCombatData();
+	void SaveFarmingData(ESaveType SaveType);
+	void SaveSurvivalTimeData(ESaveType SaveType);
+	void SaveCombatData(ESaveType SaveType);
 
   public:
 	UBODataAsset* GetBODataAsset() const;
@@ -73,7 +76,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	float GetCurShield() const;
 	float GetMaxShield() const;
 
-	bool GetIsLevelPreparing() const;
+	bool GetIsBossDefeated() const;
 
 	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
 	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
@@ -104,17 +107,14 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 CurShield;
 	int32 MaxShield;
 
-	bool IsLevelPreparing;
+	bool IsBossDefeated;
+
 	TMap<ELevel, TSoftObjectPtr<UWorld>> Levels;
+	TArray<UItemInstanceBase*> PlayerItemInventory;
+	TArray<UItemInstanceBase*> PlayerEquipmentInventory;
+	TArray<UItemInstanceBase*> StorageInventory;
+
+	TMap<FName, FMonsterInfo> MonsterDatas; // move to monster spawn system
 
 	FTimerHandle HideLoadingScreenTimer;
-
-	UPROPERTY()
-	TArray<UItemInstanceBase*> PlayerItemInventory;
-	UPROPERTY()
-	TArray<UItemInstanceBase*> PlayerEquipmentInventory;
-	UPROPERTY()
-	TArray<UItemInstanceBase*> StorageInventory;
-	UPROPERTY()
-	TMap<FName, FMonsterInfo> MonsterDatas; // move to monster spawn system
 };

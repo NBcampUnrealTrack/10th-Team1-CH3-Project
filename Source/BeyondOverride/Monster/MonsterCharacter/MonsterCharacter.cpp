@@ -134,7 +134,7 @@ void AMonsterCharacter::DeathSequence()
 	{
 		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 		{
-			GameMode->AddKilledMonster(GetMonsterID());
+			GameMode->AddKilledMonster(GetMonsterID(), GetMonsterType());
 		}
 	}
 

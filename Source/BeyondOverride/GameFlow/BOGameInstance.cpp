@@ -81,16 +81,20 @@ void UBOGameInstance::InitSetting()
 	CurShield = 0;
 	MaxShield = 0;
 
+	IsBossDefeated = false;
+
 	PlayerItemInventory.Empty();
 	PlayerEquipmentInventory.Empty();
 	StorageInventory.Empty();
 	MonsterDatas.Empty();
 
-	OpenLevel(CurLevel);
+	OpenLevel(ELevel::Basic);
 }
 
 void UBOGameInstance::Start()
 {
+	InitSetting();
+
 	GameState = EGameState::Playing;
 	PlayingState = EPlayingState::Bunker;
 
@@ -136,9 +140,13 @@ void UBOGameInstance::EndFarming(EFarmingResult Result)
 		DeathCount += 1;
 	}
 
-	SaveFarmingData();
+	if (Result == EFarmingResult::Clear)
+	{
+		GameState = EGameState::End;
 
-	if (Result != EFarmingResult::Clear)
+		OpenLevel(ELevel::Basic);
+	}
+	else
 	{
 		OpenLevel(ELevel::Bunker);
 	}
@@ -158,17 +166,24 @@ void UBOGameInstance::Die()
 	}
 }
 
+void UBOGameInstance::EnterAIBuilding()
+{
+	OpenLevel(ELevel::AIBuilding);
+}
+
 void UBOGameInstance::EnterServerRoom()
 {
-	SavePlayerData();
-	SaveFarmingData();
-
 	OpenLevel(ELevel::ServerRoom);
 }
 
 void UBOGameInstance::OpenLevel(ELevel Level)
 {
 	if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == Levels[Level].GetAssetName())
+	{
+		return;
+	}
+
+	if (!Levels.Contains(Level))
 	{
 		return;
 	}
@@ -182,9 +197,13 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		SaveStorageData();
 	}
 
-	if (!Levels.Contains(Level))
+	if (Level == ELevel::Bunker || Level == ELevel::Basic)
 	{
-		return;
+		SaveFarmingData(ESaveType::All);
+	}
+	else
+	{
+		SaveFarmingData(ESaveType::Partial);
 	}
 
 	if (Level != ELevel::Basic)
@@ -250,6 +269,11 @@ void UBOGameInstance::OnLevelPrepared()
 		UE_LOG(LogGameFlow, Warning, TEXT("GameMode InitSetting Called"));
 		GameMode->InitSetting();
 	}
+}
+
+void UBOGameInstance::OnBossDefeated()
+{
+	IsBossDefeated = true;
 }
 
 void UBOGameInstance::SavePlayerData()
@@ -322,42 +346,73 @@ void UBOGameInstance::SaveStorageData()
 	}
 }
 
-void UBOGameInstance::SaveFarmingData()
+void UBOGameInstance::SaveFarmingData(ESaveType SaveType)
 {
-	SaveSurvivalTimeData();
-	SaveCombatData();
+	SaveSurvivalTimeData(SaveType);
+	SaveCombatData(SaveType);
 }
 
-void UBOGameInstance::SaveSurvivalTimeData()
+void UBOGameInstance::SaveSurvivalTimeData(ESaveType SaveType)
 {
 	if (!GetWorld())
 	{
 		return;
 	}
 
-	if (UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>())
+	UBOWorldSubsystem* WorldSubsystem = GetWorld()->GetSubsystem<UBOWorldSubsystem>();
+	if (!WorldSubsystem)
 	{
-		SurvivalTime = WorldSubsystem->GetSurvivalTime();
+		return;
+	}
 
+	float Time = WorldSubsystem->GetSurvivalTime();
+
+	SurvivalTime += Time;
+
+	if (SaveType == ESaveType::All)
+	{
 		TotalSurvivalTime += SurvivalTime;
-
-		UE_LOG(LogGameFlow, Warning, TEXT("Survival Time : %f"), SurvivalTime);
-		UE_LOG(LogGameFlow, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
+		SurvivalTime = 0.0f;
 	}
+
+	UE_LOG(LogGameFlow, Warning, TEXT("Survival Time : %f"), SurvivalTime);
+	UE_LOG(LogGameFlow, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
 }
 
-void UBOGameInstance::SaveCombatData()
+void UBOGameInstance::SaveCombatData(ESaveType SaveType)
 {
 	if (!GetWorld())
 	{
 		return;
 	}
 
-	if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+	ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>();
+	if (!GameMode)
 	{
-		GameMode->GetKilledMonsters(KilledMonsters);
-		KillerMonster = GameMode->GetKillerMonster();
+		return;
+	}
 
+	TMap<FName, int32> Data{};
+	GameMode->GetKilledMonsters(Data);
+	KillerMonster = GameMode->GetKillerMonster();
+
+	for (TPair<FName, int32> Monster : Data)
+	{
+		FName Id = Monster.Key;
+		int32 Count = Monster.Value;
+
+		if (KilledMonsters.Contains(Id))
+		{
+			KilledMonsters[Id] += Count;
+		}
+		else
+		{
+			KilledMonsters.Add(Id, Count);
+		}
+	}
+
+	if (SaveType == ESaveType::All)
+	{
 		for (TPair<FName, int32> Monster : KilledMonsters)
 		{
 			FName Id = Monster.Key;
@@ -372,6 +427,8 @@ void UBOGameInstance::SaveCombatData()
 				TotalKilledMonsters.Add(Id, Count);
 			}
 		}
+
+		KilledMonsters.Empty();
 	}
 }
 
@@ -463,9 +520,9 @@ float UBOGameInstance::GetMaxShield() const
 	return MaxShield;
 }
 
-bool UBOGameInstance::GetIsLevelPreparing() const
+bool UBOGameInstance::GetIsBossDefeated() const
 {
-	return IsLevelPreparing;
+	return IsBossDefeated;
 }
 
 TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerItemInventory() const

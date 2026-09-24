@@ -36,6 +36,7 @@ enum class ELevel : uint8
 	Basic,
 	Bunker,
 	Main,
+	AIBuilding,
 	ServerRoom // test code
 };
 
@@ -62,4 +63,11 @@ enum class EFarmingResult : uint8
 	Success,
 	Fail,
 	Clear
+};
+
+UENUM(BlueprintType)
+enum class ESaveType : uint8
+{
+	Partial,
+	All
 };

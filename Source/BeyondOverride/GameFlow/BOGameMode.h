@@ -6,6 +6,7 @@
 
 #include "Enums/BOEnums.h"
 #include "GameFramework/GameMode.h"
+#include "Monster/Enums/InfoEnums.h"
 
 #include "BOGameMode.generated.h"
 
@@ -30,14 +31,15 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void StartFarming(); // when interacting with the bunker entrance
 	void EndFarming(EFarmingResult Result);
 	void Die();
+	void EnterAIBuilding();
 	void EnterServerRoom(); // test code
-	void StartBossBattle(); // when interacting with the server room door
 	void StartDefense();    // when interacting with the main computer first time
 	void ClearGame();       // when interacting with the main computer after defense
-	void Ending();          // after final result widget's ok button clicked
+	void ShowEnding();      // after final result widget's ok button clicked
+	void EndGame();         // after end of ending credit
 	void ExitGame();        // after quit button clicked
 
-	void AddKilledMonster(FName MonsterId);
+	void AddKilledMonster(FName MonsterId, EMonsterType MonsterType);
 	void SetKillerMonster(FName MonsterId);
 
 	void GetKilledMonsters(TMap<FName, int32>& Data) const;

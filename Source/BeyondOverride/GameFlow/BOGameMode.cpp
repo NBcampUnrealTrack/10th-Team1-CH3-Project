@@ -73,6 +73,13 @@ void ABOGameMode::InitSetting()
 				StartFarming();
 			}
 		}
+		else if (BOGameState == EGameState::End)
+		{
+			if (UUIManager* UIManager = UUIManager::Get(this))
+			{
+				UIManager->ShowScreen(EUIScreen::FinalResult, EUIInputMode::UIOnly);
+			}
+		}
 	}
 }
 
@@ -190,19 +197,20 @@ void ABOGameMode::Die()
 	}
 }
 
+void ABOGameMode::EnterAIBuilding()
+{
+	if (GameInstance)
+	{
+		GameInstance->EnterAIBuilding();
+	}
+}
+
 void ABOGameMode::EnterServerRoom()
 {
 	if (GameInstance)
 	{
 		GameInstance->EnterServerRoom();
 	}
-}
-
-void ABOGameMode::StartBossBattle()
-{
-	// request to monster spawn system
-	// spawn boss
-	// start boss phase
 }
 
 void ABOGameMode::StartDefense()
@@ -219,13 +227,16 @@ void ABOGameMode::StartDefense()
 
 void ABOGameMode::ClearGame()
 {
-	if (UUIManager* UIManager = UUIManager::Get(this))
-	{
-		UIManager->ShowScreen(EUIScreen::FinalResult, EUIInputMode::UIOnly);
-	}
+	EndFarming(EFarmingResult::Clear);
 }
 
-void ABOGameMode::Ending()
+void ABOGameMode::ShowEnding()
+{
+	// play cut scene
+	// show ending credit
+}
+
+void ABOGameMode::EndGame()
 {
 	if (GameInstance)
 	{
@@ -241,8 +252,18 @@ void ABOGameMode::ExitGame()
 	}
 }
 
-void ABOGameMode::AddKilledMonster(FName MonsterId)
+void ABOGameMode::AddKilledMonster(FName MonsterId, EMonsterType MonsterType)
 {
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	if (MonsterType == EMonsterType::Boss)
+	{
+		GameInstance->OnBossDefeated();
+	}
+
 	if (KilledMonsters.Contains(MonsterId))
 	{
 		KilledMonsters[MonsterId] += 1;
