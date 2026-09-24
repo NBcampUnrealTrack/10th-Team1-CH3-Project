@@ -205,6 +205,7 @@ void UMonsterStatComponent::OnBalisticHit(AActor* Target)
 
 void UMonsterStatComponent::OnMissileHit(TArray<FOverlapResult> Targets)
 {
+	TSet<AActor*> CompleteTargets = {};
 
 	if (Targets.IsEmpty())
 	{
@@ -220,12 +221,18 @@ void UMonsterStatComponent::OnMissileHit(TArray<FOverlapResult> Targets)
 			continue;
 		}
 
+		if (CompleteTargets.Contains(Actor))
+		{
+			continue;
+		}
+
 		ABOCharacter* IsBOCharacter = Cast<ABOCharacter>(Actor);
 		AMonsterCharacter* IsMonsterCharacter = Cast<AMonsterCharacter>(Actor);
 		AAttackMissileActor* IsMissile = Cast<AAttackMissileActor>(Actor);
 
 		if (IsBOCharacter || IsMonsterCharacter || IsMissile)
 		{
+			CompleteTargets.Add(Actor);
 			DamageLogic(Actor, AttackDamage);
 		}
 	}
