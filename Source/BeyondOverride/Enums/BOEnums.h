@@ -36,8 +36,7 @@ enum class ELevel : uint8
 	Basic,
 	Bunker,
 	Main,
-	AIBuilding,
-	ServerRoom // test code
+	AIBuilding
 };
 
 UENUM(BlueprintType)

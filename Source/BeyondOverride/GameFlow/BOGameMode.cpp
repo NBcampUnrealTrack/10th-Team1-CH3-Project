@@ -205,14 +205,6 @@ void ABOGameMode::EnterAIBuilding()
 	}
 }
 
-void ABOGameMode::EnterServerRoom()
-{
-	if (GameInstance)
-	{
-		GameInstance->EnterServerRoom();
-	}
-}
-
 void ABOGameMode::StartDefense()
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Begin Defense"));
@@ -234,6 +226,10 @@ void ABOGameMode::ShowEnding()
 {
 	// play cut scene
 	// show ending credit
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->ShowScreen(EUIScreen::EndingCredits, EUIInputMode::UIOnly);
+	}
 }
 
 void ABOGameMode::EndGame()

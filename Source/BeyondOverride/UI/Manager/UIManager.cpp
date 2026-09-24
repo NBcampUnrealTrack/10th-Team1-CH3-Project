@@ -6,8 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/PlayerController/BOPlayerController.h"
 #include "UI/Widgets/InteractPromptWidget.h"
-#include "UObject/ConstructorHelpers.h"
 #include "UI/Widgets/NotificationWidget.h"
+#include "UObject/ConstructorHelpers.h"
 
 UUIManager::UUIManager()
 {
@@ -47,6 +47,18 @@ UUIManager::UUIManager()
 		ScreenClasses.Add(EUIScreen::FinalResult, FinalResultWBPClass.Class);
 	}
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> EndingCreditsWBPClass(TEXT("/Game/UI/WBP_EndingCredits"));
+	if (EndingCreditsWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::EndingCredits, EndingCreditsWBPClass.Class);
+	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> DebugSettingWBPClass(TEXT("/Game/UI/WBP_DebugSetting"));
+	if (DebugSettingWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::DebugSetting, DebugSettingWBPClass.Class);
+	}
+
 	static ConstructorHelpers::FClassFinder<UUserWidget> NoneWBPClass(TEXT("/Game/UI/WBP_None"));
 	if (NoneWBPClass.Succeeded())
 	{
@@ -64,7 +76,6 @@ UUIManager::UUIManager()
 	{
 		NotificationWidgetClass = NotificationWidgetWBPClass.Class;
 	}
-
 }
 
 UUIManager* UUIManager::Get(const UObject* WorldContextObject)
@@ -181,6 +192,8 @@ void UUIManager::ApplyInputMode(EUIInputMode InputMode, UUserWidget* Widget)
 		FInputModeUIOnly Mode;
 		if (Widget)
 		{
+			Widget->SetIsFocusable(true);
+			Widget->SetKeyboardFocus();
 			Mode.SetWidgetToFocus(Widget->TakeWidget());
 		}
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
@@ -274,7 +287,6 @@ bool UUIManager::IsAnyMenuOpen() const
 
 	return false;
 }
-
 
 void UUIManager::ShowNotification(const FText& Main, const FText& Sub, float Duration)
 {

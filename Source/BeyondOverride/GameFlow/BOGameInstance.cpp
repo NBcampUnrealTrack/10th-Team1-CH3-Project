@@ -8,6 +8,7 @@
 
 #include "DataTables/Monster/MonsterInfo.h"
 #include "Engine/AssetManager.h"
+#include "GameFlow/BOGameMode.h"
 #include "GameFlow/Manager/LoadingScreenManager.h"
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -72,6 +73,8 @@ void UBOGameInstance::InitSetting()
 
 	TotalSurvivalTime = 0.0f;
 	SurvivalTime = 0.0f;
+	FarmingCount = 0;
+	DeathCount = 0;
 	TotalKilledMonsters.Empty();
 	KilledMonsters.Empty();
 	KillerMonster = "None";
@@ -86,7 +89,6 @@ void UBOGameInstance::InitSetting()
 	PlayerItemInventory.Empty();
 	PlayerEquipmentInventory.Empty();
 	StorageInventory.Empty();
-	MonsterDatas.Empty();
 
 	OpenLevel(ELevel::Basic);
 }
@@ -104,6 +106,11 @@ void UBOGameInstance::Start()
 void UBOGameInstance::End()
 {
 	InitSetting();
+
+	if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+	{
+		GameMode->InitSetting();
+	}
 }
 
 void UBOGameInstance::Exit()
@@ -171,17 +178,12 @@ void UBOGameInstance::EnterAIBuilding()
 	OpenLevel(ELevel::AIBuilding);
 }
 
-void UBOGameInstance::EnterServerRoom()
-{
-	OpenLevel(ELevel::ServerRoom);
-}
-
 void UBOGameInstance::OpenLevel(ELevel Level)
 {
-	if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == Levels[Level].GetAssetName())
+	/*if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == Levels[Level].GetAssetName())
 	{
 		return;
-	}
+	}*/
 
 	if (!Levels.Contains(Level))
 	{
@@ -430,6 +432,11 @@ void UBOGameInstance::SaveCombatData(ESaveType SaveType)
 
 		KilledMonsters.Empty();
 	}
+}
+
+void UBOGameInstance::SetIsBossDefeated(bool InIsBossDefeated)
+{
+	IsBossDefeated = InIsBossDefeated;
 }
 
 UBODataAsset* UBOGameInstance::GetBODataAsset() const

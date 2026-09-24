@@ -18,7 +18,8 @@ public class BeyondOverride : ModuleRules
             "MoviePlayer",
             "RenderCore",
             "Slate",
-            "SlateCore"
+            "SlateCore",
+            "ActorSequence"
         });
 
         PublicIncludePaths.AddRange(new string[] {

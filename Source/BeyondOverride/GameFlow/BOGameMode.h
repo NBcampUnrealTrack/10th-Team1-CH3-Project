@@ -32,12 +32,11 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void EndFarming(EFarmingResult Result);
 	void Die();
 	void EnterAIBuilding();
-	void EnterServerRoom(); // test code
-	void StartDefense();    // when interacting with the main computer first time
-	void ClearGame();       // when interacting with the main computer after defense
-	void ShowEnding();      // after final result widget's ok button clicked
-	void EndGame();         // after end of ending credit
-	void ExitGame();        // after quit button clicked
+	void StartDefense(); // when interacting with the main computer first time
+	void ClearGame();    // when interacting with the main computer after defense
+	void ShowEnding();   // after final result widget's ok button clicked
+	void EndGame();      // after end of ending credit
+	void ExitGame();     // after quit button clicked
 
 	void AddKilledMonster(FName MonsterId, EMonsterType MonsterType);
 	void SetKillerMonster(FName MonsterId);

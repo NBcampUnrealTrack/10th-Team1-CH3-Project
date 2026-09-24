@@ -142,7 +142,6 @@ bool UInventoryComponent::AddItem(UItemInstanceBase* Item, const int32 SlotIndex
 	NotifyInventoryChanged();
 
 	return true;
-
 }
 
 bool UInventoryComponent::RemoveItem(const int32 SlotIndex, const int32 Count)

@@ -146,3 +146,20 @@ void UExitManager::CleanSetting()
 {
 	ExitControllers.Empty();
 }
+
+void UExitManager::GetExitLocations(TMap<FName, TPair<FVector, FRotator>>& Exits)
+{
+	Exits.Empty();
+
+	for (TObjectPtr<AExitControllerActor> ExitController : ExitControllers)
+	{
+		if (AExitActor* Exit = ExitController->GetTargetExit())
+		{
+			FName Name = ExitController->GetRegionID();
+			FVector Location = Exit->GetActorLocation();
+			FRotator Rotation = Exit->GetActorRotation();
+
+			Exits.Add(Name, {Location, Rotation});
+		}
+	}
+}

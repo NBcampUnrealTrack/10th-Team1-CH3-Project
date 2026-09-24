@@ -31,7 +31,6 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void EndFarming(EFarmingResult Result);
 	void Die();
 	void EnterAIBuilding();
-	void EnterServerRoom();
 
 	void OpenLevel(ELevel Level);
 	void ShowLoadingScreenWidget(bool IsNew);
@@ -54,6 +53,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void SaveCombatData(ESaveType SaveType);
 
   public:
+	void SetIsBossDefeated(bool InIsBossDefeated);
+
 	UBODataAsset* GetBODataAsset() const;
 
 	void GetMonsterData(FName Id, FMonsterInfo& Data) const; // move to monster spawn system
@@ -109,9 +110,13 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	bool IsBossDefeated;
 
+	UPROPERTY()
 	TMap<ELevel, TSoftObjectPtr<UWorld>> Levels;
+	UPROPERTY()
 	TArray<UItemInstanceBase*> PlayerItemInventory;
+	UPROPERTY()
 	TArray<UItemInstanceBase*> PlayerEquipmentInventory;
+	UPROPERTY()
 	TArray<UItemInstanceBase*> StorageInventory;
 
 	TMap<FName, FMonsterInfo> MonsterDatas; // move to monster spawn system

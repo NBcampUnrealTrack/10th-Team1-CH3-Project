@@ -275,6 +275,12 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				EnhancedInput->BindAction(PlayerController->EscapeAction, ETriggerEvent::Started, this, &ABOCharacter::Escape);
 			}
 
+			// Add for Debug Widget
+			if (PlayerController->DebugAction)
+			{
+				EnhancedInput->BindAction(PlayerController->DebugAction, ETriggerEvent::Started, this, &ABOCharacter::Debug);
+			}
+
 			if (PlayerController->EquipSlot1Action)
 			{
 				EnhancedInput->BindAction(PlayerController->EquipSlot1Action, ETriggerEvent::Started, this, &ABOCharacter::EquipSlot1);
@@ -793,6 +799,14 @@ void ABOCharacter::Escape(const FInputActionValue& value)
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
 		UIManager->PushScreen(EUIScreen::PauseMenu, EUIInputMode::UIOnly);
+	}
+}
+
+void ABOCharacter::Debug(const FInputActionValue& value)
+{
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->PushScreen(EUIScreen::DebugSetting, EUIInputMode::UIOnly);
 	}
 }
 
