@@ -55,7 +55,7 @@ void UContainerManager::LoadContainerData()
 		return;
 	}
 
-	TArray<FContainerData*> AllRows{};
+	/*TArray<FContainerData*> AllRows{};
 	ContainerDataTable->GetAllRows<FContainerData>(TEXT("Get All Container Datas"), AllRows);
 
 	for (FContainerData* Row : AllRows)
@@ -65,6 +65,16 @@ void UContainerManager::LoadContainerData()
 			FName RegionID = Row->RegionID;
 			ContainerDatas.Add(RegionID, *Row);
 		}
+	}*/
+
+	const TMap<FName, uint8*>& AllRows = ContainerDataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& pair : AllRows)
+	{
+		FName RegionID = pair.Key;
+		FContainerData* ContainerData = reinterpret_cast<FContainerData*>(pair.Value);
+
+		ContainerDatas.Add(RegionID, *ContainerData);
 	}
 }
 

@@ -45,17 +45,27 @@ void USpawnVolumeManager::LoadSpawnVolumeData()
 		return;
 	}
 
-	TArray<FSpawnVolumeData*> AllRows{};
+	const TMap<FName, uint8*>& AllRows = SpawnVolumeDataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& pair : AllRows)
+	{
+		FName RegionID = pair.Key;
+		FSpawnVolumeData* SpawnVolumeData = reinterpret_cast<FSpawnVolumeData*>(pair.Value);
+
+		SpawnVolumeDatas.Add(RegionID, *SpawnVolumeData);
+	}
+
+	/*TArray<FSpawnVolumeData*> AllRows{};
 	SpawnVolumeDataTable->GetAllRows<FSpawnVolumeData>(TEXT("Get All Spawn Volume Datas"), AllRows);
 
 	for (FSpawnVolumeData* Row : AllRows)
 	{
 		if (Row)
 		{
-			FName ID = Row->ID;
-			SpawnVolumeDatas.Add(ID, *Row);
+			FName RegionID = Row->RegionID;
+			SpawnVolumeDatas.Add(RegionID, *Row);
 		}
-	}
+	}*/
 }
 
 void USpawnVolumeManager::LoadPhaseData()
@@ -83,7 +93,17 @@ void USpawnVolumeManager::LoadPhaseData()
 		return;
 	}
 
-	TArray<FPhaseData*> AllRows{};
+	const TMap<FName, uint8*>& AllRows = PhaseDataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& pair : AllRows)
+	{
+		FName RegionID = pair.Key;
+		FPhaseData* PhaseData = reinterpret_cast<FPhaseData*>(pair.Value);
+
+		PhaseDatas.Add(RegionID, *PhaseData);
+	}
+
+	/*TArray<FPhaseData*> AllRows{};
 	PhaseDataTable->GetAllRows<FPhaseData>(TEXT("Get All Phase Datas"), AllRows);
 
 	for (FPhaseData* Row : AllRows)
@@ -93,7 +113,7 @@ void USpawnVolumeManager::LoadPhaseData()
 			FName SpawnVolumeID = Row->SpawnVolumeID;
 			PhaseDatas.Add(SpawnVolumeID, *Row);
 		}
-	}
+	}*/
 }
 
 void USpawnVolumeManager::InitSetting()

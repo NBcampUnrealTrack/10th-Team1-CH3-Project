@@ -34,8 +34,8 @@ void ASpawnVolume::BeginPlay()
 	{
 		if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 		{
-			SpawnVolumeManager->GetSpawnVolumeData(ID, SpawnVolumeData);
-			SpawnVolumeManager->GetPhaseData(ID, PhaseData);
+			SpawnVolumeManager->GetSpawnVolumeData(RegionID, SpawnVolumeData);
+			SpawnVolumeManager->GetPhaseData(RegionID, PhaseData);
 		}
 	}
 
@@ -48,16 +48,16 @@ void ASpawnVolume::BeginPlay()
 
 void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogGameFlow, Warning, TEXT("%s Overlapped"), *ID.ToString());
+	UE_LOG(LogGameFlow, Warning, TEXT("%s Overlapped"), *RegionID.ToString());
 	UE_LOG(LogGameFlow, Warning, TEXT("Overlap Actor : %s"), *OtherActor->GetName());
 
 	if (OtherActor->IsA<ABOCharacter>())
 	{
-		UE_LOG(LogGarbage, Warning, TEXT("Player Overlapped %s"), *ID.ToString());
+		UE_LOG(LogGarbage, Warning, TEXT("Player Overlapped %s"), *RegionID.ToString());
 
 		if (BoxComp)
 		{
-			UE_LOG(LogGameFlow, Warning, TEXT("%s Remove Overlap Bind"), *ID.ToString());
+			UE_LOG(LogGameFlow, Warning, TEXT("%s Remove Overlap Bind"), *RegionID.ToString());
 
 			BoxComp->OnComponentBeginOverlap.RemoveDynamic(this, &ASpawnVolume::OnOverlapped);
 			BoxComp->SetGenerateOverlapEvents(false);
@@ -77,7 +77,7 @@ void ASpawnVolume::SpawnMonsters()
 	int32 Count = FMath::RandRange(SpawnVolumeData.MinSpawnCount, SpawnVolumeData.MaxSpawnCount);
 	TArray<FSpawnEntry> SpawnEntries = SpawnVolumeData.SpawnEntries;
 
-	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : %s"), *ID.ToString());
+	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : %s"), *RegionID.ToString());
 	UE_LOG(LogGameFlow, Warning, TEXT("Count : %d"), Count);
 
 	for (int i = 0; i < Count; i++)
@@ -247,14 +247,9 @@ void ASpawnVolume::ActivateContainers()
 	}
 }
 
-FName ASpawnVolume::GetID() const
-{
-	return ID;
-}
-
 FName ASpawnVolume::GetRegionID() const
 {
-	return SpawnVolumeData.RegionID;
+	return RegionID;
 }
 
 void ASpawnVolume::CleanSetting()

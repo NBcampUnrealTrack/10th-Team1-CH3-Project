@@ -1,11 +1,9 @@
 [
     {
-        "Name": "SPAWN_VOLUME_01",
-        "Id": "SPAWN_VOLUME_01",
-        "RegionId": "REGION_01",
+        "Name": "FOREST_01",
         "SpawnEntries": [
             {
-                "Id": "Gunner",
+                "ID": "Gunner",
                 "Prob": 1.0
             }
         ],
@@ -13,16 +11,14 @@
         "MaxSpawnCount": 30
     },
     {
-        "Name": "SPAWN_VOLUME_02",
-        "Id": "SPAWN_VOLUME_02",
-        "RegionId": "REGION_02",
+        "Name": "FOREST_02",
         "SpawnEntries": [
             {
-                "Id": "Gunner",
+                "ID": "Gunner",
                 "Prob": 0.6
             },
             {
-                "Id": "Assasin",
+                "ID": "Assasin",
                 "Prob": 0.4
             }
         ],
@@ -30,24 +26,249 @@
         "MaxSpawnCount": 15
     },
     {
-        "Name": "SPAWN_VOLUME_03",
-        "Id": "SPAWN_VOLUME_03",
-        "RegionId": "REGION_03",
+        "Name": "FOREST_03",
         "SpawnEntries": [
             {
-                "Id": "Gunner",
-                "Prob": 0.5
+                "ID": "Gunner",
+                "Prob": 0.8
             },
             {
-                "Id": "Assasin",
-                "Prob": 0.3
-            },
-            {
-                "Id": "Mech",
+                "ID": "Assasin",
                 "Prob": 0.2
             }
         ],
         "MinSpawnCount": 15,
         "MaxSpawnCount": 20
+    },
+    {
+        "Name": "COMPLEX_01",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.8
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "COMPLEX_02",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.8
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "COMPLEX_03",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.5
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.3
+            },
+            {
+                "ID": "Mech",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 10,
+        "MaxSpawnCount": 20
+    },
+    {
+        "Name": "COMPLEX_04",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 4
+    },
+    {
+        "Name": "COMPLEX_05",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "COMPLEX_06",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 4
+    },
+    {
+        "Name": "COMPLEX_07",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "VILLAGE_01",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "VILLAGE_02",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.8
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 8,
+        "MaxSpawnCount": 10
+    },
+    {
+        "Name": "VILLAGE_03",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "FACTORY_01",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 4
+    },
+    {
+        "Name": "FACTORY_02",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 1.0
+            }
+        ],
+        "MinSpawnCount": 1,
+        "MaxSpawnCount": 2
+    },
+    {
+        "Name": "FACTORY_03",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.8
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 3
+    },
+    {
+        "Name": "FACTORY_04",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.8
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "FACTORY_05",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.2
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.5
+            },
+            {
+                "ID": "Mech",
+                "Prob": 0.3
+            }
+        ],
+        "MinSpawnCount": 6,
+        "MaxSpawnCount": 8
+    },
+    {
+        "Name": "FACTORY_06",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.8
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 6
+    },
+    {
+        "Name": "FACTORY_08",
+        "SpawnEntries": [
+            {
+                "ID": "Gunner",
+                "Prob": 0.4
+            },
+            {
+                "ID": "Assasin",
+                "Prob": 0.6
+            }
+        ],
+        "MinSpawnCount": 10,
+        "MaxSpawnCount": 15
     }
 ]

@@ -1,37 +1,203 @@
 [
     {
-        "Name": "CONTAINER_01",
-        "RegionId": "REGION_01",
-        "ContainerActivateProb": 0.7,
+        "Name": "FOREST_01",
+        "ContainerActivateProb": 1.0,
         "SpawnEntries": [
             {
-                "Id": "ASSAULT_RIFLE_A",
-                "Prob": 0.1
-            },
-            {
-                "Id": "ASSAULT_RIFLE_B",
-                "Prob": 0.1
-            },
-            {
                 "Id": "RIFLE_AMMO",
-                "Prob": 0.4
+                "Prob": 0.2
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.2
             },
             {
                 "Id": "GRENADE",
-                "Prob": 0.6
+                "Prob": 0.2
             },
             {
                 "Id": "BANDAGE",
-                "Prob": 0.4
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 5,
+        "MaxSpawnCount": 10
+    },
+    {
+        "Name": "FOREST_02",
+        "ContainerActivateProb": 0.55,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.2
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 5
+    },
+    {
+        "Name": "FOREST_03",
+        "ContainerActivateProb": 0.6,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.2
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
             }
         ],
         "MinSpawnCount": 3,
-        "MaxSpawnCount": 6
+        "MaxSpawnCount": 7
     },
     {
-        "Name": "CONTAINER_02",
-        "RegionId": "REGION_02",
-        "ContainerActivateProb": 0.5,
+        "Name": "COMPLEX_01",
+        "ContainerActivateProb": 0.6,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.2
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 3,
+        "MaxSpawnCount": 7
+    },
+    {
+        "Name": "COMPLEX_02",
+        "ContainerActivateProb": 0.6,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.2
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.2
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 3,
+        "MaxSpawnCount": 7
+    },
+    {
+        "Name": "COMPLEX_03",
+        "ContainerActivateProb": 0.3,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.05
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.05
+            },
+            {
+                "Id": "PISTOL_A",
+                "Prob": 0.05
+            },
+            {
+                "Id": "PISTOL_B",
+                "Prob": 0.05
+            },
+            {
+                "Id": "SHOTGUN_A",
+                "Prob": 0.05
+            },
+            {
+                "Id": "SHOTGUN_B",
+                "Prob": 0.05
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.1
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GONBONG",
+                "Prob": 0.05
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.25
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 5
+    },
+    {
+        "Name": "VILLAGE_01",
+        "ContainerActivateProb": 1.0,
         "SpawnEntries": [
             {
                 "Id": "PISTOL_A",
@@ -42,33 +208,44 @@
                 "Prob": 0.1
             },
             {
-                "Id": "PISTOL_AMMO",
-                "Prob": 0.4
-            },
-            {
-                "Id": "GONBONG",
+                "Id": "SHOTGUN_A",
                 "Prob": 0.1
             },
             {
+                "Id": "SHOTGUN_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.15
+            },
+            {
                 "Id": "GRENADE",
-                "Prob": 0.3
+                "Prob": 0.1
             },
             {
                 "Id": "BANDAGE",
-                "Prob": 0.6
+                "Prob": 0.2
             }
         ],
         "MinSpawnCount": 5,
         "MaxSpawnCount": 10
     },
     {
-        "Name": "CONTAINER_03",
-        "RegionId": "REGION_03",
-        "ContainerActivateProb": 0.3,
+        "Name": "VILLAGE_02",
+        "ContainerActivateProb": 0.6,
         "SpawnEntries": [
             {
-                "Id": "KEY_CARD",
-                "Prob": 1.0
+                "Id": "PISTOL_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "PISTOL_B",
+                "Prob": 0.1
             },
             {
                 "Id": "SHOTGUN_A",
@@ -79,19 +256,387 @@
                 "Prob": 0.1
             },
             {
-                "Id": "SHOTGUN_AMMO",
-                "Prob": 0.4
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.15
             },
             {
-                "Id": "GONBONG",
-                "Prob": 0.2
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
             },
             {
                 "Id": "BANDAGE",
-                "Prob": 0.4
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 7
+    },
+    {
+        "Name": "VILLAGE_03",
+        "ContainerActivateProb": 1.0,
+        "SpawnEntries": [
+            {
+                "Id": "PISTOL_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "PISTOL_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHOTGUN_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHOTGUN_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "PISTOL_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHOTGUN_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
             }
         ],
         "MinSpawnCount": 5,
         "MaxSpawnCount": 10
+    },
+    {
+        "Name": "FACTORY_01",
+        "ContainerActivateProb": 1.0,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_A",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 5,
+        "MaxSpawnCount": 10
+    },
+    {
+        "Name": "FACTORY_02",
+        "ContainerActivateProb": 1.0,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_A",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 5,
+        "MaxSpawnCount": 10
+    },
+    {
+        "Name": "FACTORY_03",
+        "ContainerActivateProb": 0.6,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_B",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 7
+    },
+    {
+        "Name": "FACTORY_04",
+        "ContainerActivateProb": 0.6,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_B",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 7
+    },
+    {
+        "Name": "FACTORY_05",
+        "ContainerActivateProb": 0.2,
+        "SpawnEntries": [
+            {
+                "Id": "KEY_CARD",
+                "Prob": 1.0
+            },
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_D",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 2,
+        "MaxSpawnCount": 3
+    },
+    {
+        "Name": "FACTORY_06",
+        "ContainerActivateProb": 0.6,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_B",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 4,
+        "MaxSpawnCount": 7
+    },
+    {
+        "Name": "FACTORY_07",
+        "ContainerActivateProb": 1.0,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_A",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 5,
+        "MaxSpawnCount": 10
+    },
+    {
+        "Name": "FACTORY_08",
+        "ContainerActivateProb": 0.3,
+        "SpawnEntries": [
+            {
+                "Id": "RIFLE_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_B",
+                "Prob": 0.1
+            },
+            {
+                "Id": "RIFLE_AMMO",
+                "Prob": 0.15
+            },
+            {
+                "Id": "SHIELD_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "SHIELD_RECHARGER_C",
+                "Prob": 0.15
+            },
+            {
+                "Id": "BACKPACK_A",
+                "Prob": 0.1
+            },
+            {
+                "Id": "GRENADE",
+                "Prob": 0.1
+            },
+            {
+                "Id": "BANDAGE",
+                "Prob": 0.2
+            }
+        ],
+        "MinSpawnCount": 3,
+        "MaxSpawnCount": 5
     }
 ]
