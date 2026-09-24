@@ -20,6 +20,9 @@ ASpawnVolume::ASpawnVolume()
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Collsion"));
 	BoxComp->SetupAttachment(RootComponent);
+
+	BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 }
 
 void ASpawnVolume::BeginPlay()
