@@ -65,12 +65,15 @@ void AMonsterCharacter::MonsterAttack()
 
 	UParticleSystemComponent* Particle = nullptr;
 
+	FVector AttackPoint = GetMesh()->GetSocketLocation(*SocketName.ToString());
+	FRotator AttackFocus = GetMesh()->GetSocketRotation(*SocketName.ToString());
+
 	if (Effect)
 	{
 		Particle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
 															Effect,
-															GetMesh()->GetSocketLocation(*SocketName.ToString()),
-															GetMesh()->GetSocketRotation(*SocketName.ToString()),
+															AttackPoint,
+															AttackFocus,
 															true);
 		if (Particle)
 		{
@@ -224,7 +227,17 @@ bool AMonsterCharacter::IsDelay()
 	return MonsterStat->IsDelay();
 }
 
+void AMonsterCharacter::OnMissileHit(TArray<FOverlapResult> Targets)
+{
+	MonsterStat->OnMissileHit(Targets);
+}
+
 FVector AMonsterCharacter::GetAttackPoint() const
 {
 	return GetMesh()->GetSocketLocation(*SocketName.ToString());
+}
+
+FRotator AMonsterCharacter::GetAttackRotator() const
+{
+	return GetMesh()->GetSocketRotation(*SocketName.ToString());
 }
