@@ -10,6 +10,9 @@ AStorageContainerActor::AStorageContainerActor()
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	SetRootComponent(StaticMeshComp);
 
+	StaticMeshComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel14);                                         // Container
+	StaticMeshComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel13, ECollisionResponse::ECR_Overlap); // SpawnVolume
+
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
 	PromptData.Title = FText::FromString(TEXT("상자"));
@@ -22,6 +25,9 @@ AStorageContainerActor::AStorageContainerActor()
 void AStorageContainerActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	StaticMeshComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel14);                                         // Container
+	StaticMeshComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel13, ECollisionResponse::ECR_Overlap); // SpawnVolume
 
 	if (GetWorld())
 	{

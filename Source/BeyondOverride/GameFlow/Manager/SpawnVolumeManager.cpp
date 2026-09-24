@@ -24,6 +24,7 @@ void USpawnVolumeManager::LoadSpawnVolumeData()
 {
 	if (!GetWorld())
 	{
+		UE_LOG(LogGameFlow, Warning, TEXT("No World"));
 		return;
 	}
 
@@ -54,18 +55,6 @@ void USpawnVolumeManager::LoadSpawnVolumeData()
 
 		SpawnVolumeDatas.Add(RegionID, *SpawnVolumeData);
 	}
-
-	/*TArray<FSpawnVolumeData*> AllRows{};
-	SpawnVolumeDataTable->GetAllRows<FSpawnVolumeData>(TEXT("Get All Spawn Volume Datas"), AllRows);
-
-	for (FSpawnVolumeData* Row : AllRows)
-	{
-		if (Row)
-		{
-			FName RegionID = Row->RegionID;
-			SpawnVolumeDatas.Add(RegionID, *Row);
-		}
-	}*/
 }
 
 void USpawnVolumeManager::LoadPhaseData()
@@ -102,18 +91,6 @@ void USpawnVolumeManager::LoadPhaseData()
 
 		PhaseDatas.Add(RegionID, *PhaseData);
 	}
-
-	/*TArray<FPhaseData*> AllRows{};
-	PhaseDataTable->GetAllRows<FPhaseData>(TEXT("Get All Phase Datas"), AllRows);
-
-	for (FPhaseData* Row : AllRows)
-	{
-		if (Row)
-		{
-			FName SpawnVolumeID = Row->SpawnVolumeID;
-			PhaseDatas.Add(SpawnVolumeID, *Row);
-		}
-	}*/
 }
 
 void USpawnVolumeManager::InitSetting()
@@ -130,11 +107,11 @@ void USpawnVolumeManager::InitSetting()
 	}
 }
 
-bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeID, FSpawnVolumeData& Data) const
+bool USpawnVolumeManager::GetSpawnVolumeData(FName RegionID, FSpawnVolumeData& Data) const
 {
-	if (SpawnVolumeDatas.Contains(SpawnVolumeID))
+	if (SpawnVolumeDatas.Contains(RegionID))
 	{
-		Data = SpawnVolumeDatas[SpawnVolumeID];
+		Data = SpawnVolumeDatas[RegionID];
 
 		return true;
 	}
@@ -142,11 +119,11 @@ bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeID, FSpawnVolumeDa
 	return false;
 }
 
-bool USpawnVolumeManager::GetPhaseData(FName SpawnVolumeID, FPhaseData& Data) const
+bool USpawnVolumeManager::GetPhaseData(FName RegionID, FPhaseData& Data) const
 {
-	if (PhaseDatas.Contains(SpawnVolumeID))
+	if (PhaseDatas.Contains(RegionID))
 	{
-		Data = PhaseDatas[SpawnVolumeID];
+		Data = PhaseDatas[RegionID];
 
 		return true;
 	}

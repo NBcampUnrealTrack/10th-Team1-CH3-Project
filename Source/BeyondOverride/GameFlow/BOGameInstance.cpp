@@ -112,6 +112,8 @@ void UBOGameInstance::Exit()
 
 void UBOGameInstance::StartFarming()
 {
+	UE_LOG(LogGameFlow, Warning, TEXT("Game Instance Begin Farming"));
+
 	PlayingState = EPlayingState::Farming;
 	FarmingResult = EFarmingResult::None;
 
@@ -166,6 +168,11 @@ void UBOGameInstance::EnterServerRoom()
 
 void UBOGameInstance::OpenLevel(ELevel Level)
 {
+	if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == Levels[Level].GetAssetName())
+	{
+		return;
+	}
+
 	CurLevel = Level;
 
 	SavePlayerData();
@@ -217,6 +224,8 @@ void UBOGameInstance::OnPostLoadMap(UWorld* World)
 
 void UBOGameInstance::HideLoadingScreenWidget()
 {
+	UE_LOG(LogGameFlow, Warning, TEXT("HideLoadingScreenWidget"));
+
 	if (ULoadingScreenManager* LoadingScreenManager = GetSubsystem<ULoadingScreenManager>())
 	{
 		LoadingScreenManager->HideLoadingScreenWidget();
@@ -235,8 +244,10 @@ void UBOGameInstance::OnCharacterPrepared()
 
 void UBOGameInstance::OnLevelPrepared()
 {
+	UE_LOG(LogGameFlow, Warning, TEXT("OnLevelPrepared"));
 	if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 	{
+		UE_LOG(LogGameFlow, Warning, TEXT("GameMode InitSetting Called"));
 		GameMode->InitSetting();
 	}
 }

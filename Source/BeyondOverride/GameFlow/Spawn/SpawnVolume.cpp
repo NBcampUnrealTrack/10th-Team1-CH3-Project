@@ -3,6 +3,7 @@
 #include "GameFlow/Spawn/SpawnVolume.h"
 
 #include "DataTables/Monster/MonsterInfo.h"
+#include "Engine/EngineTypes.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/Manager/ContainerManager.h"
 #include "GameFlow/Manager/SpawnVolumeManager.h"
@@ -22,13 +23,20 @@ ASpawnVolume::ASpawnVolume()
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Collsion"));
 	BoxComp->SetupAttachment(RootComponent);
 
+	BoxComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel13); // SpawnVolume
 	BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel14, ECollisionResponse::ECR_Overlap); // Container
 }
 
 void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BoxComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel13); // SpawnVolume
+	BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel14, ECollisionResponse::ECR_Overlap); // Container
 
 	if (GetWorld() && GetWorld()->GetGameInstance())
 	{
@@ -148,7 +156,7 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 
 	SpawnLocation.X = X;
 	SpawnLocation.Y = Y;
-	SpawnLocation.Z = SVLocation.Z + 100.0f;
+	// SpawnLocation.Z = SVLocation.Z + 100.0f;
 
 	float Prob = FMath::RandRange(0.0f, 1.0f);
 	float Sum{};

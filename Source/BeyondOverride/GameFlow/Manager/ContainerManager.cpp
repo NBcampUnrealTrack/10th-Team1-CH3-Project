@@ -55,18 +55,6 @@ void UContainerManager::LoadContainerData()
 		return;
 	}
 
-	/*TArray<FContainerData*> AllRows{};
-	ContainerDataTable->GetAllRows<FContainerData>(TEXT("Get All Container Datas"), AllRows);
-
-	for (FContainerData* Row : AllRows)
-	{
-		if (Row)
-		{
-			FName RegionID = Row->RegionID;
-			ContainerDatas.Add(RegionID, *Row);
-		}
-	}*/
-
 	const TMap<FName, uint8*>& AllRows = ContainerDataTable->GetRowMap();
 
 	for (const TPair<FName, uint8*>& pair : AllRows)
@@ -172,6 +160,8 @@ void UContainerManager::ActivateContainers(TObjectPtr<ASpawnVolume> OverlappedSp
 
 	TArray<AActor*> AllActors{};
 	OverlappedSpawnVolume->GetOverlappingActors(AllActors, AStorageContainerActor::StaticClass());
+
+	UE_LOG(LogGameFlow, Warning, TEXT("Container Count : %d"), AllActors.Num());
 
 	for (AActor* Actor : AllActors)
 	{
