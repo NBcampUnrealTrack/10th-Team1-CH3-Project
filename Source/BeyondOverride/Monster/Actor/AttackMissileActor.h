@@ -12,6 +12,7 @@
 #include "AttackMissileActor.generated.h"
 
 class UCapsuleComponent;
+class UProjectileMovementComponent;
 
 UCLASS()
 class BEYONDOVERRIDE_API AAttackMissileActor : public AActor
@@ -27,24 +28,43 @@ class BEYONDOVERRIDE_API AAttackMissileActor : public AActor
 							 AController* EventInstigator,
 							 AActor* DamageCauser) override;
 
-	void SetDamage(int32 Damage);
+	void MissileSetUp(FVector Point,
+					  float Angle,
+					  int32 Damage,
+					  ACharacter* ThisOwner);
+
+	void MissileEffect();
 
   protected:
 	virtual void BeginPlay() override;
 
-	void TargetPoint(FVector Point);
+	virtual void Tick(float DeltaSecond) override;
 
-	void ExplosionSequnce();
+	void Launch();
+
+	void ExplosionSequnce(FVector Position);
+
+	UFUNCTION()
+	void OnCollisionOverlap(UPrimitiveComponent* OverlappedComp,
+							AActor* OtherActor,
+							UPrimitiveComponent* OhtherComp,
+							int32 otherBodyIndex,
+							bool bFromSweep,
+							const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnCollisionHit(UPrimitiveComponent* HitComponent,
 						AActor* OtherActor,
 						UPrimitiveComponent* OtherComp,
-						FVector NormalImpulse,
-						const FHitResult& Hit);
+						FVector NormalImpulse, const FHitResult& Hit);
+
 	// Properties
   public:
   protected:
+	FVector AttackPoint = FVector::ZeroVector;
+
+	float FireAngle = 0.0f;
+
 	uint32 BrokenCount = 0;
 
 	uint32 ThisDamage = 0;
@@ -52,16 +72,23 @@ class BEYONDOVERRIDE_API AAttackMissileActor : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack|AttackOwner")
 	ACharacter* AttackOwner;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack|Component")
-	USceneComponent* RootComp;
+	// Comp
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack|Component")
 	UCapsuleComponent* CollisionComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack|Component")
 	UStaticMeshComponent* StaticMeshComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack|Component")
+	UProjectileMovementComponent* ProjectileMovement;
 
-	// Effect
+	// Fly Effect
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Effect")
+	TObjectPtr<UParticleSystem> TailEffect;
+
+	// Explosion Effect
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Effect")
 	TObjectPtr<UParticleSystem> ExplosionEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Effect")
 	TObjectPtr<USoundBase> ExplosionSound;
+
+	FTimerHandle EffectUpdate;
 };

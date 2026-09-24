@@ -37,6 +37,10 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	FVector GetAttackPoint() const;
 
+	FRotator GetAttackRotator() const;
+
+	void OnMissileHit(TArray<FOverlapResult> Targets);
+
 	float GetAttackRange() const;
 
 	bool IsDelay();

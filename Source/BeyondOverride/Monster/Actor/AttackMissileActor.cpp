@@ -9,50 +9,105 @@
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
+#include "Monster/System/BFLSoundEvent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Player/Character/BOCharacter.h"
+#include "Projectiles/Bullets/BulletProjectile.h"
 
 AAttackMissileActor::AAttackMissileActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+
 	CollisionComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Sphere Collision Comp"));
-	CollisionComp->SetCollisionProfileName(TEXT("Missile"));
-	CollisionComp->SetSimulatePhysics(true);
-	CollisionComp->OnComponentHit.AddDynamic(this, &AAttackMissileActor::OnCollisionHit);
 	SetRootComponent(CollisionComp);
+
+	// 상태 전환
+	CollisionComp->SetCollisionProfileName(TEXT("Missile"));
+
+	// 오버랩 인식
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AAttackMissileActor::OnCollisionOverlap);
+	CollisionComp->OnComponentHit.AddDynamic(this, &AAttackMissileActor::OnCollisionHit);
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Comp"));
 	StaticMeshComp->SetupAttachment(CollisionComp);
+
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
+	ProjectileMovement->UpdatedComponent = CollisionComp;
+	ProjectileMovement->ProjectileGravityScale = 1.0f;
 }
 
 void AAttackMissileActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorld()->GetTimerManager().SetTimer(EffectUpdate,
+										   this,
+										   &AAttackMissileActor::MissileEffect,
+										   0.05f,
+										   true);
+
+	Launch();
 }
 
-void AAttackMissileActor::TargetPoint(FVector Point)
+void AAttackMissileActor::Tick(float DeltaSecond)
 {
-	FVector Start = CollisionComp->GetComponentLocation();
-	FVector ToTarget = Point - Start;
+	Super::Tick(DeltaSecond);
 
-	float Distance = ToTarget.Size();
-	FVector Direction = ToTarget.GetSafeNormal();
+	const FVector Velocity = ProjectileMovement->Velocity;
 
-	float Speed = Distance / 1.0;
+	if (!Velocity.IsNearlyZero())
+	{
+		FRotator Rotation = Velocity.Rotation();
 
-	FVector DesiredVelocity = Direction * Speed;
+		// 미사일 모델의 기본 방향에 맞춘 보정
+		Rotation.Pitch += 90.0f;
 
-	FVector CurrentVelocity = CollisionComp->GetPhysicsLinearVelocity();
-	FVector DeltaVelocity = DesiredVelocity - CurrentVelocity;
-
-	CollisionComp->AddImpulse(DeltaVelocity * CollisionComp->GetMass());
+		SetActorRotation(Rotation);
+	}
 }
 
-void AAttackMissileActor::ExplosionSequnce()
+void AAttackMissileActor::Launch()
 {
-	FVector ExplosionPoint = GetActorLocation();
+	FVector Delta = AttackPoint - CollisionComp->GetComponentLocation();
+
+	float HorizontalDistance = FVector2D(Delta.X, Delta.Y).Size();
+	float HeightDifference = Delta.Z;
+
+	float Gravity = FMath::Abs(GetWorld()->GetGravityZ());
+
+	float FlightTime = 2.5f;
+
+	float CosAngle = FMath::Cos(FireAngle);
+
+	if (FMath::IsNearlyZero(CosAngle))
+	{
+		return;
+	}
+
+	// 고정된 비행 시간과 계산된 각도로 필요한 속도 계산
+	float Speed = HorizontalDistance / (FlightTime * CosAngle);
+
+	float Pitch = FMath::RadiansToDegrees(FireAngle);
+
+	FVector HorizontalDirection =
+		FVector(Delta.X, Delta.Y, 0.0f).GetSafeNormal();
+
+	FVector LaunchDirection =
+		HorizontalDirection * CosAngle +
+		FVector::UpVector * FMath::Sin(FireAngle);
+
+	ProjectileMovement->Velocity = LaunchDirection * Speed;
+}
+
+void AAttackMissileActor::ExplosionSequnce(FVector Position)
+{
 
 	UParticleSystemComponent* Particle = nullptr;
+
+	FVector ExplosionPoint = Position;
 
 	// 결과 값 저장용 배열
 	TArray<FOverlapResult> OverlapResults;
@@ -63,7 +118,7 @@ void AAttackMissileActor::ExplosionSequnce()
 	// 인식할 Actor 설정 ECC_Pawn
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
 
-	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(150.0f);
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(250.0f);
 
 	bool bHit = GetWorld()->OverlapMultiByObjectType(OverlapResults,
 													 ExplosionPoint,
@@ -71,20 +126,18 @@ void AAttackMissileActor::ExplosionSequnce()
 													 ObjectQueryParams,
 													 CollisionShape);
 
-	for (const FOverlapResult& Result : OverlapResults)
+	if (!AttackOwner)
 	{
-		AActor* Actor = Result.GetActor();
-		if (!Actor)
-		{
-			continue;
-		}
-
-		UGameplayStatics::ApplyDamage(Actor,
-									  ThisDamage,
-									  AttackOwner->GetController(),
-									  AttackOwner,
-									  UDamageType::StaticClass());
+		return;
 	}
+
+	AMonsterCharacter* MonsterOnwer = Cast<AMonsterCharacter>(AttackOwner);
+	if (!MonsterOnwer)
+	{
+		return;
+	}
+
+	MonsterOnwer->OnMissileHit(OverlapResults);
 
 	if (ExplosionEffect)
 	{
@@ -123,13 +176,35 @@ void AAttackMissileActor::ExplosionSequnce()
 	Destroy();
 }
 
+void AAttackMissileActor::OnCollisionOverlap(UPrimitiveComponent* OverlappedComp,
+											 AActor* OtherActor,
+											 UPrimitiveComponent* OhtherComp,
+											 int32 otherBodyIndex,
+											 bool bFromSweep,
+											 const FHitResult& SweepResult)
+{
+	if (ABulletProjectile* HitActor = Cast<ABulletProjectile>(OtherActor))
+	{
+		return;
+	}
+	if (OtherActor == Owner)
+	{
+		return;
+	}
+	ExplosionSequnce(SweepResult.ImpactPoint);
+}
+
 void AAttackMissileActor::OnCollisionHit(UPrimitiveComponent* HitComponent,
 										 AActor* OtherActor,
 										 UPrimitiveComponent* OtherComp,
 										 FVector NormalImpulse,
 										 const FHitResult& Hit)
 {
-	ExplosionSequnce();
+	if (ABulletProjectile* HitActor = Cast<ABulletProjectile>(OtherActor))
+	{
+		return;
+	}
+	ExplosionSequnce(Hit.ImpactPoint);
 }
 
 float AAttackMissileActor::TakeDamage(float DamageAmount,
@@ -140,9 +215,9 @@ float AAttackMissileActor::TakeDamage(float DamageAmount,
 
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (BrokenCount >= 5)
+	if (BrokenCount >= 2)
 	{
-		ExplosionSequnce();
+		ExplosionSequnce(GetActorLocation());
 		BrokenCount = 0;
 	}
 
@@ -151,7 +226,120 @@ float AAttackMissileActor::TakeDamage(float DamageAmount,
 	return ActualDamage;
 }
 
-void AAttackMissileActor::SetDamage(int32 Damage)
+void AAttackMissileActor::MissileSetUp(FVector Point,
+									   float Angle,
+									   int32 Damage,
+									   ACharacter* ThisOwner)
 {
 	ThisDamage = Damage;
+	AttackPoint = Point;
+	FireAngle = Angle;
+	AttackOwner = ThisOwner;
+}
+
+void AAttackMissileActor::MissileEffect()
+{
+	const FVector ReverseVelocity = -ProjectileMovement->Velocity;
+
+	FBoxSphereBounds MissileBounds = CollisionComp->CalcLocalBounds();
+	FTransform MissileTransform = CollisionComp->GetComponentTransform();
+	FRotator MissileRotation = MissileTransform.GetRotation().Rotator();
+	FVector MissileExtent = MissileBounds.BoxExtent;
+	FVector MissileOrigin = MissileBounds.Origin;
+
+	FVector TailLocation = GetActorLocation();
+
+	FVector MissileLocalDirection;
+	FVector MissileLocalEdge;
+	FRotator Rotation;
+
+	float TX = BIG_NUMBER;
+	float TY = BIG_NUMBER;
+	float TZ = BIG_NUMBER;
+
+	if (!ReverseVelocity.IsNearlyZero())
+	{
+		Rotation = ReverseVelocity.Rotation();
+		TailLocation = GetActorLocation() + ReverseVelocity.GetSafeNormal() * MissileExtent;
+		MissileLocalDirection = MissileRotation.UnrotateVector(ReverseVelocity).GetSafeNormal();
+	}
+
+	if (!FMath::IsNearlyZero(MissileLocalDirection.X))
+	{
+		float XBoundary = MissileLocalDirection.X > 0.0f
+							  ? MissileExtent.X
+							  : -MissileExtent.X;
+
+		TX = XBoundary / MissileLocalDirection.X;
+	}
+
+	if (!FMath::IsNearlyZero(MissileLocalDirection.Y))
+	{
+		float YBoundary = MissileLocalDirection.Y > 0.0f
+							  ? MissileExtent.Y
+							  : -MissileExtent.Y;
+
+		TY = YBoundary / MissileLocalDirection.Y;
+	}
+
+	if (!FMath::IsNearlyZero(MissileLocalDirection.Z))
+	{
+		float ZBoundary = MissileLocalDirection.Z > 0.0f
+							  ? MissileExtent.Z
+							  : -MissileExtent.Z;
+
+		TZ = ZBoundary / MissileLocalDirection.Z;
+	}
+
+	float T = BIG_NUMBER;
+
+	if (TX >= 0.0f)
+	{
+		T = FMath::Min(T, TX);
+	}
+
+	if (TY >= 0.0f)
+	{
+		T = FMath::Min(T, TY);
+	}
+
+	if (TZ >= 0.0f)
+	{
+		T = FMath::Min(T, TZ);
+	}
+
+	MissileLocalEdge = MissileLocalDirection * T;
+	FVector TailLocalLocation =
+		MissileOrigin + MissileLocalEdge;
+
+	TailLocation = MissileTransform.TransformPosition(TailLocalLocation);
+
+	UParticleSystemComponent* Particle = nullptr;
+	if (TailEffect)
+	{
+		Particle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
+															TailEffect,
+															TailLocation,
+															Rotation,
+															true);
+
+		if (Particle)
+		{
+			FTimerHandle DestroyParticleTimerHandle;
+			TWeakObjectPtr<UParticleSystemComponent> WeakParticle = Particle;
+			GetWorld()->GetTimerManager().SetTimer(
+				DestroyParticleTimerHandle,
+				[WeakParticle]()
+				{
+					if (WeakParticle.IsValid())
+					{
+						WeakParticle->DestroyComponent();
+					}
+				},
+				2.0f,
+				false);
+		}
+	}
+
+	UBFLSoundEvent::SoundPlay(GetActorLocation(), "MissileFly", 50.0f, 1.0f, 0.2f, false, GetWorld());
 }

@@ -16,6 +16,7 @@
 #include "MonsterStatComponent.generated.h"
 
 class UMonsterDataAsset;
+class BOCharacter;
 
 UCLASS()
 class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
@@ -24,33 +25,41 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 
 	// Methtods
   public:
+	// Life Cycle Function
 	UMonsterStatComponent();
 
+	// Getter
 	EMonsterType GetMonsterType() const;
-
 	float GetWalkSpeed() const;
-
 	float GetSprintSpeed() const;
-
-	void SetAttackRange(float Range);
 	float GetAttackRange() const;
-
 	FVector GetAttackPoint() const;
-
-	void SetMonsterID(FName ID);
 	FName GetMonsterID() const;
+
+	// Setter
+	void SetAttackRange(float Range);
+	void SetMonsterID(FName ID);
+
+	// Basic Stat System
+	void StatSetup();
 
 	// Attack System
 	void CallAttackLock();
 	bool IsDelay() const;
+
 	void Attack();
-	void StatSetup();
+	void OnMissileHit(TArray<FOverlapResult> Targets);
+	void DamageLogic(AActor* Target, int32 Damage);
 
 	// Protect System
-	void ApplyProtect(int32 getdamage, AActor* DamageCauser);
+	void
+	ApplyProtect(int32 GetDamage, AActor* DamageCauser);
 
   protected:
+	// Life Cycle Function
 	virtual void BeginPlay() override;
+
+	// Attack System
 	void OnBalisticHit(AActor* Target);
 
 	// Properties
@@ -91,7 +100,6 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SprintSpeed = 1.2f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTimerHandle AttackLock;
 
 	// Monster key Info

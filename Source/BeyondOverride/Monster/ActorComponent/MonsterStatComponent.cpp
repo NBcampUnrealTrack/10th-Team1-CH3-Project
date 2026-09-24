@@ -5,6 +5,7 @@
 
 // Add include
 #include "DataTables/Monster/MonsterStatInfo.h"
+#include "Engine/OverlapResult.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monster/AiController/MonsterAIController.h"
@@ -13,6 +14,8 @@
 #include "Monster/Enums/StateEnums.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/BFLMeleeAttack.h"
+#include "Monster/System/BFLMissileAttack.h"
+#include "Monster/System/BFLSoundEvent.h"
 #include "Monster/System/BalisticTrace.h"
 #include "Player/Character/BOCharacter.h"
 
@@ -101,6 +104,8 @@ void UMonsterStatComponent::Attack()
 
 		FVector BulletDirection = (Target->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
 
+		UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Rifle", 3500.0f, 1.2f, 2.0f, false, GetWorld());
+
 		UBalisticTrace* NewBalisticTrace = NewObject<UBalisticTrace>(this);
 
 		NewBalisticTrace->OnBalisticHit.AddUObject(this, &UMonsterStatComponent::OnBalisticHit);
@@ -135,20 +140,122 @@ void UMonsterStatComponent::Attack()
 			{
 				return;
 			}
-
-			UGameplayStatics::ApplyDamage(Target,
-										  AttackDamage,
-										  Owner->GetController(),
-										  Owner,
-										  UDamageType::StaticClass());
+			DamageLogic(Target, AttackDamage);
 		}
 	}
+	else if (MonsterType == EMonsterType::Special)
+	{
+		AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
+		if (!Owner)
+		{
+			return;
+		}
+
+		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+		if (!AIController)
+		{
+			return;
+		}
+
+		ABOCharacter* Target = AIController->GetTarget();
+		if (!Target)
+		{
+			return;
+		}
+
+		UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Missile", 5500.0f, 1.0f, 4.0f, false, GetWorld());
+		FVector Delta = Target->GetActorLocation() - Owner->GetAttackPoint();
+
+		float HorizontalDistance = FVector2D(Delta.X, Delta.Y).Size();
+		float HeightDifference = Delta.Z;
+
+		float Gravity = FMath::Abs(GetWorld()->GetGravityZ());
+
+		float FlightTime = 2.5f;
+
+		// 목표 위치에 도달하기 위한 발사 각도 계산
+		float Angle = FMath::Atan2(HeightDifference + 0.5f * Gravity * FlightTime * FlightTime,
+								   HorizontalDistance);
+
+		UBFLMissileAttack::MissileAttack(Owner->GetAttackPoint(),
+										 Target->GetActorLocation(),
+										 Angle,
+										 AttackDamage,
+										 Owner,
+										 GetWorld());
+	}
+
 	CallAttackLock();
 }
 
-void UMonsterStatComponent::ApplyProtect(int32 getdamage, AActor* DamageCauser)
+void UMonsterStatComponent::OnBalisticHit(AActor* Target)
 {
-	TakeDamage(FMath::Max(1, getdamage - Protect), DamageCauser);
+	AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
+	if (!Owner)
+	{
+		return;
+	}
+	ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
+	if (!PlayerCharacter)
+	{
+		return;
+	}
+	DamageLogic(Target, AttackDamage);
+}
+
+void UMonsterStatComponent::OnMissileHit(TArray<FOverlapResult> Targets)
+{
+
+	if (Targets.IsEmpty())
+	{
+		return;
+	}
+
+	for (const FOverlapResult& Result : Targets)
+	{
+
+		AActor* Actor = Result.GetActor();
+		if (!Actor)
+		{
+			continue;
+		}
+
+		ABOCharacter* IsBOCharacter = Cast<ABOCharacter>(Actor);
+		AMonsterCharacter* IsMonsterCharacter = Cast<AMonsterCharacter>(Actor);
+		AAttackMissileActor* IsMissile = Cast<AAttackMissileActor>(Actor);
+
+		if (IsBOCharacter || IsMonsterCharacter || IsMissile)
+		{
+			DamageLogic(Actor, AttackDamage);
+		}
+	}
+}
+
+void UMonsterStatComponent::DamageLogic(AActor* Target, int32 Damage)
+{
+
+	AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
+	if (!Owner)
+	{
+		return;
+	}
+
+	AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+	if (!AIController)
+	{
+		return;
+	}
+
+	UGameplayStatics::ApplyDamage(Target,
+								  Damage,
+								  AIController,
+								  Owner,
+								  UDamageType::StaticClass());
+}
+
+void UMonsterStatComponent::ApplyProtect(int32 GetDamage, AActor* DamageCauser)
+{
+	TakeDamage(FMath::Max(1, GetDamage - Protect), DamageCauser);
 }
 
 bool UMonsterStatComponent::IsDelay() const
@@ -174,25 +281,6 @@ void UMonsterStatComponent::CallAttackLock()
 void UMonsterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void UMonsterStatComponent::OnBalisticHit(AActor* Target)
-{
-	AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
-	if (!Owner)
-	{
-		return;
-	}
-	ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
-	if (!PlayerCharacter)
-	{
-		return;
-	}
-	UGameplayStatics::ApplyDamage(Target,
-								  AttackDamage,
-								  Owner->GetController(),
-								  Owner,
-								  UDamageType::StaticClass());
 }
 
 void UMonsterStatComponent::StatSetup()
