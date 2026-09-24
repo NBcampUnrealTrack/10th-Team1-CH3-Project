@@ -14,7 +14,6 @@ void USpawnVolumeManager::Initialize(FSubsystemCollectionBase& Collection)
 	SpawnVolumeDatas.Empty();
 	PhaseDatas.Empty();
 
-	ActivatedSpawnVolumes.Empty();
 	SpawnVolumeByRegion.Empty();
 
 	LoadSpawnVolumeData();
@@ -25,6 +24,7 @@ void USpawnVolumeManager::LoadSpawnVolumeData()
 {
 	if (!GetWorld())
 	{
+		UE_LOG(LogGameFlow, Warning, TEXT("No World"));
 		return;
 	}
 
@@ -46,16 +46,14 @@ void USpawnVolumeManager::LoadSpawnVolumeData()
 		return;
 	}
 
-	TArray<FSpawnData*> AllRows{};
-	SpawnVolumeDataTable->GetAllRows<FSpawnData>(TEXT("Get All Spawn Volume Datas"), AllRows);
+	const TMap<FName, uint8*>& AllRows = SpawnVolumeDataTable->GetRowMap();
 
-	for (FSpawnData* Row : AllRows)
+	for (const TPair<FName, uint8*>& pair : AllRows)
 	{
-		if (Row)
-		{
-			FName ID = Row->ID;
-			SpawnVolumeDatas.Add(ID, *Row);
-		}
+		FName RegionID = pair.Key;
+		FSpawnVolumeData* SpawnVolumeData = reinterpret_cast<FSpawnVolumeData*>(pair.Value);
+
+		SpawnVolumeDatas.Add(RegionID, *SpawnVolumeData);
 	}
 }
 
@@ -84,16 +82,14 @@ void USpawnVolumeManager::LoadPhaseData()
 		return;
 	}
 
-	TArray<FPhaseData*> AllRows{};
-	PhaseDataTable->GetAllRows<FPhaseData>(TEXT("Get All Phase Datas"), AllRows);
+	const TMap<FName, uint8*>& AllRows = PhaseDataTable->GetRowMap();
 
-	for (FPhaseData* Row : AllRows)
+	for (const TPair<FName, uint8*>& pair : AllRows)
 	{
-		if (Row)
-		{
-			FName SpawnVolumeID = Row->SpawnVolumeID;
-			PhaseDatas.Add(SpawnVolumeID, *Row);
-		}
+		FName RegionID = pair.Key;
+		FPhaseData* PhaseData = reinterpret_cast<FPhaseData*>(pair.Value);
+
+		PhaseDatas.Add(RegionID, *PhaseData);
 	}
 }
 
@@ -106,29 +102,16 @@ void USpawnVolumeManager::InitSetting()
 	{
 		if (TObjectPtr<ASpawnVolume> SpawnVolume = Cast<ASpawnVolume>(Actor))
 		{
-			SpawnVolume->OnPlayerEntered.BindUObject(this, &USpawnVolumeManager::ActivateSpawnVolume);
 			SpawnVolumeByRegion.Add(SpawnVolume->GetRegionID(), SpawnVolume);
 		}
 	}
 }
 
-void USpawnVolumeManager::ActivateSpawnVolume(ASpawnVolume* SpawnVolume)
+bool USpawnVolumeManager::GetSpawnVolumeData(FName RegionID, FSpawnVolumeData& Data) const
 {
-	if (ActivatedSpawnVolumes.Contains(SpawnVolume))
+	if (SpawnVolumeDatas.Contains(RegionID))
 	{
-		return;
-	}
-
-	UE_LOG(LogGameFlow, Warning, TEXT("Activate Spawn Volume"));
-	ActivatedSpawnVolumes.Add(SpawnVolume);
-	SpawnVolume->SpawnMonsters();
-}
-
-bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeID, FSpawnData& Data) const
-{
-	if (SpawnVolumeDatas.Contains(SpawnVolumeID))
-	{
-		Data = SpawnVolumeDatas[SpawnVolumeID];
+		Data = SpawnVolumeDatas[RegionID];
 
 		return true;
 	}
@@ -136,11 +119,11 @@ bool USpawnVolumeManager::GetSpawnVolumeData(FName SpawnVolumeID, FSpawnData& Da
 	return false;
 }
 
-bool USpawnVolumeManager::GetPhaseData(FName SpawnVolumeID, FPhaseData& Data) const
+bool USpawnVolumeManager::GetPhaseData(FName RegionID, FPhaseData& Data) const
 {
-	if (PhaseDatas.Contains(SpawnVolumeID))
+	if (PhaseDatas.Contains(RegionID))
 	{
-		Data = PhaseDatas[SpawnVolumeID];
+		Data = PhaseDatas[RegionID];
 
 		return true;
 	}
@@ -168,6 +151,5 @@ void USpawnVolumeManager::CleanSetting()
 		}
 	}
 
-	ActivatedSpawnVolumes.Empty();
 	SpawnVolumeByRegion.Empty();
 }

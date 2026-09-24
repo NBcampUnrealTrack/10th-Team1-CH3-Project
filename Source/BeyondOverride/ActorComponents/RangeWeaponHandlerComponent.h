@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -27,20 +27,27 @@ DECLARE_DELEGATE_RetVal_TwoParams(
 	const FName&, // 탄약 ItemID
 	const int32); // 필요한 탄약 개수
 
+// 현재 탄약 개수 변경 델리게이트 - 사격 & 재장전 후 탄약 개수 변경 시 호출하여, 남은 탄약 개수를 UI에 반영함
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnAmmoCountUpdatedDelegate,
+	const int32); // 현재 탄약 개수
+
 UCLASS()
 class BEYONDOVERRIDE_API URangeWeaponHandlerComponent : public UEquipmentHandlerComponent
 {
 	GENERATED_BODY()
 
-public:
+  public:
 	// 사격 수행 시 송출하는 델리게이트
 	FOnFireExecutedDelegate OnFireExecutedDelegate;
 	// 재장전 가능 여부 델리게이트
 	FCanReloadDelegate CanReloadDelegate;
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
+	// 현재 탄약 개수 업데이트 델리게이트
+	FOnAmmoCountUpdatedDelegate OnAmmoCountUpdatedDelegate;
 
-protected:
+  protected:
 	// 등록된 Range Weapon 인스턴스
 	UPROPERTY()
 	TObjectPtr<URangeWeaponInstance> RangeWeaponInstance;
@@ -51,13 +58,17 @@ protected:
 	// 총구 소켓 이름
 	FName MuzzleSocketName;
 
-public:
+  public:
 	URangeWeaponHandlerComponent();
 
-protected:
+  protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
+  public:
+	// 현재 탄 퍼짐 각도 반환
+	float GetCurrentSpreadDegree() const;
+
+  public:
 	// 장비 등록
 	virtual bool Assign(UEquippableItemInstance* InEquippableItemInstance) override;
 	// 장비 제거
@@ -86,8 +97,7 @@ public:
 
 	bool IsReloading() const;
 
-
-protected:
+  protected:
 	// 장비 등록 가능 여부
 	virtual bool CanAssign(const UEquippableItemInstance* InEquippableItemInstance) const override;
 	// 장비 제거 가능 여부
@@ -101,7 +111,7 @@ protected:
 
 	virtual void OnEquipCompleted() override;
 
-protected:
+  protected:
 	// 사격 활성화 여부
 	bool bIsActive;
 	// 조준 여부
@@ -122,7 +132,7 @@ protected:
 	// 탄 퍼짐 각도 (원뿔 영역 내 균일 분포)
 	FTimeline SpreadDegreeTimeline;
 
-protected:
+  protected:
 	// 사격
 	void Fire();
 
@@ -165,7 +175,7 @@ protected:
 	// 재장전 애니메이션 중단
 	void StopReloadAnimation();
 
-protected:
+  protected:
 	// 사격 종료 시 호출
 	void OnFireCompleted();
 

@@ -1,5 +1,6 @@
 #include "UI/Widgets/InventoryScreenWidget.h"
 
+#include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Image.h"
 #include "Components/VerticalBox.h"
@@ -13,7 +14,8 @@
 #include "UI/Widgets/EquipmentSlotWidget.h"
 #include "UI/Widgets/HeldItemWidget.h"
 #include "UI/Widgets/ItemSlotPanelWidget.h"
-#include "Blueprint/SlateBlueprintLibrary.h"
+#include "UI/Widgets/ItemTooltipWidget.h"
+#include "Items/Objects/ItemInstanceBase.h"
 
 void UInventoryScreenWidget::NativeConstruct()
 {
@@ -36,6 +38,7 @@ void UInventoryScreenWidget::NativeConstruct()
 	{
 		BackpackSlotPanel->SetInventory(OwnerCharacter->GetPlayerInventoryComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 		BackpackSlotPanel->SetContainerName(FText::FromString(TEXT("가방")));
+		BackpackSlotPanel->OnSlotHoverChanged.AddDynamic(this, &UInventoryScreenWidget::HandleSlotHovered);
 	}
 
 	if (ContainerSlotPanel)
@@ -46,6 +49,7 @@ void UInventoryScreenWidget::NativeConstruct()
 		{
 			PlayerNearbyItemComponent->OnNearbyItemsChanged.AddDynamic(this, &UInventoryScreenWidget::OnNearbyItemsChanged);
 			ContainerSlotPanel->SetWorldItems(PlayerNearbyItemComponent->GetItemPickups(), PlayerNearbyItemComponent, OwnerCharacter->GetInventoryInteractionComponent());
+			ContainerSlotPanel->OnSlotHoverChanged.AddDynamic(this, &UInventoryScreenWidget::HandleSlotHovered);
 		}
 	}
 
@@ -65,6 +69,11 @@ void UInventoryScreenWidget::NativeConstruct()
 						OwnerCharacter->GetInventoryInteractionComponent(),
 						OwnerCharacter->GetEquipmentComponent());
 				} });
+	}
+
+	if (UInventoryInteractionComponent* IIC = OwnerCharacter->GetInventoryInteractionComponent())
+	{
+		IIC->OnHoldItemChanged.AddDynamic(this, &UInventoryScreenWidget::HandleHoldItemChanged);
 	}
 }
 
@@ -168,3 +177,18 @@ void UInventoryScreenWidget::OnNearbyItemsChanged(const TArray<AItemPickupBase*>
 	ContainerSlotPanel->SetWorldItems(NearbyItems, OwnerCharacter->GetNearbyItemComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 }
 
+void UInventoryScreenWidget::HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item)
+{
+	if (!Tooltip || HeldItem->GetVisibility() != ESlateVisibility::Collapsed)
+		return;
+
+	Tooltip->OnItemHovered(bIsHovered, Item);
+}
+
+void UInventoryScreenWidget::HandleHoldItemChanged(const UItemInstanceBase* HoldItem)
+{
+	if (HoldItem && Tooltip)
+	{
+		Tooltip->OnItemHovered(false, nullptr);
+	}
+}

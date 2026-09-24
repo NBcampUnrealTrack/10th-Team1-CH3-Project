@@ -3,7 +3,9 @@
 #include "GameFlow/Spawn/SpawnVolume.h"
 
 #include "DataTables/Monster/MonsterInfo.h"
+#include "Engine/EngineTypes.h"
 #include "GameFlow/BOGameInstance.h"
+#include "GameFlow/Manager/ContainerManager.h"
 #include "GameFlow/Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Logging/BOLog.h"
@@ -20,18 +22,28 @@ ASpawnVolume::ASpawnVolume()
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Collsion"));
 	BoxComp->SetupAttachment(RootComponent);
+
+	BoxComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel13); // SpawnVolume
+	BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel14, ECollisionResponse::ECR_Overlap); // Container
 }
 
 void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
 
+	BoxComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel13); // SpawnVolume
+	BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel14, ECollisionResponse::ECR_Overlap); // Container
+
 	if (GetWorld() && GetWorld()->GetGameInstance())
 	{
 		if (USpawnVolumeManager* SpawnVolumeManager = GetWorld()->GetGameInstance()->GetSubsystem<USpawnVolumeManager>())
 		{
-			SpawnVolumeManager->GetSpawnVolumeData(ID, SpawnVolumeData);
-			SpawnVolumeManager->GetPhaseData(ID, PhaseData);
+			SpawnVolumeManager->GetSpawnVolumeData(RegionID, SpawnVolumeData);
+			SpawnVolumeManager->GetPhaseData(RegionID, PhaseData);
 		}
 	}
 
@@ -44,22 +56,23 @@ void ASpawnVolume::BeginPlay()
 
 void ASpawnVolume::OnOverlapped(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogGameFlow, Warning, TEXT("%s Overlapped"), *ID.ToString());
+	UE_LOG(LogGameFlow, Warning, TEXT("%s Overlapped"), *RegionID.ToString());
 	UE_LOG(LogGameFlow, Warning, TEXT("Overlap Actor : %s"), *OtherActor->GetName());
 
 	if (OtherActor->IsA<ABOCharacter>())
 	{
-		UE_LOG(LogGarbage, Warning, TEXT("Player Overlapped %s"), *ID.ToString());
+		UE_LOG(LogGarbage, Warning, TEXT("Player Overlapped %s"), *RegionID.ToString());
 
 		if (BoxComp)
 		{
-			UE_LOG(LogGameFlow, Warning, TEXT("%s Remove Overlap Bind"), *ID.ToString());
+			UE_LOG(LogGameFlow, Warning, TEXT("%s Remove Overlap Bind"), *RegionID.ToString());
 
 			BoxComp->OnComponentBeginOverlap.RemoveDynamic(this, &ASpawnVolume::OnOverlapped);
 			BoxComp->SetGenerateOverlapEvents(false);
-		}
 
-		OnPlayerEntered.ExecuteIfBound(this);
+			SpawnMonsters();
+			ActivateContainers();
+		}
 	}
 	else
 	{
@@ -72,7 +85,7 @@ void ASpawnVolume::SpawnMonsters()
 	int32 Count = FMath::RandRange(SpawnVolumeData.MinSpawnCount, SpawnVolumeData.MaxSpawnCount);
 	TArray<FSpawnEntry> SpawnEntries = SpawnVolumeData.SpawnEntries;
 
-	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : %s"), *ID.ToString());
+	UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : %s"), *RegionID.ToString());
 	UE_LOG(LogGameFlow, Warning, TEXT("Count : %d"), Count);
 
 	for (int i = 0; i < Count; i++)
@@ -83,6 +96,8 @@ void ASpawnVolume::SpawnMonsters()
 
 void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float MinDist, float MaxDist, bool IsChase)
 {
+	UE_LOG(LogGameFlow, Warning, TEXT("SpawnRandomMonster Called"));
+
 	if (!GetWorld() || !GetWorld()->GetFirstPlayerController() || !BoxComp)
 	{
 		return;
@@ -134,12 +149,12 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 	float Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
 
 	// Is it Optimal?
-	while (Distance < MinDistance || MaxDistance < Distance)
+	/*while (Distance < MinDistance || MaxDistance < Distance)
 	{
 		X = FMath::RandRange(SVLocation.X - BoxExtent.X, SVLocation.X + BoxExtent.X);
 		Y = FMath::RandRange(SVLocation.Y - BoxExtent.Y, SVLocation.Y + BoxExtent.Y);
 		Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
-	}
+	}*/
 
 	SpawnLocation.X = X;
 	SpawnLocation.Y = Y;
@@ -161,6 +176,8 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 			GameInstance->GetMonsterData(MonsterID, MonsterData);
 
 			// Spawn AI
+			UE_LOG(LogGameFlow, Warning, TEXT("Spawn Monster : %s"), *MonsterID.ToString());
+
 			MonsterSpawnSystem->MonsterSpawn(SpawnLocation, MonsterID);
 
 			if (IsChase)
@@ -227,14 +244,24 @@ void ASpawnVolume::SpawnPhaseMonsters()
 	PhaseIndex += 1;
 }
 
-FName ASpawnVolume::GetID() const
+void ASpawnVolume::ActivateContainers()
 {
-	return ID;
+	if (!GetGameInstance())
+	{
+		return;
+	}
+
+	if (UContainerManager* ContainerManager = GetGameInstance()->GetSubsystem<UContainerManager>())
+	{
+		UE_LOG(LogGameFlow, Warning, TEXT("Spawn Volume : Activate Containers"));
+
+		ContainerManager->ActivateContainers(this);
+	}
 }
 
 FName ASpawnVolume::GetRegionID() const
 {
-	return SpawnVolumeData.RegionID;
+	return RegionID;
 }
 
 void ASpawnVolume::CleanSetting()

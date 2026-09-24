@@ -1,4 +1,4 @@
-#include "ActorComponents/EquipmentManagerComponent.h"
+﻿#include "ActorComponents/EquipmentManagerComponent.h"
 
 #include "ActorComponents/MeleeWeaponHandlerComponent.h"
 #include "ActorComponents/RangeWeaponHandlerComponent.h"
@@ -13,7 +13,7 @@
 
 UEquipmentManagerComponent::UEquipmentManagerComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 
 	ActiveSlot = EEquipmentSlot::Unarmed;
 
@@ -23,6 +23,23 @@ UEquipmentManagerComponent::UEquipmentManagerComponent()
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Melee, CreateDefaultSubobject<UMeleeWeaponHandlerComponent>(TEXT("MeleeWeapon Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Throwable, CreateDefaultSubobject<UThrowableItemHandlerComponent>(TEXT("ThrowableItem Handler Component")));
 	EquipmentHandlerComponents.Add(EEquipmentSlot::Effect, CreateDefaultSubobject<UUtilityItemHandlerComponent>(TEXT("UtilityItem Handler Component")));
+}
+
+void UEquipmentManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	// 유효하지 않은 슬롯
+	if (!EquipmentHandlerComponents.Contains(ActiveSlot) || !EquipmentHandlerComponents[ActiveSlot])
+	{
+		OnSpreadDegreeUpdatedDelegate.Broadcast(0.f);
+		return;
+	}
+
+	// RangeWeapon의 현재 탄 퍼짐을 델리게이트로 송출
+	if (URangeWeaponHandlerComponent* RangeWeaponHandler = Cast<URangeWeaponHandlerComponent>(EquipmentHandlerComponents[ActiveSlot]))
+	{
+		float SpreadDegree = RangeWeaponHandler->GetCurrentSpreadDegree();
+		OnSpreadDegreeUpdatedDelegate.Broadcast(SpreadDegree);
+	}
 }
 
 EEquipmentSlot UEquipmentManagerComponent::GetActiveSlot() const
@@ -303,6 +320,7 @@ void UEquipmentManagerComponent::BindDelegates()
 			PrimaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
 			PrimaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::CanReload);
 			PrimaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::RequestReloadAmmo);
+			PrimaryRangeWeaponHandler->OnAmmoCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnAmmoCountUpdated);
 		}
 	}
 
@@ -314,6 +332,7 @@ void UEquipmentManagerComponent::BindDelegates()
 			SecondaryRangeWeaponHandler->OnFireExecutedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnFireExecuted);
 			SecondaryRangeWeaponHandler->CanReloadDelegate.BindUObject(this, &UEquipmentManagerComponent::CanReload);
 			SecondaryRangeWeaponHandler->RequestReloadAmmoDelegate.BindUObject(this, &UEquipmentManagerComponent::RequestReloadAmmo);
+			SecondaryRangeWeaponHandler->OnAmmoCountUpdatedDelegate.AddUObject(this, &UEquipmentManagerComponent::OnAmmoCountUpdated);
 		}
 	}
 
@@ -365,6 +384,11 @@ int32 UEquipmentManagerComponent::RequestReloadAmmo(const FName& AmmoItemID, con
 
 	// 재장전에 사용할 탄약 개수 전달
 	return RequestReloadAmmoDelegate.Execute(AmmoItemID, RequestedAmmoCount);
+}
+
+void UEquipmentManagerComponent::OnAmmoCountUpdated(const int32 AmmoCount) const
+{
+	OnRangeWeaponAmmoCountUpdatedDelegate.Broadcast(ActiveSlot, AmmoCount);
 }
 
 void UEquipmentManagerComponent::OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance)

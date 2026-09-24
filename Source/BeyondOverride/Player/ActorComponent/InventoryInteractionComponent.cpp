@@ -206,13 +206,18 @@ bool UInventoryInteractionComponent::HandleNearbySlotClick(UNearbyItemComponent*
 
 bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
 {
-	UNearbyItemComponent* NearbyItemComponent = nullptr;
-
 	AActor* Owner = GetOwner();
 
-	if (IsValid(Owner))
+	if (!IsValid(Owner))
 	{
-		NearbyItemComponent = Owner->FindComponentByClass<UNearbyItemComponent>();
+		return false;
+	}
+
+	UNearbyItemComponent* NearbyItemComponent = Owner->FindComponentByClass<UNearbyItemComponent>();
+
+	if (!IsValid(NearbyItemComponent))
+	{
+		return false;
 	}
 
 	if (bLeftClick)
@@ -221,6 +226,76 @@ bool UInventoryInteractionComponent::DropItem(bool bLeftClick)
 	}
 
 	return DropOne(NearbyItemComponent);
+}
+
+bool UInventoryInteractionComponent::SellItem(bool bLeftClick)
+{
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	if (bLeftClick)
+	{
+		return SellAll();
+	}
+
+	return SellOne();
+}
+
+bool UInventoryInteractionComponent::BuyItem(UItemInstanceBase* Item)
+{
+	if (!IsValid(Item))
+	{
+		return false;
+	}
+
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UPlayerInventoryComponent* PlayerInventory = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+
+	if (!IsValid(PlayerInventory))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = Item->GetItemData();
+
+	if (!ItemData)
+	{
+		return false;
+	}
+
+	const int32 ItemCount = Item->GetStackCount();
+
+	if (ItemCount <= 0 || ItemData->BuyPrice < 0)
+	{
+		return false;
+	}
+
+	const int64 Price = ItemData->BuyPrice * ItemCount;
+
+	if (PlayerInventory->GetMoney() < Price)
+	{
+		return false;
+	}
+
+	if (!PlayerInventory->AddItem(Item))
+	{
+		return false;
+	}
+
+	if (Price == 0)
+	{
+		return true;
+	}
+
+	return PlayerInventory->SpendMoney(Price);
 }
 
 bool UInventoryInteractionComponent::IsHoldingItem() const
@@ -291,9 +366,7 @@ bool UInventoryInteractionComponent::PickupHalf(UInventoryComponent* Inventory, 
 
 	if (StackCount <= 1)
 	{
-		return PickupAll(
-			Inventory,
-			SlotIndex);
+		return PickupAll(Inventory, SlotIndex);
 	}
 
 	const int32 HoldCount = StackCount / 2;
@@ -1215,6 +1288,118 @@ bool UInventoryInteractionComponent::DropOne(UNearbyItemComponent* NearbyItemCom
 	}
 
 	HoldItem->SetStackCount(HoldCount - 1);
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::SellAll()
+{
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = HoldItem->GetItemData();
+
+	if (!ItemData || ItemData->SellPrice <= 0)
+	{
+		return false;
+	}
+
+	const int32 HoldCount = HoldItem->GetStackCount();
+
+	if (HoldCount <= 0)
+	{
+		return false;
+	}
+
+	const int64 TotalPrice =
+		static_cast<int64>(ItemData->SellPrice) * HoldCount;
+
+	if (TotalPrice > MAX_int32)
+	{
+		return false;
+	}
+
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UPlayerInventoryComponent* PlayerInventory = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+
+	if (!IsValid(PlayerInventory))
+	{
+		return false;
+	}
+
+	if (!PlayerInventory->AddMoney(static_cast<int32>(TotalPrice)))
+	{
+		return false;
+	}
+
+	// 전체 판매 완료
+	HoldItem = nullptr;
+
+	OnHoldItemChanged.Broadcast(HoldItem);
+
+	return true;
+}
+
+bool UInventoryInteractionComponent::SellOne()
+{
+	if (!IsValid(HoldItem))
+	{
+		return false;
+	}
+
+	const FItemDataRow* ItemData = HoldItem->GetItemData();
+
+	if (!ItemData || ItemData->SellPrice <= 0)
+	{
+		return false;
+	}
+
+	const int32 HoldCount = HoldItem->GetStackCount();
+
+	if (HoldCount <= 0)
+	{
+		return false;
+	}
+
+	AActor* Owner = GetOwner();
+
+	if (!IsValid(Owner))
+	{
+		return false;
+	}
+
+	UPlayerInventoryComponent* PlayerInventory = Owner->FindComponentByClass<UPlayerInventoryComponent>();
+
+	if (!IsValid(PlayerInventory))
+	{
+		return false;
+	}
+
+	if (!PlayerInventory->AddMoney(ItemData->SellPrice))
+	{
+		return false;
+	}
+
+	const int32 NewCount = HoldCount - 1;
+
+	if (NewCount <= 0)
+	{
+		HoldItem = nullptr;
+	}
+	else
+	{
+		HoldItem->SetStackCount(NewCount);
+	}
 
 	OnHoldItemChanged.Broadcast(HoldItem);
 

@@ -23,7 +23,7 @@
         "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Assault_Rifle_A_StaticMesh.Assault_Rifle_A_StaticMesh'",
         "MaxStackCount": 1,
         "Weight": 10.0,
-        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB.T_RifleB'"
+        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleA.T_RifleA'"
     },
     {
         "Name": "ASSAULT_RIFLE_B",
@@ -49,7 +49,7 @@
         "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Pistols_A_StaticMesh.Pistols_A_StaticMesh'",
         "MaxStackCount": 1,
         "Weight": 4.0,
-        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolB.T_PistolB'"
+        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolA.T_PistolA'"
     },
     {
         "Name": "PISTOL_B",
@@ -75,7 +75,7 @@
         "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Shotgun_A_StaticMesh.Shotgun_A_StaticMesh'",
         "MaxStackCount": 1,
         "Weight": 7.3,
-        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunB.T_ShotgunB'"
+        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunA.T_ShotgunA'"
     },
     {
         "Name": "SHOTGUN_B",
@@ -155,19 +155,19 @@
         "Weight": 0.4,
         "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Throwables/T_Grenade.T_Grenade'"
     },
-  {
-    "Name": "BANDAGE",
-    "DisplayName": "Bandage",
-    "Description": "Bandage Description",
-    "ItemType": "EffectItem",
-    "ItemRarity": "Common",
-    "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Utilities/Bandage/BP_ItemInstance_Bandage.BP_ItemInstance_Bandage_C'",
-    "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Utilities/Bandage/BP_ItemPickup_Bandage.BP_ItemPickup_Bandage_C'",
-    "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Health/Bandage/SM_Bandage.SM_Bandage'",
-    "MaxStackCount": 5,
-    "Weight": 1.2,
-    "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_Bandage.T_Bandage'"
-  },
+    {
+        "Name": "BANDAGE",
+        "DisplayName": "Bandage",
+        "Description": "Bandage Description",
+        "ItemType": "EffectItem",
+        "ItemRarity": "Common",
+        "ItemInstanceClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Utilities/Bandage/BP_ItemInstance_Bandage.BP_ItemInstance_Bandage_C'",
+        "ItemPickupClass": "/Script/Engine.Blueprint'/Game/Blueprints/Items/Utilities/Bandage/BP_ItemPickup_Bandage.BP_ItemPickup_Bandage_C'",
+        "ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Health/Bandage/SM_Bandage.SM_Bandage'",
+        "MaxStackCount": 5,
+        "Weight": 1.2,
+        "ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_Bandage.T_Bandage'"
+    },
     {
         "Name": "SHIELD_RECHARGER_A",
         "DisplayName": "Shield Recharger A",

@@ -1,103 +1,290 @@
 [
     {
-        "Name": "PHASE_01",
-        "Id": "PHASE_01",
-        "SpawnVolumeId": "SPAWN_VOLUME_01",
+        "Name": "COMPLEX_01",
         "PhaseEntries": [
             {
                 "PhaseIndex": 0,
                 "SpawnEntries": [
                     {
-                        "Id": "Gunner",
-                        "Prob": 1.0
-                    }
-                ],
-                "SpawnCount": 10,
-                "Duration": 0.0
-            }
-        ]
-    },
-    {
-        "Name": "PHASE_02",
-        "Id": "PHASE_02",
-        "SpawnVolumeId": "SPAWN_VOLUME_02",
-        "PhaseEntries": [
-            {
-                "PhaseIndex": 0,
-                "SpawnEntries": [
-                    {
-                        "Id": "Gunner",
-                        "Prob": 1.0
-                    }
-                ],
-                "SpawnCount": 7,
-                "Duration": 5.0
-            },
-            {
-                "PhaseIndex": 1,
-                "SpawnEntries": [
-                    {
-                        "Id": "Gunner",
-                        "Prob": 0.5
-                    },
-                    {
-                        "Id": "Assasin",
-                        "Prob": 0.5
-                    }
-                ],
-                "SpawnCount": 10,
-                "Duration": 0.0
-            }
-        ]
-    },
-    {
-        "Name": "PHASE_03",
-        "Id": "PHASE_03",
-        "SpawnVolumeId": "SPAWN_VOLUME_03",
-        "PhaseEntries": [
-            {
-                "PhaseIndex": 0,
-                "SpawnEntries": [
-                    {
-                        "Id": "Gunner",
+                        "ID": "Gunner",
                         "Prob": 1.0
                     }
                 ],
                 "SpawnCount": 5,
-                "Duration": 5.0
+                "Duration": 10.0
             },
             {
                 "PhaseIndex": 1,
                 "SpawnEntries": [
                     {
-                        "Id": "Gunner",
-                        "Prob": 0.6
-                    },
-                    {
-                        "Id": "Assasin",
-                        "Prob": 0.4
+                        "ID": "Assasin",
+                        "Prob": 1.0
                     }
                 ],
-                "SpawnCount": 10,
-                "Duration": 7.0
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "COMPLEX_02",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 5,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "ID": "Assasin",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "COMPLEX_03",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 7,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "ID": "Assasin",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 5,
+                "Duration": 10.0
             },
             {
                 "PhaseIndex": 2,
                 "SpawnEntries": [
                     {
-                        "Id": "Gunner",
+                        "ID": "Mech",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "VILLAGE_01",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "VILLAGE_02",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 5,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "ID": "Assasin",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "VILLAGE_03",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "FACTORY_01",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "FACTORY_03",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "ID": "Assasin",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 2,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "FACTORY_04",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 5,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "ID": "Assasin",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "FACTORY_06",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 5,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "ID": "Assasin",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 3,
+                "Duration": 0.0
+            }
+        ]
+    },
+    {
+        "Name": "FACTORY_08",
+        "PhaseEntries": [
+            {
+                "PhaseIndex": 0,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 7,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 1,
+                "SpawnEntries": [
+                    {
+                        "ID": "Assasin",
+                        "Prob": 1.0
+                    }
+                ],
+                "SpawnCount": 5,
+                "Duration": 10.0
+            },
+            {
+                "PhaseIndex": 2,
+                "SpawnEntries": [
+                    {
+                        "ID": "Gunner",
                         "Prob": 0.5
                     },
                     {
-                        "Id": "Assasin",
-                        "Prob": 0.3
-                    },
-                    {
-                        "Id": "Mech",
-                        "Prob": 0.2
+                        "ID": "Assasin",
+                        "Prob": 0.5
                     }
                 ],
-                "SpawnCount": 15,
+                "SpawnCount": 10,
                 "Duration": 0.0
             }
         ]

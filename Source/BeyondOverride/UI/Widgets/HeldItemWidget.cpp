@@ -24,6 +24,7 @@ void UHeldItemWidget::OnHoldItemChanged(const UItemInstanceBase* HoldItem)
 {
 	SetItem(const_cast<UItemInstanceBase*>(HoldItem));
 	SetVisibility(HoldItem ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	UpdatePosition();
 }
 
 void UHeldItemWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -33,6 +34,11 @@ void UHeldItemWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	if (GetVisibility() == ESlateVisibility::Collapsed)
 		return;
 
+	UpdatePosition();
+}
+
+void UHeldItemWidget::UpdatePosition()
+{
 	APlayerController* PC = GetOwningPlayer();
 	if (!PC)
 		return;

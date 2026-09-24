@@ -33,11 +33,5 @@ struct FPhaseData : public FTableRowBase
 
   public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
-	FName ID = "Default";
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
-	FName SpawnVolumeID = "Default";
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
 	TArray<FPhaseEntry> PhaseEntries;
 };

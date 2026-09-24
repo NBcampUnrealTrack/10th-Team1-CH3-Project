@@ -81,13 +81,13 @@ public:
 	UFUNCTION(BlueprintPure)
 	int32 GetTotalItemCount(FName ItemID) const;
 
-	// ItemID를 Count만큼 판매
-	UFUNCTION(BlueprintCallable)
-	bool SellItem(FName ItemID, int32 Count);
-
 	// 돈 사용
 	UFUNCTION(BlueprintCallable)
 	bool SpendMoney(int32 Amount);
+
+	// 돈 추가
+	UFUNCTION(BlueprintCallable)
+	bool AddMoney(int32 Amount);
 
 	// 현재 보유 돈 반환
 	UFUNCTION(BlueprintPure)

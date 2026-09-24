@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -22,6 +22,11 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(
 	EEquipmentSlot,
 	UEquippableItemInstance*);
 
+// [RangeWeapon] 탄 퍼짐 각도 변경 시 송출하는 델리게이트 - 다이나믹 크로스헤어 UI 업데이트
+DECLARE_MULTICAST_DELEGATE_OneParam(
+	FOnSpreadDegreeUpdatedDelegate,
+	float); // 현재 탄 퍼짐 각도
+
 // [RangeWeapon] 사격 실행 시 송출하는 델리게이트 - 캐릭터 사격 애니메이션 재생 등 수행
 DECLARE_MULTICAST_DELEGATE(
 	FOnFireExecutedDelegate);
@@ -37,6 +42,12 @@ DECLARE_DELEGATE_RetVal_TwoParams(
 	FRequestReloadAmmoDelegate,
 	const FName&, // 탄약 ItemID
 	const int32); // 필요한 탄약 개수
+
+// [RangeWeapon] 탄약 개수 변경 알림 델리게이트 - 사격 & 재장전 후 송출되며, 슬롯 UI의 탄약 개수 변경 등 수행
+DECLARE_MULTICAST_DELEGATE_TwoParams(
+	FOnRangeWeaponAmmoCountUpdatedDelegate,
+	EEquipmentSlot,
+	const int32); // 현재 탄약 개수
 
 // [Throwable & Utility Item] 아이템 사용 시 개수 변경 알리는 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(
@@ -70,6 +81,10 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
   public:
 	UEquipmentManagerComponent();
 
+  protected:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+  public:
 	// Getters
 	EEquipmentSlot GetActiveSlot() const;         // 현재 활성화 슬롯 반환
 	bool HasEquipment(EEquipmentSlot Slot) const; // 슬롯에 장비가 등록되었는지 여부
@@ -109,6 +124,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	// 장비 인스턴스 전달 델리게이트
 	FOnActiveSlotChangedDelegate OnActiveSlotChangedDelegate;
 
+	// 탄 퍼짐 각도 델리게이트
+	FOnSpreadDegreeUpdatedDelegate OnSpreadDegreeUpdatedDelegate;
+
 	// 사격 실행 델리게이트
 	FOnFireExecutedDelegate OnFireExecutedDelegate;
 
@@ -116,6 +134,9 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	FCanReloadDelegate CanReloadDelegate;
 	// 재장전 탄약 요청 델리게이트
 	FRequestReloadAmmoDelegate RequestReloadAmmoDelegate;
+
+	// 총기 탄약 개수 변경 알림 델리게이트
+	FOnRangeWeaponAmmoCountUpdatedDelegate OnRangeWeaponAmmoCountUpdatedDelegate;
 
 	// 사용 후 아이템 개수 변경 알림 델리게이트
 	FOnEquipmentCountUpdatedDelegate OnEquipmentCountUpdatedDelegate;
@@ -130,9 +151,11 @@ class BEYONDOVERRIDE_API UEquipmentManagerComponent : public UActorComponent
 	void BindDelegates();
 
 	// [Range Weapon] 델리게이트 바인딩 이벤트
+	void OnSpreadDegreeUpdated(float SpreadDegree) const;
 	void OnFireExecuted() const;
 	bool CanReload(const FName& AmmoItemID) const;
 	int32 RequestReloadAmmo(const FName& AmmoItemID, const int32 RequestedAmmoCount);
+	void OnAmmoCountUpdated(const int32 AmmoCount) const;
 
 	// [Throwable & Utility Item] 델리게이트 바인딩 이벤트
 	void OnEquipmentCountUpdated(UEquippableItemInstance* EquippableItemInstance);

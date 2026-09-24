@@ -39,7 +39,7 @@ void ULoadingScreenManager::InitSetting()
 {
 	CurUpdateTime = UpdateTime;
 	CurImageTime = 0.0f;
-	CurProgress = 0.0f;
+	CurProgress = 0.05f;
 
 	ImageIndex = 0;
 
@@ -69,6 +69,7 @@ void ULoadingScreenManager::ShowLoadingScreenWidget(bool IsNew)
 	if (LoadingScreenWidgetClass)
 	{
 		LoadingScreenWidget = CreateWidget<ULoadingScreenWidget>(GetWorld(), LoadingScreenWidgetClass);
+		LoadingScreenWidget->SetLoadingProgressBar(CurProgress);
 		LoadingScreenWidget->SetLoadingImage(LoadingImages[ImageIndex]);
 		LoadingScreenWidget->AddToViewport();
 

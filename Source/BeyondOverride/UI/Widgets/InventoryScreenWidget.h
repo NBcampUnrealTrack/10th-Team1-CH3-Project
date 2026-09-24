@@ -13,6 +13,8 @@ class AItemPickupBase;
 class UNearbyItemComponent;
 class UVerticalBox;
 class UImage;
+class UItemTooltipWidget;
+class UItemInstanceBase;
 
 UCLASS()
 class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
@@ -42,10 +44,19 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 	UHeldItemWidget* HeldItem;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UItemTooltipWidget> Tooltip;
+
+	UPROPERTY(meta = (BindWidget))
 	UImage* CharacterPreviewImage;
 
 	UFUNCTION()
 	void OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems);
+
+	UFUNCTION()
+	void HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item);
+
+	UFUNCTION()
+	void HandleHoldItemChanged(const UItemInstanceBase* HoldItem);
 
   private:
 	bool bIsContainerOpen = false;
