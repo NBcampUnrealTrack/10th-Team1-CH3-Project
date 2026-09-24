@@ -29,7 +29,7 @@ UMonsterSpawn::UMonsterSpawn()
 
 void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 {
-
+	/*
 	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
 	FNavLocation NavLocation;
@@ -37,6 +37,7 @@ void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 	FVector MoveLocation;
 
 	float Radius = 200;
+
 
 	if (NavSystem && !NavSystem->ProjectPointToNavigation(Location, NavLocation))
 	{
@@ -80,6 +81,7 @@ void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 	{
 		MoveLocation = Location;
 	}
+	*/
 
 	FActorSpawnParameters SpawnParams;
 
@@ -97,7 +99,7 @@ void UMonsterSpawn::MonsterSpawn(FVector Location, FName ID)
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	AMonsterCharacter* SpawnedActor = GetWorld()->SpawnActor<AMonsterCharacter>(MonsterClass,
-																				MoveLocation,
+																				Location,
 																				FRotator::ZeroRotator,
 																				SpawnParams);
 }

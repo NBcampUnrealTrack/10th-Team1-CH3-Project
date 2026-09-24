@@ -96,6 +96,8 @@ void ASpawnVolume::SpawnMonsters()
 
 void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float MinDist, float MaxDist, bool IsChase)
 {
+	UE_LOG(LogGameFlow, Warning, TEXT("SpawnRandomMonster Called"));
+
 	if (!GetWorld() || !GetWorld()->GetFirstPlayerController() || !BoxComp)
 	{
 		return;
@@ -147,16 +149,16 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 	float Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
 
 	// Is it Optimal?
-	while (Distance < MinDistance || MaxDistance < Distance)
+	/*while (Distance < MinDistance || MaxDistance < Distance)
 	{
 		X = FMath::RandRange(SVLocation.X - BoxExtent.X, SVLocation.X + BoxExtent.X);
 		Y = FMath::RandRange(SVLocation.Y - BoxExtent.Y, SVLocation.Y + BoxExtent.Y);
 		Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
-	}
+	}*/
 
 	SpawnLocation.X = X;
 	SpawnLocation.Y = Y;
-	// SpawnLocation.Z = SVLocation.Z + 100.0f;
+	SpawnLocation.Z = SVLocation.Z + 100.0f;
 
 	float Prob = FMath::RandRange(0.0f, 1.0f);
 	float Sum{};
@@ -174,6 +176,8 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 			GameInstance->GetMonsterData(MonsterID, MonsterData);
 
 			// Spawn AI
+			UE_LOG(LogGameFlow, Warning, TEXT("Spawn Monster : %s"), *MonsterID.ToString());
+
 			MonsterSpawnSystem->MonsterSpawn(SpawnLocation, MonsterID);
 
 			if (IsChase)
