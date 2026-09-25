@@ -98,6 +98,8 @@ UDataTable* UBODataAsset::GetContainerDataTable() const
 UDataTable* UBODataAsset::GetDefenseDataTable() const
 {
 	return DefenseDataTable;
+}
+
 UDataTable* UBODataAsset::GetLoadingTipTable() const
 {
 	return LoadingTipTable;
