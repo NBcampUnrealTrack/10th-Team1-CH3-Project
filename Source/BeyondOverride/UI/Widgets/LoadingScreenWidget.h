@@ -10,6 +10,7 @@
 
 class UImage;
 class UProgressBar;
+class UTextBlock;
 
 UCLASS()
 class BEYONDOVERRIDE_API ULoadingScreenWidget : public UUserWidget
@@ -20,10 +21,21 @@ class BEYONDOVERRIDE_API ULoadingScreenWidget : public UUserWidget
 	void SetLoadingProgressBar(float Percent);
 	void SetLoadingImage(TObjectPtr<UTexture2D> Image);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI|Loading")
+	void OnLoadingTipChanged();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI|Loading")
+	void OnLoadingImageChanged();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI|Loading")
+	void OnLoadingProgressChanged(float Percent);
+
+	void SetLoadingTip(const FString& Tip);
+
   public:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	TObjectPtr<UProgressBar> LoadingProgressBar;
+	TObjectPtr<UImage> LoadingImage;
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	TObjectPtr<UImage> LoadingImage;
+	TObjectPtr<UTextBlock> LoadingTipText;
 };

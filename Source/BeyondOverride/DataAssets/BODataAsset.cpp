@@ -84,3 +84,8 @@ UDataTable* UBODataAsset::GetContainerDataTable() const
 {
 	return ContainerDataTable;
 }
+
+UDataTable* UBODataAsset::GetLoadingTipTable() const
+{
+	return LoadingTipTable;
+}

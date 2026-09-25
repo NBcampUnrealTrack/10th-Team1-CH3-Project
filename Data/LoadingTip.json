@@ -1,0 +1,58 @@
+[
+  {
+    "Name": "LOADING_01",
+    "LoadingTip": "사망 시 소유중인 모든 아이템을 잃어버립니다."
+  },
+  {
+    "Name": "LOADING_02",
+    "LoadingTip": "무게 제한을 넘기면 이동 속도가 느려지며 구르거나 점프할 수 없습니다."
+  },
+  {
+    "Name": "LOADING_03",
+    "LoadingTip": "벽 뒤에 숨으세요! AI는 벽뒤를 잘 못 봅니다."
+  },
+  {
+    "Name": "LOADING_04",
+    "LoadingTip": "탈출구를 잘 고르세요! 어려운 곳일수록 탈출이 어려워집니다!"
+  },
+  {
+    "Name": "LOADING_05",
+    "LoadingTip": "모은 아이템을 상점에 판매할 수 있습니다"
+  },
+  {
+    "Name": "LOADING_06",
+    "LoadingTip": "벙커에서 나가기 전 충분한 아이템을 가지고 있는지 확인하세요."
+  },
+  {
+    "Name": "LOADING_07",
+    "LoadingTip": "익숙하지 않은 구역에서는 탈출로를 미리 파악해두세요."
+  },
+  {
+    "Name": "LOADING_08",
+    "LoadingTip": "확신이 없다면 도망치세요. 기회는 또 옵니다."
+  },
+  {
+    "Name": "LOADING_09",
+    "LoadingTip": "탈출구를 유심히 살펴보세요. 어떤 탈출구는 닫혀있습니다."
+  },
+  {
+    "Name": "LOADING_10",
+    "LoadingTip": "위험한 지역일수록 좋은 아이템이 나올 수도 있습니다."
+  },
+  {
+    "Name": "LOADING_11",
+    "LoadingTip": "목숨을 소중히 여기세요. 죽으면 모든 아이템을 잃습니다."
+  },
+  {
+    "Name": "LOADING_12",
+    "LoadingTip": "큰 소리를 내면 주위의 AI가 몰려올 수도 있습니다."
+  },
+  {
+    "Name": "LOADING_13",
+    "LoadingTip": "마지막까지 방심하지 마세요. 탈출 전까지는 안전하지 않습니다."
+  },
+  {
+    "Name": "LOADING_14",
+    "LoadingTip": "너무 많은 아이템을 가질려고 하지 마세요. 과한 욕심은 화를 부릅니다."
+  }
+]
