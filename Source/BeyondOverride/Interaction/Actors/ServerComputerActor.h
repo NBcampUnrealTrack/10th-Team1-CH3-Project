@@ -22,6 +22,17 @@ class BEYONDOVERRIDE_API AServerComputerActor : public AInteractableActorBase
   protected:
 	virtual void PerformInteract(AActor* Interactor) override;
 
+	void OnHackingStarted();
+
+	UFUNCTION(BlueprintCallable, Category = "Computer")
+	void OnHackingCompleted();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
+
+  private:
+	float HackingTime;
+	bool IsHacked;
+
+	FTimerHandle HackingTimer;
 };
