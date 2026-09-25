@@ -37,6 +37,21 @@ class BEYONDOVERRIDE_API UAirNavComponent : public UActorComponent
 
 	// Properties
   public:
-	UPROPERTY(VisibleAnywhere, Category = "Monster|NavCheck")
+	// NavControl
+	UPROPERTY(VisibleAnywhere, Category = "Monster|AirNav")
+	bool AirNavOn;
+
+	// Sample Data
+	UPROPERTY(VisibleAnywhere, Category = "Monster|AirNav")
+	int32 SamplingPlayCount;
+
+	// NavData
+	UPROPERTY(VisibleAnywhere, Category = "Monster|AirNav")
+	FVector NavStartLocation;
+	UPROPERTY(VisibleAnywhere, Category = "Monster|AirNav")
+	FVector NavEndLocation;
+	UPROPERTY(VisibleAnywhere, Category = "Monster|AirNav")
 	TArray<FVector> Paths;
+
+	FTimerHandle SampleCreateTimer;
 };

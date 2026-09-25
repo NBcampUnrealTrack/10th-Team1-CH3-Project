@@ -1,5 +1,9 @@
 #include "Interaction/Actors/KeycardDoorController.h"
 
+#include "ActorSequence.h"
+#include "ActorSequenceComponent.h"
+#include "MovieSceneSequencePlayer.h"
+
 #include "DataAssets/BODataAsset.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOGameMode.h"
@@ -21,6 +25,8 @@ AKeycardDoorController::AKeycardDoorController()
 	PromptData.HoldSeconds = 3.f;
 	PromptData.bMoveCancel = true;
 	PromptData.DisableReason = FText::FromString(TEXT("카드키를 보유하고 있지 않습니다."));
+
+	IsOpened = false;
 }
 
 void AKeycardDoorController::BeginPlay()
@@ -31,11 +37,18 @@ void AKeycardDoorController::BeginPlay()
 	{
 		PromptData.bEnabled = true;
 	}
+
+	DoorSequence = FindComponentByClass<UActorSequenceComponent>();
 }
 
 bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) const
 {
 	OutReason = PromptData.DisableReason;
+
+	if (IsOpened)
+	{
+		return false;
+	}
 
 	// 키카드 보유하고있는지 로직추가
 	return HasPlayerKeyCard();
@@ -43,12 +56,13 @@ bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) c
 
 void AKeycardDoorController::PerformInteract(AActor* Interactor)
 {
-	if (GetWorld())
+	if (DoorSequence)
 	{
-		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
-		{
-			GameMode->EnterServerRoom();
-		}
+		DoorSequence->PlaySequence();
+		PromptData.bEnabled = false;
+		PromptData.DisableReason = FText::FromString(TEXT("이미 작동된 문입니다."));
+
+		IsOpened = true;
 	}
 }
 

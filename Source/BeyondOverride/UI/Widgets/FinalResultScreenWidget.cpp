@@ -45,7 +45,7 @@ void UFinalResultScreenWidget::OnOKBtnClicked()
 
 	if (ABOGameMode* GM = Cast<ABOGameMode>(UGameplayStatics::GetGameMode(this)))
 	{
-		GM->Ending();
+		GM->ShowEnding();
 	}
 }
 

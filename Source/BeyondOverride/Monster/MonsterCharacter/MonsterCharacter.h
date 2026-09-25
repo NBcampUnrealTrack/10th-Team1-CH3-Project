@@ -37,11 +37,18 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	FVector GetAttackPoint() const;
 
+	FRotator GetAttackRotator() const;
+
+	void OnMissileHit(TArray<FOverlapResult> Targets);
+
 	float GetAttackRange() const;
 
 	bool IsDelay();
 
-	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	virtual float TakeDamage(float DamageAmount,
+							 FDamageEvent const& DamageEvent,
+							 AController* EventInstigator,
+							 AActor* DamageCauser) override;
 
 	void MonsterAttack();
 

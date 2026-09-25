@@ -48,6 +48,10 @@ class BEYONDOVERRIDE_API ABOPlayerController : public APlayerController
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* EscapeAction = nullptr;
 
+	// Add for Debug Widget
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* DebugAction = nullptr; // ]
+
 	// 장비 슬롯 전환
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Equipment")
 	UInputAction* EquipSlot1Action = nullptr;

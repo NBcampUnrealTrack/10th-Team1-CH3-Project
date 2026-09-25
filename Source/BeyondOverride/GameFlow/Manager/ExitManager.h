@@ -32,6 +32,8 @@ class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 
 	void CleanSetting();
 
+	void GetExitLocations(TMap<FName, TPair<FVector, FRotator>>& Exits);
+
   private:
 	TObjectPtr<UBOGameInstance> GameInstance;
 

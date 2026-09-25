@@ -6,6 +6,8 @@
 
 #include "KeycardDoorController.generated.h"
 
+class UActorSequenceComponent;
+
 UCLASS()
 class BEYONDOVERRIDE_API AKeycardDoorController : public AInteractableActorBase
 {
@@ -23,4 +25,9 @@ class BEYONDOVERRIDE_API AKeycardDoorController : public AInteractableActorBase
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> MeshComp;
+
+	UPROPERTY()
+	TObjectPtr<UActorSequenceComponent> DoorSequence;
+
+	bool IsOpened;
 };
