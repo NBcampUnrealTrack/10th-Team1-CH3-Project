@@ -39,6 +39,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	UDataTable* GetMonsterDataTable() const;
 	UDataTable* GetContainerDataTable() const;
 	UDataTable* GetDefenseDataTable() const;
+	UDataTable* GetLoadingTipTable() const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
@@ -46,6 +47,9 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
 	TArray<TObjectPtr<UTexture2D>> LoadingImages;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TObjectPtr<UDataTable> LoadingTipTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
 	float LoadingScreenUpdateTime;

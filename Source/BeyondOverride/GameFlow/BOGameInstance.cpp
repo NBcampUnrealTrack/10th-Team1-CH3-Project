@@ -250,10 +250,14 @@ void UBOGameInstance::HideLoadingScreenWidget()
 
 	if (ULoadingScreenManager* LoadingScreenManager = GetSubsystem<ULoadingScreenManager>())
 	{
+		LoadingScreenManager->OnLoadingScreenHidden.RemoveAll(this);
+		LoadingScreenManager->OnLoadingScreenHidden.AddUObject(this, &UBOGameInstance::OnLevelPrepared);
 		LoadingScreenManager->HideLoadingScreenWidget();
 	}
-
-	OnLevelPrepared();
+	else
+	{
+		OnLevelPrepared();
+	}
 }
 
 void UBOGameInstance::OnCharacterPrepared()

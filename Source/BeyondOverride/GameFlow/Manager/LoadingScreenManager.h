@@ -23,8 +23,12 @@ class BEYONDOVERRIDE_API ULoadingScreenManager : public UGameInstanceSubsystem
 	void ShowLoadingScreenWidget(bool IsNew);
 	void HideLoadingScreenWidget();
 
+	void NextLoadingTip();
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateLoadingScreenWidget();
+
+	FSimpleMulticastDelegate OnLoadingScreenHidden;
 
   private:
 	float UpdateTime;
@@ -38,9 +42,19 @@ class BEYONDOVERRIDE_API ULoadingScreenManager : public UGameInstanceSubsystem
 	float CurProgress;
 	int32 ImageIndex;
 
+	int32 TipIndex;
+	FString CurLoadingTip;
+
 	TSubclassOf<ULoadingScreenWidget> LoadingScreenWidgetClass;
 	TWeakObjectPtr<ULoadingScreenWidget> LoadingScreenWidget;
 	TArray<TObjectPtr<UTexture2D>> LoadingImages;
+	TArray<FString> LoadingTips;
 
 	FTimerHandle UpdateTimer;
+	FTimerHandle HideTimer;
+	float HideDelay = 0.45f;
+
+	void RemoveLoadingScreenWidget();
+
+	void OnHideTimerFinished();
 };
