@@ -43,5 +43,5 @@ void AExitActor::PerformInteract(AActor* Interactor)
 	ABOGameMode* GM = Cast<ABOGameMode>(UGameplayStatics::GetGameMode(this));
 	if (!GM)
 		return;
-	GM->EndFarming(EFarmingResult::Success);
+	GM->EndFarming(EStageResult::Success);
 }

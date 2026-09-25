@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GameFlow/State/ProgressFarmingState.h"
+#include "GameFlow/State/Farming/ProgressFarmingState.h"
 
 #include "GameFlow/BOWorldSubsystem.h"
 #include "GameFlow/Manager/ExitManager.h"
@@ -8,7 +8,7 @@
 
 void UProgressFarmingState::Enter()
 {
-	UE_LOG(LogGameFlow, Warning, TEXT("Progress Enter"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Farming Progress Enter"));
 
 	Super::Enter();
 

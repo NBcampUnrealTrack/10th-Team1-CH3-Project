@@ -35,5 +35,5 @@ class BEYONDOVERRIDE_API USpawnVolumeManager : public UGameInstanceSubsystem
 	TMap<FName, FSpawnVolumeData> SpawnVolumeDatas;
 	TMap<FName, FPhaseData> PhaseDatas;
 
-	TMap<FName, TObjectPtr<ASpawnVolume>> SpawnVolumeByRegion;
+	TMap<FName, TWeakObjectPtr<ASpawnVolume>> SpawnVolumeByRegion;
 };

@@ -12,7 +12,7 @@
 
 class UBOGameInstance;
 class UFarmingStateMachine;
-// class UDefenseStateMachine;
+class UDefenseStateMachine;
 
 UCLASS()
 class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
@@ -29,10 +29,11 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void EnterBunker();
 	void ProvideBasicEquipment();
 	void StartFarming(); // when interacting with the bunker entrance
-	void EndFarming(EFarmingResult Result);
+	void EndFarming(EStageResult Result);
 	void Die();
 	void EnterAIBuilding();
 	void StartDefense(); // when interacting with the main computer first time
+	void EndDefense();   // when end of defense;
 	void ClearGame();    // when interacting with the main computer after defense
 	void ShowEnding();   // after final result widget's ok button clicked
 	void EndGame();      // after end of ending credit
@@ -50,9 +51,8 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 
 	UPROPERTY()
 	TObjectPtr<UFarmingStateMachine> FarmingStateMachine;
-
-	/*UPROPERTY()
-	TObjectPtr<UDefenseStateMachine> DefenseStateMachine;*/
+	UPROPERTY()
+	TObjectPtr<UDefenseStateMachine> DefenseStateMachine;
 
   private:
 	TMap<FName, int32> KilledMonsters;

@@ -1,0 +1,36 @@
+[
+	{
+		"Name": "0",
+		"DurationRatio": 0.3,
+		"SpawnEntries": [
+			{
+				"ID": "Gunner",
+				"Prob": 1
+			}
+		]
+	},
+	{
+		"Name": "1",
+		"DurationRatio": 0.3,
+		"SpawnEntries": [
+			{
+				"ID": "Assasin",
+				"Prob": 1
+			}
+		]
+	},
+	{
+		"Name": "2",
+		"DurationRatio": 0.4,
+		"SpawnEntries": [
+			{
+				"ID": "Gunner",
+				"Prob": 0.5
+			},
+			{
+				"ID": "Assasin",
+				"Prob": 0.5
+			}
+		]
+	}
+]

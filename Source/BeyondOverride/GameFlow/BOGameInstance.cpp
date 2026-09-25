@@ -68,7 +68,8 @@ void UBOGameInstance::InitSetting()
 	GameState = EGameState::Begin;
 	PlayingState = EPlayingState::None;
 	DeathLocation = EDeathLocation::None;
-	FarmingResult = EFarmingResult::None;
+	FarmingResult = EStageResult::None;
+	DefenseResult = EStageResult::None;
 	CurLevel = ELevel::Basic;
 
 	TotalSurvivalTime = 0.0f;
@@ -126,7 +127,7 @@ void UBOGameInstance::StartFarming()
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Instance Begin Farming"));
 
 	PlayingState = EPlayingState::Farming;
-	FarmingResult = EFarmingResult::None;
+	FarmingResult = EStageResult::None;
 
 	SurvivalTime = 0.0f;
 	KilledMonsters.Empty();
@@ -135,19 +136,19 @@ void UBOGameInstance::StartFarming()
 	OpenLevel(ELevel::Main);
 }
 
-void UBOGameInstance::EndFarming(EFarmingResult Result)
+void UBOGameInstance::EndFarming(EStageResult Result)
 {
 	PlayingState = EPlayingState::Bunker;
 	FarmingResult = Result;
 	FarmingCount += 1;
 
-	if (Result == EFarmingResult::Fail)
+	if (Result == EStageResult::Fail)
 	{
 		DeathLocation = EDeathLocation::Main;
 		DeathCount += 1;
 	}
 
-	if (Result == EFarmingResult::Clear)
+	if (Result == EStageResult::Clear)
 	{
 		GameState = EGameState::End;
 
@@ -300,7 +301,7 @@ void UBOGameInstance::SavePlayerData()
 		}
 
 		// inventory
-		if (FarmingResult != EFarmingResult::Fail)
+		if (FarmingResult != EStageResult::Fail)
 		{
 			if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
 			{
@@ -374,7 +375,6 @@ void UBOGameInstance::SaveSurvivalTimeData(ESaveType SaveType)
 	if (SaveType == ESaveType::All)
 	{
 		TotalSurvivalTime += SurvivalTime;
-		SurvivalTime = 0.0f;
 	}
 
 	UE_LOG(LogGameFlow, Warning, TEXT("Survival Time : %f"), SurvivalTime);
@@ -439,6 +439,11 @@ void UBOGameInstance::SetIsBossDefeated(bool InIsBossDefeated)
 	IsBossDefeated = InIsBossDefeated;
 }
 
+void UBOGameInstance::SetIsKeyCardDoorOpened(bool InIsKeyCardDoorOpened)
+{
+	IsKeyCardDoorOpened = InIsKeyCardDoorOpened;
+}
+
 UBODataAsset* UBOGameInstance::GetBODataAsset() const
 {
 	return BODataAsset;
@@ -467,9 +472,14 @@ EDeathLocation UBOGameInstance::GetDeathLocation() const
 	return DeathLocation;
 }
 
-EFarmingResult UBOGameInstance::GetFarmingResult() const
+EStageResult UBOGameInstance::GetFarmingResult() const
 {
 	return FarmingResult;
+}
+
+EStageResult UBOGameInstance::GetDefenseResult() const
+{
+	return DefenseResult;
 }
 
 float UBOGameInstance::GetTotalSurvivalTime() const
@@ -530,6 +540,11 @@ float UBOGameInstance::GetMaxShield() const
 bool UBOGameInstance::GetIsBossDefeated() const
 {
 	return IsBossDefeated;
+}
+
+bool UBOGameInstance::GetIsKeyCardDoorOpened() const
+{
+	return IsKeyCardDoorOpened;
 }
 
 TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerItemInventory() const

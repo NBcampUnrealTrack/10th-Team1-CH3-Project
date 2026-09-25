@@ -10,9 +10,6 @@
 
 #include "BODataAsset.generated.h"
 
-/**
- *
- */
 UCLASS()
 class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 {
@@ -27,16 +24,21 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	float GetLoadingProgressUpdateInterval() const;
 
 	void GetLevels(TMap<ELevel, TSoftObjectPtr<UWorld>>& Data) const;
-	void GetRegions(TArray<FName>& Data) const;
+
 	void GetBasicEquipments(TArray<FName>& Data) const;
 	FName GetKeyCardID() const;
 	float GetExitActivateProb() const;
+
 	float GetTotalDefenseTime() const;
+	int32 GetMonsterSpawnInterval() const;
+	void GetSupplies(TArray<FName>& Data) const;
+	int32 GetSupplySpawnCount() const;
 
 	UDataTable* GetSpawnVolumeDataTable() const;
 	UDataTable* GetPhaseDataTable() const;
 	UDataTable* GetMonsterDataTable() const;
 	UDataTable* GetContainerDataTable() const;
+	UDataTable* GetDefenseDataTable() const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
@@ -60,20 +62,26 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
 	TMap<ELevel, TSoftObjectPtr<UWorld>> Levels;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
-	TArray<FName> Regions;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data|Farming")
 	TArray<FName> BasicEquipments;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data|Farming")
 	FName KeyCardID;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data|Farming")
 	float ExitActivateProb;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data|Defense")
 	float TotalDefenseTime;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data|Defense")
+	float MonsterSpawnInterval;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data|Defense")
+	TArray<FName> Supplies;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data|Defense")
+	int32 SupplySpawnCount;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* SpawnVolumeDataTable;
@@ -86,4 +94,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* ContainerDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
+	UDataTable* DefenseDataTable;
 };

@@ -100,7 +100,7 @@ void UExitManager::ActivateExits()
 
 	for (int i = 1; i <= Count; i++)
 	{
-		if (i < Size && ExitControllers[i])
+		if (i < Size && ExitControllers[i].IsValid())
 		{
 			ExitControllers[i]->SetControllerAvailable(true);
 		}
@@ -113,7 +113,7 @@ AExitControllerActor* UExitManager::SelectRandomExit()
 
 	if (ExitControllers.Num() != 0)
 	{
-		return ExitControllers[0];
+		return ExitControllers[0].Get();
 	}
 	else
 	{
@@ -151,7 +151,7 @@ void UExitManager::GetExitLocations(TMap<FName, TPair<FVector, FRotator>>& Exits
 {
 	Exits.Empty();
 
-	for (TObjectPtr<AExitControllerActor> ExitController : ExitControllers)
+	for (TWeakObjectPtr<AExitControllerActor> ExitController : ExitControllers)
 	{
 		if (AExitActor* Exit = ExitController->GetTargetExit())
 		{

@@ -4,13 +4,10 @@
 
 #include "CoreMinimal.h"
 
-#include "GameFlow/State/BaseFarmingState.h"
+#include "GameFlow/State/Farming/BaseFarmingState.h"
 
 #include "BeginFarmingState.generated.h"
 
-/**
- *
- */
 UCLASS()
 class BEYONDOVERRIDE_API UBeginFarmingState : public UBaseFarmingState
 {

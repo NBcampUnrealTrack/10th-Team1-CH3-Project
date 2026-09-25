@@ -10,11 +10,6 @@ void UBODataAsset::GetLevels(TMap<ELevel, TSoftObjectPtr<UWorld>>& Data) const
 	Data = Levels;
 }
 
-void UBODataAsset::GetRegions(TArray<FName>& Data) const
-{
-	Data = Regions;
-}
-
 void UBODataAsset::GetBasicEquipments(TArray<FName>& Data) const
 {
 	Data = BasicEquipments;
@@ -65,6 +60,21 @@ float UBODataAsset::GetTotalDefenseTime() const
 	return TotalDefenseTime;
 }
 
+int32 UBODataAsset::GetMonsterSpawnInterval() const
+{
+	return MonsterSpawnInterval;
+}
+
+void UBODataAsset::GetSupplies(TArray<FName>& Data) const
+{
+	Data = Supplies;
+}
+
+int32 UBODataAsset::GetSupplySpawnCount() const
+{
+	return SupplySpawnCount;
+}
+
 UDataTable* UBODataAsset::GetSpawnVolumeDataTable() const
 {
 	return SpawnVolumeDataTable;
@@ -83,4 +93,9 @@ UDataTable* UBODataAsset::GetMonsterDataTable() const
 UDataTable* UBODataAsset::GetContainerDataTable() const
 {
 	return ContainerDataTable;
+}
+
+UDataTable* UBODataAsset::GetDefenseDataTable() const
+{
+	return DefenseDataTable;
 }

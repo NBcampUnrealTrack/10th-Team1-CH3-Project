@@ -95,4 +95,9 @@ void AServerComputerActor::OnHackingCompleted()
 
 	PromptData.bEnabled = true;
 	PromptData.ActionText = FText::FromString(TEXT("[E] 키를 눌러 폭파하세요!"));
+
+	UUIManager::Get(this)->ShowNotification(
+		FText::FromString(TEXT("서버 해킹 완료")),
+		FText::FromString(TEXT("AI 기업 건물 폭파가 가능합니다.")),
+		5.0f);
 }

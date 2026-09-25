@@ -114,6 +114,7 @@ void UDebugSettingWidget::OnSetLocation()
 	if (Locations.Contains(Option))
 	{
 		FVector Location = Locations[Option].Key;
+		Location.Z += 50.0f;
 		FRotator Rotation = Locations[Option].Value;
 
 		Character->TeleportTo(Location, Rotation);

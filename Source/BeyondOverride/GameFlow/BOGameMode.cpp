@@ -13,11 +13,13 @@
 #include "Items/Actors/ItemPickupBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Logging/BOLog.h"
+#include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Player/ActorComponent/InventoryComponent.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "Player/PlayerController/BOPlayerController.h"
-#include "State/FarmingStateMachine.h"
+#include "State/Defense/DefenseStateMachine.h"
+#include "State/Farming/FarmingStateMachine.h"
 #include "UI/Manager/UIManager.h"
 
 ABOGameMode::ABOGameMode()
@@ -98,15 +100,15 @@ void ABOGameMode::EnterBunker()
 		return;
 	}
 
-	EFarmingResult FarmingResult = GameInstance->GetFarmingResult();
+	EStageResult FarmingResult = GameInstance->GetFarmingResult();
 	EDeathLocation DeathLocation = GameInstance->GetDeathLocation();
 
-	if (DeathLocation != EDeathLocation::Bunker && FarmingResult != EFarmingResult::Success)
+	if (DeathLocation != EDeathLocation::Bunker && FarmingResult != EStageResult::Success)
 	{
 		ProvideBasicEquipment();
 	}
 
-	if (FarmingResult != EFarmingResult::None)
+	if (FarmingResult != EStageResult::None)
 	{
 		if (UUIManager* UIManager = UUIManager::Get(this))
 		{
@@ -165,18 +167,18 @@ void ABOGameMode::StartFarming()
 	if (FarmingStateMachine)
 	{
 		FarmingStateMachine->Initialize(this);
-		FarmingStateMachine->ChangeState(EFarmingState::Begin);
+		FarmingStateMachine->ChangeState(EStageState::Begin);
 	}
 }
 
-void ABOGameMode::EndFarming(EFarmingResult Result)
+void ABOGameMode::EndFarming(EStageResult Result)
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode End Farming"));
 
 	if (FarmingStateMachine)
 	{
-		FarmingStateMachine->SetFarmingResult(Result);
-		FarmingStateMachine->ChangeState(EFarmingState::End);
+		FarmingStateMachine->SetStageResult(Result);
+		FarmingStateMachine->ChangeState(EStageState::End);
 	}
 }
 
@@ -193,7 +195,7 @@ void ABOGameMode::Die()
 
 	if (PlayingState == EPlayingState::Farming)
 	{
-		EndFarming(EFarmingResult::Fail);
+		EndFarming(EStageResult::Fail);
 	}
 }
 
@@ -208,18 +210,41 @@ void ABOGameMode::EnterAIBuilding()
 void ABOGameMode::StartDefense()
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Begin Defense"));
-	/*DefenseStateMachine = NewObject<UDefenseStateMachine>(this, UDefenseStateMachine::StaticClass());
+
+	DefenseStateMachine = NewObject<UDefenseStateMachine>(this, UDefenseStateMachine::StaticClass());
 
 	if (DefenseStateMachine)
 	{
 		DefenseStateMachine->Initialize(this);
-		DefenseStateMachine->ChangeState(EFarmingState::Begin);
-	}*/
+		DefenseStateMachine->ChangeState(EStageState::Begin);
+	}
+}
+
+void ABOGameMode::EndDefense()
+{
+	// show widget if needed
+	// play cut scene if needed
+
+	// destroy all monsters
+	// improve logic with object pool
+	TArray<AActor*> AllActors{};
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMonsterCharacter::StaticClass(), AllActors);
+
+	for (AActor* Actor : AllActors)
+	{
+		if (Actor)
+		{
+			if (AMonsterCharacter* Monster = Cast<AMonsterCharacter>(Actor))
+			{
+				Monster->Destroy(); // change to die
+			}
+		}
+	}
 }
 
 void ABOGameMode::ClearGame()
 {
-	EndFarming(EFarmingResult::Clear);
+	EndFarming(EStageResult::Clear);
 }
 
 void ABOGameMode::ShowEnding()

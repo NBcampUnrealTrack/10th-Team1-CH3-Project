@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GameFlow/State/EndFarmingState.h"
+#include "GameFlow/State/Farming/EndFarmingState.h"
 
 #include "FarmingStateMachine.h"
 
@@ -11,10 +11,11 @@
 
 void UEndFarmingState::Enter()
 {
-	UE_LOG(LogGameFlow, Warning, TEXT("End Enter"));
+	UE_LOG(LogGameFlow, Warning, TEXT("Farming End Enter"));
 	Super::Enter();
 
 	SetEndTime();
+	CleanRegions();
 	SetFarmingResult();
 }
 
@@ -52,7 +53,7 @@ void UEndFarmingState::SetFarmingResult()
 		return;
 	}
 
-	EFarmingResult FarmingResult = StateMachine->GetFarmingResult();
+	EStageResult FarmingResult = FarmingStateMachine->GetStageResult();
 
 	if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
 	{
