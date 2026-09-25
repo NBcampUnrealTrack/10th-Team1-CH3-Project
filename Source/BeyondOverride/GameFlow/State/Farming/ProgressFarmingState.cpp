@@ -2,9 +2,14 @@
 
 #include "GameFlow/State/Farming/ProgressFarmingState.h"
 
+#include "Engine/TargetPoint.h"
+#include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOWorldSubsystem.h"
 #include "GameFlow/Manager/ExitManager.h"
+#include "Kismet/GameplayStatics.h"
 #include "Logging/BOLog.h"
+#include "Player/Character/BOCharacter.h"
+#include "Player/PlayerController/BOPlayerController.h"
 
 void UProgressFarmingState::Enter()
 {
@@ -24,9 +29,67 @@ void UProgressFarmingState::SpawnCharacter()
 		return;
 	}
 
+	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	ELevel PrevLevel = GameInstance->GetPrevLevel();
+	ELevel CurLevel = GameInstance->GetCurLevel();
+
+	if (PrevLevel == ELevel::AIBuilding && CurLevel == ELevel::Main)
+	{
+		TeleportCharacter();
+
+		return;
+	}
+
 	if (UExitManager* ExitManager = GetWorld()->GetGameInstance()->GetSubsystem<UExitManager>())
 	{
 		ExitManager->SpawnCharacter();
+	}
+}
+
+void UProgressFarmingState::TeleportCharacter()
+{
+	ABOPlayerController* PlayerController = GetWorld()->GetFirstPlayerController<ABOPlayerController>();
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	ABOCharacter* Character = PlayerController->GetPawn<ABOCharacter>();
+	if (!Character)
+	{
+		return;
+	}
+
+	TArray<AActor*> AllActors{};
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), AllActors);
+
+	for (AActor* Actor : AllActors)
+	{
+		if (!Actor)
+		{
+			continue;
+		}
+
+		ATargetPoint* TargetPoint = Cast<ATargetPoint>(Actor);
+		if (!TargetPoint)
+		{
+			continue;
+		}
+
+		if (TargetPoint->ActorHasTag(FName(TEXT("AIBuildingEntrance"))))
+		{
+			FVector Location = TargetPoint->GetActorLocation();
+			FRotator Rotation = TargetPoint->GetActorRotation();
+			Rotation.Yaw += 180.0f;
+
+			Character->TeleportTo(Location, Rotation);
+			PlayerController->SetControlRotation(Rotation);
+		}
 	}
 }
 

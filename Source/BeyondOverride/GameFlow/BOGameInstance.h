@@ -31,6 +31,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void EndFarming(EStageResult Result);
 	void Die();
 	void EnterAIBuilding();
+	void ExitAIBuilding();
 
 	void OpenLevel(ELevel Level);
 	void ShowLoadingScreenWidget(bool IsNew);
@@ -55,6 +56,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
   public:
 	void SetIsBossDefeated(bool InIsBossDefeated);
 	void SetIsKeyCardDoorOpened(bool InIsKeyCardDoorOpened);
+	void SetIsDefenseStarted(bool InIsDefenseStarted);
 
 	UBODataAsset* GetBODataAsset() const;
 
@@ -65,6 +67,9 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	EDeathLocation GetDeathLocation() const;
 	EStageResult GetFarmingResult() const;
 	EStageResult GetDefenseResult() const;
+
+	ELevel GetPrevLevel() const;
+	ELevel GetCurLevel() const;
 
 	float GetTotalSurvivalTime() const;
 	float GetSurvivalTime() const;
@@ -81,6 +86,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	bool GetIsBossDefeated() const;
 	bool GetIsKeyCardDoorOpened() const;
+	bool GetIsDefenseStarted() const;
 
 	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
 	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
@@ -97,6 +103,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	EDeathLocation DeathLocation;
 	EStageResult FarmingResult;
 	EStageResult DefenseResult;
+	ELevel PrevLevel;
 	ELevel CurLevel;
 
 	float TotalSurvivalTime;
@@ -114,6 +121,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 
 	bool IsBossDefeated;
 	bool IsKeyCardDoorOpened;
+	bool IsDefenseStarted;
 
 	UPROPERTY()
 	TMap<ELevel, TSoftObjectPtr<UWorld>> Levels;

@@ -1,11 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Interaction/Actors/AIBuildingEntrance.h"
+#include "Interaction/Actors/AIBuildingExit.h"
 
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOGameMode.h"
 
-AAIBuildingEntrance::AAIBuildingEntrance()
+AAIBuildingExit::AAIBuildingExit()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
@@ -14,42 +14,42 @@ AAIBuildingEntrance::AAIBuildingEntrance()
 	if (MeshFinder.Succeeded())
 		MeshComp->SetStaticMesh(MeshFinder.Object);
 
-	PromptData.Title = FText::FromString(TEXT("AI 건물 입구"));
-	PromptData.ActionText = FText::FromString(TEXT("[E] 키를 눌러 입장하세요"));
+	PromptData.Title = FText::FromString(TEXT("AI 건물 출구"));
+	PromptData.ActionText = FText::FromString(TEXT("[E] 키를 눌러 퇴장하세요"));
 	PromptData.HoldSeconds = 3.f;
 	PromptData.bMoveCancel = true;
-	PromptData.DisableReason = FText::FromString(TEXT("보스 처치 후 입장 가능합니다."));
+	PromptData.DisableReason = FText::FromString(TEXT("탈출이 불가합니다."));
 }
 
-void AAIBuildingEntrance::BeginPlay()
+void AAIBuildingExit::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsBossDefeated())
+	if (!IsDefenseStarted())
 	{
 		PromptData.bEnabled = true;
 	}
 }
 
-bool AAIBuildingEntrance::CanInteract(AActor* Interactor, FText& OutReason) const
+bool AAIBuildingExit::CanInteract(AActor* Interactor, FText& OutReason) const
 {
 	OutReason = PromptData.DisableReason;
 
-	return IsBossDefeated();
+	return !IsDefenseStarted();
 }
 
-void AAIBuildingEntrance::PerformInteract(AActor* Interactor)
+void AAIBuildingExit::PerformInteract(AActor* Interactor)
 {
 	if (GetWorld())
 	{
 		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
 		{
-			GameMode->EnterAIBuilding();
+			GameMode->ExitAIBuilding();
 		}
 	}
 }
 
-bool AAIBuildingEntrance::IsBossDefeated() const
+bool AAIBuildingExit::IsDefenseStarted() const
 {
 	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
 	if (!GameInstance)
@@ -57,5 +57,5 @@ bool AAIBuildingEntrance::IsBossDefeated() const
 		return false;
 	}
 
-	return GameInstance->GetIsBossDefeated();
+	return GameInstance->GetIsDefenseStarted();
 }

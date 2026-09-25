@@ -8,7 +8,6 @@
 
 #include "DataTables/Monster/MonsterInfo.h"
 #include "Engine/AssetManager.h"
-#include "GameFlow/BOGameMode.h"
 #include "GameFlow/Manager/LoadingScreenManager.h"
 #include "Interaction/Actors/StorageContainerActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -70,6 +69,7 @@ void UBOGameInstance::InitSetting()
 	DeathLocation = EDeathLocation::None;
 	FarmingResult = EStageResult::None;
 	DefenseResult = EStageResult::None;
+	PrevLevel = ELevel::None;
 	CurLevel = ELevel::Basic;
 
 	TotalSurvivalTime = 0.0f;
@@ -86,6 +86,8 @@ void UBOGameInstance::InitSetting()
 	MaxShield = 0;
 
 	IsBossDefeated = false;
+	IsKeyCardDoorOpened = false;
+	IsDefenseStarted = false;
 
 	PlayerItemInventory.Empty();
 	PlayerEquipmentInventory.Empty();
@@ -139,8 +141,11 @@ void UBOGameInstance::StartFarming()
 void UBOGameInstance::EndFarming(EStageResult Result)
 {
 	PlayingState = EPlayingState::Bunker;
+
 	FarmingResult = Result;
 	FarmingCount += 1;
+
+	IsDefenseStarted = false;
 
 	if (Result == EStageResult::Fail)
 	{
@@ -179,6 +184,11 @@ void UBOGameInstance::EnterAIBuilding()
 	OpenLevel(ELevel::AIBuilding);
 }
 
+void UBOGameInstance::ExitAIBuilding()
+{
+	OpenLevel(ELevel::Main);
+}
+
 void UBOGameInstance::OpenLevel(ELevel Level)
 {
 	/*if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == Levels[Level].GetAssetName())
@@ -191,6 +201,7 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		return;
 	}
 
+	PrevLevel = CurLevel;
 	CurLevel = Level;
 
 	SavePlayerData();
@@ -448,6 +459,11 @@ void UBOGameInstance::SetIsKeyCardDoorOpened(bool InIsKeyCardDoorOpened)
 	IsKeyCardDoorOpened = InIsKeyCardDoorOpened;
 }
 
+void UBOGameInstance::SetIsDefenseStarted(bool InIsDefenseStarted)
+{
+	IsDefenseStarted = InIsDefenseStarted;
+}
+
 UBODataAsset* UBOGameInstance::GetBODataAsset() const
 {
 	return BODataAsset;
@@ -484,6 +500,16 @@ EStageResult UBOGameInstance::GetFarmingResult() const
 EStageResult UBOGameInstance::GetDefenseResult() const
 {
 	return DefenseResult;
+}
+
+ELevel UBOGameInstance::GetPrevLevel() const
+{
+	return PrevLevel;
+}
+
+ELevel UBOGameInstance::GetCurLevel() const
+{
+	return CurLevel;
 }
 
 float UBOGameInstance::GetTotalSurvivalTime() const
@@ -549,6 +575,11 @@ bool UBOGameInstance::GetIsBossDefeated() const
 bool UBOGameInstance::GetIsKeyCardDoorOpened() const
 {
 	return IsKeyCardDoorOpened;
+}
+
+bool UBOGameInstance::GetIsDefenseStarted() const
+{
+	return IsDefenseStarted;
 }
 
 TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerItemInventory() const

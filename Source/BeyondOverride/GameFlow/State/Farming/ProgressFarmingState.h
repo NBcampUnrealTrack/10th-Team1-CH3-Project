@@ -18,6 +18,7 @@ class BEYONDOVERRIDE_API UProgressFarmingState : public UBaseFarmingState
 
   private:
 	void SpawnCharacter();
+	void TeleportCharacter();
 	void ActivateExits();
 	void SetStartTime();
 };

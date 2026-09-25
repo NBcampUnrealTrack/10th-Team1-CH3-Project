@@ -207,9 +207,22 @@ void ABOGameMode::EnterAIBuilding()
 	}
 }
 
+void ABOGameMode::ExitAIBuilding()
+{
+	if (GameInstance)
+	{
+		GameInstance->ExitAIBuilding();
+	}
+}
+
 void ABOGameMode::StartDefense()
 {
 	UE_LOG(LogGameFlow, Warning, TEXT("Game Mode Begin Defense"));
+
+	if (GameInstance)
+	{
+		GameInstance->SetIsDefenseStarted(true);
+	}
 
 	DefenseStateMachine = NewObject<UDefenseStateMachine>(this, UDefenseStateMachine::StaticClass());
 

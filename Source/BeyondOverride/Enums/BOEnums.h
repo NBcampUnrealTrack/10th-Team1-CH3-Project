@@ -35,6 +35,7 @@ enum class EDeathLocation : uint8
 UENUM(BlueprintType)
 enum class ELevel : uint8
 {
+	None,
 	Basic,
 	Bunker,
 	Main,

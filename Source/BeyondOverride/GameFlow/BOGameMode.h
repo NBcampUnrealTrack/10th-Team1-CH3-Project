@@ -32,6 +32,7 @@ class BEYONDOVERRIDE_API ABOGameMode : public AGameMode
 	void EndFarming(EStageResult Result);
 	void Die();
 	void EnterAIBuilding();
+	void ExitAIBuilding();
 	void StartDefense(); // when interacting with the main computer first time
 	void EndDefense();   // when end of defense;
 	void ClearGame();    // when interacting with the main computer after defense
