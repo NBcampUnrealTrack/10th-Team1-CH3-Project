@@ -508,5 +508,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "FUEL_CAN",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"39B604EE494DC5899D366086A672E4E1\", \"Fuel Can\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"6818ED824DB65ECB945CD09EF3BA18D4\", \"Fuel Can Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/FuelCan/BP_ItemInstance_FuelCan.BP_ItemInstance_FuelCan_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/FuelCan/BP_ItemPickup_FuelCan.BP_ItemPickup_FuelCan_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/GasCan_Closed_mdl_GasCan_Closed_LOD0.GasCan_Closed_mdl_GasCan_Closed_LOD0'",
+		"MaxStackCount": 5,
+		"Weight": 0.4,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
