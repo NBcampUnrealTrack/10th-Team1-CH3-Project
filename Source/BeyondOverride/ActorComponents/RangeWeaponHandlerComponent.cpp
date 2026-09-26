@@ -1,6 +1,7 @@
 ﻿#include "ActorComponents/RangeWeaponHandlerComponent.h"
 
 #include "Animation/AnimInstance.h"
+#include "Bullets/BulletBase.h"
 #include "DataAssets/EquipmentAnimationDataAsset.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/RangeWeaponDataRow.h"
@@ -11,7 +12,6 @@
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/RangeWeaponInstance.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Projectiles/Bullets/BulletProjectile.h"
 
 URangeWeaponHandlerComponent::URangeWeaponHandlerComponent()
 {
@@ -620,7 +620,7 @@ void URangeWeaponHandlerComponent::SpawnBullets()
 		const FRotator SpreadRotation = GetSpreadRotation(AimRotation); // 랜덤 탄 퍼짐 적용된 방향
 
 		// 총알 액터 생성
-		ABulletProjectile* BulletActor = GetWorld()->SpawnActor<ABulletProjectile>(
+		ABulletBase* BulletActor = GetWorld()->SpawnActor<ABulletBase>(
 			RangeWeaponData->BulletClass,
 			MuzzleLocation,
 			SpreadRotation,
