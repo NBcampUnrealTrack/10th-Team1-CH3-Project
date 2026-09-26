@@ -313,5 +313,20 @@
 		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_AccessCard.T_AccessCard'",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "CABLE",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"DEBDEBF04847F146E6D6299DB47A2065\", \"Cable\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"35FFD75647B3D0E70291039F46FD5CC5\", \"Cable Description\")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Cable/BP_ItemInstance_Cable.BP_ItemInstance_Cable_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Cable/BP_ItemPickup_Cable.BP_ItemPickup_Cable_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Cable/SM_Cable.SM_Cable'",
+		"MaxStackCount": 15,
+		"Weight": 0.1,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
