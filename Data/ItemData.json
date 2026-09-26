@@ -538,5 +538,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "FLYING_PAN",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"3B5F0EA648CAE470E39746BB5DACA739\", \"Flying Pan\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"5F0A38AA4EEDCB4E5C802C9734107DA3\", \"Flying Pan Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/FlyingPan/BP_ItemInstance_FlyingPan.BP_ItemInstance_FlyingPan_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/FlyingPan/BP_ItemPickup_FlyingPan.BP_ItemPickup_FlyingPan_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Pan_mdl.Pan_mdl'",
+		"MaxStackCount": 5,
+		"Weight": 0.3,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
