@@ -17,18 +17,12 @@
 #include "Monster/System/BFLMissileAttack.h"
 #include "Monster/System/BFLSoundEvent.h"
 #include "Monster/System/BalisticTrace.h"
+#include "Monster/System/MonsterCalling.h"
 #include "Player/Character/BOCharacter.h"
 
 UMonsterStatComponent::UMonsterStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	static ConstructorHelpers::FObjectFinder<UMonsterDataAsset> DataAssetFinder(TEXT("/Game/Blueprints/Monster/DataAssets/DA_MonstersInfo.DA_MonstersInfo"));
-
-	if (DataAssetFinder.Succeeded())
-	{
-		MonsterData = DataAssetFinder.Object;
-	}
 }
 
 EMonsterType UMonsterStatComponent::GetMonsterType() const
@@ -84,23 +78,24 @@ void UMonsterStatComponent::Attack()
 		return;
 	}
 
+	AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
+	if (!Owner)
+	{
+		return;
+	}
+	AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+	if (!AIController)
+	{
+		return;
+	}
+	ABOCharacter* Target = AIController->GetTarget();
+	if (!Target)
+	{
+		return;
+	}
+
 	if (MonsterType == EMonsterType::Range)
 	{
-		AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
-		if (!Owner)
-		{
-			return;
-		}
-		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
-		if (!AIController)
-		{
-			return;
-		}
-		ABOCharacter* Target = AIController->GetTarget();
-		if (!Target)
-		{
-			return;
-		}
 
 		FVector BulletDirection = (Target->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
 
@@ -118,50 +113,22 @@ void UMonsterStatComponent::Attack()
 	}
 	else if (MonsterType == EMonsterType::Melee)
 	{
-		ACharacter* Owner = Cast<ACharacter>(GetOwner());
-		if (!Owner)
-		{
-			return;
-		}
 
-		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
-		if (!AIController)
-		{
-			return;
-		}
+		AActor* MeleeTarget = UBFLMeleeAttack::DashAttack(Owner, AIController->GetTarget(), GetAttackRange());
 
-		AActor* Target = UBFLMeleeAttack::DashAttack(Owner, AIController->GetTarget(), GetAttackRange());
-
-		if (Target)
+		if (MeleeTarget)
 		{
 
-			ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(Target);
+			ABOCharacter* PlayerCharacter = Cast<ABOCharacter>(MeleeTarget);
 			if (!PlayerCharacter)
 			{
 				return;
 			}
-			DamageLogic(Target, AttackDamage);
+			DamageLogic(MeleeTarget, AttackDamage);
 		}
 	}
 	else if (MonsterType == EMonsterType::Special)
 	{
-		AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
-		if (!Owner)
-		{
-			return;
-		}
-
-		AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
-		if (!AIController)
-		{
-			return;
-		}
-
-		ABOCharacter* Target = AIController->GetTarget();
-		if (!Target)
-		{
-			return;
-		}
 
 		UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Missile", 5500.0f, 1.0f, 4.0f, false, GetWorld());
 		FVector Delta = Target->GetActorLocation() - Owner->GetAttackPoint();
@@ -183,6 +150,12 @@ void UMonsterStatComponent::Attack()
 										 AttackDamage,
 										 Owner,
 										 GetWorld());
+	}
+	else if (MonsterType == EMonsterType::Fly)
+	{
+		UMonsterCalling* Calling = NewObject<UMonsterCalling>(Owner);
+		UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Calling", 4500.0f, 1.0f, 1.0f, false, GetWorld());
+		Calling->CallMonsters(Owner->GetActorLocation(), AttackRange * BulletSpeed, Target, ECallType::Attack);
 	}
 
 	CallAttackLock();
@@ -292,12 +265,14 @@ void UMonsterStatComponent::BeginPlay()
 
 void UMonsterStatComponent::StatSetup()
 {
-	if (!MonsterData)
+	AMonsterCharacter* Monster = Cast<AMonsterCharacter>(GetOwner());
+	if (!Monster)
 	{
 		return;
 	}
-	AMonsterCharacter* Monster = Cast<AMonsterCharacter>(GetOwner());
-	if (!Monster)
+
+	UMonsterDataAsset* MonsterData = Monster->GetMonsterData();
+	if (!MonsterData)
 	{
 		return;
 	}

@@ -14,6 +14,9 @@
 // UHT Header
 #include "MonsterCharacter.generated.h"
 
+// DELEGATE
+DECLARE_MULTICAST_DELEGATE(FOnStatSetComplete);
+
 // 전방 선언
 class UMonsterStatComponent;
 class UMonsterDataAsset;
@@ -23,36 +26,41 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	// Methtods
+	// Methods
   public:
 	AMonsterCharacter();
 
-	void FocusSetUp(bool data);
+	// MoveInput
+	void MoveFlying(const FVector& TargetLocation);
 
-	EMonsterType GetMonsterType() const;
-
+	// Setters
 	void SetMonsterID(FName ID);
 
+	// Getters
 	FName GetMonsterID() const;
-
+	UMonsterDataAsset* GetMonsterData() const;
 	FVector GetAttackPoint() const;
-
 	FRotator GetAttackRotator() const;
-
-	void OnMissileHit(TArray<FOverlapResult> Targets);
-
 	float GetAttackRange() const;
 
+	UFUNCTION(BlueprintCallable, Category = "MonsterID")
+	EMonsterType GetMonsterType() const;
+
+	// Functions
+	void OnMissileHit(TArray<FOverlapResult> Targets);
+
+	void FocusSetUp(bool data);
+
 	bool IsDelay();
+
+	void MonsterAttack();
+
+	void DeathSequence();
 
 	virtual float TakeDamage(float DamageAmount,
 							 FDamageEvent const& DamageEvent,
 							 AController* EventInstigator,
 							 AActor* DamageCauser) override;
-
-	void MonsterAttack();
-
-	void DeathSequence();
 
   protected:
 	virtual void PostInitializeComponents() override;
@@ -62,6 +70,8 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	// Properties
   public:
+	FOnStatSetComplete OnStatSetComplete;
+
   protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
 	TObjectPtr<UMonsterDataAsset> MonsterData;

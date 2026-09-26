@@ -64,9 +64,6 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 
 	// Properties
   public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
-	TObjectPtr<UMonsterDataAsset> MonsterData;
-
   protected:
 	// Attack Info
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

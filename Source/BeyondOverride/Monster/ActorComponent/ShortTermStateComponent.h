@@ -25,6 +25,7 @@ class BEYONDOVERRIDE_API UShortTermStateComponent : public UActorComponent
   public:
 	UShortTermStateComponent();
 
+	// Flag Set
 	void PlantFlag(FFlagInfo FlagInfo);
 
 	void PlantFlag(EFlag State, float Time);

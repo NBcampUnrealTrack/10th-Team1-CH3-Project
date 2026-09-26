@@ -7,6 +7,7 @@
 #include "NavigationSystem.h"
 #include "TimerManager.h"
 
+#include "Monster/ActorComponent/AirNavComponent.h"
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/ActorComponent/SenseComponent.h"
 #include "Monster/ActorComponent/ShortTermStateComponent.h"
@@ -29,6 +30,9 @@ AMonsterAIController::AMonsterAIController()
 
 	// 센서 값 컴포넌트
 	SenseValue = CreateDefaultSubobject<USenseComponent>(TEXT("SenseValue"));
+
+	// 공중 네비 컴포넌트
+	AirNav = CreateDefaultSubobject<UAirNavComponent>(TEXT("AirNav"));
 
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SetPerceptionComponent(*AIPerception);
@@ -66,21 +70,35 @@ void AMonsterAIController::PostInitializeComponents()
 
 void AMonsterAIController::EnableBehaviorTree()
 {
-	// Assets 존재 여부
-	if (!BehaviorTreeAsset)
+	SenseValue->SetSpawnPoint(GetMonster()->GetActorLocation());
+	if (GetMonster()->GetMonsterType() != EMonsterType::Fly)
 	{
-		return;
-	}
+		// Assets 존재 여부
+		if (!BehaviorTreeAsset)
+		{
+			return;
+		}
 
-	// 지정 BT 에셋을 실행하는 함수
-	RunBehaviorTree(BehaviorTreeAsset);
+		// 지정 BT 에셋을 실행하는 함수
+		RunBehaviorTree(BehaviorTreeAsset);
+	}
+	else
+	{
+		// Assets 존재 여부
+		if (!AirBehaviorTreeAsset)
+		{
+			return;
+		}
+
+		// 지정 BT 에셋을 실행하는 함수
+		RunBehaviorTree(AirBehaviorTreeAsset);
+	}
 }
 
 void AMonsterAIController::BeginPlay()
 {
 	Super::BeginPlay();
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetHearUpdated);
-	EnableBehaviorTree();
 }
 
 void AMonsterAIController::OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimulus)
@@ -117,7 +135,7 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 
 	if (InPawn)
 	{
-		SenseValue->SetSpawnPoint(InPawn->GetActorLocation());
+		GetMonster()->OnStatSetComplete.AddUObject(this, &AMonsterAIController::EnableBehaviorTree);
 	}
 }
 
@@ -139,7 +157,33 @@ void AMonsterAIController::FocusSetUp(const EMonsterState& Input)
 	}
 }
 
+void AMonsterAIController::MoveFlying(const FVector& TargetLocation)
+{
+	GetMonster()->MoveFlying(TargetLocation);
+}
 // 중재자 패턴용
+
+// MonsterCharacter
+
+UMonsterDataAsset* AMonsterAIController::GetMonsterData() const
+{
+	if (!GetMonster())
+	{
+		return nullptr;
+	}
+	return GetMonster()->GetMonsterData();
+}
+
+AMonsterCharacter* AMonsterAIController::GetMonster() const
+{
+	AMonsterCharacter* MonsterCharacter = Cast<AMonsterCharacter>(GetPawn());
+	if (!MonsterCharacter)
+	{
+		return nullptr;
+	}
+
+	return MonsterCharacter;
+}
 
 // Event
 
@@ -205,7 +249,7 @@ bool AMonsterAIController::IsContinueState() const
 	return State->IsContinueState();
 }
 
-// Sense Code
+// Sense
 
 void AMonsterAIController::SetTarget(ABOCharacter* Target)
 {
@@ -240,4 +284,21 @@ FVector AMonsterAIController::GetEQSPoint() const
 FVector AMonsterAIController::GetSpawnPoint() const
 {
 	return SenseValue->GetSpawnPoint();
+}
+
+// AirNav
+
+bool AMonsterAIController::AirNavControl(FVector TargetLocation)
+{
+	return AirNav->AirNavControl(TargetLocation);
+}
+
+FVector AMonsterAIController::AirNavResult()
+{
+	return AirNav->AirNavResult();
+}
+
+bool AMonsterAIController::PathControl()
+{
+	return AirNav->PathControl();
 }

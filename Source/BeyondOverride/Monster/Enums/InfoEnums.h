@@ -17,3 +17,11 @@ enum class EMonsterType : uint8
 	Fly UMETA(DisplayName = "Fly"),
 	Boss UMETA(DisplayName = "Boss")
 };
+
+UENUM(BlueprintType)
+enum class EAirNavState : uint8
+{
+	Fail UMETA(DisplayName = "Fail"),
+	Continue UMETA(DisplayName = "Continue"),
+	Complete UMETA(DisplayName = "Complete")
+};

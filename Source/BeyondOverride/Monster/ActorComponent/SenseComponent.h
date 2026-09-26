@@ -47,9 +47,6 @@ class BEYONDOVERRIDE_API USenseComponent : public UActorComponent
 
 	// Properties
   public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
-	TObjectPtr<UMonsterDataAsset> MonsterData;
-
   protected:
 	UPROPERTY(VisibleAnywhere, Category = "State|SenseValue")
 	TObjectPtr<ABOCharacter> MonsterTarget;
