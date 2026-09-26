@@ -19,7 +19,8 @@
 
 UMonsterSpawn::UMonsterSpawn()
 {
-	static ConstructorHelpers::FClassFinder<AMonsterCharacter> MonsterBP(TEXT("/Game/Blueprints/Monster/MonsterCharcter/BP_MonsterCharacter.BP_MonsterCharacter.BP_MonsterCharacter_C"));
+	static ConstructorHelpers::FClassFinder<AMonsterCharacter> MonsterBP(
+		TEXT("/Game/Blueprints/Monster/MonsterCharcter/BP_MonsterCharacter.BP_MonsterCharacter.BP_MonsterCharacter_C"));
 
 	if (MonsterBP.Succeeded())
 	{

@@ -12,12 +12,16 @@
 #include "Monster/Enums/InfoEnums.h"
 #include "Monster/Enums/StateEnums.h"
 #include "Monster/Structs/StateParams.h"
+#include "Monster/Structs/SystemParams.h"
 #include "Perception/AIPerceptionTypes.h"
 
 // UHT Header
 #include "MonsterAIController.generated.h"
 
 // 전방 선언
+class UMonsterDataAsset;
+class AMonsterCharacter;
+class UAirNavComponent;
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
 class UAISenseConfig_Hearing;
@@ -38,6 +42,12 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 
 	// BehaviorTree 시작 함수
 	void EnableBehaviorTree();
+
+	// MonsterCharacter
+
+	UMonsterDataAsset* GetMonsterData() const;
+
+	AMonsterCharacter* GetMonster() const;
 
 	// Event
 
@@ -82,7 +92,16 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 
 	FVector GetSpawnPoint() const;
 
+	bool AirNavControl(FVector TargetLocation);
+
+	FVector AirNavResult();
+
+	bool PathControl();
+
 	void FocusSetUp(const EMonsterState& input);
+
+	// MoveInput
+	void MoveFlying(const FVector& TargetLocation);
 
   protected:
 	virtual void BeginPlay() override;
@@ -98,8 +117,18 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	// Properties
   public:
   protected:
+	// MonsterData
+
+	// BT
 	UPROPERTY(EditDefaultsOnly, Category = "AI|Control")
 	class UBehaviorTree* BehaviorTreeAsset;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI|Control")
+	class UBehaviorTree* AirBehaviorTreeAsset;
+
+	// Add Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|State")
+	TObjectPtr<UAirNavComponent> AirNav;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|State")
 	TObjectPtr<UContinuousStateComponent> State;
@@ -110,6 +139,7 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|State")
 	TObjectPtr<USenseComponent> SenseValue;
 
+	// Perceptions
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moster|AI")
 	TObjectPtr<UAIPerceptionComponent> AIPerception;
 

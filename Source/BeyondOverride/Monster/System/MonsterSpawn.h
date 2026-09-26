@@ -25,5 +25,6 @@ class BEYONDOVERRIDE_API UMonsterSpawn : public UObject
 	UFUNCTION(BlueprintCallable)
 	void MonsterSpawn(FVector Location, FName ID);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn|Data")
 	TSubclassOf<AMonsterCharacter> MonsterClass;
 };

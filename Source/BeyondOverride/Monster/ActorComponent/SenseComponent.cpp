@@ -11,13 +11,6 @@
 USenseComponent::USenseComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	static ConstructorHelpers::FObjectFinder<UMonsterDataAsset> DataAssetFinder(TEXT("/Game/Blueprints/Monster/DataAssets/DA_MonstersInfo.DA_MonstersInfo"));
-
-	if (DataAssetFinder.Succeeded())
-	{
-		MonsterData = DataAssetFinder.Object;
-	}
 }
 
 void USenseComponent::SetTarget(ABOCharacter* Target)
@@ -92,12 +85,14 @@ void USenseComponent::BeginPlay()
 
 void USenseComponent::SenseSetup()
 {
-	if (!MonsterData)
+	AMonsterCharacter* Monster = Cast<AMonsterCharacter>(GetOwner());
+	if (!Monster)
 	{
 		return;
 	}
-	AMonsterCharacter* Monster = Cast<AMonsterCharacter>(GetOwner());
-	if (!Monster)
+
+	UMonsterDataAsset* MonsterData = Monster->GetMonsterData();
+	if (!MonsterData)
 	{
 		return;
 	}

@@ -5,6 +5,9 @@
 // Core include
 #include "CoreMinimal.h"
 
+// Add include
+#include "Monster/Enums/InfoEnums.h"
+
 // UHT Header
 #include "SystemParams.generated.h"
 

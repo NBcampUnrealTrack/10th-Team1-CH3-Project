@@ -37,6 +37,15 @@ AMonsterCharacter::AMonsterCharacter()
 	}
 }
 
+void AMonsterCharacter::MoveFlying(const FVector& TargetLocation)
+{
+	if (GetMonsterType() == EMonsterType::Fly)
+	{
+		const FVector Direction = (TargetLocation - GetActorLocation()).GetSafeNormal();
+		AddMovementInput(Direction);
+	}
+}
+
 void AMonsterCharacter::FocusSetUp(bool data)
 {
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
@@ -195,11 +204,23 @@ void AMonsterCharacter::PostInitializeComponents()
 
 	SetUpMesh();
 	MonsterStat->StatSetup();
+	OnStatSetComplete.Broadcast();
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
-		Movement->MaxWalkSpeed = MonsterStat->GetWalkSpeed() * 1;
+		Movement->MaxWalkSpeed = MonsterStat->GetWalkSpeed();
 		Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+		if (MonsterStat->GetMonsterType() == EMonsterType::Fly)
+		{
+			Movement->GravityScale = 0.0f;
+			Movement->SetMovementMode(MOVE_Flying);
+			Movement->DefaultLandMovementMode = MOVE_Flying;
+		}
 	}
+}
+
+UMonsterDataAsset* AMonsterCharacter::GetMonsterData() const
+{
+	return MonsterData;
 }
 
 EMonsterType AMonsterCharacter::GetMonsterType() const
