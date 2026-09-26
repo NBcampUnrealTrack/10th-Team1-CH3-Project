@@ -463,5 +463,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "CANTEEN",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"3592AE19454B1E238B623A88B93BC491\", \"Canteen\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"4AC57C9D49D55F39FC8ABF9B28860410\", \"Canteen Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Canteen/BP_ItemInstance_Canteen.BP_ItemInstance_Canteen_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Canteen/BP_ItemPickup_Canteen.BP_ItemPickup_Canteen_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Canteen_mdl.Canteen_mdl'",
+		"MaxStackCount": 15,
+		"Weight": 0.1,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
