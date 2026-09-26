@@ -523,5 +523,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "METAL_SCRAP",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"06532DD044D3E4F1BC8AB7807C2863EA\", \"Metal Scrap\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"AB59DE4B4D1422CDC6EAB88E3A67816F\", \"Metal Scrap Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/MetalScrap/BP_ItemInstance_MetalScrap.BP_ItemInstance_MetalScrap_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/MetalScrap/BP_ItemPickup_MetalScrap.BP_ItemPickup_MetalScrap_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/MetalScraps_mdl.MetalScraps_mdl'",
+		"MaxStackCount": 20,
+		"Weight": 0.1,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
