@@ -373,5 +373,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "MOUSE",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"B282B9714F637E7420BD879B65D15299\", \"Mouse\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"6C9C60A44E75AA73A2A6FE91C0F5FFBD\", \"Mouse Description\")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Mouse/BP_ItemInstance_Mouse.BP_ItemInstance_Mouse_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Mouse/BP_ItemPickup_Mouse.BP_ItemPickup_Mouse_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Mouse/SM_Mouse.SM_Mouse'",
+		"MaxStackCount": 3,
+		"Weight": 0.2,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
