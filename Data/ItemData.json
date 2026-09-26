@@ -493,5 +493,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "DUCT_TAPE",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"D0FE3A15493EDD7E600BCFBB05CE078B\", \"Duct Tape\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"529F104E43398CC5C02E4BB54FA1FF8A\", \"Duct Tape Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/DuctTape/BP_ItemInstance_DuctTape.BP_ItemInstance_DuctTape_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/DuctTape/BP_ItemPickup_DuctTape.BP_ItemPickup_DuctTape_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/DuctTape_mdl.DuctTape_mdl'",
+		"MaxStackCount": 15,
+		"Weight": 0.1,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
