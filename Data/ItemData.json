@@ -478,5 +478,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "CLOTH",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"AAFD57F94E08BDF526FC6B813CDAD162\", \"Cloth\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"98492C6A472444B9D6534FBFB14B9BC5\", \"Cloth Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Cloth/BP_ItemInstance_Cloth.BP_ItemInstance_Cloth_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Cloth/BP_ItemPickup_Cloth.BP_ItemPickup_Cloth_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Cloth_mdl.Cloth_mdl'",
+		"MaxStackCount": 20,
+		"Weight": 0.1,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
