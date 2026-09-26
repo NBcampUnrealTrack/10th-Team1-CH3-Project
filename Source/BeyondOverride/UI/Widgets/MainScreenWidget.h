@@ -12,6 +12,7 @@ class UPanelWidget;
 class ABOCharacter;
 class UPlayerInventoryComponent;
 class UItemInstanceBase;
+class UEquipmentManagerComponent;
 enum class EEquipmentSlot : uint8;
 
 UCLASS()
@@ -49,6 +50,35 @@ class BEYONDOVERRIDE_API UMainScreenWidget : public UUserWidget
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Compass")
 	float DegreesPerTick = 15.0f;
 
+  protected:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWidget> LineTop;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWidget> LineBottom;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWidget> LineLeft;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWidget> LineRight;
+
+	// 탄 퍼짐이 0도일 때 중심에서 각 조각까지의 기본 거리 (픽셀)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
+	float CrosshairBaseOffset = 0.0f;
+
+	// 탄 퍼짐 1도당 추가로 벌어지는 거리 (픽셀)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
+	float CrosshairPixelsPerDegree = 40.0f;
+
+	// 벌어질 수 있는 최대 거리 (픽셀)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
+	float CrosshairMaxOffset = 120.0f;
+
+	// 목표 거리를 따라가는 속도 (클수록 빠르게 반응)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair")
+	float CrosshairInterpSpeed = 25.0f;
+
   private:
 	UPROPERTY()
 	TObjectPtr<UStatComponent> StatComponent;
@@ -58,6 +88,17 @@ class BEYONDOVERRIDE_API UMainScreenWidget : public UUserWidget
 
 	UPROPERTY()
 	TObjectPtr<UPlayerInventoryComponent> InventoryComponent;
+
+		UPROPERTY()
+	TObjectPtr<UEquipmentManagerComponent> EquipmentManager;
+
+	float TargetSpreadDegree = 0.0f;
+
+	float CurrentCrosshairOffset = 0.0f;
+
+	void HandleSpreadDegreeUpdated(float SpreadDegree);
+
+	void UpdateCrosshair(float DeltaTime);
 
 	UFUNCTION()
 	void HandleHealthChanged(int32 Health, int32 MaxHealth);

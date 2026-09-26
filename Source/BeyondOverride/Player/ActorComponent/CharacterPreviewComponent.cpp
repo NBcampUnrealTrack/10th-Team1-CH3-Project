@@ -19,7 +19,7 @@ void UCharacterPreviewComponent::BeginPlay()
 		return;
 	}
 
-	const FVector SpawnLocation = OwnerCharacter->GetActorLocation() + PreviewStageOffset;
+	const FVector SpawnLocation = PreviewStageOffset;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

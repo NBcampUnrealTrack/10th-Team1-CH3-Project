@@ -19,7 +19,8 @@ enum class EPlayingState : uint8
 {
 	None,
 	Bunker,
-	Farming
+	Farming,
+	Defense
 };
 
 UENUM(BlueprintType)
@@ -27,12 +28,14 @@ enum class EDeathLocation : uint8
 {
 	None,
 	Bunker,
-	Main
+	Main,
+	AIBuilding
 };
 
 UENUM(BlueprintType)
 enum class ELevel : uint8
 {
+	None,
 	Basic,
 	Bunker,
 	Main,
@@ -40,14 +43,7 @@ enum class ELevel : uint8
 };
 
 UENUM(BlueprintType)
-enum class ELocation : uint8
-{
-	Corridor,
-	AIBuildingEntrance
-};
-
-UENUM(BlueprintType)
-enum class EFarmingState : uint8
+enum class EStageState : uint8
 {
 	None,
 	Begin,
@@ -56,7 +52,7 @@ enum class EFarmingState : uint8
 };
 
 UENUM(BlueprintType)
-enum class EFarmingResult : uint8
+enum class EStageResult : uint8
 {
 	None,
 	Success,

@@ -38,5 +38,5 @@ class BEYONDOVERRIDE_API UExitManager : public UGameInstanceSubsystem
 	TObjectPtr<UBOGameInstance> GameInstance;
 
 	float ExitActivateProb;
-	TArray<TObjectPtr<AExitControllerActor>> ExitControllers;
+	TArray<TWeakObjectPtr<AExitControllerActor>> ExitControllers;
 };

@@ -143,6 +143,9 @@ void AInteractableActorBase::OnFocusEnd(AActor* Interactor)
 // 실행
 void AInteractableActorBase::OnInteractComplete(AActor* Interactor)
 {
+	if (!bInteractionEnabled)
+		return;
+
 	// 여기서 한 번 더 검사하는 이유:
 	// 누르기 시작할 때는 가능했는데 3초 홀드가 끝나는 사이에
 	// 조건이 깨질 수 있다. (가방이 꽉 찼거나, 탈출구가 다시 잠겼거나)
@@ -157,4 +160,15 @@ void AInteractableActorBase::OnInteractComplete(AActor* Interactor)
 	// 모든 상호작용 물건에 한꺼번에 적용된다.
 	PerformInteract(Interactor);     // C++ 하위 클래스
 	OnInteractPerformed(Interactor); // BP 하위 클래스
+}
+
+void AInteractableActorBase::SetInteractionEnabled(bool bEnabled)
+{
+	if (bInteractionEnabled == bEnabled)
+		return;
+
+	bInteractionEnabled = bEnabled;
+
+	if (!bEnabled && Highlight)
+		Highlight->SetHighlighted(false);
 }

@@ -135,7 +135,7 @@ ASpawnVolume* USpawnVolumeManager::GetSpawnVolume(FName RegionID) const
 {
 	if (SpawnVolumeByRegion.Contains(RegionID))
 	{
-		return SpawnVolumeByRegion[RegionID];
+		return SpawnVolumeByRegion[RegionID].Get();
 	}
 
 	return nullptr;
@@ -143,9 +143,9 @@ ASpawnVolume* USpawnVolumeManager::GetSpawnVolume(FName RegionID) const
 
 void USpawnVolumeManager::CleanSetting()
 {
-	for (TPair<FName, TObjectPtr<ASpawnVolume>> Pair : SpawnVolumeByRegion)
+	for (TPair<FName, TWeakObjectPtr<ASpawnVolume>> Pair : SpawnVolumeByRegion)
 	{
-		if (IsValid(Pair.Value))
+		if (Pair.Value.IsValid())
 		{
 			Pair.Value->CleanSetting();
 		}

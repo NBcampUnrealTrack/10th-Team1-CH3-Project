@@ -109,13 +109,13 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 		return;
 	}
 
-	UMonsterSpawn* MonsterSpawnSystem = NewObject<UMonsterSpawn>(this);
+	UMonsterSpawn* MonsterSpawnSystem = NewObject<UMonsterSpawn>(this, UMonsterSpawn::StaticClass());
 	if (!MonsterSpawnSystem)
 	{
 		return;
 	}
 
-	UMonsterCalling* MonsterCallingSystem = NewObject<UMonsterCalling>(this);
+	UMonsterCalling* MonsterCallingSystem = NewObject<UMonsterCalling>(this, UMonsterCalling::StaticClass());
 	if (!MonsterCallingSystem)
 	{
 		return;

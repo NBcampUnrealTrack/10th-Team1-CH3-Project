@@ -15,8 +15,11 @@ APreviewCharacterActor::APreviewCharacterActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	PreviewRoot = CreateDefaultSubobject<USceneComponent>(TEXT("PreviewRoot"));
+	RootComponent = PreviewRoot;
+
 	BodyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BodyMesh"));
-	RootComponent = BodyMesh;
+	BodyMesh->SetupAttachment(PreviewRoot);
 	BodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BodyMesh->SetCastShadow(false);
 
@@ -50,7 +53,7 @@ APreviewCharacterActor::APreviewCharacterActor()
 	PreviewLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("PreviewLight"));
 	PreviewLight->SetupAttachment(PreviewCapture);
 	PreviewLight->SetRelativeLocation(FVector(-30.f, 60.f, 30.f));
-	PreviewLight->Intensity = 5000.f;
+	PreviewLight->Intensity = 2000.f;
 	PreviewLight->AttenuationRadius = 400.f;
 	PreviewLight->SetLightColor(FLinearColor::White);
 	PreviewLight->CastShadows = false;

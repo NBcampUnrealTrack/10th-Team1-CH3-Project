@@ -2,8 +2,6 @@
 
 #include "Interaction/Actors/AIBuildingEntrance.h"
 
-#include "AIBuildingEntrance.h"
-
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/BOGameMode.h"
 

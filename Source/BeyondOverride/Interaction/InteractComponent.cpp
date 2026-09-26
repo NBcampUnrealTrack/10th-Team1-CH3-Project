@@ -192,7 +192,8 @@ AActor* UInteractComponent::TraceForTarget(FVector& OutViewLoc,
 	}
 
 	// 약속을 지킨 물건인지. 안 지켰으면 nullptr 이 나온다.
-	if (!Cast<IInteractableInterface>(Hit.GetActor()))
+	const IInteractableInterface* Interactable = Cast<IInteractableInterface>(Hit.GetActor());
+	if (!Interactable || !Interactable->IsInteractable())
 	{
 		return nullptr;
 	}

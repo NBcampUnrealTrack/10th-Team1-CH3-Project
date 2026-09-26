@@ -58,4 +58,9 @@ class BEYONDOVERRIDE_API IInteractableInterface
 	virtual void OnInteractCancel(AActor *Interactor)
 	{
 	}
+
+	virtual bool IsInteractable() const
+	{
+		return true;
+	}
 };

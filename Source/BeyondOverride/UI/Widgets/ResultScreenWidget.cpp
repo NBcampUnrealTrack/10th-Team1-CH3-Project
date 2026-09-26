@@ -41,7 +41,7 @@ void UResultScreenWidget::NativeConstruct()
 	if (!OwnerCharacter)
 		return;
 
-	bIsSurvived = (GI->GetFarmingResult() == EFarmingResult::Success);
+	bIsSurvived = (GI->GetFarmingResult() == EStageResult::Success);
 
 	// 탈출 / 사망 분기처리
 	if (!bIsSurvived)

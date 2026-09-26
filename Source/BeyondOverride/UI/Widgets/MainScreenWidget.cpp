@@ -1,14 +1,15 @@
 #include "MainScreenWidget.h"
 
+#include "ActorComponents/EquipmentManagerComponent.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/PanelWidget.h"
 #include "Components/ProgressBar.h"
-#include "Player/ActorComponent/StatComponent.h"
-#include "Player/Character/BOCharacter.h"
-#include "UI/Widgets/EquipmentSlotWidget.h"
 #include "Enums/EquipmentSlot.h"
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Player/ActorComponent/PlayerInventoryComponent.h"
+#include "Player/ActorComponent/StatComponent.h"
+#include "Player/Character/BOCharacter.h"
+#include "UI/Widgets/EquipmentSlotWidget.h"
 
 void UMainScreenWidget::NativeConstruct()
 {
@@ -17,6 +18,13 @@ void UMainScreenWidget::NativeConstruct()
 	OwningCharacter = Cast<ABOCharacter>(GetOwningPlayerPawn());
 	if (!OwningCharacter)
 		return;
+
+	CurrentCrosshairOffset = CrosshairBaseOffset;
+	EquipmentManager = OwningCharacter->GetEquipmentComponent();
+	if (EquipmentManager)
+	{
+		EquipmentManager->OnSpreadDegreeUpdatedDelegate.AddUObject(this, &UMainScreenWidget::HandleSpreadDegreeUpdated);
+	}
 
 	StatComponent = OwningCharacter->GetStatComponent();
 	if (!StatComponent)
@@ -52,6 +60,12 @@ void UMainScreenWidget::NativeConstruct()
 
 void UMainScreenWidget::NativeDestruct()
 {
+	if (EquipmentManager)
+	{
+		EquipmentManager->OnSpreadDegreeUpdatedDelegate.RemoveAll(this);
+		EquipmentManager = nullptr;
+	}
+
 	if (StatComponent)
 	{
 		StatComponent->OnHealthChanged.RemoveDynamic(this, &UMainScreenWidget::HandleHealthChanged);
@@ -73,6 +87,7 @@ void UMainScreenWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	UpdateCompass();
+	UpdateCrosshair(InDeltaTime);
 }
 
 void UMainScreenWidget::UpdateCompass()
@@ -99,6 +114,32 @@ void UMainScreenWidget::UpdateCompass()
 	const float TranslationX = PointerScreenX - OneLoopWidth - (Yaw * PixelsPerDegree);
 
 	CompassTick->SetRenderTranslation(FVector2D(TranslationX, 0.0f));
+}
+
+void UMainScreenWidget::HandleSpreadDegreeUpdated(float SpreadDegree)
+{
+	TargetSpreadDegree = SpreadDegree;
+}
+
+void UMainScreenWidget::UpdateCrosshair(float DeltaTime)
+{
+	// 목표 거리 = 기본 거리 + (탄 퍼짐 각도 * 도당 픽셀), 최대값으로 제한
+	const float TargetOffset = FMath::Min(
+		CrosshairBaseOffset + TargetSpreadDegree * CrosshairPixelsPerDegree,
+		CrosshairMaxOffset);
+
+	// 부드럽게 따라가도록 보간
+	CurrentCrosshairOffset = FMath::FInterpTo(CurrentCrosshairOffset, TargetOffset, DeltaTime, CrosshairInterpSpeed);
+
+	// 위젯은 WBP에서 정중앙에 배치해 두고, 이동량만 Render Translation으로 준다
+	if (LineTop)
+		LineTop->SetRenderTranslation(FVector2D(0.0f, -CurrentCrosshairOffset));
+	if (LineBottom)
+		LineBottom->SetRenderTranslation(FVector2D(0.0f, CurrentCrosshairOffset));
+	if (LineLeft)
+		LineLeft->SetRenderTranslation(FVector2D(-CurrentCrosshairOffset, 0.0f));
+	if (LineRight)
+		LineRight->SetRenderTranslation(FVector2D(CurrentCrosshairOffset, 0.0f));
 }
 
 void UMainScreenWidget::HandleHealthChanged(int32 Health, int32 MaxHealth)

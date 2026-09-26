@@ -10,6 +10,7 @@ class USceneCaptureComponent2D;
 class UPointLightComponent;
 class UTextureRenderTarget2D;
 class USkeletalMeshComponent;
+class USceneComponent;
 class ACharacter;
 
 UCLASS()
@@ -36,6 +37,11 @@ class BEYONDOVERRIDE_API APreviewCharacterActor : public AActor
 	void SetActive(bool bActive);
 
   protected:
+	// 실제 루트 - BodyMesh를 루트로 쓰면 InitializeFromCharacter에서 BodyMesh의 상대 트랜스폼을
+	// 설정할 때 그게 곧 액터의 월드 트랜스폼이 되어버려서 스폰 위치가 덮어써짐. 그래서 빈 컴포넌트를 진짜 루트로 둠
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	TObjectPtr<USceneComponent> PreviewRoot;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<USkeletalMeshComponent> BodyMesh;
 

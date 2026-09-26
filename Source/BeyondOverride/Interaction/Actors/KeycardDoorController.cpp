@@ -33,12 +33,27 @@ void AKeycardDoorController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasPlayerKeyCard())
+	DoorSequence = FindComponentByClass<UActorSequenceComponent>();
+
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>();
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	if (GameInstance->GetIsKeyCardDoorOpened())
+	{
+		OpenDoor();
+	}
+	else if (HasPlayerKeyCard())
 	{
 		PromptData.bEnabled = true;
 	}
-
-	DoorSequence = FindComponentByClass<UActorSequenceComponent>();
 }
 
 bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) const
@@ -56,14 +71,14 @@ bool AKeycardDoorController::CanInteract(AActor* Interactor, FText& OutReason) c
 
 void AKeycardDoorController::PerformInteract(AActor* Interactor)
 {
-	if (DoorSequence)
-	{
-		DoorSequence->PlaySequence();
-		PromptData.bEnabled = false;
-		PromptData.DisableReason = FText::FromString(TEXT("이미 작동된 문입니다."));
+	OpenDoor();
 
-		IsOpened = true;
+	if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+	{
+		GameInstance->SetIsKeyCardDoorOpened(true);
 	}
+
+	SetInteractionEnabled(false);
 }
 
 bool AKeycardDoorController::HasPlayerKeyCard() const
@@ -99,4 +114,19 @@ bool AKeycardDoorController::HasPlayerKeyCard() const
 	}
 
 	return false;
+}
+
+void AKeycardDoorController::OpenDoor()
+{
+	if (!DoorSequence)
+	{
+		return;
+	}
+
+	DoorSequence->PlaySequence();
+
+	PromptData.bEnabled = false;
+	PromptData.DisableReason = FText::FromString(TEXT("이미 작동된 문입니다."));
+
+	IsOpened = true;
 }
