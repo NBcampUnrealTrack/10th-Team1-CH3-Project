@@ -553,5 +553,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "COOKING_POT",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"3AFB40204021C35C8AB4BE93436C6040\", \"Cooking Pot\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"B49074FD475F2B18C5DFEEB2C6694E66\", \"Cooking Pot Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/CookingPot/BP_ItemInstance_CookingPot.BP_ItemInstance_CookingPot_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/CookingPot/BP_ItemPickup_CookingPot.BP_ItemPickup_CookingPot_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Pot_mdl.Pot_mdl'",
+		"MaxStackCount": 5,
+		"Weight": 0.3,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
