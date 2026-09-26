@@ -47,12 +47,26 @@ class BEYONDOVERRIDE_API AInteractableActorBase : public AActor,
 	virtual void OnFocusBegin(AActor *Interactor) override;
 	virtual void OnFocusEnd(AActor *Interactor) override;
 	virtual void OnInteractComplete(AActor *Interactor) override;
+	virtual bool IsInteractable() const override
+	{
+		return bInteractionEnabled;
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	TObjectPtr<USoundBase> InteractionSound;
 
 	UFUNCTION(BlueprintCallable, Category = "Audio")
 	void PlayInteractionSound(int32 RepeatCount = 1, float DelaySeconds = 0.0f);
+
+	// 상호작용 자체를 불가능하게 만드는 함수 (Prompt의 bEnabled와는 다르다)
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void SetInteractionEnabled(bool bEnabled);
+
+	UFUNCTION(BlueprintPure, Category = "Interaction")
+	bool IsInteractionEnabled() const
+	{
+		return bInteractionEnabled;
+	}
 
   protected:
 	virtual void PostInitializeComponents() override;
@@ -94,4 +108,7 @@ class BEYONDOVERRIDE_API AInteractableActorBase : public AActor,
 	// 특정 컴포넌트만 반응하게 손으로 제어하려는 경우에만 쓴다.
 	UPROPERTY(EditDefaultsOnly, Category = "Interaction|Advanced")
 	bool bAutoSetupInteractCollision = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	bool bInteractionEnabled = true;
 };

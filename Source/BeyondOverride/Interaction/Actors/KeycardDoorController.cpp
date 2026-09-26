@@ -77,6 +77,8 @@ void AKeycardDoorController::PerformInteract(AActor* Interactor)
 	{
 		GameInstance->SetIsKeyCardDoorOpened(true);
 	}
+
+	SetInteractionEnabled(false);
 }
 
 bool AKeycardDoorController::HasPlayerKeyCard() const
