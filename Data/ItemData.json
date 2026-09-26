@@ -358,5 +358,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "LAPTOP",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"0A43B4CD48EE3A700C318093FD638030\", \"Laptop\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"184E4185495AEC4019C02F81D4E421E4\", \"Laptop Description\")",
+		"ItemType": "Misc",
+		"ItemRarity": "Rare",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Laptop/BP_ItemInstance_Laptop.BP_ItemInstance_Laptop_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Laptop/BP_ItemPickup_Laptop.BP_ItemPickup_Laptop_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Laptop/SM_Laptop.SM_Laptop'",
+		"MaxStackCount": 1,
+		"Weight": 2,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
