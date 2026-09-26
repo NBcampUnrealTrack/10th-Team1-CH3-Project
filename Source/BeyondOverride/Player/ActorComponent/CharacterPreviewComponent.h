@@ -40,7 +40,7 @@ class BEYONDOVERRIDE_API UCharacterPreviewComponent : public UActorComponent
 	UPROPERTY()
 	TObjectPtr<APreviewCharacterActor> PreviewActor;
 
-	// PreviewActor를 스폰할 오프셋 - 월드 어디와도 안 겹치는 먼 위치
+	// PreviewActor를 스폰할 절대 월드 좌표 - 플레이어 위치와 무관하게 항상 이 자리에 고정 스폰됨
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|Preview")
-	FVector PreviewStageOffset = FVector(0.f, 0.f, 100000.f);
+	FVector PreviewStageOffset = FVector(0.f, 0.f, -10000.f);
 };
