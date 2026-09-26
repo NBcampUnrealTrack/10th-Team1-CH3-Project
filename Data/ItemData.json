@@ -343,5 +343,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "FLASHLIGHT",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"B863FB6348A82C1843CC39A83A9031E7\", \"Flashlight\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"2AC0C0594A49ECA8FB16E897A5AE041C\", \"Flashlight Description\")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Flashlight/BP_ItemInstance_Flashlight.BP_ItemInstance_Flashlight_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Flashlight/BP_ItemPickup_Flashlight.BP_ItemPickup_Flashlight_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Flashlight/SM_Flashlight.SM_Flashlight'",
+		"MaxStackCount": 5,
+		"Weight": 0.2,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
