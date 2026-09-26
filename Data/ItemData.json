@@ -568,5 +568,20 @@
 		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
+	},
+	{
+		"Name": "WINE",
+		"DisplayName": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"B90FE30C44715FC819469495A7ADD01B\", \"Wine\")",
+		"Description": "NSLOCTEXT(\"[12D3D44B4344F02D8ACAF67067447E07]\", \"8697F3884AD1AA99B3D275A2F0340CB1\", \"Wine Description \")",
+		"ItemType": "Misc",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Wine/BP_ItemInstance_Wine.BP_ItemInstance_Wine_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Misc/Wine/BP_ItemPickup_Wine.BP_ItemPickup_Wine_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Wine_mdl.Wine_mdl'",
+		"MaxStackCount": 3,
+		"Weight": 0.2,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
 	}
 ]
