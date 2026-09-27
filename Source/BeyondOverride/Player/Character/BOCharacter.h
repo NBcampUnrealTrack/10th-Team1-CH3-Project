@@ -217,6 +217,8 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	void Inventory(const FInputActionValue& value);
 	UFUNCTION()
 	void Escape(const FInputActionValue& value);
+	UFUNCTION()
+	void ToggleMap(const FInputActionValue& value);
 
 	// Add for Debug Widget
 	UFUNCTION()

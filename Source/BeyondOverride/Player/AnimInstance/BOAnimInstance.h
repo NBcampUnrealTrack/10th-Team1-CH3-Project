@@ -51,12 +51,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	bool bIsAiming = false;
 	UPROPERTY(BlueprintReadOnly, Category = "Aim")
+	bool bHasAimOffset = false;
+	UPROPERTY(BlueprintReadOnly, Category = "Aim")
 	float AimPitch = 0.0f;
+
 
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	UBlendSpace* EquipmentHipLocomotion = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	UBlendSpace* EquipmentAimLocomotion = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
+	UBlendSpace* EquipmentAimOffset = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")
 	UAnimSequenceBase* EquipmentJump = nullptr;
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")

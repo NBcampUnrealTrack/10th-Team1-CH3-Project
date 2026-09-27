@@ -21,6 +21,7 @@ enum class EItemSlotPanelMode : uint8
 {
 	Inventory,
 	WorldItems,
+	Shop,
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotHoverChanged, bool, bIsHovered, UItemInstanceBase*, Item);
@@ -40,6 +41,8 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 	void SetInventory(UInventoryComponent* InInventory, UInventoryInteractionComponent* InInteraction);
 
 	void SetWorldItems(const TArray<AItemPickupBase*>& InItems, UNearbyItemComponent* InNearbyItemComponent, UInventoryInteractionComponent* InInteraction);
+
+	void SetShopItems(const TArray<UItemInstanceBase*>& InItems, UInventoryInteractionComponent* InInteraction);
 
 	void RefreshSlots();
 
@@ -72,6 +75,9 @@ class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
 
 	UPROPERTY()
 	TArray<TObjectPtr<AItemPickupBase>> WorldItems;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UItemInstanceBase>> ShopItems;
 
 	UPROPERTY()
 	TObjectPtr<UInventoryInteractionComponent> InteractionComponent;

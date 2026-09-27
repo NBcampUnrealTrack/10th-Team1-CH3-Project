@@ -106,13 +106,13 @@ void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset
 
 	CurrentEquipmentData = NewData;
 
-	//EquipmentHipIdle = NewData->IdleHip;
-	//EquipmentAimIdle = NewData->IdleAim;
 	EquipmentHipLocomotion = NewData->LocomotionHip;
 	EquipmentAimLocomotion = NewData->LocomotionAim;
+	EquipmentAimOffset = NewData->AimOffset;
 	EquipmentJump = NewData->Jump;
 	EquipmentFallingLoop = NewData->FallingLoop;
 	EquipmentLand = NewData->Land;
+	bHasAimOffset = IsValid(NewData->AimOffset);
 }
 
 float UBOAnimInstance::PlayEquipMontage()

@@ -59,6 +59,18 @@ UUIManager::UUIManager()
 		ScreenClasses.Add(EUIScreen::DebugSetting, DebugSettingWBPClass.Class);
 	}
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> ShopScreenWBPClass(TEXT("/Game/UI/WBP_ShopScreen"));
+	if (ShopScreenWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::ShopScreen, ShopScreenWBPClass.Class);
+	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> MapScreenWBPClass(TEXT("/Game/UI/WBP_MapScreen"));
+	if (MapScreenWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::MapScreen, MapScreenWBPClass.Class);
+	}
+
 	static ConstructorHelpers::FClassFinder<UUserWidget> NoneWBPClass(TEXT("/Game/UI/WBP_None"));
 	if (NoneWBPClass.Succeeded())
 	{
