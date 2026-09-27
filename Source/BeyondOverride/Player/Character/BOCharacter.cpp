@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
+#include "Camera/PlayerCameraManager.h"
 #include "DataTables/Items/BackpackDataRow.h"
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/ShieldDataRow.h"
@@ -68,6 +69,15 @@ ABOCharacter::ABOCharacter()
 void ABOCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (IsValid(PlayerController->PlayerCameraManager))
+		{
+			PlayerController->PlayerCameraManager->ViewPitchMin = -70.0f;
+			PlayerController->PlayerCameraManager->ViewPitchMax = 70.0f;
+		}
+	}
 
 	if (IsValid(StatComponent))
 	{
@@ -558,34 +568,6 @@ void ABOCharacter::Reload(const FInputActionValue& value)
 
 void ABOCharacter::Roll(const FInputActionValue& Value)
 {
-	/*if (!IsValid(RollMontage) || !IsValid(GetMesh()))
-	{
-		return;
-	}
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-
-	if (!IsValid(AnimInstance))
-	{
-		return;
-	}
-
-	if (AnimInstance->Montage_IsPlaying(RollMontage))
-	{
-		return;
-	}
-
-	const FName SectionName = GetRollSectionName();
-
-	const float Duration = AnimInstance->Montage_Play(RollMontage);
-
-	if (Duration <= 0.0f)
-	{
-		return;
-	}
-
-	AnimInstance->Montage_JumpToSection(SectionName, RollMontage);*/
-
 	if (!CanUseGameplayInput() || bIsOverweight)
 	{
 		return;
@@ -721,58 +703,6 @@ void ABOCharacter::InteractPress(const FInputActionValue& value)
 						ItemPickup->Destroy();
 					}
 				}
-
-				if (EquipmentManagerComponent)
-				{
-
-					//// Range Weapon
-					// if (ItemInstance->IsA(URangeWeaponInstance::StaticClass()))
-					//{
-					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Primary, ItemInstance))
-					//	{
-					//		if (PlayerInventoryComponent)
-					//		{
-					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Primary, ItemInstance);
-					//		}
-					//		ItemPickup->Destroy();
-					//	}
-					//	else if (EquipmentManagerComponent->Assign(EEquipmentSlot::Secondary, ItemInstance))
-					//	{
-					//		if (PlayerInventoryComponent)
-					//		{
-					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Secondary, ItemInstance);
-					//		}
-					//		ItemPickup->Destroy();
-					//	}
-					// }
-					//// Melee Weapon
-					// else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
-					//{
-					//	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
-					//	{
-					//		if (PlayerInventoryComponent)
-					//		{
-					//			PlayerInventoryComponent->SetEquipmentItem(EEquipmentSlot::Melee, ItemInstance);
-					//		}
-					//		ItemPickup->Destroy();
-					//	}
-					// }
-					////// throwable Weapon
-					////else if (ItemInstance->IsA(UMeleeWeaponInstance::StaticClass()))
-					////{
-					////	if (EquipmentManagerComponent->Assign(EEquipmentSlot::Melee, ItemInstance))
-					////	{
-					////		ItemPickup->Destroy();
-					////	}
-					////}
-					// else
-					//{
-					//	if (PlayerInventoryComponent->AddItem(ItemInstance))
-					//	{
-					//		ItemPickup->Destroy();
-					//	}
-					// }
-				}
 			}
 		}
 	}
@@ -850,18 +780,6 @@ void ABOCharacter::Unarm(const FInputActionValue& value)
 
 void ABOCharacter::DropEquipment(const FInputActionValue& value)
 {
-	// if (EquipmentManagerComponent)
-	//{
-	//	// 장비 제거
-	//	UItemInstanceBase* ItemInstance = EquipmentManagerComponent->Unassign(EquipmentManagerComponent->GetActiveSlot());
-
-	//	// 제거한 장비 액터 소환
-	//	FItemFactory::SpawnItemPickup(
-	//		GetWorld(),
-	//		ItemInstance,
-	//		GetActorLocation() + 30 * GetActorForwardVector());
-	//}
-
 	if (!IsValid(PlayerInventoryComponent) || !IsValid(EquipmentManagerComponent))
 	{
 		return;

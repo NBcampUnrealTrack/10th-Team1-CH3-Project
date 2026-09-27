@@ -18,6 +18,8 @@ public:
 	TObjectPtr<UBlendSpace> LocomotionHip; // 캐릭터 Hip Locomotion
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
 	TObjectPtr<UBlendSpace> LocomotionAim; // 캐릭터 Aim Locomotion
+	UPROPERTY(EditDefaultsOnly, Category = "Character|Locomotion")
+	TObjectPtr<UBlendSpace> AimOffset; // 캐릭터 무기 Aim Offset
 
 	// Character Airborne
 	UPROPERTY(EditDefaultsOnly, Category = "Character|Airborne")
