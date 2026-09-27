@@ -19,4 +19,7 @@ class BEYONDOVERRIDE_API UShopComponent : public UNPCActorComponent
 
   protected:
 	virtual void BeginPlay() override;
+
+  private:
+	// FNPCShopData NPCShopData;
 };

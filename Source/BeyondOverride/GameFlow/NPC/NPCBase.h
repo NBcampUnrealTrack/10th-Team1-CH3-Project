@@ -11,9 +11,9 @@
 
 #include "NPCBase.generated.h"
 
-class UInteractionComponent;
-class UBehaviorComponent;
-class UDialogueComponent;
+// class UInteractionComponent;
+// class UBehaviorComponent;
+// class UDialogueComponent;
 
 UCLASS()
 class BEYONDOVERRIDE_API ANPCBase : public ACharacter, public IInteractableInterface
@@ -32,26 +32,24 @@ class BEYONDOVERRIDE_API ANPCBase : public ACharacter, public IInteractableInter
 	virtual void PerformInteract(AActor* Interactor);
 
   public:
-	void AddInteractionOption(ENPCInteractionOption Option);
-
 	FName GetNPCID() const;
-	TObjectPtr<UInteractionComponent> GetInteractionComp() const;
+	/*TObjectPtr<UInteractionComponent> GetInteractionComp() const;
 	TObjectPtr<UBehaviorComponent> GetBehaviorComp() const;
-	TObjectPtr<UDialogueComponent> GetDialogueComp() const;
+	TObjectPtr<UDialogueComponent> GetDialogueComp() const;*/
 	void GetInteractionOptions(TArray<ENPCInteractionOption>& Options) const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
 	FName NPCID;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
 	TObjectPtr<UInteractionComponent> InteractionComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
 	TObjectPtr<UBehaviorComponent> BehaviorComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
-	TObjectPtr<UDialogueComponent> DialogueComp;
+	TObjectPtr<UDialogueComponent> DialogueComp;*/
 
   protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
@@ -59,7 +57,4 @@ class BEYONDOVERRIDE_API ANPCBase : public ACharacter, public IInteractableInter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	FInteractPrompt PromptData;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TArray<ENPCInteractionOption> InteractionOptions;
 };

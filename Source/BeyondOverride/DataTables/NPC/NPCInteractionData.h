@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 
-/**
- * 
- */
-class BEYONDOVERRIDE_API NPCInteractionData
+#include "NPCInteractionData.generated.h"
+
+USTRUCT(BlueprintType)
+struct FNPCInteractionData : public FTableRowBase
 {
-public:
-	NPCInteractionData();
-	~NPCInteractionData();
+	GENERATED_USTRUCT_BODY()
+
+  public:
 };

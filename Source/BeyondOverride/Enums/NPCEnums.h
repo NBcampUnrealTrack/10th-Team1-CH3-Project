@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,9 +9,10 @@
 UENUM(BlueprintType)
 enum class ENPCInteractionOption : uint8
 {
-	None,
-	Dialogue,
-	Shop,
-	Quest,
-	Heal
+	None UMETA(DisplayName = "???"),
+	Dialogue UMETA(DisplayName = "대화"),
+	Shop UMETA(DisplayName = "상점"),
+	Quest UMETA(DisplayName = "의뢰"),
+	Heal UMETA(DisplayName = "회복"),
+	Exit UMETA(DisplayName = "(돌아가기)"),
 };

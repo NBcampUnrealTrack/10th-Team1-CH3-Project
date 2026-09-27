@@ -109,3 +109,8 @@ UDataTable* UBODataAsset::GetNPCDataTable() const
 {
 	return NPCDataTable;
 }
+
+UDataTable* UBODataAsset::GetNPCShopDataTable() const
+{
+	return NPCShopDataTable;
+}

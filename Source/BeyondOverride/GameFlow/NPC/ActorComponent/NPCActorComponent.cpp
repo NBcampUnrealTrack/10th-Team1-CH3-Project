@@ -17,7 +17,7 @@ void UNPCActorComponent::BeginPlay()
 
 void UNPCActorComponent::InitSetting()
 {
-	if (AActor* Actor = GetOwner())
+	/*if (AActor* Actor = GetOwner())
 	{
 		NPC = Cast<ANPCBase>(Actor);
 
@@ -25,5 +25,5 @@ void UNPCActorComponent::InitSetting()
 		{
 			NPC->AddInteractionOption(Option);
 		}
-	}
+	}*/
 }

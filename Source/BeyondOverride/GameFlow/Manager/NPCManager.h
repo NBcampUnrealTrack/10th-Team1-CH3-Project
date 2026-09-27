@@ -9,6 +9,8 @@
 
 #include "NPCManager.generated.h"
 
+class UItemInstanceBase;
+
 UCLASS()
 class BEYONDOVERRIDE_API UNPCManager : public UGameInstanceSubsystem
 {
@@ -19,11 +21,16 @@ class BEYONDOVERRIDE_API UNPCManager : public UGameInstanceSubsystem
 
   private:
 	void LoadNPCData();
+	void LoadNPCShopData();
+	void SetNPCShopItems(FName NPCID, const TArray<FName>& ShopItems);
 
   public:
 	void GetNPCData(FName NPCID, FNPCData& Data) const;
+	void GetNPCShopData(FName NPCID, FNPCShopData& Data) const;
+	void GetNPCShopItems(FName NPCID, TArray<UItemInstanceBase*>& Items);
 
   private:
-	UPROPERTY()
 	TMap<FName, FNPCData> NPCDatas;
+	TMap<FName, FNPCShopData> NPCShopDatas;
+	TMap<FName, TArray<UItemInstanceBase*>> NPCShopItems;
 };

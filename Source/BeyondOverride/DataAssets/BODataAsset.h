@@ -41,6 +41,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	UDataTable* GetDefenseDataTable() const;
 	UDataTable* GetLoadingTipTable() const;
 	UDataTable* GetNPCDataTable() const;
+	UDataTable* GetNPCShopDataTable() const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
@@ -105,4 +106,7 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* NPCDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
+	UDataTable* NPCShopDataTable;
 };
