@@ -113,7 +113,7 @@ void ABossCharacter::MonsterAttack()
 		GetWorld()->GetTimerManager().SetTimer(FireDelay,
 											   this,
 											   &ABossCharacter::MissileFire,
-											   FMath::RandRange(0.1f, 0.9f),
+											   FMath::RandRange(0.05f, 0.07f),
 											   false);
 
 		BossController->PatternHold(EBossPattern::Missile);
@@ -315,7 +315,7 @@ void ABossCharacter::MissileFire()
 	GetWorld()->GetTimerManager().SetTimer(FireDelay,
 										   this,
 										   &ABossCharacter::MissileFire,
-										   FMath::RandRange(0.1f, 0.3f),
+										   FMath::RandRange(0.05f, 0.07f),
 										   false);
 }
 

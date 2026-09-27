@@ -55,7 +55,7 @@ void ABossAIController::RecallStart()
 	GetWorld()->GetTimerManager().SetTimer(RecallTimer,
 										   this,
 										   &ABossAIController::RecallEnd,
-										   2.60f,
+										   1.40f,
 										   false);
 }
 
