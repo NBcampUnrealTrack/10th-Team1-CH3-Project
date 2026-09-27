@@ -1,0 +1,12 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "DataTables/NPC/NPCInteractionData.h"
+
+NPCInteractionData::NPCInteractionData()
+{
+}
+
+NPCInteractionData::~NPCInteractionData()
+{
+}

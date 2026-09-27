@@ -104,3 +104,8 @@ UDataTable* UBODataAsset::GetLoadingTipTable() const
 {
 	return LoadingTipTable;
 }
+
+UDataTable* UBODataAsset::GetNPCDataTable() const
+{
+	return NPCDataTable;
+}

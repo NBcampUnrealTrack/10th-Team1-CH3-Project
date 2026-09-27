@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+#include "DataTables/NPC/NPCData.h"
+#include "Enums/NPCEnums.h"
 #include "GameFramework/Character.h"
 #include "Interaction/Internal/InteractableInterface.h"
 
@@ -30,10 +32,13 @@ class BEYONDOVERRIDE_API ANPCBase : public ACharacter, public IInteractableInter
 	virtual void PerformInteract(AActor* Interactor);
 
   public:
+	void AddInteractionOption(ENPCInteractionOption Option);
+
 	FName GetNPCID() const;
 	TObjectPtr<UInteractionComponent> GetInteractionComp() const;
 	TObjectPtr<UBehaviorComponent> GetBehaviorComp() const;
 	TObjectPtr<UDialogueComponent> GetDialogueComp() const;
+	void GetInteractionOptions(TArray<ENPCInteractionOption>& Options) const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
@@ -50,5 +55,11 @@ class BEYONDOVERRIDE_API ANPCBase : public ACharacter, public IInteractableInter
 
   protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
+	FNPCData NPCData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	FInteractPrompt PromptData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
+	TArray<ENPCInteractionOption> InteractionOptions;
 };

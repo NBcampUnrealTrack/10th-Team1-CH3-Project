@@ -3,26 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Components/ActorComponent.h"
+#include "GameFlow/NPC/ActorComponent/NPCActorComponent.h"
+
 #include "InteractionComponent.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BEYONDOVERRIDE_API UInteractionComponent : public UActorComponent
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class BEYONDOVERRIDE_API UInteractionComponent : public UNPCActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+  public:
 	UInteractionComponent();
 
-protected:
-	// Called when the game starts
+  protected:
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
+  public:
+	void InteractNPC();
 };

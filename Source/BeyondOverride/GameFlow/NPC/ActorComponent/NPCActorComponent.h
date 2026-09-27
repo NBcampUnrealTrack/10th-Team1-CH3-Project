@@ -5,18 +5,30 @@
 #include "CoreMinimal.h"
 
 #include "Components/ActorComponent.h"
-#include "GameFlow/NPC/ActorComponent/NPCActorComponent.h"
+#include "Enums/NPCEnums.h"
 
-#include "BehaviorComponent.generated.h"
+#include "NPCActorComponent.generated.h"
+
+class ANPCBase;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class BEYONDOVERRIDE_API UBehaviorComponent : public UNPCActorComponent
+class BEYONDOVERRIDE_API UNPCActorComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
   public:
-	UBehaviorComponent();
+	UNPCActorComponent();
 
   protected:
 	virtual void BeginPlay() override;
+
+  public:
+	void InitSetting();
+
+  protected:
+	UPROPERTY()
+	ENPCInteractionOption Option;
+
+	UPROPERTY()
+	TObjectPtr<ANPCBase> NPC;
 };

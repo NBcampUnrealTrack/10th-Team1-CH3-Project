@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameFlow/NPC/NPCBase.h"
 
@@ -8,20 +8,37 @@
 #include "ActorComponent/DialogueComponent.h"
 #include "ActorComponent/InteractionComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "GameFlow/Manager/NPCManager.h"
 #include "Interaction/Internal/InteractionChannels.h"
 
 ANPCBase::ANPCBase()
+	: NPCID(FName(TEXT("Default")))
 {
 	AIControllerClass = ANPCAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-
-	NPCID = FName(TEXT("Default"));
 
 	InteractionComp = CreateDefaultSubobject<UInteractionComponent>(FName(TEXT("Interaction Comp")));
 	BehaviorComp = CreateDefaultSubobject<UBehaviorComponent>(FName(TEXT("Behavior Comp")));
 	DialogueComp = CreateDefaultSubobject<UDialogueComponent>(FName(TEXT("Dialogue Comp")));
 
+	InteractionOptions.Empty();
+
+	if (!GetWorld() || !GetWorld()->GetGameInstance())
+	{
+		return;
+	}
+
+	UNPCManager* NPCManager = GetWorld()->GetGameInstance()->GetSubsystem<UNPCManager>();
+	if (!NPCManager)
+	{
+		return;
+	}
+
+	NPCManager->GetNPCData(NPCID, NPCData);
+
 	// set prompt data
+	PromptData.Title = FText::FromString(NPCData.NPCName.ToString());
+	PromptData.ActionText = FText::FromString(TEXT("[E] 키를 눌러 대화하기"));
 }
 
 void ANPCBase::BeginPlay()
@@ -60,6 +77,11 @@ void ANPCBase::PerformInteract(AActor* Interactor)
 {
 }
 
+void ANPCBase::AddInteractionOption(ENPCInteractionOption Option)
+{
+	InteractionOptions.Add(Option);
+}
+
 FName ANPCBase::GetNPCID() const
 {
 	return NPCID;
@@ -78,4 +100,9 @@ TObjectPtr<UBehaviorComponent> ANPCBase::GetBehaviorComp() const
 TObjectPtr<UDialogueComponent> ANPCBase::GetDialogueComp() const
 {
 	return DialogueComp;
+}
+
+void ANPCBase::GetInteractionOptions(TArray<ENPCInteractionOption>& Options) const
+{
+	Options = InteractionOptions;
 }
