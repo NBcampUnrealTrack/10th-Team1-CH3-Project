@@ -31,7 +31,8 @@ enum class EUIScreen : uint8
 	FinalResult,   // WBP_FinalResultScreen
 	EndingCredits, // WBP_EndingCredits
 	DebugSetting,   // WBP_DebugSetting
-	ShopScreen // WBP_ShopScreen
+	ShopScreen, // WBP_ShopScreen
+	MapScreen,	// WBP_MapScreen
 };
 
 USTRUCT()

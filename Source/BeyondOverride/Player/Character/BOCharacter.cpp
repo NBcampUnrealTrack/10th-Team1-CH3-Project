@@ -285,6 +285,11 @@ void ABOCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 				EnhancedInput->BindAction(PlayerController->EscapeAction, ETriggerEvent::Started, this, &ABOCharacter::Escape);
 			}
 
+			if (PlayerController->MapAction)
+			{
+				EnhancedInput->BindAction(PlayerController->MapAction, ETriggerEvent::Started, this, &ABOCharacter::ToggleMap);
+			}
+
 			// Add for Debug Widget
 			if (PlayerController->DebugAction)
 			{
@@ -729,6 +734,18 @@ void ABOCharacter::Escape(const FInputActionValue& value)
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
 		UIManager->PushScreen(EUIScreen::PauseMenu, EUIInputMode::UIOnly);
+	}
+}
+
+void ABOCharacter::ToggleMap(const FInputActionValue& value)
+{
+	UBOGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance<UBOGameInstance>() : nullptr;
+	if (!GameInstance || GameInstance->GetPlayingState() != EPlayingState::Farming)
+		return;
+
+	if (UUIManager* UIManager = UUIManager::Get(this))
+	{
+		UIManager->PushScreen(EUIScreen::MapScreen, EUIInputMode::UIOnly);
 	}
 }
 
