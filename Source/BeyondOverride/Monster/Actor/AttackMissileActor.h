@@ -30,7 +30,7 @@ class BEYONDOVERRIDE_API AAttackMissileActor : public AActor
 
 	void MissileSetUp(FVector Point,
 					  float Angle,
-					  int32 Damage,
+					  float Time,
 					  ACharacter* ThisOwner);
 
 	void MissileEffect();
@@ -67,7 +67,7 @@ class BEYONDOVERRIDE_API AAttackMissileActor : public AActor
 
 	uint32 BrokenCount = 0;
 
-	uint32 ThisDamage = 0;
+	float FlightTime = 0.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack|AttackOwner")
 	ACharacter* AttackOwner;

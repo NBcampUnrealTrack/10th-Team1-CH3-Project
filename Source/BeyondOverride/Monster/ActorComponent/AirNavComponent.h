@@ -66,6 +66,4 @@ class BEYONDOVERRIDE_API UAirNavComponent : public UActorComponent
 	FVector NavEndLocation = FVector::ZeroVector;
 	UPROPERTY(VisibleAnywhere, Category = "Monster|AirNav")
 	TArray<FVector> Paths;
-
-	FTimerHandle SampleCreateTimer;
 };

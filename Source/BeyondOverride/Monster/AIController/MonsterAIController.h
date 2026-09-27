@@ -19,6 +19,7 @@
 #include "MonsterAIController.generated.h"
 
 // 전방 선언
+class UMonsterStatComponent;
 class UMonsterDataAsset;
 class AMonsterCharacter;
 class UAirNavComponent;
@@ -44,6 +45,9 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	void EnableBehaviorTree();
 
 	// MonsterCharacter
+
+	UFUNCTION(BlueprintCallable, Category = "Monster|Stat")
+	UMonsterStatComponent* GetMonsterStats() const;
 
 	UMonsterDataAsset* GetMonsterData() const;
 

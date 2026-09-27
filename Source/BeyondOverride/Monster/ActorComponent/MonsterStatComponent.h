@@ -30,11 +30,14 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 
 	// Getter
 	EMonsterType GetMonsterType() const;
-	float GetWalkSpeed() const;
+	FVector GetAttackPoint() const;
+	int32 GetAttackDamage() const;
 	float GetSprintSpeed() const;
 	float GetAttackRange() const;
-	FVector GetAttackPoint() const;
+	float GetWalkSpeed() const;
 	FName GetMonsterID() const;
+	float GetFlyMax() const;
+	float GetFlyMin() const;
 
 	// Setter
 	void SetAttackRange(float Range);
@@ -43,17 +46,26 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	// Basic Stat System
 	void StatSetup();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterStat")
+	int NowHP();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterStat")
+	int MaxHP();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MonsterStat")
+	bool IsDead();
+
 	// Attack System
 	void CallAttackLock();
 	bool IsDelay() const;
 
 	void Attack();
+	void BalisticFire();
 	void OnMissileHit(TArray<FOverlapResult> Targets);
 	void DamageLogic(AActor* Target, int32 Damage);
 
 	// Protect System
-	void
-	ApplyProtect(int32 GetDamage, AActor* DamageCauser);
+	void ApplyProtect(int32 GetDamage, AActor* DamageCauser);
 
   protected:
 	// Life Cycle Function
@@ -73,6 +85,9 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	int32 RapidCount = 3;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CurRapid = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RapidDelay = 0.05f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -83,6 +98,10 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float BulletSpeed = 2500.0f;
+
+	FTimerHandle AttackLock;
+
+	FTimerHandle RapidTimer;
 
 	// Another Info
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -97,7 +116,11 @@ class BEYONDOVERRIDE_API UMonsterStatComponent : public UStatComponent
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SprintSpeed = 1.2f;
 
-	FTimerHandle AttackLock;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FlyMin = 300.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FlyMax = 500.0f;
 
 	// Monster key Info
 

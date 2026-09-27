@@ -9,6 +9,13 @@
 #include "StateEnums.generated.h"
 
 UENUM(BlueprintType)
+enum class EBossPhase : uint8
+{
+	Phase1 UMETA(DisplayName = "Phase1"),
+	Phase2 UMETA(DisplayName = "Phase2"),
+};
+
+UENUM(BlueprintType)
 enum class EMonsterState : uint8
 {
 	Chase UMETA(DisplayName = "Chase"),
