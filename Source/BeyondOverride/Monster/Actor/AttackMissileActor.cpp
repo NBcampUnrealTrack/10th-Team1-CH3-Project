@@ -78,8 +78,6 @@ void AAttackMissileActor::Launch()
 
 	float Gravity = FMath::Abs(GetWorld()->GetGravityZ());
 
-	float FlightTime = 2.5f;
-
 	float CosAngle = FMath::Cos(FireAngle);
 
 	if (FMath::IsNearlyZero(CosAngle))
@@ -187,6 +185,10 @@ void AAttackMissileActor::OnCollisionOverlap(UPrimitiveComponent* OverlappedComp
 	{
 		return;
 	}
+	if (AAttackMissileActor* HitActor = Cast<AAttackMissileActor>(OtherActor))
+	{
+		return;
+	}
 	if (OtherActor == Owner)
 	{
 		return;
@@ -228,10 +230,10 @@ float AAttackMissileActor::TakeDamage(float DamageAmount,
 
 void AAttackMissileActor::MissileSetUp(FVector Point,
 									   float Angle,
-									   int32 Damage,
+									   float Time,
 									   ACharacter* ThisOwner)
 {
-	ThisDamage = Damage;
+	FlightTime = Time;
 	AttackPoint = Point;
 	FireAngle = Angle;
 	AttackOwner = ThisOwner;

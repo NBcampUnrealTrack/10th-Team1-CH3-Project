@@ -39,7 +39,8 @@ AMonsterCharacter::AMonsterCharacter()
 
 void AMonsterCharacter::MoveFlying(const FVector& TargetLocation)
 {
-	if (GetMonsterType() == EMonsterType::Fly)
+	if (GetMonsterType() == EMonsterType::Fly ||
+		GetMonsterType() == EMonsterType::Boss)
 	{
 		const FVector Direction = (TargetLocation - GetActorLocation()).GetSafeNormal();
 		AddMovementInput(Direction);
@@ -129,24 +130,26 @@ float AMonsterCharacter::TakeDamage(float DamageAmount,
 	MonsterController->SetTarget(Target);
 	MonsterStat->ApplyProtect(ActualDamage, Target);
 
-	DeathSequence();
+	DeathSequence(true);
 
 	return ActualDamage;
 }
 
-void AMonsterCharacter::DeathSequence()
+void AMonsterCharacter::DeathSequence(bool Cast)
 {
 
 	if (!MonsterStat->GetIsDead())
 	{
 		return;
 	}
-
-	if (GetWorld())
+	if (Cast)
 	{
-		if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+		if (GetWorld())
 		{
-			GameMode->AddKilledMonster(GetMonsterID(), GetMonsterType());
+			if (ABOGameMode* GameMode = GetWorld()->GetAuthGameMode<ABOGameMode>())
+			{
+				GameMode->AddKilledMonster(GetMonsterID(), GetMonsterType());
+			}
 		}
 	}
 
@@ -218,14 +221,33 @@ void AMonsterCharacter::PostInitializeComponents()
 	}
 }
 
+// MonsterData
+
 UMonsterDataAsset* AMonsterCharacter::GetMonsterData() const
 {
 	return MonsterData;
 }
 
+// MonsterStat
+
+float AMonsterCharacter::GetFlyMax() const
+{
+	return MonsterStat->GetFlyMax();
+}
+
+float AMonsterCharacter::GetFlyMin() const
+{
+	return MonsterStat->GetFlyMin();
+}
+
 EMonsterType AMonsterCharacter::GetMonsterType() const
 {
 	return MonsterStat->GetMonsterType();
+}
+
+UMonsterStatComponent* AMonsterCharacter::GetMonsterStats() const
+{
+	return MonsterStat;
 }
 
 void AMonsterCharacter::SetMonsterID(FName ID)
@@ -252,6 +274,8 @@ void AMonsterCharacter::OnMissileHit(TArray<FOverlapResult> Targets)
 {
 	MonsterStat->OnMissileHit(Targets);
 }
+
+// Mesh
 
 FVector AMonsterCharacter::GetAttackPoint() const
 {

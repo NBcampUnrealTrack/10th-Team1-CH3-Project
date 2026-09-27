@@ -9,7 +9,7 @@
 void UBFLMissileAttack::MissileAttack(FVector SpawnLocation,
 									  FVector AttackPoint,
 									  float FireAngle,
-									  int32 Damage,
+									  float FlightTime,
 									  ACharacter* ThisOwner,
 									  UObject* WorldContextObject)
 {
@@ -43,13 +43,13 @@ void UBFLMissileAttack::MissileAttack(FVector SpawnLocation,
 
 	FActorSpawnParameters SpawnParams;
 
-	SpawnParams.CustomPreSpawnInitalization = [AttackPoint, FireAngle, Damage, ThisOwner](AActor* SpawnedActor)
+	SpawnParams.CustomPreSpawnInitalization = [AttackPoint, FireAngle, FlightTime, ThisOwner](AActor* SpawnedActor)
 	{
 		AAttackMissileActor* AttackMissile = Cast<AAttackMissileActor>(SpawnedActor);
 
 		if (AttackMissile)
 		{
-			AttackMissile->MissileSetUp(AttackPoint, FireAngle, Damage, ThisOwner);
+			AttackMissile->MissileSetUp(AttackPoint, FireAngle, FlightTime, ThisOwner);
 		}
 	};
 

@@ -45,7 +45,7 @@ EBTNodeResult::Type UBTTaskFly_MoveTo::ExecuteTask(UBehaviorTreeComponent& Owner
 		return EBTNodeResult::Failed;
 	}
 
-	AMonsterCharacter* AIMonster = Cast<AMonsterCharacter>(AIController->GetPawn());
+	AMonsterCharacter* AIMonster = AIController->GetMonster();
 	if (!AIMonster)
 	{
 		return EBTNodeResult::Failed;
@@ -62,6 +62,9 @@ EBTNodeResult::Type UBTTaskFly_MoveTo::ExecuteTask(UBehaviorTreeComponent& Owner
 	}
 
 	FVector TargetLocation = BlackboardComp->GetValueAsVector(TargetLocationKey.SelectedKeyName);
+
+	TargetLocation.Z = FMath::FRandRange(TargetLocation.Z + AIMonster->GetFlyMin(),
+										 TargetLocation.Z + AIMonster->GetFlyMax());
 
 	if (AIController->AirNavControl(TargetLocation))
 	{

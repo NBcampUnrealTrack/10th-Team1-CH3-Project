@@ -31,8 +31,6 @@ bool UAirNavComponent::AirNavControl(FVector TargetLocation)
 		return false;
 	}
 
-	TargetLocation.Z = FMath::FRandRange(TargetLocation.Z + 300.0f, TargetLocation.Z + 500.0f);
-
 	if (AirNavOn && NavEndLocation.X == TargetLocation.X && NavEndLocation.Y == TargetLocation.Y)
 	{
 		NavMakePaths();
@@ -199,8 +197,8 @@ TArray<FVector> UAirNavComponent::AirNav(const FVector& TargetLocation,
 	bool bHit = UKismetSystemLibrary::CapsuleTraceSingle(Monster,
 														 Start,
 														 End,
-														 TraceRadius, // Radius
-														 TraceRadius, // Half Height
+														 Radius,     // Radius
+														 HalfHeight, // Half Height
 														 UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 														 false,        // Complex
 														 IgnoreActors, // Ignore Actors
@@ -317,8 +315,8 @@ TArray<FVector> UAirNavComponent::AirNav(const FVector& TargetLocation,
 				bool Trace1 = UKismetSystemLibrary::CapsuleTraceSingle(Monster,
 																	   Start,
 																	   WallEndCheck[Check],
-																	   TraceRadius, // Radius
-																	   TraceRadius, // Half Height
+																	   Radius,     // Radius
+																	   HalfHeight, // Half Height
 																	   UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																	   false,        // Complex
 																	   IgnoreActors, // Ignore Actors
@@ -329,8 +327,8 @@ TArray<FVector> UAirNavComponent::AirNav(const FVector& TargetLocation,
 				bool Trace2 = UKismetSystemLibrary::CapsuleTraceSingle(Monster,
 																	   HitResult.ImpactPoint,
 																	   WallEndCheck[Check],
-																	   TraceRadius, // Radius
-																	   TraceRadius, // Half Height
+																	   Radius,     // Radius
+																	   HalfHeight, // Half Height
 																	   UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																	   false,        // Complex
 																	   IgnoreActors, // Ignore Actors
@@ -376,8 +374,8 @@ TArray<FVector> UAirNavComponent::AirNav(const FVector& TargetLocation,
 			bool Trace = UKismetSystemLibrary::CapsuleTraceSingle(Monster,
 																  CanMoveEndPoint[loop],
 																  TracePointCheck,
-																  TraceRadius, // Radius
-																  TraceRadius, // Half Height
+																  Radius,     // Radius
+																  HalfHeight, // Half Height
 																  UEngineTypes::ConvertToTraceType(ECC_WorldStatic),
 																  false,        // Complex
 																  IgnoreActors, // Ignore Actors

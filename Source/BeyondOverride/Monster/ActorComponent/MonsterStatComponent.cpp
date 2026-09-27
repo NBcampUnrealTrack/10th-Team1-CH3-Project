@@ -60,6 +60,11 @@ FVector UMonsterStatComponent::GetAttackPoint() const
 	return Owner->GetAttackPoint();
 }
 
+int32 UMonsterStatComponent::GetAttackDamage() const
+{
+	return AttackDamage;
+}
+
 void UMonsterStatComponent::SetMonsterID(FName ID)
 {
 	MonsterID = ID;
@@ -68,6 +73,16 @@ void UMonsterStatComponent::SetMonsterID(FName ID)
 FName UMonsterStatComponent::GetMonsterID() const
 {
 	return MonsterID;
+}
+
+float UMonsterStatComponent::GetFlyMax() const
+{
+	return FlyMax;
+}
+
+float UMonsterStatComponent::GetFlyMin() const
+{
+	return FlyMin;
 }
 
 void UMonsterStatComponent::Attack()
@@ -96,20 +111,7 @@ void UMonsterStatComponent::Attack()
 
 	if (MonsterType == EMonsterType::Range)
 	{
-
-		FVector BulletDirection = (Target->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
-
-		UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Rifle", 3500.0f, 1.2f, 2.0f, false, GetWorld());
-
-		UBalisticTrace* NewBalisticTrace = NewObject<UBalisticTrace>(this);
-
-		NewBalisticTrace->OnBalisticHit.AddUObject(this, &UMonsterStatComponent::OnBalisticHit);
-
-		NewBalisticTrace->BalisticStart(Owner,
-										GetAttackPoint(),
-										BulletDirection,
-										AttackDelay,
-										BulletSpeed);
+		BalisticFire();
 	}
 	else if (MonsterType == EMonsterType::Melee)
 	{
@@ -147,7 +149,7 @@ void UMonsterStatComponent::Attack()
 		UBFLMissileAttack::MissileAttack(Owner->GetAttackPoint(),
 										 Target->GetActorLocation(),
 										 Angle,
-										 AttackDamage,
+										 FlightTime,
 										 Owner,
 										 GetWorld());
 	}
@@ -159,6 +161,54 @@ void UMonsterStatComponent::Attack()
 	}
 
 	CallAttackLock();
+}
+
+void UMonsterStatComponent::BalisticFire()
+{
+	AMonsterCharacter* Owner = Cast<AMonsterCharacter>(GetOwner());
+	if (!Owner)
+	{
+		return;
+	}
+	AMonsterAIController* AIController = Cast<AMonsterAIController>(Owner->GetController());
+	if (!AIController)
+	{
+		return;
+	}
+	ABOCharacter* Target = AIController->GetTarget();
+	if (!Target)
+	{
+		return;
+	}
+
+	FVector BulletDirection = (Target->GetActorLocation() - GetAttackPoint()).GetSafeNormal();
+
+	UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Rifle", 3500.0f, 1.2f, 2.0f, false, GetWorld());
+
+	UBalisticTrace* NewBalisticTrace = NewObject<UBalisticTrace>(this);
+
+	NewBalisticTrace->OnBalisticHit.AddUObject(this, &UMonsterStatComponent::OnBalisticHit);
+
+	NewBalisticTrace->BalisticStart(Owner,
+									GetAttackPoint(),
+									BulletDirection,
+									AttackDelay,
+									BulletSpeed);
+
+	CurRapid = CurRapid + 1;
+
+	if (CurRapid < RapidCount)
+	{
+		GetWorld()->GetTimerManager().SetTimer(RapidTimer,
+											   this,
+											   &UMonsterStatComponent::BalisticFire,
+											   RapidDelay,
+											   false);
+	}
+	else
+	{
+		CurRapid = 0;
+	}
 }
 
 void UMonsterStatComponent::OnBalisticHit(AActor* Target)
@@ -307,6 +357,24 @@ void UMonsterStatComponent::StatSetup()
 	WalkSpeed = MonsterStatInfo->WalkSpeed;
 	SprintSpeed = MonsterStatInfo->SprintSpeed;
 
+	FlyMax = MonsterStatInfo->FlyMax;
+	FlyMin = MonsterStatInfo->FlyMin;
+
 	// Monster key Info
 	MonsterType = MonsterStatInfo->MonsterType;
+}
+
+int UMonsterStatComponent::NowHP()
+{
+	return CurHealth;
+}
+
+int UMonsterStatComponent::MaxHP()
+{
+	return MaxHealth;
+}
+
+bool UMonsterStatComponent::IsDead()
+{
+	return bIsDead;
 }
