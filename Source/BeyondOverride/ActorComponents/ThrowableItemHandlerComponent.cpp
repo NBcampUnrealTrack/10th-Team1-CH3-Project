@@ -1,11 +1,11 @@
-#include "ActorComponents/ThrowableItemHandlerComponent.h"
+﻿#include "ActorComponents/ThrowableItemHandlerComponent.h"
 
 #include "DataTables/Items/EquippableItemDataRow.h"
 #include "DataTables/Items/ThrowableItemDataRow.h"
 #include "Items/Objects/EquippableItemInstance.h"
 #include "Items/Objects/ThrowableItemInstance.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Projectiles/Throwables/ThrowableProjectile.h"
+#include "Throwables/ThrowableBase.h"
 
 UThrowableItemHandlerComponent::UThrowableItemHandlerComponent()
 {
@@ -216,8 +216,8 @@ FRotator UThrowableItemHandlerComponent::GetAimRotation() const
 
 	// 목표 위치
 	const FVector AimLocation = HitResult.bBlockingHit
-		? HitResult.ImpactPoint
-		: EndLocation;
+									? HitResult.ImpactPoint
+									: EndLocation;
 
 	// 투척 방향 구하기
 	const FRotator ThrowRotation = UKismetMathLibrary::FindLookAtRotation(
@@ -277,7 +277,7 @@ void UThrowableItemHandlerComponent::Throw()
 	GetWorld()->GetTimerManager().ClearTimer(ThrowTimerHandle);
 
 	// 투사체 액터 소환
-	AThrowableProjectile* Throwable = SpawnThrowable();
+	AThrowableBase* Throwable = SpawnThrowable();
 	if (!Throwable)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[UThrowableItemHandlerComponent] 투척 실패 - %s의 투척 액터 생성 실패"), *GetNameSafe(ThrowableItemInstance));
@@ -295,7 +295,7 @@ void UThrowableItemHandlerComponent::Throw()
 	GEngine->AddOnScreenDebugMessage(4002, 5.0f, FColor::Orange, FString::Printf(TEXT("Throwable Item Throwed - %s"), *GetNameSafe(EquippableItemInstance)));
 }
 
-AThrowableProjectile* UThrowableItemHandlerComponent::SpawnThrowable()
+AThrowableBase* UThrowableItemHandlerComponent::SpawnThrowable()
 {
 	// 등록된 장비 없음
 	if (!HasEquipment())
@@ -306,24 +306,25 @@ AThrowableProjectile* UThrowableItemHandlerComponent::SpawnThrowable()
 	const FVector ThrowStartLocation = GetThrowStartLocation();
 	const FRotator ThrowRotation = GetAimRotation();
 
+	// 소환 인자 설정
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = GetOwner();
+	SpawnParams.Instigator = Cast<APawn>(GetOwner());
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 	// 투척 액터 생성
-	AThrowableProjectile* ThrowableActor = GetWorld()->SpawnActor<AThrowableProjectile>(
+	AThrowableBase* ThrowableActor = GetWorld()->SpawnActor<AThrowableBase>(
 		ThrowableItemData->ThrowableClass,
 		ThrowStartLocation,
-		FRotator::ZeroRotator);
-	if (!ThrowableActor)
+		FRotator::ZeroRotator,
+		SpawnParams);
+	if (!IsValid(ThrowableActor))
 	{
 		return nullptr;
 	}
 
-	// 투척 초기 설정
-	ThrowableActor->Initalize(
-		Cast<APawn>(GetOwner()),
-		ThrowableItemData->Damage,
-		ThrowableItemData->Radius,
-		ThrowableItemData->ActivationDelay,
-		ThrowableItemData->ThrowSpeed * ThrowRotation.Vector(),
-		ThrowableItemData->ThrowGravityScale);
+	// 투척 액터 던지기
+	ThrowableActor->Throw(Cast<APawn>(GetOwner()), ThrowRotation, ThrowableItemData->ThrowForce);
 
 	return ThrowableActor;
 }
