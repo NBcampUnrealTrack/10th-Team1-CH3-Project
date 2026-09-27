@@ -120,6 +120,21 @@
 		"BuyPrice": 0
 	},
 	{
+		"Name": "GRENADE_LAUNCHER_B",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"C758F2E341F691FF7E0BE095B8B42D10\", \"Grenade Launcher B\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"E79E35DC48ADE763589B52B28029138F\", \"Grenade Launcher B Description\")",
+		"ItemType": "RangeWeapon",
+		"ItemRarity": "Epic",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/BP_ItemInstance_GrenadeLauncherB.BP_ItemInstance_GrenadeLauncherB_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/BP_ItemPickup_GrenadeLauncherB.BP_ItemPickup_GrenadeLauncherB_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Grenade_Launcher_B_StaticMesh.Grenade_Launcher_B_StaticMesh'",
+		"MaxStackCount": 1,
+		"Weight": 15,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
 		"Name": "RIFLE_AMMO",
 		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"RIFLE_AMMO_DisplayName\", \"Rifle Ammo\")",
 		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"RIFLE_AMMO_Description\", \"Ammo for Rifle\")",

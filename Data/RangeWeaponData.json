@@ -131,5 +131,24 @@
 		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherA/CF_Spread_GrenadeLauncherA.CF_Spread_GrenadeLauncherA'",
 		"AimSpreadMultiplier": 0.5,
 		"ItemIconLong": "None"
+	},
+	{
+		"Name": "GRENADE_LAUNCHER_B",
+		"Damage": 60,
+		"FireRate": 1,
+		"FireMode": "SemiAuto",
+		"BulletClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Bullets/BP_ExplosiveBullet_GrenadeLauncher.BP_ExplosiveBullet_GrenadeLauncher_C'",
+		"ProjectileSpeed": 5000,
+		"ProjectileGravityScale": 1,
+		"ProjectileRange": 10000,
+		"ProjectilesPerShot": 1,
+		"AmmoItemID": "GRENADE_LAUNCHER_AMMO",
+		"MagazineSize": 8,
+		"ReloadTime": 3.5,
+		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/CF_RecoilPitch_GrenadeLauncherB.CF_RecoilPitch_GrenadeLauncherB'",
+		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/CF_RecoilYaw_GrenadeLauncherB.CF_RecoilYaw_GrenadeLauncherB'",
+		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/CF_Spread_GrenadeLauncherB.CF_Spread_GrenadeLauncherB'",
+		"AimSpreadMultiplier": 0.5,
+		"ItemIconLong": "None"
 	}
 ]
