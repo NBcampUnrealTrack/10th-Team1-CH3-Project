@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -6,7 +6,7 @@
 
 #include "RangeWeaponDataRow.generated.h"
 
-class ABulletProjectile;
+class ABulletBase;
 
 USTRUCT(BlueprintType)
 struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
@@ -22,7 +22,7 @@ struct BEYONDOVERRIDE_API FRangeWeaponDataRow : public FTableRowBase
 	EFireMode FireMode = EFireMode::None; // 사격 모드
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
-	TSubclassOf<ABulletProjectile> BulletClass; // 투사체 클래스
+	TSubclassOf<ABulletBase> BulletClass; // 투사체 클래스
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
 	float ProjectileSpeed = 0.f; // 투사체 속도
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile")
