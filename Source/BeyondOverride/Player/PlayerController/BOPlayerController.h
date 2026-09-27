@@ -47,6 +47,8 @@ class BEYONDOVERRIDE_API ABOPlayerController : public APlayerController
 	UInputAction* InventoryAction = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* EscapeAction = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* MapAction = nullptr;
 
 	// Add for Debug Widget
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")

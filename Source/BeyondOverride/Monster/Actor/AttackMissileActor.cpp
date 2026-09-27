@@ -1,9 +1,10 @@
-// 26/09/23 Copyright CH3 Team1 Jinho Song
+ï»¿// 26/09/23 Copyright CH3 Team1 Jinho Song
 
 // Base include
 #include "Monster/Actor/AttackMissileActor.h"
 
 // Add include
+#include "Bullets/BulletBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Engine/OverlapResult.h"
@@ -15,7 +16,6 @@
 #include "Monster/System/BFLSoundEvent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Player/Character/BOCharacter.h"
-#include "Projectiles/Bullets/BulletProjectile.h"
 
 AAttackMissileActor::AAttackMissileActor()
 {
@@ -24,10 +24,10 @@ AAttackMissileActor::AAttackMissileActor()
 	CollisionComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Sphere Collision Comp"));
 	SetRootComponent(CollisionComp);
 
-	// »óÅÂ ÀüÈ¯
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	CollisionComp->SetCollisionProfileName(TEXT("Missile"));
 
-	// ¿À¹ö·¦ ÀÎ½Ä
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AAttackMissileActor::OnCollisionOverlap);
 	CollisionComp->OnComponentHit.AddDynamic(this, &AAttackMissileActor::OnCollisionHit);
 
@@ -62,7 +62,7 @@ void AAttackMissileActor::Tick(float DeltaSecond)
 	{
 		FRotator Rotation = Velocity.Rotation();
 
-		// ¹Ì»çÀÏ ¸ðµ¨ÀÇ ±âº» ¹æÇâ¿¡ ¸ÂÃá º¸Á¤
+		// ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½âº» ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		Rotation.Pitch += 90.0f;
 
 		SetActorRotation(Rotation);
@@ -85,7 +85,7 @@ void AAttackMissileActor::Launch()
 		return;
 	}
 
-	// °íÁ¤µÈ ºñÇà ½Ã°£°ú °è»êµÈ °¢µµ·Î ÇÊ¿äÇÑ ¼Óµµ °è»ê
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½
 	float Speed = HorizontalDistance / (FlightTime * CosAngle);
 
 	float Pitch = FMath::RadiansToDegrees(FireAngle);
@@ -107,13 +107,13 @@ void AAttackMissileActor::ExplosionSequnce(FVector Position)
 
 	FVector ExplosionPoint = Position;
 
-	// °á°ú °ª ÀúÀå¿ë ¹è¿­
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­
 	TArray<FOverlapResult> OverlapResults;
 
-	// Query ¼³Á¤¿ë ±¸Á¶Ã¼
+	// Query ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 	FCollisionObjectQueryParams ObjectQueryParams;
 
-	// ÀÎ½ÄÇÒ Actor ¼³Á¤ ECC_Pawn
+	// ï¿½Î½ï¿½ï¿½ï¿½ Actor ï¿½ï¿½ï¿½ï¿½ ECC_Pawn
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
 
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(250.0f);
@@ -181,7 +181,7 @@ void AAttackMissileActor::OnCollisionOverlap(UPrimitiveComponent* OverlappedComp
 											 bool bFromSweep,
 											 const FHitResult& SweepResult)
 {
-	if (ABulletProjectile* HitActor = Cast<ABulletProjectile>(OtherActor))
+	if (ABulletBase* HitActor = Cast<ABulletBase>(OtherActor))
 	{
 		return;
 	}
@@ -202,7 +202,7 @@ void AAttackMissileActor::OnCollisionHit(UPrimitiveComponent* HitComponent,
 										 FVector NormalImpulse,
 										 const FHitResult& Hit)
 {
-	if (ABulletProjectile* HitActor = Cast<ABulletProjectile>(OtherActor))
+	if (ABulletBase* HitActor = Cast<ABulletBase>(OtherActor))
 	{
 		return;
 	}

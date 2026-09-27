@@ -25,6 +25,9 @@ class BEYONDOVERRIDE_API UPanelFrameWidget : public UUserWidget
 	void SetCarryWeight(float CurrentWeight, float MaxWeight);
 
 	UFUNCTION(BlueprintCallable, Category = "PanelFrame")
+	void HideCountTextBox();
+
+	UFUNCTION(BlueprintCallable, Category = "PanelFrame")
 	void HideCarryWeight();
 
   protected:

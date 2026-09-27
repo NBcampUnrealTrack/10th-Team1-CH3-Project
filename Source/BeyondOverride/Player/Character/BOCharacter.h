@@ -33,7 +33,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	UEquipmentManagerComponent* GetEquipmentComponent() const
 	{
 		return EquipmentManagerComponent;
@@ -93,10 +93,10 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 		return bIsOverweight;
 	}
 
-  public:
+public:
 	ABOCharacter();
 
-  protected:
+protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
@@ -105,7 +105,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 
-  protected:
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -160,7 +160,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TObjectPtr<UCharacterPreviewComponent> CharacterPreviewComponent;
 
-  private:
+private:
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
 	UFUNCTION()
@@ -217,6 +217,8 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	void Inventory(const FInputActionValue& value);
 	UFUNCTION()
 	void Escape(const FInputActionValue& value);
+	UFUNCTION()
+	void ToggleMap(const FInputActionValue& value);
 
 	// Add for Debug Widget
 	UFUNCTION()
@@ -266,7 +268,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	TWeakObjectPtr<AActor> DeathDamageCauser;
 	bool bDeathSequenceFinished = false;
 
-  public:
+public:
 	// 장비 슬롯에 아이템 등록 및 해제
 	UFUNCTION()
 	void OnEquipmentItemChanged(EEquipmentSlot Slot, UItemInstanceBase* ItemInstanceBase);
@@ -279,7 +281,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	UFUNCTION()
 	void OnWeightChanged(float CurCarryWeight, float MaxCarryWeight);
 
-  private:
+private:
 	// EquipmentManagerComponent의 델리게이트 바인딩
 	void BindingEquipmentManagerComponentDelegates();
 
@@ -305,7 +307,7 @@ class BEYONDOVERRIDE_API ABOCharacter : public ACharacter
 	// EquipmentManagerComponent::OnEffectAppliedDelegate 바인딩 - 유틸리티 아이템 사용 후 호출, 해당 아이템 효과 적용
 	void OnEffectApplied(const FUtilityItemDataRow* UtilityItemData);
 
-  private:
+private:
 	FTimerHandle DeathTimerHandle;
 
 	FVector2D MoveInput = FVector2D::ZeroVector;

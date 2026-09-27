@@ -30,13 +30,19 @@ void UItemSlotPanelWidget::NativeDestruct()
 
 FReply UItemSlotPanelWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	if (Mode == EItemSlotPanelMode::WorldItems && InteractionComponent && InteractionComponent->IsHoldingItem())
+	if (InteractionComponent && InteractionComponent->IsHoldingItem())
 	{
 		const FKey EffectingButton = InMouseEvent.GetEffectingButton();
+		const bool bIsMouseButton = EffectingButton == EKeys::LeftMouseButton || EffectingButton == EKeys::RightMouseButton;
 
-		if (EffectingButton == EKeys::LeftMouseButton || EffectingButton == EKeys::RightMouseButton)
+		if (bIsMouseButton)
 		{
-			InteractionComponent->DropItem(EffectingButton == EKeys::LeftMouseButton);
+			const bool bLeftClick = EffectingButton == EKeys::LeftMouseButton;
+
+			if (Mode == EItemSlotPanelMode::WorldItems)
+				InteractionComponent->DropItem(bLeftClick);
+			else if (Mode == EItemSlotPanelMode::Shop)
+				InteractionComponent->SellItem(bLeftClick);
 		}
 	}
 
@@ -60,6 +66,7 @@ void UItemSlotPanelWidget::UnbindInventory()
 	if (PanelFrame)
 	{
 		PanelFrame->HideCarryWeight();
+		PanelFrame->HideCountTextBox();
 	}
 }
 
@@ -99,6 +106,20 @@ void UItemSlotPanelWidget::SetWorldItems(const TArray<AItemPickupBase*>& InItems
 	RefreshSlots();
 }
 
+void UItemSlotPanelWidget::SetShopItems(const TArray<UItemInstanceBase*>& InItems, UInventoryInteractionComponent* InInteraction)
+{
+	UnbindInventory();
+	WorldItems.Empty();
+
+	Mode = EItemSlotPanelMode::Shop;
+	ShopItems.Empty();
+	for (UItemInstanceBase* Item : InItems)
+		ShopItems.Add(Item);
+	InteractionComponent = InInteraction;
+
+	RefreshSlots();
+}
+
 void UItemSlotPanelWidget::OnInventoryChanged(const TArray<UItemInstanceBase*>& Slots)
 {
 	RefreshSlots();
@@ -124,6 +145,10 @@ void UItemSlotPanelWidget::RefreshSlots()
 			return;
 		SlotCount = InventoryComponent->GetSlotCount();
 	}
+	else if (Mode == EItemSlotPanelMode::Shop)
+	{
+		SlotCount = ShopItems.Num();
+	}
 	else
 	{
 		SlotCount = WorldItems.Num();
@@ -137,6 +162,10 @@ void UItemSlotPanelWidget::RefreshSlots()
 		if (Mode == EItemSlotPanelMode::Inventory)
 		{
 			Item = InventoryComponent->GetItem(Index);
+		}
+		else if (Mode == EItemSlotPanelMode::Shop)
+		{
+			Item = ShopItems.IsValidIndex(Index) ? ShopItems[Index].Get() : nullptr;
 		}
 		else if (WorldItems.IsValidIndex(Index) && WorldItems[Index])
 		{
@@ -161,7 +190,7 @@ void UItemSlotPanelWidget::RefreshSlots()
 		SlotContainer->AddChildToUniformGrid(SlotWidget, Row, Column);
 	}
 
-	if (PanelFrame)
+	if (PanelFrame && Mode == EItemSlotPanelMode::Inventory)
 		PanelFrame->SetSlotCount(CurrentCount, SlotCount);
 }
 
@@ -175,6 +204,26 @@ void UItemSlotPanelWidget::HandleSlotClicked(int32 SlotIndex, bool bLeftClick)
 		if (!InventoryComponent)
 			return;
 		InteractionComponent->HandleSlotClick(InventoryComponent, SlotIndex, bLeftClick);
+	}
+	else if (Mode == EItemSlotPanelMode::Shop)
+	{
+		if (InteractionComponent->IsHoldingItem())
+		{
+			InteractionComponent->SellItem(bLeftClick);
+			return;
+		}
+
+		if (!ShopItems.IsValidIndex(SlotIndex) || !ShopItems[SlotIndex])
+			return;
+
+		UItemInstanceBase* BuyCopy = DuplicateObject<UItemInstanceBase>(ShopItems[SlotIndex], InteractionComponent->GetOwner());
+		if (!BuyCopy)
+			return;
+
+		BuyCopy->Initialize();
+		BuyCopy->SetStackCount(1);
+
+		InteractionComponent->BuyItem(BuyCopy);
 	}
 	else
 	{

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 
@@ -8,7 +8,7 @@
 
 class UThrowableItemInstance;
 class UEquippableItemInstance;
-class AThrowableProjectile;
+class AThrowableBase;
 
 struct FThrowableItemDataRow;
 
@@ -87,5 +87,5 @@ class BEYONDOVERRIDE_API UThrowableItemHandlerComponent : public UEquipmentHandl
 	void Throw();
 
 	// 투척 아이템 소환
-	AThrowableProjectile* SpawnThrowable();
+	AThrowableBase* SpawnThrowable();
 };

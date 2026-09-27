@@ -105,6 +105,36 @@
 		"BuyPrice": 0
 	},
 	{
+		"Name": "GRENADE_LAUNCHER_A",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"609922094DA9B4B8502CF184585CCBE3\", \"Grenade Launcher A\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"93A5F2F44E21B0B4F36264AABBD4788B\", \"Grenade Launcher A Description\")",
+		"ItemType": "RangeWeapon",
+		"ItemRarity": "Epic",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/GrenadeLauncherA/BP_ItemInstance_GrenadeLauncherA.BP_ItemInstance_GrenadeLauncherA_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/GrenadeLauncherA/BP_ItemPickup_GrenadeLauncherA.BP_ItemPickup_GrenadeLauncherA_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Grenade_Launcher_A_StaticMesh.Grenade_Launcher_A_StaticMesh'",
+		"MaxStackCount": 1,
+		"Weight": 15,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
+		"Name": "GRENADE_LAUNCHER_B",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"C758F2E341F691FF7E0BE095B8B42D10\", \"Grenade Launcher B\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"E79E35DC48ADE763589B52B28029138F\", \"Grenade Launcher B Description\")",
+		"ItemType": "RangeWeapon",
+		"ItemRarity": "Epic",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/BP_ItemInstance_GrenadeLauncherB.BP_ItemInstance_GrenadeLauncherB_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/BP_ItemPickup_GrenadeLauncherB.BP_ItemPickup_GrenadeLauncherB_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Grenade_Launcher_B_StaticMesh.Grenade_Launcher_B_StaticMesh'",
+		"MaxStackCount": 1,
+		"Weight": 15,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
 		"Name": "RIFLE_AMMO",
 		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"RIFLE_AMMO_DisplayName\", \"Rifle Ammo\")",
 		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"RIFLE_AMMO_Description\", \"Ammo for Rifle\")",
@@ -150,6 +180,21 @@
 		"BuyPrice": 0
 	},
 	{
+		"Name": "GRENADE_LAUNCHER_AMMO",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"4EF917EF4E96E4F7F66A4280C99CA381\", \"Grenade Launcher Ammo\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"287094294DC4D5F3934C2DA0594F63E1\", \"Ammo for Grenade Launcher\")",
+		"ItemType": "Misc",
+		"ItemRarity": "Uncommon",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Ammo/GrenadeLauncherAmmo/BP_ItemInstance_GrenadeLauncherAmmo.BP_ItemInstance_GrenadeLauncherAmmo_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Ammo/GrenadeLauncherAmmo/BP_ItemPickup_GrenadeLauncherAmmo.BP_ItemPickup_GrenadeLauncherAmmo_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Pickups/GrenadeLauncher_Pickup.GrenadeLauncher_Pickup'",
+		"MaxStackCount": 12,
+		"Weight": 0.15,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
 		"Name": "GONBONG",
 		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"GONBONG_DisplayName\", \"Gonbong\")",
 		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"GONBONG_Description\", \"Gonbong Description\")",
@@ -176,6 +221,21 @@
 		"MaxStackCount": 3,
 		"Weight": 0.4,
 		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Throwables/T_Grenade.T_Grenade'",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
+		"Name": "IMPACT_GRENADE",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"99E3AC5B41B6F45858092C9F73442D75\", \"Impact Grenade\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"358E1B854998CE0987F3079F08CDDF04\", \"Impact Grenade\")",
+		"ItemType": "ThrowableItem",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/ImpactGrenade/BP_ItemInstance_ImpactGrenade.BP_ItemInstance_ImpactGrenade_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/ImpactGrenade/BP_ItemPickup_ImpactGrenade.BP_ItemPickup_ImpactGrenade_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/rgo_grenade/Meshes/SM_rgo_grenade.SM_rgo_grenade'",
+		"MaxStackCount": 5,
+		"Weight": 0.3,
+		"ItemIcon": "None",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
