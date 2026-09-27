@@ -56,6 +56,14 @@
 		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunB/DA_EquipmentAnimation_ShotgunB.DA_EquipmentAnimation_ShotgunB'"
 	},
 	{
+		"Name": "GRENADE_LAUNCHER_A",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Grenade_Launcher_A.Grenade_Launcher_A'",
+		"EquipDelay": 1.8,
+		"EquipSocketName": "Grenade_Launcher_A",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/GrenadeLauncherA/DA_EquipmentAnimation_GrenadeLauncherA.DA_EquipmentAnimation_GrenadeLauncherA'"
+	},
+	{
 		"Name": "GONBONG",
 		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/Gonbong/Meshs/SKM_Gonbang.SKM_Gonbang'",
 		"EquipDelay": 0.8,
