@@ -180,6 +180,21 @@
 		"BuyPrice": 0
 	},
 	{
+		"Name": "IMPACT_GRENADE",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"99E3AC5B41B6F45858092C9F73442D75\", \"Impact Grenade\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"358E1B854998CE0987F3079F08CDDF04\", \"Impact Grenade\")",
+		"ItemType": "ThrowableItem",
+		"ItemRarity": "Common",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/ImpactGrenade/BP_ItemInstance_ImpactGrenade.BP_ItemInstance_ImpactGrenade_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/ImpactGrenade/BP_ItemPickup_ImpactGrenade.BP_ItemPickup_ImpactGrenade_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/rgo_grenade/Meshes/SM_rgo_grenade.SM_rgo_grenade'",
+		"MaxStackCount": 5,
+		"Weight": 0.3,
+		"ItemIcon": "None",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
 		"Name": "BANDAGE",
 		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"BANDAGE_DisplayName\", \"Bandage\")",
 		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"BANDAGE_Description\", \"Bandage Description\")",
