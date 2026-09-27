@@ -1,8 +1,8 @@
 [
 	{
 		"Name": "GRENADE",
-		"ThrowableClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Throwables/BP_Throwable_Grenade.BP_Throwable_Grenade_C'",
+		"ThrowableClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Throwables/Grenade/BP_Throwable_Grenade.BP_Throwable_Grenade_C'",
 		"ThrowDuration": 1,
-		"ThrowForce": 1600
+		"ThrowForce": 1200
 	}
 ]
