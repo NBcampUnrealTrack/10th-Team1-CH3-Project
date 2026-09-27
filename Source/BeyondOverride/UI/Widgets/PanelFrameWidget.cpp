@@ -34,6 +34,12 @@ void UPanelFrameWidget::SetCarryWeight(float CurrentWeight, float MaxWeight)
 	bIsOverCarryWeight = (CurrentWeight > MaxWeight);
 }
 
+void UPanelFrameWidget::HideCountTextBox()
+{
+	if (CountTextBox)
+		CountTextBox->SetVisibility(ESlateVisibility::Collapsed);
+}
+
 void UPanelFrameWidget::HideCarryWeight()
 {
 	if (CarryWeightBox)

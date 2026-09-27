@@ -59,6 +59,12 @@ UUIManager::UUIManager()
 		ScreenClasses.Add(EUIScreen::DebugSetting, DebugSettingWBPClass.Class);
 	}
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> ShopScreenWBPClass(TEXT("/Game/UI/WBP_ShopScreen"));
+	if (ShopScreenWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::ShopScreen, ShopScreenWBPClass.Class);
+	}
+
 	static ConstructorHelpers::FClassFinder<UUserWidget> NoneWBPClass(TEXT("/Game/UI/WBP_None"));
 	if (NoneWBPClass.Succeeded())
 	{
