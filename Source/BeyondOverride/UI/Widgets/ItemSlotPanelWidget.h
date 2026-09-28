@@ -24,7 +24,7 @@ enum class EItemSlotPanelMode : uint8
 	Shop,
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotHoverChanged, bool, bIsHovered, UItemInstanceBase*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSlotHoverChanged, bool, bIsHovered, UItemInstanceBase*, Item, bool, bIsBuy);
 
 UCLASS()
 class BEYONDOVERRIDE_API UItemSlotPanelWidget : public UUserWidget
