@@ -275,7 +275,14 @@ void UMonsterStatComponent::DamageLogic(AActor* Target, int32 Damage)
 	{
 		return;
 	}
-
+	ABOCharacter* Player = Cast<ABOCharacter>(Target);
+	if (Player)
+	{
+		if (Player->GetIsRolling())
+		{
+			return;
+		}
+	}
 	UGameplayStatics::ApplyDamage(Target,
 								  Damage,
 								  AIController,
