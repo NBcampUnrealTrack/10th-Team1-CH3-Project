@@ -115,7 +115,7 @@
 	},
 	{
 		"Name": "GRENADE_LAUNCHER_A",
-		"Damage": 75,
+		"Damage": 400,
 		"FireRate": 1.2,
 		"FireMode": "SemiAuto",
 		"BulletClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Bullets/BP_ExplosiveBullet_GrenadeLauncher.BP_ExplosiveBullet_GrenadeLauncher_C'",
@@ -134,7 +134,7 @@
 	},
 	{
 		"Name": "GRENADE_LAUNCHER_B",
-		"Damage": 60,
+		"Damage": 200,
 		"FireRate": 1,
 		"FireMode": "SemiAuto",
 		"BulletClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Bullets/BP_ExplosiveBullet_GrenadeLauncher.BP_ExplosiveBullet_GrenadeLauncher_C'",
