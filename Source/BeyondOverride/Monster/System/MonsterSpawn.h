@@ -1,4 +1,3 @@
-
 // 26/09/16 Copyright Jinho Song
 
 #pragma once

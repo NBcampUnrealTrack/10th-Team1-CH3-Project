@@ -48,6 +48,7 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 	}
 
+	bIsShooting = bIsFireMontagePlaying;
 	EquipmentGroundSpeed = bIsFireMontagePlaying ? 0.0f : GroundSpeed;
 
 	const FVector LocalVelocity = Character->GetActorTransform().InverseTransformVectorNoScale(Velocity);
@@ -66,6 +67,17 @@ void UBOAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	bIsCrouch = MovementComponent->IsCrouching();
 	bIsAiming = Character->GetIsAiming();
+
+	const bool bApplyAimOffset = bHasAimOffset && (bIsAiming || bIsShooting);
+	const float TargetAlpha = bApplyAimOffset ? 1.0f : 0.0f;
+
+	AimOffsetAlpha = FMath::FInterpTo(AimOffsetAlpha, TargetAlpha, DeltaSeconds, 12.0f);
+
+	/*if (!bHasAimOffset && AimOffsetAlpha < 0.01f)
+	{
+		AimOffsetAlpha = 0.0f;
+		EquipmentAimOffset = nullptr;
+	}*/
 }
 
 void UBOAnimInstance::PlayFireMontage(UAnimMontage* FireMontage)
@@ -112,7 +124,18 @@ void UBOAnimInstance::ApplyEquipmentAnimation(const UEquipmentAnimationDataAsset
 	EquipmentJump = NewData->Jump;
 	EquipmentFallingLoop = NewData->FallingLoop;
 	EquipmentLand = NewData->Land;
+
 	bHasAimOffset = IsValid(NewData->AimOffset);
+
+	if (bHasAimOffset)
+	{
+		EquipmentAimOffset = NewData->AimOffset;
+	}
+	else
+	{
+		AimOffsetAlpha = 0.0f;
+		EquipmentAimOffset = nullptr;
+	}
 }
 
 float UBOAnimInstance::PlayEquipMontage()

@@ -50,10 +50,14 @@ protected:
 	bool bIsCrouch = false;
 	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
 	bool bIsAiming = false;
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "Movement")
+	bool bIsShooting = false;
 	UPROPERTY(BlueprintReadOnly, Category = "Aim")
 	bool bHasAimOffset = false;
 	UPROPERTY(BlueprintReadOnly, Category = "Aim")
 	float AimPitch = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Transient, Category = "Aim")
+	float AimOffsetAlpha = 0.0f;
 
 
 	UPROPERTY(BlueprintReadOnly, Category = "Equipment")

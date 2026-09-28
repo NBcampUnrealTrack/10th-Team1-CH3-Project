@@ -43,7 +43,7 @@ class BEYONDOVERRIDE_API UShopScreenWidget : public UUserWidget
 
   private:
 	UFUNCTION()
-	void HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item);
+	void HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item, bool bIsBuy);
 
 	UPROPERTY()
 	TArray<TObjectPtr<UItemInstanceBase>> CachedShopItems;

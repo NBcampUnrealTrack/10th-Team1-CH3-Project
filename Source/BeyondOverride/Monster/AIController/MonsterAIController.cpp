@@ -165,6 +165,15 @@ void AMonsterAIController::MoveFlying(const FVector& TargetLocation)
 
 // MonsterCharacter
 
+UMonsterStatComponent* AMonsterAIController::GetMonsterStats() const
+{
+	if (!GetMonster())
+	{
+		return nullptr;
+	}
+	return GetMonster()->GetMonsterStats();
+}
+
 UMonsterDataAsset* AMonsterAIController::GetMonsterData() const
 {
 	if (!GetMonster())

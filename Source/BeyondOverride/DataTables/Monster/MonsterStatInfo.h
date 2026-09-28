@@ -56,6 +56,10 @@ struct FMonsterStatInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Intelligence = FMath::RandRange(0, 5);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FlyMin = 300.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FlyMax = 500.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float WalkSpeed = 600;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SprintSpeed = 1.2f;

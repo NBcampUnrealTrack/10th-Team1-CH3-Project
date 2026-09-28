@@ -39,12 +39,16 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 	// Getters
 	FName GetMonsterID() const;
 	UMonsterDataAsset* GetMonsterData() const;
+	float GetFlyMax() const;
+	float GetFlyMin() const;
 	FVector GetAttackPoint() const;
 	FRotator GetAttackRotator() const;
 	float GetAttackRange() const;
 
 	UFUNCTION(BlueprintCallable, Category = "MonsterID")
 	EMonsterType GetMonsterType() const;
+
+	UMonsterStatComponent* GetMonsterStats() const;
 
 	// Functions
 	void OnMissileHit(TArray<FOverlapResult> Targets);
@@ -53,9 +57,9 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	bool IsDelay();
 
-	void MonsterAttack();
+	virtual void MonsterAttack();
 
-	void DeathSequence();
+	void DeathSequence(bool Cast = false);
 
 	virtual float TakeDamage(float DamageAmount,
 							 FDamageEvent const& DamageEvent,

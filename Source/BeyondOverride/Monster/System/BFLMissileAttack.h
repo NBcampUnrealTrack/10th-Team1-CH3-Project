@@ -23,7 +23,7 @@ class BEYONDOVERRIDE_API UBFLMissileAttack : public UBlueprintFunctionLibrary
 	static void MissileAttack(FVector SpawnLocation,
 							  FVector AttackPoint,
 							  float FireAngle,
-							  int32 Damage,
+							  float FlightTime,
 							  ACharacter* ThisOwner,
 							  UObject* WorldContextObject);
 };
