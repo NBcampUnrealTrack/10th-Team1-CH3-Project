@@ -246,5 +246,13 @@
 		"EquipSocketName": "SHOTGUN_A",
 		"HolsterSocketName": "None",
 		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunALegendary/DA_EquipmentAnimation_ShotgunALegendary.DA_EquipmentAnimation_ShotgunALegendary'"
+	},
+	{
+		"Name": "SHOTGUN_B_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Shotgun_B.Shotgun_B'",
+		"EquipDelay": 1.2,
+		"EquipSocketName": "SHOTGUN_B",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunBEpic/DA_EquipmentAnimation_ShotgunBEpic.DA_EquipmentAnimation_ShotgunBEpic'"
 	}
 ]
