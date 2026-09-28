@@ -27,6 +27,8 @@ ASpawnVolume::ASpawnVolume()
 	BoxComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	BoxComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel14, ECollisionResponse::ECR_Overlap); // Container
+
+	SpawnMaxRadius = 100000.0f;
 }
 
 void ASpawnVolume::BeginPlay()
