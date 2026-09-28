@@ -264,5 +264,24 @@
 		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolALegendary/CF_Spread_PistolALegendary.CF_Spread_PistolALegendary'",
 		"AimSpreadMultiplier": 0.3,
 		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolA_V.T_PistolA_V'"
+	},
+	{
+		"Name": "PISTOL_B_EPIC",
+		"Damage": 25,
+		"FireRate": 0.11,
+		"FireMode": "SemiAuto",
+		"BulletClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Bullets/BP_StandardBullet_Pistol.BP_StandardBullet_Pistol_C'",
+		"ProjectileSpeed": 10000,
+		"ProjectileGravityScale": 0.8,
+		"ProjectileRange": 20000,
+		"ProjectilesPerShot": 1,
+		"AmmoItemID": "PISTOL_AMMO",
+		"MagazineSize": 15,
+		"ReloadTime": 1.4,
+		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolBEpic/CF_RecoilPitch_PistolBEpic.CF_RecoilPitch_PistolBEpic'",
+		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolBEpic/CF_RecoilYaw_PistolBEpic.CF_RecoilYaw_PistolBEpic'",
+		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolBEpic/CF_Spread_PistolBEpic.CF_Spread_PistolBEpic'",
+		"AimSpreadMultiplier": 0.3,
+		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolB_V.T_PistolB_V'"
 	}
 ]
