@@ -202,9 +202,9 @@
 		"AmmoItemID": "RIFLE_AMMO",
 		"MagazineSize": 30,
 		"ReloadTime": 2.2,
-		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilPitch_AssaultRifleB.CF_RecoilPitch_AssaultRifleB'",
-		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilYaw_AssaultRifleB.CF_RecoilYaw_AssaultRifleB'",
-		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_Spread_AssaultRifleB.CF_Spread_AssaultRifleB'",
+		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleBEpic/CF_RecoilPitch_AssaultRifleBEpic.CF_RecoilPitch_AssaultRifleBEpic'",
+		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleBEpic/CF_RecoilYaw_AssaultRifleBEpic.CF_RecoilYaw_AssaultRifleBEpic'",
+		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleBEpic/CF_Spread_AssaultRifleBEpic.CF_Spread_AssaultRifleBEpic'",
 		"AimSpreadMultiplier": 0.5,
 		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB_V.T_RifleB_V'"
 	},
