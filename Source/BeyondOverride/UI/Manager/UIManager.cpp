@@ -59,6 +59,12 @@ UUIManager::UUIManager()
 		ScreenClasses.Add(EUIScreen::DebugSetting, DebugSettingWBPClass.Class);
 	}
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> NPCInteractionWBPClass(TEXT("/Game/UI/WBP_NPCInteraction"));
+	if (NPCInteractionWBPClass.Succeeded())
+	{
+		ScreenClasses.Add(EUIScreen::NPCInteraction, NPCInteractionWBPClass.Class);
+	}
+
 	static ConstructorHelpers::FClassFinder<UUserWidget> ShopScreenWBPClass(TEXT("/Game/UI/WBP_ShopScreen"));
 	if (ShopScreenWBPClass.Succeeded())
 	{

@@ -2,6 +2,7 @@
 
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
 #include "Items/Objects/ItemInstanceBase.h"
 
@@ -11,13 +12,15 @@ void UItemTooltipWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UItemTooltipWidget::OnItemHovered(bool bIsHovered, UItemInstanceBase* Item)
+void UItemTooltipWidget::OnItemHovered(bool bIsHovered, UItemInstanceBase* Item, bool bInShowBuyPrice)
 {
 	SlotData = Item;
+	bShowBuyPrice = bInShowBuyPrice;
 	SetVisibility(bIsHovered && Item ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 
 	if (bIsHovered && SlotData)
 	{
+		HB_Price->SetVisibility(SlotData->GetItemData()->SellPrice <= 0 ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
 		SetTooltipData();
 		UpdatePosition();
 	}
@@ -33,13 +36,15 @@ void UItemTooltipWidget::SetTooltipData()
 
 	if (Data && StackCount)
 	{
+		const int32 UnitPrice = bShowBuyPrice ? Data->BuyPrice : Data->SellPrice;
+
 		ItemNameText->SetText(Data->DisplayName);
 		ItemDescText->SetText(Data->Description);
 
-		ItemTotalPriceText->SetText(FText::AsNumber(Data->SellPrice * StackCount));
+		ItemTotalPriceText->SetText(FText::AsNumber(UnitPrice * StackCount));
 		ItemTotalWeightText->SetText(FText::AsNumber(Data->Weight * StackCount));
 
-		ItemUnitPriceText->SetText(StackCount > 1 ? FText::FromString(FString::Printf(TEXT("(%d)"), Data->SellPrice)) : FText::GetEmpty());
+		ItemUnitPriceText->SetText(StackCount > 1 ? FText::FromString(FString::Printf(TEXT("(%d)"), UnitPrice)) : FText::GetEmpty());
 		ItemUnitWeightText->SetText(StackCount > 1 ? FText::FromString(FString::Printf(TEXT("(%s)"), *FString::SanitizeFloat(Data->Weight))) : FText::GetEmpty());
 	}
 }

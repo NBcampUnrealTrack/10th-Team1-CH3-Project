@@ -1,0 +1,25 @@
+[
+	{
+		"Name": "MERCHANT",
+		"ShopItems": [
+			"ASSAULT_RIFLE_A",
+			"ASSAULT_RIFLE_B",
+			"PISTOL_A",
+			"PISTOL_B",
+			"SHOTGUN_A",
+			"SHOTGUN_B",
+			"RIFLE_AMMO",
+			"PISTOL_AMMO",
+			"SHOTGUN_AMMO",
+			"GONBONG",
+			"GRENADE",
+			"BANDAGE",
+			"SHIELD_RECHARGER_A",
+			"SHIELD_RECHARGER_B",
+			"SHIELD_RECHARGER_C",
+			"SHIELD_RECHARGER_D",
+			"BACKPACK_A",
+			"SHIELD_A"
+		]
+	}
+]
