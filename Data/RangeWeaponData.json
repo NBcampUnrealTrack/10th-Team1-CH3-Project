@@ -228,7 +228,7 @@
 		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB_V.T_RifleB_V'"
 	},
 	{
-		"Name": "PISTOL_A_0",
+		"Name": "PISTOL_A_EPIC",
 		"Damage": 32,
 		"FireRate": 0.12,
 		"FireMode": "SemiAuto",
@@ -243,6 +243,25 @@
 		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolAEpic/CF_RecoilPitch_PistolAEpic.CF_RecoilPitch_PistolAEpic'",
 		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolAEpic/CF_RecoilYaw_PistolAEpic.CF_RecoilYaw_PistolAEpic'",
 		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolAEpic/CF_Spread_PistolAEpic.CF_Spread_PistolAEpic'",
+		"AimSpreadMultiplier": 0.3,
+		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolA_V.T_PistolA_V'"
+	},
+	{
+		"Name": "PISTOL_A_LEGENDARY",
+		"Damage": 40,
+		"FireRate": 0.12,
+		"FireMode": "SemiAuto",
+		"BulletClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Bullets/BP_StandardBullet_Pistol.BP_StandardBullet_Pistol_C'",
+		"ProjectileSpeed": 10000,
+		"ProjectileGravityScale": 0.8,
+		"ProjectileRange": 20000,
+		"ProjectilesPerShot": 1,
+		"AmmoItemID": "PISTOL_AMMO",
+		"MagazineSize": 7,
+		"ReloadTime": 1.1,
+		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolALegendary/CF_RecoilPitch_PistolALegendary.CF_RecoilPitch_PistolALegendary'",
+		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolALegendary/CF_RecoilYaw_PistolALegendary.CF_RecoilYaw_PistolALegendary'",
+		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/PistolALegendary/CF_Spread_PistolALegendary.CF_Spread_PistolALegendary'",
 		"AimSpreadMultiplier": 0.3,
 		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_PistolA_V.T_PistolA_V'"
 	}
