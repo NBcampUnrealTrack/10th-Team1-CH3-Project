@@ -19,7 +19,7 @@ class BEYONDOVERRIDE_API UItemTooltipWidget : public UUserWidget
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UFUNCTION()
-	void OnItemHovered(bool bIsHovered, UItemInstanceBase* Item);
+	void OnItemHovered(bool bIsHovered, UItemInstanceBase* Item, bool bInShowBuyPrice = false);
 
 	void SetTooltipData();
 
@@ -43,6 +43,8 @@ class BEYONDOVERRIDE_API UItemTooltipWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ItemUnitWeightText;
+
+	bool bShowBuyPrice = false;
 
 	void UpdatePosition();
 };

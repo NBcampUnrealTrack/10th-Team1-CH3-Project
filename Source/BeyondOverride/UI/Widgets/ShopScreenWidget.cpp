@@ -87,12 +87,12 @@ void UShopScreenWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UShopScreenWidget::HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item)
+void UShopScreenWidget::HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item, bool bIsBuy)
 {
 	if (!Tooltip || HeldItem->GetVisibility() != ESlateVisibility::Collapsed)
 		return;
 
-	Tooltip->OnItemHovered(bIsHovered, Item);
+	Tooltip->OnItemHovered(bIsHovered, Item, bIsBuy);
 }
 
 FReply UShopScreenWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
