@@ -132,7 +132,7 @@ void UMonsterStatComponent::Attack()
 	else if (MonsterType == EMonsterType::Special)
 	{
 
-		UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Missile", 5500.0f, 1.0f, 4.0f, false, GetWorld());
+		UBFLSoundEvent::SoundPlay(Owner->GetAttackPoint(), "Missile", 5500.0f, 1.0f, 1.5f, false, GetWorld());
 		FVector Delta = Target->GetActorLocation() - Owner->GetAttackPoint();
 
 		float HorizontalDistance = FVector2D(Delta.X, Delta.Y).Size();
@@ -297,11 +297,6 @@ bool UMonsterStatComponent::IsDelay() const
 
 void UMonsterStatComponent::CallAttackLock()
 {
-	if (IsDelay())
-	{
-		return;
-	}
-
 	GetWorld()->GetTimerManager().SetTimer(AttackLock,
 										   FTimerDelegate(),
 										   AttackDelay,

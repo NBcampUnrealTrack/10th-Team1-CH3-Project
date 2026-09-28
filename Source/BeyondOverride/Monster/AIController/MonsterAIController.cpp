@@ -7,6 +7,7 @@
 #include "NavigationSystem.h"
 #include "TimerManager.h"
 
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Monster/ActorComponent/AirNavComponent.h"
 #include "Monster/ActorComponent/ContinuousStateComponent.h"
 #include "Monster/ActorComponent/SenseComponent.h"
@@ -128,6 +129,14 @@ void AMonsterAIController::OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimul
 	}
 }
 
+void AMonsterAIController::StopTree()
+{
+	if (UBehaviorTreeComponent* BTComponent = Cast<UBehaviorTreeComponent>(BrainComponent))
+	{
+		BTComponent->StopTree(EBTStopMode::Safe);
+	}
+}
+
 void AMonsterAIController::OnPossess(APawn* InPawn)
 {
 	// 부모 클래스의 로직 상속
@@ -136,6 +145,7 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 	if (InPawn)
 	{
 		GetMonster()->OnStatSetComplete.AddUObject(this, &AMonsterAIController::EnableBehaviorTree);
+		GetMonster()->OnDeleteMonster.AddUObject(this, &AMonsterAIController::StopTree);
 	}
 }
 
