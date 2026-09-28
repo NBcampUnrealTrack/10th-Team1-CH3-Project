@@ -10,6 +10,7 @@
 
 // Add Include
 #include "Monster/ActorComponent/MonsterStatComponent.h"
+#include "Monster/Enums/MonsterValues.h"
 
 // UHT Header
 #include "MonsterCharacter.generated.h"
@@ -69,6 +70,14 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 							 AController* EventInstigator,
 							 AActor* DamageCauser) override;
 
+	EPatrolType IsPatrolType() const;
+
+	EPointPatrolState NowPatrolState() const;
+	void ChangePatrolState();
+
+	int GetPointX() const;
+	int GetPointY() const;
+
   protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -81,6 +90,16 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 	FOnDeleteMonster OnDeleteMonster;
 
   protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Patrol")
+	EPointPatrolState PatrolState = EPointPatrolState::Return;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Patrol")
+	EPatrolType PatrolType = EPatrolType::Random;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Patrol")
+	int PointRangeX = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Patrol")
+	int PointRangeY = 0;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
 	TObjectPtr<UMonsterDataAsset> MonsterData;
 

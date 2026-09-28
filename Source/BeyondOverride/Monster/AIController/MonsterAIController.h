@@ -10,6 +10,7 @@
 
 // Add include
 #include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/MonsterValues.h"
 #include "Monster/Enums/StateEnums.h"
 #include "Monster/Structs/StateParams.h"
 #include "Monster/Structs/SystemParams.h"
@@ -45,6 +46,8 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	void EnableBehaviorTree();
 
 	// MonsterCharacter
+
+	EPatrolType IsPatrolType() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Monster|Stat")
 	UMonsterStatComponent* GetMonsterStats() const;
@@ -103,6 +106,12 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	bool PathControl();
 
 	void FocusSetUp(const EMonsterState& input);
+
+	EPointPatrolState NowPatrolState() const;
+	void ChangePatrolState();
+
+	int GetPointX() const;
+	int GetPointY() const;
 
 	// MoveInput
 	void MoveFlying(const FVector& TargetLocation);

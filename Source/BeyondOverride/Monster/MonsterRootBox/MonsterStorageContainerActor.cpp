@@ -10,7 +10,12 @@
 AMonsterStorageContainerActor::AMonsterStorageContainerActor()
 {
 	StaticMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	StaticMeshComp->SetSimulatePhysics(true);
 	StaticMeshComp->SetEnableGravity(true);
+
+	StaticMeshComp->SetAngularDamping(10.0f);
+	StaticMeshComp->SetLinearDamping(5.0f);
+
 	SkeletalComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Comp"));
 	SkeletalComp->SetupAttachment(StaticMeshComp);
 }
@@ -22,6 +27,7 @@ void AMonsterStorageContainerActor::MeshInfoSetUp(FName ID,
 												  USkeletalMesh* Skeletal,
 												  TSubclassOf<UAnimInstance> Anim)
 {
+
 	StorageID = ID;
 	SkeletalScale = Scale;
 	SkeletalLocation = Location;
@@ -32,8 +38,9 @@ void AMonsterStorageContainerActor::MeshInfoSetUp(FName ID,
 
 	SkeletalComp->SetSkeletalMesh(StorageSkeletal);
 	SkeletalComp->SetRelativeScale3D(SkeletalScale);
-	SkeletalComp->SetRelativeLocation(SkeletalLocation);
 	SkeletalComp->SetRelativeRotation(SkeletalRotation);
+
+	StaticMeshComp->SetRelativeLocation(SkeletalLocation);
 
 	if (StorageAnimInstance)
 	{

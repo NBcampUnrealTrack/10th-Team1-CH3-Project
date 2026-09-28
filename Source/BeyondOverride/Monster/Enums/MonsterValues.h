@@ -15,3 +15,18 @@ enum class EBossPattern : uint8
 	Range UMETA(DisplayName = "Range"),
 	Melee UMETA(DisplayName = "Melee"),
 };
+
+UENUM(BlueprintType)
+enum class EPatrolType : uint8
+{
+	Random UMETA(DisplayName = "Random"),
+	Point UMETA(DisplayName = "Point"),
+	Stop UMETA(DisplayName = "Stop"),
+};
+
+UENUM(BlueprintType)
+enum class EPointPatrolState : uint8
+{
+	Go UMETA(DisplayName = "Go"),
+	Return UMETA(DisplayName = "Return"),
+};

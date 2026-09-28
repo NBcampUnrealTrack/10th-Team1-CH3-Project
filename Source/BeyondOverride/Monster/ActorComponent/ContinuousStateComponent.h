@@ -10,6 +10,7 @@
 
 // Add include
 #include "Monster/Enums/InfoEnums.h"
+#include "Monster/Enums/MonsterValues.h"
 #include "Monster/Enums/StateEnums.h"
 
 // UHT Header

@@ -128,6 +128,14 @@ float AMonsterCharacter::TakeDamage(float DamageAmount,
 	{
 		Target = Cast<ABOCharacter>(EventInstigator->GetPawn());
 	}
+	if (!Target)
+	{
+		return ActualDamage;
+	}
+	if (MonsterStat->GetIsDead())
+	{
+		return ActualDamage;
+	}
 
 	MonsterController->PlantFlag(EFlag::TakeDamage, CurrentTime);
 	MonsterController->SetTarget(Target);
@@ -138,9 +146,40 @@ float AMonsterCharacter::TakeDamage(float DamageAmount,
 	return ActualDamage;
 }
 
+EPointPatrolState AMonsterCharacter::NowPatrolState() const
+{
+	return PatrolState;
+}
+
+void AMonsterCharacter::ChangePatrolState()
+{
+	if (PatrolState == EPointPatrolState::Go)
+	{
+		PatrolState = EPointPatrolState::Return;
+	}
+	else
+	{
+		PatrolState = EPointPatrolState::Go;
+	}
+}
+
+int AMonsterCharacter::GetPointX() const
+{
+	return PointRangeX;
+}
+
+int AMonsterCharacter::GetPointY() const
+{
+	return PointRangeY;
+}
+
+EPatrolType AMonsterCharacter::IsPatrolType() const
+{
+	return PatrolType;
+}
+
 void AMonsterCharacter::DeathSequence(bool Cast)
 {
-
 	if (!MonsterStat->GetIsDead() && Cast)
 	{
 		return;
@@ -155,12 +194,15 @@ void AMonsterCharacter::DeathSequence(bool Cast)
 			}
 		}
 	}
+
 	OnDeleteMonster.Broadcast();
+
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
 		Movement->MaxWalkSpeed = 0.0f;
 		Movement->StopMovementImmediately();
 	}
+
 	GetWorld()->GetTimerManager().SetTimer(DeathMotionTimer,
 										   this,
 										   &AMonsterCharacter::EraseMonster,
@@ -170,13 +212,6 @@ void AMonsterCharacter::DeathSequence(bool Cast)
 
 void AMonsterCharacter::EraseMonster()
 {
-	UBFLMissileAttack::MissileAttack(GetActorLocation(),
-									 GetActorLocation(),
-									 90.0f,
-									 0.5f,
-									 this,
-									 GetWorld());
-
 	UBFLMonsterStorageSpawn::StorageSpawn(GetActorLocation(),
 										  GetMonsterID(),
 										  GetWorld());

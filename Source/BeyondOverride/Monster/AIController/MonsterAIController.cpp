@@ -166,30 +166,46 @@ void AMonsterAIController::FocusSetUp(const EMonsterState& Input)
 		AICharacter->FocusSetUp(Focus);
 	}
 }
+// 중재자 패턴용
+
+// MonsterCharacter
+EPointPatrolState AMonsterAIController::NowPatrolState() const
+{
+	return GetMonster()->NowPatrolState();
+}
+
+void AMonsterAIController::ChangePatrolState()
+{
+	GetMonster()->ChangePatrolState();
+}
+
+int AMonsterAIController::GetPointX() const
+{
+	return GetMonster()->GetPointX();
+}
+
+int AMonsterAIController::GetPointY() const
+{
+	return GetMonster()->GetPointY();
+}
+
+EPatrolType AMonsterAIController::IsPatrolType() const
+{
+	return GetMonster()->IsPatrolType();
+}
 
 void AMonsterAIController::MoveFlying(const FVector& TargetLocation)
 {
 	GetMonster()->MoveFlying(TargetLocation);
 }
-// 중재자 패턴용
-
-// MonsterCharacter
 
 UMonsterStatComponent* AMonsterAIController::GetMonsterStats() const
 {
-	if (!GetMonster())
-	{
-		return nullptr;
-	}
 	return GetMonster()->GetMonsterStats();
 }
 
 UMonsterDataAsset* AMonsterAIController::GetMonsterData() const
 {
-	if (!GetMonster())
-	{
-		return nullptr;
-	}
 	return GetMonster()->GetMonsterData();
 }
 

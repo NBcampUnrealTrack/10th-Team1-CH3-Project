@@ -17,7 +17,6 @@ void UBFLSoundEvent::NoisePlay(FVector Location, float Radius, UObject* WorldCon
 	}
 
 	UWorld* World = WorldContextObject->GetWorld();
-
 	if (!World)
 	{
 		return;
@@ -119,7 +118,6 @@ void UBFLSoundEvent::SoundPlay(FVector Location, FName SoundTarget, float Radius
 	}
 
 	UWorld* World = WorldContextObject->GetWorld();
-
 	if (!World)
 	{
 		return;

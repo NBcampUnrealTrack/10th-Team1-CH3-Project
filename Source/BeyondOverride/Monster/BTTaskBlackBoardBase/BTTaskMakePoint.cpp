@@ -17,7 +17,7 @@ UBTTaskMakePoint::UBTTaskMakePoint()
 
 EBTNodeResult::Type UBTTaskMakePoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	float RangeRand = 750.0f;
+	float RangeRand;
 
 	FVector PatrolPoint;
 	FVector TargetCenter;
@@ -34,15 +34,34 @@ EBTNodeResult::Type UBTTaskMakePoint::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
-	AMonsterCharacter* Monster = Cast<AMonsterCharacter>(AIController->GetPawn());
+	AMonsterCharacter* Monster = AIController->GetMonster();
 	if (!Monster)
 	{
 		return EBTNodeResult::Failed;
 	}
 
-	TargetCenter = AIController->GetSpawnPoint();
-	TargetCenter.X += FMath::RandRange(-RangeRand, RangeRand);
-	TargetCenter.Y += FMath::RandRange(-RangeRand, RangeRand);
+	EPatrolType PatrolType = AIController->IsPatrolType();
+
+	EPointPatrolState NowState = AIController->NowPatrolState();
+	AIController->ChangePatrolState();
+
+	if (PatrolType == EPatrolType::Random)
+	{
+		RangeRand = 750.0f;
+		TargetCenter = AIController->GetSpawnPoint();
+		TargetCenter.X = TargetCenter.X + FMath::RandRange(-RangeRand, RangeRand);
+		TargetCenter.Y = TargetCenter.Y + FMath::RandRange(-RangeRand, RangeRand);
+	}
+	else if (PatrolType == EPatrolType::Point)
+	{
+		TargetCenter = AIController->GetSpawnPoint();
+		TargetCenter.X = TargetCenter.X + AIController->GetPointX();
+		TargetCenter.Y = TargetCenter.Y + AIController->GetPointY();
+	}
+	else
+	{
+		TargetCenter = AIController->GetSpawnPoint();
+	}
 
 	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
@@ -53,6 +72,6 @@ EBTNodeResult::Type UBTTaskMakePoint::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		PatrolPoint = NavLocation.Location;
 	}
 
-	BlackboardComp->SetValueAsVector(TEXT("RandPoint"), PatrolPoint);
+	BlackboardComp->SetValueAsVector(TEXT("PatrolPoint"), PatrolPoint);
 	return EBTNodeResult::Succeeded;
 }

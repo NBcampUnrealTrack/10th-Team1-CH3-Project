@@ -11,6 +11,8 @@
 // UHT Header
 #include "BFLMonsterStorageSpawn.generated.h"
 
+class ASpawnVolume;
+
 UCLASS()
 class BEYONDOVERRIDE_API UBFLMonsterStorageSpawn : public UBlueprintFunctionLibrary
 {
@@ -23,4 +25,7 @@ class BEYONDOVERRIDE_API UBFLMonsterStorageSpawn : public UBlueprintFunctionLibr
 	static void StorageSpawn(FVector SpawnLocation,
 							 FName StorageTarget,
 							 UObject* WorldContextObject);
+
+	static ASpawnVolume* FindSpawnVolume(FVector SpawnLocation,
+										 UWorld* World);
 };
