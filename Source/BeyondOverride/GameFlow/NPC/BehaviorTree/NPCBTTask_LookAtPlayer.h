@@ -21,5 +21,5 @@ class BEYONDOVERRIDE_API UNPCBTTask_LookAtPlayer : public UBTTask_BlackboardBase
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
-	float RotationSpeed = 3.0f;
+	float RotationSpeed;
 };

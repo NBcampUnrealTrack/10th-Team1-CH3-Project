@@ -47,7 +47,12 @@ void UNPCBTTask_LookAtPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8*
 		return;
 	}
 
-	FRotator NewRotation = FMath::RInterpTo(NPC->GetActorRotation(), TargetRotation, DeltaSeconds, RotationSpeed);
+	// FRotator NewRotation = FMath::RInterpTo(NPC->GetActorRotation(), TargetRotation, DeltaSeconds, RotationSpeed);
+
+	FRotator NewRotation = NPC->GetActorRotation();
+	float Yaw = FMath::FixedTurn(NPC->GetActorRotation().Yaw, TargetRotation.Yaw, RotationSpeed);
+
+	NewRotation.Yaw = Yaw;
 
 	NPC->SetActorRotation(NewRotation);
 }
