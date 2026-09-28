@@ -36,6 +36,9 @@ class BEYONDOVERRIDE_API APreviewCharacterActor : public AActor
 	// 인벤토리 열림/닫힘에 맞춰 캡처 시작/정지
 	void SetActive(bool bActive);
 
+	// 장비 착용 몽타주(무기 드는 동작 등) 재생 - 실제로 장비가 바뀌는 순간에만 호출해야 함
+	void PlayEquipAnimation();
+
   protected:
 	// 실제 루트 - BodyMesh를 루트로 쓰면 InitializeFromCharacter에서 BodyMesh의 상대 트랜스폼을
 	// 설정할 때 그게 곧 액터의 월드 트랜스폼이 되어버려서 스폰 위치가 덮어써짐. 그래서 빈 컴포넌트를 진짜 루트로 둠

@@ -134,6 +134,14 @@ void APreviewCharacterActor::SyncEquipmentFrom(ACharacter* SourceCharacter)
 	}
 }
 
+void APreviewCharacterActor::PlayEquipAnimation()
+{
+	if (UBOAnimInstance* PreviewAnimInstance = Cast<UBOAnimInstance>(BodyMesh->GetAnimInstance()))
+	{
+		PreviewAnimInstance->PlayEquipMontage();
+	}
+}
+
 USkeletalMeshComponent* APreviewCharacterActor::GetOrCreateEquipmentPreviewMesh(int32 Index)
 {
 	while (EquipmentPreviewMeshes.Num() <= Index)
