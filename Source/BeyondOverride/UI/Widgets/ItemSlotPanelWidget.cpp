@@ -241,5 +241,5 @@ void UItemSlotPanelWidget::OnWeightChanged(float CurCarryWeight, float MaxCarryW
 
 void UItemSlotPanelWidget::HandleSlotHovered(bool bIsHovered, UItemInstanceBase* SlotData)
 {
-	OnSlotHoverChanged.Broadcast(bIsHovered, SlotData);
+	OnSlotHoverChanged.Broadcast(bIsHovered, SlotData, Mode == EItemSlotPanelMode::Shop);
 }

@@ -26,8 +26,8 @@
 		"MaxStackCount": 1,
 		"Weight": 10,
 		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleA.T_RifleA'",
-		"SellPrice": 0,
-		"BuyPrice": 0
+		"SellPrice": 100,
+		"BuyPrice": 50
 	},
 	{
 		"Name": "ASSAULT_RIFLE_B",
@@ -115,7 +115,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Grenade_Launcher_A_StaticMesh.Grenade_Launcher_A_StaticMesh'",
 		"MaxStackCount": 1,
 		"Weight": 15,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_Grenade_Launcher_A.T_Grenade_Launcher_A'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -130,7 +130,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Grenade_Launcher_B_StaticMesh.Grenade_Launcher_B_StaticMesh'",
 		"MaxStackCount": 1,
 		"Weight": 15,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_Grenade_Launcher_B.T_Grenade_Launcher_B'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -190,7 +190,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Pickups/GrenadeLauncher_Pickup.GrenadeLauncher_Pickup'",
 		"MaxStackCount": 12,
 		"Weight": 0.15,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Ammo/Grenade_Launcher_B_Ammo.Grenade_Launcher_B_Ammo'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -206,6 +206,36 @@
 		"MaxStackCount": 1,
 		"Weight": 5,
 		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Melee/T_Gonbong.T_Gonbong'",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
+		"Name": "BASEBALL_BAT",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"4D6F4EDF4B7E61C0174FADA8A08B8823\", \"Baseball Bat\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"FB5A799D46272BC6B0C9AF89D731C83C\", \"Baseball Bat Description \")",
+		"ItemType": "MeleeWeapon",
+		"ItemRarity": "Uncommon",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/BaseballBat/BP_ItemInstance_BaseballBat.BP_ItemInstance_BaseballBat_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/BaseballBat/BP_ItemPickup_BaseballBat.BP_ItemPickup_BaseballBat_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/Baseball_Bat/baseball_bat/Meshes/SM_baseball_bat.SM_baseball_bat'",
+		"MaxStackCount": 1,
+		"Weight": 5,
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Melee/T_BaseballBat.T_BaseballBat'",
+		"SellPrice": 0,
+		"BuyPrice": 0
+	},
+	{
+		"Name": "CROWBAR",
+		"DisplayName": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"B6B73C0A4856786D4D59C0BFE16F504E\", \"Crowbar\")",
+		"Description": "NSLOCTEXT(\"DT_Items [12D3D44B4344F02D8ACAF67067447E07]\", \"20C4B42F43CF955B48C99CB2B6412CEC\", \"Crowbar Description  \")",
+		"ItemType": "MeleeWeapon",
+		"ItemRarity": "Uncommon",
+		"ItemInstanceClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/Crowbar/BP_ItemInstance_Crowbar.BP_ItemInstance_Crowbar_C'",
+		"ItemPickupClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Items/Weapons/Crowbar/BP_ItemPickup_Crowbar.BP_ItemPickup_Crowbar_C'",
+		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/PS1_Crowbar/SM_ps1crowbar.SM_ps1crowbar'",
+		"MaxStackCount": 1,
+		"Weight": 5,
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Melee/T_Crowbar.T_Crowbar'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -235,7 +265,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Weapons/rgo_grenade/Meshes/SM_rgo_grenade.SM_rgo_grenade'",
 		"MaxStackCount": 5,
 		"Weight": 0.3,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Throwables/T_RgoGrenade.T_RgoGrenade'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -265,7 +295,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Green/Meshes/SM_sci_fi_barrel_green.SM_sci_fi_barrel_green'",
 		"MaxStackCount": 5,
 		"Weight": 0.6,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_Barrel_Green.T_Barrel_Green'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -280,7 +310,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Blue/Meshes/SM_sci_fi_barrel_blue.SM_sci_fi_barrel_blue'",
 		"MaxStackCount": 5,
 		"Weight": 1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_Barrel_Blue.T_Barrel_Blue'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -295,7 +325,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Purple/Meshes/SM_sci_fi_barrel_purple.SM_sci_fi_barrel_purple'",
 		"MaxStackCount": 3,
 		"Weight": 1.4,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_Barrel_Purple.T_Barrel_Purple'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -310,7 +340,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Shields/Sci_Fi_Barrel_-_Red/Meshes/SM_sci_fi_barrel_red.SM_sci_fi_barrel_red'",
 		"MaxStackCount": 3,
 		"Weight": 1.8,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Useables/T_Barrel_Red.T_Barrel_Red'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -385,7 +415,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Cable/SM_Cable.SM_Cable'",
 		"MaxStackCount": 15,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Cable.T_Cable'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -400,7 +430,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Dice/SM_Dice.SM_Dice'",
 		"MaxStackCount": 10,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Dice.T_Dice'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -415,7 +445,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Flashlight/SM_Flashlight.SM_Flashlight'",
 		"MaxStackCount": 5,
 		"Weight": 0.2,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Flashlight.T_Flashlight'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -430,7 +460,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Laptop/SM_Laptop.SM_Laptop'",
 		"MaxStackCount": 1,
 		"Weight": 2,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Laptop.T_Laptop'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -445,7 +475,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Mouse/SM_Mouse.SM_Mouse'",
 		"MaxStackCount": 3,
 		"Weight": 0.2,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Mouse.T_Mouse'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -460,7 +490,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Props/SawBlade/SM_SawBlade.SM_SawBlade'",
 		"MaxStackCount": 10,
 		"Weight": 0.2,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Ingredients/T_SawBlade.T_SawBlade'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -475,7 +505,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Props/MetalFlywheel/SM_MetalFlywheel.SM_MetalFlywheel'",
 		"MaxStackCount": 10,
 		"Weight": 0.2,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Ingredients/T_MetalFlywheel.T_MetalFlywheel'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -490,7 +520,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Props/MetalGear/SM_MetalGear.SM_MetalGear'",
 		"MaxStackCount": 15,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Ingredients/T_MetalGear.T_MetalGear'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -505,7 +535,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/Props/Spring/SM_Spring.SM_Spring'",
 		"MaxStackCount": 15,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Ingredients/T_Spring.T_Spring'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -520,7 +550,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Can_mdl.Can_mdl'",
 		"MaxStackCount": 15,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Can.T_Can'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -535,7 +565,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Canteen_mdl.Canteen_mdl'",
 		"MaxStackCount": 15,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Canteen.T_Canteen'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -550,7 +580,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Cloth_mdl.Cloth_mdl'",
 		"MaxStackCount": 20,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Cloth.T_Cloth'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -565,7 +595,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/DuctTape_mdl.DuctTape_mdl'",
 		"MaxStackCount": 15,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_DuctTape.T_DuctTape'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -580,7 +610,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/GasCan_Closed_mdl_GasCan_Closed_LOD0.GasCan_Closed_mdl_GasCan_Closed_LOD0'",
 		"MaxStackCount": 5,
 		"Weight": 0.4,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_FuelCan.T_FuelCan'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -595,7 +625,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/MetalScraps_mdl.MetalScraps_mdl'",
 		"MaxStackCount": 20,
 		"Weight": 0.1,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_MetalScrap.T_MetalScrap'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -610,7 +640,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Pan_mdl.Pan_mdl'",
 		"MaxStackCount": 5,
 		"Weight": 0.3,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_FlyingPan.T_FlyingPan'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -625,7 +655,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Pot_mdl.Pot_mdl'",
 		"MaxStackCount": 5,
 		"Weight": 0.3,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_CookingPot.T_CookingPot'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	},
@@ -640,7 +670,7 @@
 		"ItemPickupMesh": "/Script/Engine.StaticMesh'/Game/Assets/Items/Decorations/SurvivalProps/Models/Wine_mdl.Wine_mdl'",
 		"MaxStackCount": 3,
 		"Weight": 0.2,
-		"ItemIcon": "None",
+		"ItemIcon": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Decorations/T_Wine.T_Wine'",
 		"SellPrice": 0,
 		"BuyPrice": 0
 	}
