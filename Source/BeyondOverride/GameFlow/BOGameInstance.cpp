@@ -78,7 +78,7 @@ void UBOGameInstance::InitSetting()
 	DeathCount = 0;
 	TotalKilledMonsters.Empty();
 	KilledMonsters.Empty();
-	KillerMonster = "None";
+	KillerMonster = FName(TEXT("None"));
 
 	CurHealth = 0;
 	MaxHealth = 0;
@@ -131,9 +131,9 @@ void UBOGameInstance::StartFarming()
 	PlayingState = EPlayingState::Farming;
 	FarmingResult = EStageResult::None;
 
-	SurvivalTime = 0.0f;
+	/*SurvivalTime = 0.0f;
 	KilledMonsters.Empty();
-	KillerMonster = "None";
+	KillerMonster = "None";*/
 
 	OpenLevel(ELevel::Main);
 }
@@ -146,6 +146,9 @@ void UBOGameInstance::EndFarming(EStageResult Result)
 	FarmingCount += 1;
 
 	IsDefenseStarted = false;
+
+	// save all
+	SaveFarmingData(ESaveType::All);
 
 	if (Result == EStageResult::Fail)
 	{
@@ -191,11 +194,6 @@ void UBOGameInstance::ExitAIBuilding()
 
 void UBOGameInstance::OpenLevel(ELevel Level)
 {
-	/*if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == Levels[Level].GetAssetName())
-	{
-		return;
-	}*/
-
 	if (!GetWorld())
 	{
 		return;
@@ -209,19 +207,18 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 	PrevLevel = CurLevel;
 	CurLevel = Level;
 
+	// start farming
+	if (PrevLevel == ELevel::Bunker && CurLevel == ELevel::Main)
+	{
+		ResetTempData();
+	}
+
 	SavePlayerData();
 
-	if (PlayingState == EPlayingState::Bunker)
+	// on farming
+	if (PlayingState == EPlayingState::Farming)
 	{
 		SaveStorageData();
-	}
-
-	if (Level == ELevel::Bunker || Level == ELevel::Basic)
-	{
-		SaveFarmingData(ESaveType::All);
-	}
-	else
-	{
 		SaveFarmingData(ESaveType::Partial);
 	}
 
@@ -401,12 +398,8 @@ void UBOGameInstance::SaveSurvivalTimeData(ESaveType SaveType)
 
 	float Time = WorldSubsystem->GetSurvivalTime();
 
-	SurvivalTime += Time;
-
-	if (SaveType == ESaveType::All)
-	{
-		TotalSurvivalTime += SurvivalTime;
-	}
+	SurvivalTime += Time;              // temp data
+	TotalSurvivalTime += SurvivalTime; // total data
 
 	UE_LOG(LogGameFlow, Warning, TEXT("Survival Time : %f"), SurvivalTime);
 	UE_LOG(LogGameFlow, Warning, TEXT("Total Survival Time : %f"), TotalSurvivalTime);
@@ -434,6 +427,7 @@ void UBOGameInstance::SaveCombatData(ESaveType SaveType)
 		FName Id = Monster.Key;
 		int32 Count = Monster.Value;
 
+		// temp data
 		if (KilledMonsters.Contains(Id))
 		{
 			KilledMonsters[Id] += Count;
@@ -442,30 +436,24 @@ void UBOGameInstance::SaveCombatData(ESaveType SaveType)
 		{
 			KilledMonsters.Add(Id, Count);
 		}
-	}
 
-	if (SaveType == ESaveType::All)
-	{
-		for (TPair<FName, int32> Monster : KilledMonsters)
+		// total data
+		if (TotalKilledMonsters.Contains(Id))
 		{
-			FName Id = Monster.Key;
-			int32 Count = Monster.Value;
-
-			if (TotalKilledMonsters.Contains(Id))
-			{
-				TotalKilledMonsters[Id] += Count;
-			}
-			else
-			{
-				TotalKilledMonsters.Add(Id, Count);
-			}
+			TotalKilledMonsters[Id] += Count;
+		}
+		else
+		{
+			TotalKilledMonsters.Add(Id, Count);
 		}
 	}
 }
 
-void UBOGameInstance::ResetKilledMonsters()
+void UBOGameInstance::ResetTempData()
 {
+	SurvivalTime = 0.0f;
 	KilledMonsters.Empty();
+	KillerMonster = FName(TEXT("None"));
 }
 
 void UBOGameInstance::SetIsBossDefeated(bool InIsBossDefeated)

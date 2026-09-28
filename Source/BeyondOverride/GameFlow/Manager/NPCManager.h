@@ -17,7 +17,7 @@ class BEYONDOVERRIDE_API UNPCManager : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
   public:
-	UNPCManager();
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
   private:
 	void LoadNPCData();

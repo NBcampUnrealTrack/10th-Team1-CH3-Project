@@ -19,7 +19,7 @@ void UProgressFarmingState::Enter()
 
 	SpawnCharacter();
 	ActivateExits();
-	SetStartTime();
+	// SetStartTime();
 }
 
 void UProgressFarmingState::SpawnCharacter()

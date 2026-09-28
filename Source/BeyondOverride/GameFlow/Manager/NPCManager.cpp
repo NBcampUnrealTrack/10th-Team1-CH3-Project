@@ -8,8 +8,10 @@
 #include "Items/Objects/ItemInstanceBase.h"
 #include "Logging/BOLog.h"
 
-UNPCManager::UNPCManager()
+void UNPCManager::Initialize(FSubsystemCollectionBase& Collection)
 {
+	Super::Initialize(Collection);
+
 	NPCDatas.Empty();
 	NPCShopDatas.Empty();
 	NPCShopItems.Empty();

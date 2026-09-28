@@ -143,6 +143,14 @@ void UResultScreenWidget::NativeDestruct()
 
 void UResultScreenWidget::OnOKBtnClicked()
 {
+	if (GetWorld())
+	{
+		if (UBOGameInstance* GameInstance = GetWorld()->GetGameInstance<UBOGameInstance>())
+		{
+			GameInstance->ResetTempData();
+		}
+	}
+
 	if (UUIManager* UIManager = UUIManager::Get(this))
 	{
 		UIManager->PopScreen();

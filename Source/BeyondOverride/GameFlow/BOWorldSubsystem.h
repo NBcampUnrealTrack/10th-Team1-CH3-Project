@@ -8,15 +8,14 @@
 
 #include "BOWorldSubsystem.generated.h"
 
-/**
- *
- */
 UCLASS()
 class BEYONDOVERRIDE_API UBOWorldSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 
   public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
 	void SetStartTime();
 	void SetEndTime();
 
@@ -24,5 +23,5 @@ class BEYONDOVERRIDE_API UBOWorldSubsystem : public UWorldSubsystem
 
   private:
 	float StartTime;
-	float EndTime;
+	float TotalTime;
 };

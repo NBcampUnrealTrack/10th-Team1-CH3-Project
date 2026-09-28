@@ -14,7 +14,7 @@ void UEndFarmingState::Enter()
 	UE_LOG(LogGameFlow, Warning, TEXT("Farming End Enter"));
 	Super::Enter();
 
-	SetEndTime();
+	// SetEndTime();
 	CleanRegions();
 	SetFarmingResult();
 }

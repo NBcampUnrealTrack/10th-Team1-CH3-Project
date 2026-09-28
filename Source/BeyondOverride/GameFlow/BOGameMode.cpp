@@ -115,8 +115,6 @@ void ABOGameMode::EnterBunker()
 			UIManager->PushScreen(EUIScreen::Result, EUIInputMode::UIOnly);
 		}
 	}
-
-	GameInstance->ResetKilledMonsters();
 }
 
 void ABOGameMode::ProvideBasicEquipment()
@@ -163,6 +161,8 @@ void ABOGameMode::StartFarming()
 	{
 		return;
 	}
+
+	// GameInstance->ResetTempData();
 
 	FarmingStateMachine = NewObject<UFarmingStateMachine>(this, UFarmingStateMachine::StaticClass());
 
