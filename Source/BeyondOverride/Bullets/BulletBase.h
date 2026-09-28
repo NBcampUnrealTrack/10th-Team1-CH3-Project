@@ -15,7 +15,7 @@ class BEYONDOVERRIDE_API ABulletBase : public AActor
 {
 	GENERATED_BODY()
 
-  protected:
+protected:
 	// Projectile Movement 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
@@ -34,7 +34,7 @@ class BEYONDOVERRIDE_API ABulletBase : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
 	int32 BaseDamage;
 
-  public:
+public:
 	ABulletBase();
 
 	// 초기 설정
@@ -45,7 +45,7 @@ class BEYONDOVERRIDE_API ABulletBase : public AActor
 		const float GravityScale = 1.f,
 		const float LifeSpan = 0.f);
 
-  protected:
+protected:
 	// Hit 이벤트
 	UFUNCTION()
 	virtual void OnHit(
