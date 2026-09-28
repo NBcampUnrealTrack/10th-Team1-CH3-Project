@@ -359,5 +359,24 @@
 		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunBEpic/CF_Spread_ShotgunBEpic.CF_Spread_ShotgunBEpic'",
 		"AimSpreadMultiplier": 0.7,
 		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunB_V.T_ShotgunB_V'"
+	},
+	{
+		"Name": "SHOTGUN_B_LEGENDARY",
+		"Damage": 13,
+		"FireRate": 1.3,
+		"FireMode": "SemiAuto",
+		"BulletClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Bullets/BP_StandardBullet_Shotgun.BP_StandardBullet_Shotgun_C'",
+		"ProjectileSpeed": 10000,
+		"ProjectileGravityScale": 0.8,
+		"ProjectileRange": 20000,
+		"ProjectilesPerShot": 12,
+		"AmmoItemID": "SHOTGUN_AMMO",
+		"MagazineSize": 5,
+		"ReloadTime": 1.5,
+		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunBLegendary/CF_RecoilPitch_ShotgunBLegendary.CF_RecoilPitch_ShotgunBLegendary'",
+		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunBLegendary/CF_RecoilYaw_ShotgunBLegendary.CF_RecoilYaw_ShotgunBLegendary'",
+		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/ShotgunBLegendary/CF_Spread_ShotgunBLegendary.CF_Spread_ShotgunBLegendary'",
+		"AimSpreadMultiplier": 0.7,
+		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_ShotgunB_V.T_ShotgunB_V'"
 	}
 ]
