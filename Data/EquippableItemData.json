@@ -80,10 +80,26 @@
 		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Gonbong/DA_EquipmentAnimation_Gonbong.DA_EquipmentAnimation_Gonbong'"
 	},
 	{
+		"Name": "BASEBALL_BAT",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/Baseball_Bat/baseball_bat/Meshes/SKM_baseball_bat.SKM_baseball_bat'",
+		"EquipDelay": 0.8,
+		"EquipSocketName": "Baseball_Bat",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/BaseballBat/DA_EquipmentAnimation_BaseballBat.DA_EquipmentAnimation_BaseballBat'"
+	},
+	{
+		"Name": "CROWBAR",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/PS1_Crowbar/SKM_ps1crowbar.SKM_ps1crowbar'",
+		"EquipDelay": 0.8,
+		"EquipSocketName": "Crowbar",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Crowbar/DA_EquipmentAnimation_Crowbar.DA_EquipmentAnimation_Crowbar'"
+	},
+	{
 		"Name": "GRENADE",
 		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/ThrowingWeapon/Grenade/SKM_Grenade.SKM_Grenade'",
 		"EquipDelay": 0.6,
-		"EquipSocketName": "GRENADE",
+		"EquipSocketName": "GRENADE_A",
 		"HolsterSocketName": "None",
 		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/Grenade/DA_EquipmentAnimation_Grenade.DA_EquipmentAnimation_Grenade'"
 	},
@@ -91,7 +107,7 @@
 		"Name": "IMPACT_GRENADE",
 		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/rgo_grenade/Meshes/SKM_rgo_grenade.SKM_rgo_grenade'",
 		"EquipDelay": 0.5,
-		"EquipSocketName": "GRENADE",
+		"EquipSocketName": "GRENADE_B",
 		"HolsterSocketName": "None",
 		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ImpactGrenade/DA_EquipmentAnimation_ImpactGrenade.DA_EquipmentAnimation_ImpactGrenade'"
 	},
@@ -150,5 +166,101 @@
 		"EquipSocketName": "ShieldA",
 		"HolsterSocketName": "None",
 		"EquipmentAnimationData": "None"
+	},
+	{
+		"Name": "ASSAULT_RIFLE_A_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'",
+		"EquipDelay": 1.5,
+		"EquipSocketName": "ASSAULT_RIFLE_A",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleAEpic/DA_EquipmentAnimation_AssaultRifleAEpic.DA_EquipmentAnimation_AssaultRifleAEpic'"
+	},
+	{
+		"Name": "ASSAULT_RIFLE_A_LEGENDARY",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'",
+		"EquipDelay": 1.5,
+		"EquipSocketName": "ASSAULT_RIFLE_A",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleALegendary/DA_EquipmentAnimation_AssaultRifleALegendary.DA_EquipmentAnimation_AssaultRifleALegendary'"
+	},
+	{
+		"Name": "ASSAULT_RIFLE_B_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Assault_Rifle_B.Assault_Rifle_B'",
+		"EquipDelay": 1.5,
+		"EquipSocketName": "ASSAULT_RIFLE_B",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleBEpic/DA_EquipmentAnimation_AssaultRifleBEpic.DA_EquipmentAnimation_AssaultRifleBEpic'"
+	},
+	{
+		"Name": "ASSAULT_RIFLE_B_LEGENDARY",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Assault_Rifle_B.Assault_Rifle_B'",
+		"EquipDelay": 1.5,
+		"EquipSocketName": "ASSAULT_RIFLE_B",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleBLegendary/DA_EquipmentAnimation_AssaultRifleBLegendary.DA_EquipmentAnimation_AssaultRifleBLegendary'"
+	},
+	{
+		"Name": "PISTOL_A_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Pistols_A.Pistols_A'",
+		"EquipDelay": 1.3,
+		"EquipSocketName": "None",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolAEpic/DA_EquipmentAnimation_PistolAEpic.DA_EquipmentAnimation_PistolAEpic'"
+	},
+	{
+		"Name": "PISTOL_A_LEGENDARY",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Pistols_A.Pistols_A'",
+		"EquipDelay": 1.3,
+		"EquipSocketName": "None",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolALegendary/DA_EquipmentAnimation_PistolALegendary.DA_EquipmentAnimation_PistolALegendary'"
+	},
+	{
+		"Name": "PISTOL_B_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Pistols_B.Pistols_B'",
+		"EquipDelay": 1.3,
+		"EquipSocketName": "PISTOL_B",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolBEpic/DA_EquipmentAnimation_PistolBEpic.DA_EquipmentAnimation_PistolBEpic'"
+	},
+	{
+		"Name": "PISTOL_B_LEGENDARY",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Pistols_B.Pistols_B'",
+		"EquipDelay": 1.3,
+		"EquipSocketName": "PISTOL_B",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolBLegendary/DA_EquipmentAnimation_PistolBLegendary.DA_EquipmentAnimation_PistolBLegendary'"
+	},
+	{
+		"Name": "SHOTGUN_A_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Shotgun_A.Shotgun_A'",
+		"EquipDelay": 1.2,
+		"EquipSocketName": "SHOTGUN_A",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunAEpic/DA_EquipmentAnimation_ShotgunAEpic.DA_EquipmentAnimation_ShotgunAEpic'"
+	},
+	{
+		"Name": "SHOTGUN_A_LEGENDARY",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Shotgun_A.Shotgun_A'",
+		"EquipDelay": 1.2,
+		"EquipSocketName": "SHOTGUN_A",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunALegendary/DA_EquipmentAnimation_ShotgunALegendary.DA_EquipmentAnimation_ShotgunALegendary'"
+	},
+	{
+		"Name": "SHOTGUN_B_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Shotgun_B.Shotgun_B'",
+		"EquipDelay": 1.2,
+		"EquipSocketName": "SHOTGUN_B",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunBEpic/DA_EquipmentAnimation_ShotgunBEpic.DA_EquipmentAnimation_ShotgunBEpic'"
+	},
+	{
+		"Name": "SHOTGUN_B_LEGENDARY",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapDark/Weapons/Shotgun_B.Shotgun_B'",
+		"EquipDelay": 1.2,
+		"EquipSocketName": "SHOTGUN_B",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunBLegendary/DA_EquipmentAnimation_ShotgunBLegendary.DA_EquipmentAnimation_ShotgunBLegendary'"
 	}
 ]
