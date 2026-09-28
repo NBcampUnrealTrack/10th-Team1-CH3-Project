@@ -2,6 +2,7 @@
 
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
 #include "Items/Objects/ItemInstanceBase.h"
 
@@ -19,6 +20,7 @@ void UItemTooltipWidget::OnItemHovered(bool bIsHovered, UItemInstanceBase* Item,
 
 	if (bIsHovered && SlotData)
 	{
+		HB_Price->SetVisibility(SlotData->GetItemData()->SellPrice <= 0 ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
 		SetTooltipData();
 		UpdatePosition();
 	}

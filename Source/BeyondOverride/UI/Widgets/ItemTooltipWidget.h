@@ -8,6 +8,7 @@
 
 class UItemInstanceBase;
 class UTextBlock;
+class UHorizontalBox;
 
 UCLASS()
 class BEYONDOVERRIDE_API UItemTooltipWidget : public UUserWidget
@@ -31,6 +32,9 @@ class BEYONDOVERRIDE_API UItemTooltipWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ItemDescText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UHorizontalBox> HB_Price;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ItemTotalPriceText;
