@@ -138,7 +138,7 @@ float AMonsterCharacter::TakeDamage(float DamageAmount,
 void AMonsterCharacter::DeathSequence(bool Cast)
 {
 
-	if (!MonsterStat->GetIsDead())
+	if (!MonsterStat->GetIsDead() && Cast)
 	{
 		return;
 	}
