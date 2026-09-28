@@ -6,6 +6,8 @@
 
 #include "ThrowableBase.generated.h"
 
+class USoundCue;
+
 UCLASS()
 class BEYONDOVERRIDE_API AThrowableBase : public AActor
 {

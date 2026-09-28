@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class USoundCue;
 
 UCLASS()
 class BEYONDOVERRIDE_API ABulletBase : public AActor
