@@ -174,5 +174,13 @@
 		"EquipSocketName": "ASSAULT_RIFLE_A",
 		"HolsterSocketName": "None",
 		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleAEpic/DA_EquipmentAnimation_AssaultRifleAEpic.DA_EquipmentAnimation_AssaultRifleAEpic'"
+	},
+	{
+		"Name": "ASSAULT_RIFLE_A_LEGENDARY",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Assault_Rifle_A.Assault_Rifle_A'",
+		"EquipDelay": 1.5,
+		"EquipSocketName": "ASSAULT_RIFLE_A",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/AssaultRifleALegendary/DA_EquipmentAnimation_AssaultRifleALegendary.DA_EquipmentAnimation_AssaultRifleALegendary'"
 	}
 ]

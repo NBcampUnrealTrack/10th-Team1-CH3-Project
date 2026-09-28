@@ -2,6 +2,8 @@
 	{
 		"Name": "MERCHANT",
 		"ShopItems": [
+			"ASSAULT_RIFLE_A_LEGENDARY",
+			"ASSAULT_RIFLE_A_EPIC",
 			"ASSAULT_RIFLE_A",
 			"ASSAULT_RIFLE_B",
 			"PISTOL_A",
