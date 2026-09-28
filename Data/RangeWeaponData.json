@@ -188,5 +188,24 @@
 		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleALegendary/CF_Spread_AssaultRifleALegendary.CF_Spread_AssaultRifleALegendary'",
 		"AimSpreadMultiplier": 0.5,
 		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleA_V.T_RifleA_V'"
+	},
+	{
+		"Name": "ASSAULT_RIFLE_B_EPIC",
+		"Damage": 24,
+		"FireRate": 0.07,
+		"FireMode": "FullAuto",
+		"BulletClass": "/Script/Engine.BlueprintGeneratedClass'/Game/Blueprints/Bullets/BP_StandardBullet_Rifle.BP_StandardBullet_Rifle_C'",
+		"ProjectileSpeed": 20000,
+		"ProjectileGravityScale": 0.5,
+		"ProjectileRange": 50000,
+		"ProjectilesPerShot": 1,
+		"AmmoItemID": "RIFLE_AMMO",
+		"MagazineSize": 30,
+		"ReloadTime": 2.2,
+		"RecoilPitchCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilPitch_AssaultRifleB.CF_RecoilPitch_AssaultRifleB'",
+		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_RecoilYaw_AssaultRifleB.CF_RecoilYaw_AssaultRifleB'",
+		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/AssaultRifleB/CF_Spread_AssaultRifleB.CF_Spread_AssaultRifleB'",
+		"AimSpreadMultiplier": 0.5,
+		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_RifleB_V.T_RifleB_V'"
 	}
 ]
