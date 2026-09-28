@@ -8,8 +8,6 @@
 
 class APreviewCharacterActor;
 class UTextureRenderTarget2D;
-class UEquippableItemInstance;
-enum class EEquipmentSlot : uint8;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BEYONDOVERRIDE_API UCharacterPreviewComponent : public UActorComponent
@@ -45,7 +43,4 @@ class BEYONDOVERRIDE_API UCharacterPreviewComponent : public UActorComponent
 	// PreviewActor를 스폰할 절대 월드 좌표 - 플레이어 위치와 무관하게 항상 이 자리에 고정 스폰됨
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI|Preview")
 	FVector PreviewStageOffset = FVector(0.f, 0.f, -10000.f);
-
-	// 장비 변경(장착/해제) 시마다 호출 - 인벤토리가 열려있는 동안 장비를 바꿔도 프리뷰가 바로 반영되도록 함
-	void OnEquipmentChanged(EEquipmentSlot Slot, UEquippableItemInstance* EquippableItemInstance);
 };

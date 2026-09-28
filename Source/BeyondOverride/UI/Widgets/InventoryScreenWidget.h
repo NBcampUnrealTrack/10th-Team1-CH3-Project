@@ -53,7 +53,7 @@ class BEYONDOVERRIDE_API UInventoryScreenWidget : public UUserWidget
 	void OnNearbyItemsChanged(const TArray<AItemPickupBase*>& NearbyItems);
 
 	UFUNCTION()
-	void HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item, bool bIsBuy);
+	void HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item);
 
 	UFUNCTION()
 	void HandleHoldItemChanged(const UItemInstanceBase* HoldItem);

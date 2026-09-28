@@ -6,14 +6,12 @@
 
 #include "ThrowableBase.generated.h"
 
-class USoundCue;
-
 UCLASS()
 class BEYONDOVERRIDE_API AThrowableBase : public AActor
 {
 	GENERATED_BODY()
 
-protected:
+  protected:
 	// Skeletal Mesh 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USkeletalMeshComponent> SkeletalMesh;
@@ -31,7 +29,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float IgnoreInstigatorCollisionTime;
 
-public:
+  public:
 	AThrowableBase();
 
 	// 투척 액터 던지기
@@ -40,7 +38,7 @@ public:
 		const FRotator& Rotation,
 		const float Force);
 
-protected:
+  protected:
 	// 활성화
 	virtual void Activate();
 

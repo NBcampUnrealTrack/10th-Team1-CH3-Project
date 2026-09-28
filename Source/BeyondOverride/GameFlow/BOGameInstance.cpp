@@ -196,11 +196,6 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		return;
 	}*/
 
-	if (!GetWorld())
-	{
-		return;
-	}
-
 	if (!Levels.Contains(Level))
 	{
 		return;
@@ -230,7 +225,10 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		ShowLoadingScreenWidget(true);
 	}
 
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Levels[Level]);
+	if (GetWorld())
+	{
+		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Levels[Level]);
+	}
 }
 
 void UBOGameInstance::ShowLoadingScreenWidget(bool IsNew)
@@ -306,50 +304,36 @@ void UBOGameInstance::SavePlayerData()
 		return;
 	}
 
-	ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>();
-	if (!Character)
+	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
 	{
-		return;
-	}
-
-	UStatComponent* StatComponent = Character->GetStatComponent();
-	if (!StatComponent)
-	{
-		return;
-	}
-
-	UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent();
-	if (!InventoryComponent)
-	{
-		return;
-	}
-
-	// health, shield
-	CurHealth = StatComponent->GetCurHealth();
-	MaxHealth = StatComponent->GetMaxHealth();
-	CurShield = StatComponent->GetCurShield();
-	MaxShield = StatComponent->GetMaxShield();
-
-	// money
-	PlayerMoney = InventoryComponent->GetMoney();
-
-	// inventory
-	if (FarmingResult != EStageResult::Fail)
-	{
+		// health, shield
+		if (UStatComponent* StatComponent = Character->GetStatComponent())
 		{
-			TArray<UItemInstanceBase*> InventorySlots = InventoryComponent->GetSlots();
-			TArray<UItemInstanceBase*> EquipmentSlots = InventoryComponent->GetEquipmentSlots();
+			CurHealth = StatComponent->GetCurHealth();
+			MaxHealth = StatComponent->GetMaxHealth();
+			CurShield = StatComponent->GetCurShield();
+			MaxShield = StatComponent->GetMaxShield();
+		}
 
-			for (UItemInstanceBase* InventorySlot : InventorySlots)
+		// inventory
+		if (FarmingResult != EStageResult::Fail)
+		{
+			if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
 			{
-				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
-				PlayerItemInventory.Add(Item);
-			}
+				TArray<UItemInstanceBase*> InventorySlots = InventoryComponent->GetSlots();
+				TArray<UItemInstanceBase*> EquipmentSlots = InventoryComponent->GetEquipmentSlots();
 
-			for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
-			{
-				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
-				PlayerEquipmentInventory.Add(Item);
+				for (UItemInstanceBase* InventorySlot : InventorySlots)
+				{
+					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
+					PlayerItemInventory.Add(Item);
+				}
+
+				for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
+				{
+					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
+					PlayerEquipmentInventory.Add(Item);
+				}
 			}
 		}
 	}
@@ -460,12 +444,9 @@ void UBOGameInstance::SaveCombatData(ESaveType SaveType)
 				TotalKilledMonsters.Add(Id, Count);
 			}
 		}
-	}
-}
 
-void UBOGameInstance::ResetKilledMonsters()
-{
-	KilledMonsters.Empty();
+		KilledMonsters.Empty();
+	}
 }
 
 void UBOGameInstance::SetIsBossDefeated(bool InIsBossDefeated)
@@ -599,11 +580,6 @@ bool UBOGameInstance::GetIsKeyCardDoorOpened() const
 bool UBOGameInstance::GetIsDefenseStarted() const
 {
 	return IsDefenseStarted;
-}
-
-int32 UBOGameInstance::GetPlayerMoney() const
-{
-	return PlayerMoney;
 }
 
 TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerItemInventory() const

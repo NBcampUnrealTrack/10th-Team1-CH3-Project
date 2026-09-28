@@ -1315,7 +1315,13 @@ bool UInventoryInteractionComponent::SellAll()
 		return false;
 	}
 
-	const int32 TotalPrice = ItemData->SellPrice * HoldCount;
+	const int64 TotalPrice =
+		static_cast<int64>(ItemData->SellPrice) * HoldCount;
+
+	if (TotalPrice > MAX_int32)
+	{
+		return false;
+	}
 
 	AActor* Owner = GetOwner();
 
@@ -1331,7 +1337,7 @@ bool UInventoryInteractionComponent::SellAll()
 		return false;
 	}
 
-	if (!PlayerInventory->AddMoney(TotalPrice))
+	if (!PlayerInventory->AddMoney(static_cast<int32>(TotalPrice)))
 	{
 		return false;
 	}
@@ -1353,7 +1359,7 @@ bool UInventoryInteractionComponent::SellOne()
 
 	const FItemDataRow* ItemData = HoldItem->GetItemData();
 
-	if (!ItemData || ItemData->SellPrice < 0)
+	if (!ItemData || ItemData->SellPrice <= 0)
 	{
 		return false;
 	}

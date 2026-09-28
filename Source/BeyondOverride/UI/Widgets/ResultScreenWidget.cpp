@@ -46,34 +46,18 @@ void UResultScreenWidget::NativeConstruct()
 	// 탈출 / 사망 분기처리
 	if (!bIsSurvived)
 	{
-		const FName Killer = GI->GetKillerMonster();
-
-		if (Killer != "None")
+		if (KillerText)
 		{
-			if (KillerText)
-				KillerText->SetText(FText::FromString(Killer.ToString() + TEXT("에게")));
+			const FName Killer = GI->GetKillerMonster();
+			KillerText->SetText(FText::FromString(Killer.ToString() + TEXT("에게")));
 
 			if (MonsterImage && MonsterDataTable)
 			{
-				MonsterImage->SetVisibility(ESlateVisibility::Visible);
-
 				TArray<FMonsterInfo*> AllRows;
-				if (FMonsterInfo* FoundRow = MonsterDataTable->FindRow<FMonsterInfo>(Killer, TEXT("Killer_FindByName")))
-				{
-					MonsterImage->SetBrushFromTexture(FoundRow->MonsterImage);
-				}
+				FMonsterInfo* FoundRow = MonsterDataTable->FindRow<FMonsterInfo>(Killer, TEXT("Killer_FindByName"));
+
+				MonsterImage->SetBrushFromTexture(FoundRow->MonsterImage);
 			}
-			if (TXT_Dead)
-				TXT_Dead->SetVisibility(ESlateVisibility::Collapsed);
-		}
-		else
-		{
-			if (MonsterImage)
-				MonsterImage->SetVisibility(ESlateVisibility::Collapsed);
-			if (TXT_Dead)
-				TXT_Dead->SetVisibility(ESlateVisibility::Collapsed);
-			if (KillerText)
-				KillerText->SetText(FText::FromString(TEXT("자살하셨군요.. 왜 그러셨습니까?")));
 		}
 	}
 

@@ -142,9 +142,6 @@ void ABOCharacter::BeginPlay()
 
 				if (PlayerInventoryComponent)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Load Player Money"));
-					PlayerInventoryComponent->SetMoney(GameInstance->GetPlayerMoney());
-
 					UE_LOG(LogTemp, Warning, TEXT("Load Player Inventory"));
 					PlayerInventoryComponent->SetEquipmentSlots(GameInstance->GetPlayerEquipmentInventory());
 					PlayerInventoryComponent->SetSlots(GameInstance->GetPlayerItemInventory());

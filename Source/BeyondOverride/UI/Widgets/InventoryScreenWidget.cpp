@@ -177,12 +177,12 @@ void UInventoryScreenWidget::OnNearbyItemsChanged(const TArray<AItemPickupBase*>
 	ContainerSlotPanel->SetWorldItems(NearbyItems, OwnerCharacter->GetNearbyItemComponent(), OwnerCharacter->GetInventoryInteractionComponent());
 }
 
-void UInventoryScreenWidget::HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item, bool bIsBuy)
+void UInventoryScreenWidget::HandleSlotHovered(bool bIsHovered, UItemInstanceBase* Item)
 {
 	if (!Tooltip || HeldItem->GetVisibility() != ESlateVisibility::Collapsed)
 		return;
 
-	Tooltip->OnItemHovered(bIsHovered, Item, bIsBuy);
+	Tooltip->OnItemHovered(bIsHovered, Item);
 }
 
 void UInventoryScreenWidget::HandleHoldItemChanged(const UItemInstanceBase* HoldItem)

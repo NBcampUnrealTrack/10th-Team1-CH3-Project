@@ -104,28 +104,3 @@ UDataTable* UBODataAsset::GetLoadingTipTable() const
 {
 	return LoadingTipTable;
 }
-
-UDataTable* UBODataAsset::GetNPCDataTable() const
-{
-	return NPCDataTable;
-}
-
-UDataTable* UBODataAsset::GetNPCShopDataTable() const
-{
-	return NPCShopDataTable;
-}
-
-UDataTable* UBODataAsset::GetTopicDataTable() const
-{
-	return TopicDataTable;
-}
-
-UDataTable* UBODataAsset::GetDialogueInteractionDataTable() const
-{
-	return DialogueInteractionDataTable;
-}
-
-UDataTable* UBODataAsset::GetDialogueDataTable() const
-{
-	return DialogueDataTable;
-}

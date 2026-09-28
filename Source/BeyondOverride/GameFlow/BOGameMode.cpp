@@ -115,8 +115,6 @@ void ABOGameMode::EnterBunker()
 			UIManager->PushScreen(EUIScreen::Result, EUIInputMode::UIOnly);
 		}
 	}
-
-	GameInstance->ResetKilledMonsters();
 }
 
 void ABOGameMode::ProvideBasicEquipment()

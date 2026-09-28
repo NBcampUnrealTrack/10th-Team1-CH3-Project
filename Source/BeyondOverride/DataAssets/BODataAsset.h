@@ -41,13 +41,6 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 	UDataTable* GetDefenseDataTable() const;
 	UDataTable* GetLoadingTipTable() const;
 
-	UDataTable* GetNPCDataTable() const;
-	UDataTable* GetNPCShopDataTable() const;
-
-	UDataTable* GetTopicDataTable() const;
-	UDataTable* GetDialogueInteractionDataTable() const;
-	UDataTable* GetDialogueDataTable() const;
-
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget")
 	TSubclassOf<ULoadingScreenWidget> LoadingScreenWidgetClass;
@@ -108,19 +101,4 @@ class BEYONDOVERRIDE_API UBODataAsset : public UDataAsset
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
 	UDataTable* DefenseDataTable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
-	UDataTable* NPCDataTable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
-	UDataTable* NPCShopDataTable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
-	UDataTable* TopicDataTable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
-	UDataTable* DialogueInteractionDataTable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DataTable")
-	UDataTable* DialogueDataTable;
 };

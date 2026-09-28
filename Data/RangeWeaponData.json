@@ -130,7 +130,7 @@
 		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherA/CF_RecoilYaw_GrenadeLauncherA.CF_RecoilYaw_GrenadeLauncherA'",
 		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherA/CF_Spread_GrenadeLauncherA.CF_Spread_GrenadeLauncherA'",
 		"AimSpreadMultiplier": 0.5,
-		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_Grenade_Launcher_A_V.T_Grenade_Launcher_A_V'"
+		"ItemIconLong": "None"
 	},
 	{
 		"Name": "GRENADE_LAUNCHER_B",
@@ -149,6 +149,6 @@
 		"RecoilYawCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/CF_RecoilYaw_GrenadeLauncherB.CF_RecoilYaw_GrenadeLauncherB'",
 		"SpreadCurve": "/Script/Engine.CurveFloat'/Game/Blueprints/Items/Weapons/GrenadeLauncherB/CF_Spread_GrenadeLauncherB.CF_Spread_GrenadeLauncherB'",
 		"AimSpreadMultiplier": 0.5,
-		"ItemIconLong": "/Script/Engine.Texture2D'/Game/UI/Textures/Items/Weapons/Gun/T_Grenade_Launcher_B_V.T_Grenade_Launcher_B_V'"
+		"ItemIconLong": "None"
 	}
 ]
