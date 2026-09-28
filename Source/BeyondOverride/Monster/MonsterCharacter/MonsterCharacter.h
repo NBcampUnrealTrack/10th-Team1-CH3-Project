@@ -16,7 +16,6 @@
 
 // DELEGATE
 DECLARE_MULTICAST_DELEGATE(FOnStatSetComplete);
-DECLARE_MULTICAST_DELEGATE(FOnDeleteMonster);
 
 // 전방 선언
 class UMonsterStatComponent;
@@ -62,8 +61,6 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	void DeathSequence(bool Cast = false);
 
-	void EraseMonster();
-
 	virtual float TakeDamage(float DamageAmount,
 							 FDamageEvent const& DamageEvent,
 							 AController* EventInstigator,
@@ -78,7 +75,6 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 	// Properties
   public:
 	FOnStatSetComplete OnStatSetComplete;
-	FOnDeleteMonster OnDeleteMonster;
 
   protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
@@ -89,6 +85,4 @@ class BEYONDOVERRIDE_API AMonsterCharacter : public ACharacter
 
 	FName SocketName;
 	TObjectPtr<UParticleSystem> Effect;
-
-	FTimerHandle DeathMotionTimer;
 };

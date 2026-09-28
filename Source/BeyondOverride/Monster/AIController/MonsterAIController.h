@@ -115,8 +115,6 @@ class BEYONDOVERRIDE_API AMonsterAIController : public AAIController
 	UFUNCTION()
 	void OnTargetHearUpdated(AActor* Actor, FAIStimulus Stimulus);
 
-	void StopTree();
-
 	// AI Controller가 Pawn 조종 시작시의 함수, override를 통해 재정의
 	virtual void OnPossess(APawn* InPawn) override;
 

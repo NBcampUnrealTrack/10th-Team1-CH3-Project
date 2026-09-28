@@ -13,12 +13,9 @@
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Monster/ActorComponent/MonsterStatComponent.h"
 #include "Monster/AiController/MonsterAIController.h"
 #include "Monster/DataAssets/MonsterDataAsset.h"
-#include "Monster/System/BFLMissileAttack.h"
-#include "Monster/System/BFLMonsterStorageSpawn.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Player/Character/BOCharacter.h"
 #include "UObject/ConstructorHelpers.h"
@@ -155,31 +152,7 @@ void AMonsterCharacter::DeathSequence(bool Cast)
 			}
 		}
 	}
-	OnDeleteMonster.Broadcast();
-	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
-	{
-		Movement->MaxWalkSpeed = 0.0f;
-		Movement->StopMovementImmediately();
-	}
-	GetWorld()->GetTimerManager().SetTimer(DeathMotionTimer,
-										   this,
-										   &AMonsterCharacter::EraseMonster,
-										   1.40f,
-										   false);
-}
 
-void AMonsterCharacter::EraseMonster()
-{
-	UBFLMissileAttack::MissileAttack(GetActorLocation(),
-									 GetActorLocation(),
-									 90.0f,
-									 0.5f,
-									 this,
-									 GetWorld());
-
-	UBFLMonsterStorageSpawn::StorageSpawn(GetActorLocation(),
-										  GetMonsterID(),
-										  GetWorld());
 	Destroy();
 }
 
