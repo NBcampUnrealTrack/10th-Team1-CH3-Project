@@ -42,6 +42,9 @@ class BEYONDOVERRIDE_API UResultScreenWidget : public UUserWidget
 	TObjectPtr<UTextBlock> KillerText;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> TXT_Dead;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UVerticalBox> KillCountList;
 
 	UPROPERTY(meta = (BindWidget))
