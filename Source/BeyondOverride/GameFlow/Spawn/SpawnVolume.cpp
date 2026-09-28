@@ -2,12 +2,15 @@
 
 #include "GameFlow/Spawn/SpawnVolume.h"
 
+#include "NavigationSystem.h"
+
 #include "DataTables/Monster/MonsterInfo.h"
 #include "Engine/EngineTypes.h"
 #include "GameFlow/BOGameInstance.h"
 #include "GameFlow/Manager/ContainerManager.h"
 #include "GameFlow/Manager/SpawnVolumeManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Logging/BOLog.h"
 #include "Monster/MonsterCharacter/MonsterCharacter.h"
 #include "Monster/System/MonsterCalling.h"
@@ -123,6 +126,12 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 		return;
 	}
 
+	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	if (!NavSys)
+	{
+		return;
+	}
+
 	ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>();
 	if (!Character)
 	{
@@ -145,10 +154,16 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 	FVector BoxExtent = BoxComp->GetScaledBoxExtent();
 	FVector PlayerLocation = Character->GetActorLocation();
 
+	UE_LOG(LogGameFlow, Warning, TEXT("SVLocation Z : %f"), SVLocation.Z);
+
 	FVector SpawnLocation{};
 	float X = FMath::RandRange(SVLocation.X - BoxExtent.X, SVLocation.X + BoxExtent.X);
 	float Y = FMath::RandRange(SVLocation.Y - BoxExtent.Y, SVLocation.Y + BoxExtent.Y);
-	float Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
+	// float Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
+
+	SpawnLocation.X = X;
+	SpawnLocation.Y = Y;
+	SpawnLocation.Z = SVLocation.Z + BoxExtent.Z;
 
 	// Is it Optimal?
 	/*while (Distance < MinDistance || MaxDistance < Distance)
@@ -157,10 +172,6 @@ void ASpawnVolume::SpawnRandomMonster(TArray<FSpawnEntry>& SpawnEntries, float M
 		Y = FMath::RandRange(SVLocation.Y - BoxExtent.Y, SVLocation.Y + BoxExtent.Y);
 		Distance = FMath::Pow(abs(PlayerLocation.X - X), 2) + FMath::Pow(abs(PlayerLocation.Y - Y), 2);
 	}*/
-
-	SpawnLocation.X = X;
-	SpawnLocation.Y = Y;
-	SpawnLocation.Z = SVLocation.Z + 100.0f;
 
 	float Prob = FMath::RandRange(0.0f, 1.0f);
 	float Sum{};
