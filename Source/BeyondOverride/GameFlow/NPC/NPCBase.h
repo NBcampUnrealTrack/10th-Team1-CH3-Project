@@ -32,11 +32,14 @@ class BEYONDOVERRIDE_API ANPCBase : public ACharacter, public IInteractableInter
 	virtual void PerformInteract(AActor* Interactor);
 
   public:
+	void SetIsInteracting(bool InIsInteracting);
+
 	FName GetNPCID() const;
 	/*TObjectPtr<UInteractionComponent> GetInteractionComp() const;
 	TObjectPtr<UBehaviorComponent> GetBehaviorComp() const;
 	TObjectPtr<UDialogueComponent> GetDialogueComp() const;*/
 	void GetInteractionOptions(TArray<ENPCInteractionOption>& Options) const;
+	bool GetIsInteracting() const;
 
   public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NPC")
@@ -57,4 +60,7 @@ class BEYONDOVERRIDE_API ANPCBase : public ACharacter, public IInteractableInter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	FInteractPrompt PromptData;
+
+  private:
+	bool IsInteracting;
 };

@@ -114,3 +114,18 @@ UDataTable* UBODataAsset::GetNPCShopDataTable() const
 {
 	return NPCShopDataTable;
 }
+
+UDataTable* UBODataAsset::GetTopicDataTable() const
+{
+	return TopicDataTable;
+}
+
+UDataTable* UBODataAsset::GetDialogueInteractionDataTable() const
+{
+	return DialogueInteractionDataTable;
+}
+
+UDataTable* UBODataAsset::GetDialogueDataTable() const
+{
+	return DialogueDataTable;
+}

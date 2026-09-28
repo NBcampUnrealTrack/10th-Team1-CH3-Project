@@ -22,7 +22,7 @@ class BEYONDOVERRIDE_API UNPCManager : public UGameInstanceSubsystem
   private:
 	void LoadNPCData();
 	void LoadNPCShopData();
-	void SetNPCShopItems(FName NPCID, const TArray<FName>& ShopItems);
+	void SetNPCShopItems(FName NPCID);
 
   public:
 	void GetNPCData(FName NPCID, FNPCData& Data) const;
@@ -32,5 +32,7 @@ class BEYONDOVERRIDE_API UNPCManager : public UGameInstanceSubsystem
   private:
 	TMap<FName, FNPCData> NPCDatas;
 	TMap<FName, FNPCShopData> NPCShopDatas;
-	TMap<FName, TArray<UItemInstanceBase*>> NPCShopItems;
+
+	UPROPERTY()
+	TArray<UItemInstanceBase*> NPCShopItems;
 };

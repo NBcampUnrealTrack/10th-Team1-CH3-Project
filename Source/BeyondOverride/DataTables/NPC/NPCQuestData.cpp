@@ -1,5 +1,3 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "GameFlow/NPC/BehaviorTree/NPCBTTask_Patrol.h"
-
+#include "DataTables/NPC/NPCQuestData.h"

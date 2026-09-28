@@ -196,6 +196,11 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		return;
 	}*/
 
+	if (!GetWorld())
+	{
+		return;
+	}
+
 	if (!Levels.Contains(Level))
 	{
 		return;
@@ -225,10 +230,7 @@ void UBOGameInstance::OpenLevel(ELevel Level)
 		ShowLoadingScreenWidget(true);
 	}
 
-	if (GetWorld())
-	{
-		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Levels[Level]);
-	}
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Levels[Level]);
 }
 
 void UBOGameInstance::ShowLoadingScreenWidget(bool IsNew)
@@ -444,9 +446,12 @@ void UBOGameInstance::SaveCombatData(ESaveType SaveType)
 				TotalKilledMonsters.Add(Id, Count);
 			}
 		}
-
-		KilledMonsters.Empty();
 	}
+}
+
+void UBOGameInstance::ResetKilledMonsters()
+{
+	KilledMonsters.Empty();
 }
 
 void UBOGameInstance::SetIsBossDefeated(bool InIsBossDefeated)

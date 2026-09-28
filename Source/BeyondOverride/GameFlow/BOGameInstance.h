@@ -54,6 +54,7 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	void SaveCombatData(ESaveType SaveType);
 
   public:
+	void ResetKilledMonsters();
 	void SetIsBossDefeated(bool InIsBossDefeated);
 	void SetIsKeyCardDoorOpened(bool InIsKeyCardDoorOpened);
 	void SetIsDefenseStarted(bool InIsDefenseStarted);

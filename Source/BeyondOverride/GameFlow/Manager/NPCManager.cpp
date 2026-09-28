@@ -11,6 +11,7 @@
 UNPCManager::UNPCManager()
 {
 	NPCDatas.Empty();
+	NPCShopDatas.Empty();
 	NPCShopItems.Empty();
 
 	LoadNPCData();
@@ -89,25 +90,34 @@ void UNPCManager::LoadNPCShopData()
 			FName NPCID = Pair.Key;
 
 			NPCShopDatas.Add(NPCID, *Row);
-			SetNPCShopItems(NPCID, (*Row).ShopItems);
+			// SetNPCShopItems(NPCID, (*Row).ShopItems);
 		}
 	}
 }
 
-void UNPCManager::SetNPCShopItems(FName NPCID, const TArray<FName>& ShopItems)
+void UNPCManager::SetNPCShopItems(FName NPCID)
 {
-	TArray<UItemInstanceBase*> Items{};
+	// TArray<UItemInstanceBase*> Items{};
+
+	if (!NPCShopDatas.Contains(NPCID))
+	{
+		return;
+	}
+
+	NPCShopItems.Empty();
+
+	TArray<FName> ShopItems = NPCShopDatas[NPCID].ShopItems;
 	FItemFactory ItemFactory{};
 
 	for (FName ItemID : ShopItems)
 	{
-		if (UItemInstanceBase* ItemInstance = ItemFactory.CreateItemInstance(this, ItemID, 10))
+		if (UItemInstanceBase* ItemInstance = ItemFactory.CreateItemInstance(this, ItemID, 1))
 		{
-			Items.Add(ItemInstance);
+			NPCShopItems.Add(ItemInstance);
 		}
 	}
 
-	NPCShopItems.Add(NPCID, Items);
+	// NPCShopItems.Add(NPCID, Items);
 }
 
 void UNPCManager::GetNPCData(FName NPCID, FNPCData& Data) const
@@ -130,8 +140,8 @@ void UNPCManager::GetNPCShopItems(FName NPCID, TArray<UItemInstanceBase*>& Items
 {
 	Items.Empty();
 
-	if (NPCShopItems.Contains(NPCID))
-	{
-		Items = NPCShopItems[NPCID];
-	}
+	SetNPCShopItems(NPCID);
+
+	Items = NPCShopItems;
+	// Items = NPCShopItems[NPCID];
 }

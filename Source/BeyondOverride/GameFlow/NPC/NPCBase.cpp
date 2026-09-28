@@ -7,6 +7,7 @@
 // #include "ActorComponent/BehaviorComponent.h"
 // #include "ActorComponent/DialogueComponent.h"
 // #include "ActorComponent/InteractionComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFlow/Manager/NPCManager.h"
 #include "Interaction/InteractComponent.h"
@@ -89,6 +90,30 @@ void ANPCBase::PerformInteract(AActor* Interactor)
 
 	UIManager->PopScreen();
 	UIManager->ShowScreen(EUIScreen::NPCInteraction, EUIInputMode::UIOnly);
+
+	if (!GetController())
+	{
+		return;
+	}
+
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (!AIController)
+	{
+		return;
+	}
+
+	UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
+	if (!BlackboardComponent)
+	{
+		return;
+	}
+
+	BlackboardComponent->SetValueAsBool(TEXT("IsInteracting"), true);
+}
+
+void ANPCBase::SetIsInteracting(bool InIsInteracting)
+{
+	IsInteracting = InIsInteracting;
 }
 
 FName ANPCBase::GetNPCID() const
@@ -116,4 +141,9 @@ TObjectPtr<UDialogueComponent> ANPCBase::GetDialogueComp() const
 void ANPCBase::GetInteractionOptions(TArray<ENPCInteractionOption>& Options) const
 {
 	Options = NPCData.InteractionOptions;
+}
+
+bool ANPCBase::GetIsInteracting() const
+{
+	return IsInteracting;
 }

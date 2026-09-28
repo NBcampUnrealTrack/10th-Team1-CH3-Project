@@ -10,7 +10,7 @@
 
 UNPCBTTask_FindRandomLocation::UNPCBTTask_FindRandomLocation()
 {
-	NodeName = TEXT("Find Random Location");
+	NodeName = TEXT("NPC Find Random Location");
 
 	LocationKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UNPCBTTask_FindRandomLocation, LocationKey));
 }

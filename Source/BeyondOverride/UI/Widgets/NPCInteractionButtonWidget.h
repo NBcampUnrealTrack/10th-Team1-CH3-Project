@@ -6,12 +6,14 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Enums/NPCEnums.h"
+#include "GameFlow/BODelegates.h"
 
 #include "NPCInteractionButtonWidget.generated.h"
 
 class UButton;
 class UTextBlock;
 class UItemInstanceBase;
+class ANPCBase;
 
 UCLASS()
 class BEYONDOVERRIDE_API UNPCInteractionButtonWidget : public UUserWidget
@@ -21,13 +23,19 @@ class BEYONDOVERRIDE_API UNPCInteractionButtonWidget : public UUserWidget
   public:
 	virtual void NativeConstruct() override;
 
-	void SetNPCID(FName ID);
+	void SetNPC(TObjectPtr<ANPCBase> InNPC);
 	void SetButtonOption(ENPCInteractionOption InOption);
+	void SetButtonSituation(EDialogueSituation InSituation);
+	void SetNextDialogueID(FName ID);
 	void SetButtonText(FText Text);
 
 	UFUNCTION(BlueprintCallable, Category = "Widget")
-	void OnInteractionButtonClicked();
+	void OnButtonClicked();
 
+	void OnInteractionClicked();
+	void OnTalkSituation();
+
+	void Talk();
 	void OpenShop();
 	void Goodbye();
 
@@ -39,9 +47,16 @@ class BEYONDOVERRIDE_API UNPCInteractionButtonWidget : public UUserWidget
 	TObjectPtr<UTextBlock> ButtonTextBlock;
 
   private:
-	FName NPCID;
+	UPROPERTY()
+	TObjectPtr<ANPCBase> NPC;
 	ENPCInteractionOption Option;
+	EDialogueSituation Situation;
+	FName NextDialogueID;
 
 	UPROPERTY()
 	TArray<UItemInstanceBase*> ShopItems;
+
+  public:
+	FOnInteractionButtonClicked OnInteractionButtonClicked;
+	FOnTalkButtonClicked OnTalkButtonClicked;
 };

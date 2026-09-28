@@ -3,6 +3,7 @@
 #include "GameFlow/NPC/NPCAIController.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Player/Character/BOCharacter.h"
 
 ANPCAIController::ANPCAIController()
 {
@@ -13,10 +14,39 @@ void ANPCAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (NPCBlackboardComp)
+	SetBlackboarValues();
+	StartBehaviorTree();
+}
+
+void ANPCAIController::SetBlackboarValues()
+{
+	if (!NPCBlackboardComp || !GetWorld() || !GetWorld()->GetFirstPlayerController())
 	{
-		// set values
-		NPCBlackboardComp->SetValueAsBool(TEXT("IsActing"), false);
+		return;
+	}
+
+	ABOCharacter* Player = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>();
+	if (!Player)
+	{
+		return;
+	}
+
+	NPCBlackboardComp->SetValueAsBool(TEXT("IsActing"), false);
+	NPCBlackboardComp->SetValueAsBool(TEXT("IsInteracting"), false);
+	NPCBlackboardComp->SetValueAsBool(TEXT("IsLookingAtPlayer"), false);
+	NPCBlackboardComp->SetValueAsObject(TEXT("Player"), Player);
+}
+
+void ANPCAIController::StartBehaviorTree()
+{
+	if (BehaviorTreeAsset)
+	{
+		RunBehaviorTree(BehaviorTreeAsset);
+		UE_LOG(LogTemp, Warning, TEXT("Behavior Tree started"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Behavior Tree Asset"));
 	}
 }
 
