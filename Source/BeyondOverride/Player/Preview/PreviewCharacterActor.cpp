@@ -25,7 +25,7 @@ APreviewCharacterActor::APreviewCharacterActor()
 
 	PreviewCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("PreviewCapture"));
 	PreviewCapture->SetupAttachment(BodyMesh);
-	PreviewCapture->SetRelativeLocation(FVector(-10.f, 96.f, 89.f));      
+	PreviewCapture->SetRelativeLocation(FVector(-20.f, 200.f, 89.f));      
 	PreviewCapture->SetRelativeRotation(FRotator(0.f, -84.f, 0.f));       
 	PreviewCapture->ProjectionType = ECameraProjectionMode::Orthographic; 
 	PreviewCapture->OrthoWidth = 100.f;
