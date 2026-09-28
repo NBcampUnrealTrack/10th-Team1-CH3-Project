@@ -230,5 +230,13 @@
 		"EquipSocketName": "PISTOL_B",
 		"HolsterSocketName": "None",
 		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/PistolBLegendary/DA_EquipmentAnimation_PistolBLegendary.DA_EquipmentAnimation_PistolBLegendary'"
+	},
+	{
+		"Name": "SHOTGUN_A_EPIC",
+		"EquipMesh": "/Script/Engine.SkeletalMesh'/Game/Assets/Items/Weapons/MilitaryWeapSilver/Weapons/Shotgun_A.Shotgun_A'",
+		"EquipDelay": 1.2,
+		"EquipSocketName": "SHOTGUN_A",
+		"HolsterSocketName": "None",
+		"EquipmentAnimationData": "/Script/BeyondOverride.EquipmentAnimationDataAsset'/Game/Blueprints/Items/Weapons/ShotgunAEpic/DA_EquipmentAnimation_ShotgunAEpic.DA_EquipmentAnimation_ShotgunAEpic'"
 	}
 ]
