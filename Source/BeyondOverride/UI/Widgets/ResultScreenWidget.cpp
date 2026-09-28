@@ -54,9 +54,10 @@ void UResultScreenWidget::NativeConstruct()
 			if (MonsterImage && MonsterDataTable)
 			{
 				TArray<FMonsterInfo*> AllRows;
-				FMonsterInfo* FoundRow = MonsterDataTable->FindRow<FMonsterInfo>(Killer, TEXT("Killer_FindByName"));
-
-				MonsterImage->SetBrushFromTexture(FoundRow->MonsterImage);
+				if (FMonsterInfo* FoundRow = MonsterDataTable->FindRow<FMonsterInfo>(Killer, TEXT("Killer_FindByName")))
+				{
+					MonsterImage->SetBrushFromTexture(FoundRow->MonsterImage);
+				}
 			}
 		}
 	}

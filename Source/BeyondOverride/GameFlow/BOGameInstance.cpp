@@ -306,36 +306,50 @@ void UBOGameInstance::SavePlayerData()
 		return;
 	}
 
-	if (ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>())
+	ABOCharacter* Character = GetWorld()->GetFirstPlayerController()->GetPawn<ABOCharacter>();
+	if (!Character)
 	{
-		// health, shield
-		if (UStatComponent* StatComponent = Character->GetStatComponent())
-		{
-			CurHealth = StatComponent->GetCurHealth();
-			MaxHealth = StatComponent->GetMaxHealth();
-			CurShield = StatComponent->GetCurShield();
-			MaxShield = StatComponent->GetMaxShield();
-		}
+		return;
+	}
 
-		// inventory
-		if (FarmingResult != EStageResult::Fail)
+	UStatComponent* StatComponent = Character->GetStatComponent();
+	if (!StatComponent)
+	{
+		return;
+	}
+
+	UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent();
+	if (!InventoryComponent)
+	{
+		return;
+	}
+
+	// health, shield
+	CurHealth = StatComponent->GetCurHealth();
+	MaxHealth = StatComponent->GetMaxHealth();
+	CurShield = StatComponent->GetCurShield();
+	MaxShield = StatComponent->GetMaxShield();
+
+	// money
+	PlayerMoney = InventoryComponent->GetMoney();
+
+	// inventory
+	if (FarmingResult != EStageResult::Fail)
+	{
 		{
-			if (UPlayerInventoryComponent* InventoryComponent = Character->GetPlayerInventoryComponent())
+			TArray<UItemInstanceBase*> InventorySlots = InventoryComponent->GetSlots();
+			TArray<UItemInstanceBase*> EquipmentSlots = InventoryComponent->GetEquipmentSlots();
+
+			for (UItemInstanceBase* InventorySlot : InventorySlots)
 			{
-				TArray<UItemInstanceBase*> InventorySlots = InventoryComponent->GetSlots();
-				TArray<UItemInstanceBase*> EquipmentSlots = InventoryComponent->GetEquipmentSlots();
+				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
+				PlayerItemInventory.Add(Item);
+			}
 
-				for (UItemInstanceBase* InventorySlot : InventorySlots)
-				{
-					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(InventorySlot, this);
-					PlayerItemInventory.Add(Item);
-				}
-
-				for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
-				{
-					UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
-					PlayerEquipmentInventory.Add(Item);
-				}
+			for (UItemInstanceBase* EquipmentSlot : EquipmentSlots)
+			{
+				UItemInstanceBase* Item = DuplicateObject<UItemInstanceBase>(EquipmentSlot, this);
+				PlayerEquipmentInventory.Add(Item);
 			}
 		}
 	}
@@ -585,6 +599,11 @@ bool UBOGameInstance::GetIsKeyCardDoorOpened() const
 bool UBOGameInstance::GetIsDefenseStarted() const
 {
 	return IsDefenseStarted;
+}
+
+int32 UBOGameInstance::GetPlayerMoney() const
+{
+	return PlayerMoney;
 }
 
 TArray<UItemInstanceBase*> UBOGameInstance::GetPlayerItemInventory() const

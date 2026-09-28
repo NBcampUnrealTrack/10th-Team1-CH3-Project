@@ -89,6 +89,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	bool GetIsKeyCardDoorOpened() const;
 	bool GetIsDefenseStarted() const;
 
+	int32 GetPlayerMoney() const;
+
 	TArray<UItemInstanceBase*> GetPlayerItemInventory() const;
 	TArray<UItemInstanceBase*> GetPlayerEquipmentInventory() const;
 	TArray<UItemInstanceBase*> GetStorageInventory() const;
@@ -119,6 +121,8 @@ class BEYONDOVERRIDE_API UBOGameInstance : public UGameInstance
 	int32 MaxHealth;
 	int32 CurShield;
 	int32 MaxShield;
+
+	int32 PlayerMoney;
 
 	bool IsBossDefeated;
 	bool IsKeyCardDoorOpened;
