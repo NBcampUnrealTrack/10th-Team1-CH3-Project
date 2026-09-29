@@ -1,7 +1,7 @@
 [
 	{
 		"Name": "0",
-		"DurationRatio": 0.3,
+		"DurationRatio": 0.5,
 		"SpawnEntries": [
 			{
 				"ID": "Gunner",
@@ -21,7 +21,7 @@
 	},
 	{
 		"Name": "2",
-		"DurationRatio": 0.4,
+		"DurationRatio": 0.2,
 		"SpawnEntries": [
 			{
 				"ID": "Gunner",
