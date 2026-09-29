@@ -4,6 +4,7 @@
 
 #include "Components/TextBlock.h"
 #include "GameFlow/BOGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Logging/BOLog.h"
 #include "UI/Manager/UIManager.h"
 
@@ -21,6 +22,11 @@ void UEndingCreditsWidget::NativeConstruct()
 	BindToAnimationFinished(CreditsAnimation, Event);
 
 	PlayAnimation(CreditsAnimation);
+
+	if (EndingBGM)
+	{
+		UGameplayStatics::PlaySound2D(this, EndingBGM);
+	}
 
 	SetIsFocusable(true);
 	SetKeyboardFocus();

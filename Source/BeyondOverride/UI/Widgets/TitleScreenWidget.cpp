@@ -18,6 +18,11 @@ void UTitleScreenWidget::NativeConstruct()
 	{
 		ExitBtn->OnClicked.AddDynamic(this, &UTitleScreenWidget::OnExitButtonClicked);
 	}
+
+	if (StartBGM)
+	{
+		UGameplayStatics::PlaySound2D(this, StartBGM);
+	}
 }
 
 void UTitleScreenWidget::OnStartButtonClicked()

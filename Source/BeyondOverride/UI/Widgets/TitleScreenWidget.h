@@ -7,6 +7,7 @@
 #include "TitleScreenWidget.generated.h"
 
 class UButton;
+class USoundBase;
 
 UCLASS()
 class BEYONDOVERRIDE_API UTitleScreenWidget : public UUserWidget
@@ -27,4 +28,7 @@ class BEYONDOVERRIDE_API UTitleScreenWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ExitBtn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> StartBGM;
 };

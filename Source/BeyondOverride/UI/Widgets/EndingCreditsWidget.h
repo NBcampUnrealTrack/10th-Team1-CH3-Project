@@ -9,6 +9,7 @@
 #include "EndingCreditsWidget.generated.h"
 
 class UTextBlock;
+class USoundBase;
 
 UCLASS()
 class BEYONDOVERRIDE_API UEndingCreditsWidget : public UUserWidget
@@ -42,6 +43,9 @@ class BEYONDOVERRIDE_API UEndingCreditsWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> EndTextBlock;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	TObjectPtr<USoundBase> EndingBGM;
 
   private:
 	bool IsInputEnabled;
